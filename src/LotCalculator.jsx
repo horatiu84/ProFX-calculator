@@ -6,10 +6,22 @@ const riskValues = [0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
 export default function LotCalculator() {
   const [selectedPips, setSelectedPips] = useState(10);
   const [selectedRiskIndex, setSelectedRiskIndex] = useState(0);
-  const [startOfDay, setStartOfDay] = useState(() => Number(localStorage.getItem("startOfDay")) || 1645);
-  const [endOfDay, setEndOfDay] = useState(() => Number(localStorage.getItem("endOfDay")) || 1645);
-  const [startOfWeek, setStartOfWeek] = useState(() => Number(localStorage.getItem("startOfWeek")) || 1000);
-  const [endOfWeek, setEndOfWeek] = useState(() => Number(localStorage.getItem("endOfWeek")) || 1034);
+  const [startOfDay, setStartOfDay] = useState(() => {
+    const saved = localStorage.getItem("startOfDay");
+    return saved !== null ? Number(saved) : 0;
+  });
+  const [endOfDay, setEndOfDay] = useState(() => {
+    const saved = localStorage.getItem("endOfDay");
+    return saved !== null ? Number(saved) : 0;
+  });
+  const [startOfWeek, setStartOfWeek] = useState(() => {
+    const saved = localStorage.getItem("startOfWeek");
+    return saved !== null ? Number(saved) : 0;
+  });
+  const [endOfWeek, setEndOfWeek] = useState(() => {
+    const saved = localStorage.getItem("endOfWeek");
+    return saved !== null ? Number(saved) : 0;
+  });
 
   useEffect(() => {
     localStorage.setItem("startOfDay", startOfDay);
@@ -49,14 +61,14 @@ export default function LotCalculator() {
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={startOfDay}
-            onChange={(e) => setStartOfDay(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}}
+            onChange={(e) => setStartOfDay(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}
           />
           <label className="block mb-2">Suma final zi:</label>
           <input
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={endOfDay}
-            onChange={(e) => setEndOfDay(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}}
+            onChange={(e) => setEndOfDay(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}
           />
           <h2 className="text-lg">Procentaj zi</h2>
           <p className="text-xl font-bold text-yellow-400">{dayChange}%</p>
@@ -68,14 +80,14 @@ export default function LotCalculator() {
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={startOfWeek}
-            onChange={(e) => setStartOfWeek(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}}
+            onChange={(e) => setStartOfWeek(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}
           />
           <label className="block mb-2">Suma final săptămână:</label>
           <input
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={endOfWeek}
-            onChange={(e) => setEndOfWeek(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}}
+            onChange={(e) => setEndOfWeek(e.target.value === '' ? '' : Number(e.target.value))} onFocus={(e) => { if (e.target.value === '0') e.target.select(); }}
           />
           <h2 className="text-lg">Procentaj săptămână</h2>
           <p className="text-xl font-bold text-yellow-400">{weekChange}%</p>
