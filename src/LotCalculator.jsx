@@ -49,14 +49,14 @@ export default function LotCalculator() {
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={startOfDay}
-            onChange={(e) => setStartOfDay(Number(e.target.value))}
+            onChange={(e) => setStartOfDay(Number(e.target.value))} onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
           />
           <label className="block mb-2">Suma final zi:</label>
           <input
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={endOfDay}
-            onChange={(e) => setEndOfDay(Number(e.target.value))}
+            onChange={(e) => setEndOfDay(Number(e.target.value))} onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
           />
           <h2 className="text-lg">Procentaj zi</h2>
           <p className="text-xl font-bold text-yellow-400">{dayChange}%</p>
@@ -68,14 +68,14 @@ export default function LotCalculator() {
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={startOfWeek}
-            onChange={(e) => setStartOfWeek(Number(e.target.value))}
+            onChange={(e) => setStartOfWeek(Number(e.target.value))} onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
           />
           <label className="block mb-2">Suma final săptămână:</label>
           <input
             type="number"
             className="w-full p-2 bg-gray-800 text-white rounded mb-4"
             value={endOfWeek}
-            onChange={(e) => setEndOfWeek(Number(e.target.value))}
+            onChange={(e) => setEndOfWeek(Number(e.target.value))} onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
           />
           <h2 className="text-lg">Procentaj săptămână</h2>
           <p className="text-xl font-bold text-yellow-400">{weekChange}%</p>
