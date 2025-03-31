@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-const riskLabels = ["1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
-const riskValues = [0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
+const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
+const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
 
 export default function LotCalculator() {
   const [selectedPips, setSelectedPips] = useState(10);
