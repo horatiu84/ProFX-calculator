@@ -278,7 +278,7 @@ return (
         <ul className="list-disc list-inside space-y-1">
           {dynamicLosses.map((item, idx) => (
             <li key={idx}>
-              <span className="text-yellow-300">Risc {item.label}:</span> {item.value} EUR
+              <span className="text-yellow-300">Risc {item.label}:</span> {item.value} USD
             </li>
           ))}
         </ul>
