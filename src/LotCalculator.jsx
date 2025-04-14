@@ -16,10 +16,7 @@ const [endOfTrade, setEndOfTrade] = useState(() => {
 });
 const tradeChange = startOfTrade > 0 ? (((endOfTrade - startOfTrade) / startOfTrade) * 100).toFixed(2) : "0.00";
 
-useEffect(() => {
-  localStorage.setItem("startOfTrade", startOfTrade);
-  localStorage.setItem("endOfTrade", endOfTrade);
-}, [startOfTrade, endOfTrade]);
+
 
 const [selectedPips, setSelectedPips] = useState(10);
   const [selectedRiskIndex, setSelectedRiskIndex] = useState(0);
@@ -39,6 +36,16 @@ const [selectedPips, setSelectedPips] = useState(10);
     const saved = localStorage.getItem("endOfWeek");
     return saved !== null ? Number(saved) : 0;
   });
+
+  useEffect(() => {
+    localStorage.setItem("startOfDay", startOfDay);
+    localStorage.setItem("endOfDay", endOfDay);
+  }, [startOfDay, endOfDay]);
+
+  useEffect(() => {
+    localStorage.setItem("startOfWeek", startOfWeek);
+    localStorage.setItem("endOfWeek", endOfWeek);
+  }, [startOfWeek, endOfWeek]);
 
   const riskPercent = riskValues[selectedRiskIndex];
   const points = selectedPips * 10;
@@ -69,7 +76,13 @@ const [selectedPips, setSelectedPips] = useState(10);
   };
 
   const [slPips, setSlPips] = useState(100);
-const [customLot, setCustomLot] = useState(0.09);
+const [customLotRaw, setCustomLotRaw] = useState("0.09");
+  const [customLot, setCustomLot] = useState(0);
+
+  useEffect(() => {
+    const parsed = parseFloat(customLotRaw);
+    setCustomLot(!isNaN(parsed) ? parsed : 0);
+  }, [customLotRaw]);
 const calculatedLoss = (customLot * slPips * 10).toFixed(2);
 const isHighRisk = (startOfDay > 0) && ((calculatedLoss / startOfDay) > 0.01);
 
@@ -215,17 +228,20 @@ return (
   <input
     type="number"
     className="w-full p-2 bg-yellow-200 text-black font-bold text-center rounded mb-4"
-    value={slPips}
-    onChange={(e) => setSlPips(Number(e.target.value))}
+    value={slPips === 0 ? "" : slPips}
+    onChange={(e) => setSlPips(e.target.value === "" ? 0 : Number(e.target.value))}
   />
   <label className="block mb-2">Cu ce lot intru?</label>
   <input
-    type="number"
-    step="0.01"
-    className="w-full p-2 bg-yellow-200 text-black font-bold text-center rounded mb-4"
-    value={customLot}
-    onChange={(e) => setCustomLot(Number(e.target.value))}
-  />
+  type="text"
+  inputMode="decimal"
+  className="w-full p-2 bg-yellow-200 text-black font-bold text-center rounded mb-4"
+  value={customLotRaw}
+  onChange={(e) => setCustomLotRaw(e.target.value)}
+  onBlur={() => {
+    if (customLotRaw === "") setCustomLotRaw("0");
+  }}
+/>
   <label className="block mb-2">Cât e pierderea?</label>
   <div className={`w-full p-2 text-center font-bold text-xl rounded transition-all duration-300 ${isHighRisk ? 'bg-red-500 animate-pulse' : 'bg-pink-200 text-black'}`}>
     ${calculatedLoss}
