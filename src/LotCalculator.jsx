@@ -152,7 +152,7 @@ export default function LotCalculator() {
       </div>
 
       {activeTab === "evolutie" && (
-        <div>
+        <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
               <label className="block mb-2">Suma început zi:</label>
@@ -423,8 +423,8 @@ export default function LotCalculator() {
       )}
 
       {activeTab === "lot" && (
-        <div>
-          <h2 className="text-2xl font-semibold mb-4 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-4 text-center ">
             Calculator Lot
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
