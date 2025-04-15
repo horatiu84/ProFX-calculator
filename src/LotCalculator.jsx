@@ -104,7 +104,7 @@ export default function LotCalculator() {
             FX
           </span>
         </div>
-        <span className="text-xl text-gray-400 mt-2">
+        <span className="text-xl text-gray-400 mt-2 text-center block">
           Învață să tranzacționezi gratuit, de la zero
         </span>
       </div>
