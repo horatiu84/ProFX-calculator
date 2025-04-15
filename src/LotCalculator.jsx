@@ -108,7 +108,7 @@ export default function LotCalculator() {
           Învață să tranzacționezi gratuit, de la zero
         </span>
       </div>
-      <div className="flex justify-center space-x-4 mb-8">
+      <div className="flex flex-wrap justify-center gap-2 mb-8">
         <button
           className={`px-4 py-2 rounded ${
             activeTab === "evolutie"
