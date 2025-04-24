@@ -380,6 +380,15 @@ export default function LotCalculator() {
               📥 Descarcă ghidul de conectare MT5 mobile
             </a>
           </div>
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 mt-10 max-w-3xl mx-auto">
+            <h2 className="text-xl font-bold mb-4">
+              🎬 Videoclip: Cum funcționează trailing stop
+            </h2>
+            <video controls className="w-full rounded-lg">
+              <source src="/trailing stop.mp4" type="video/mp4" />
+              Browserul tău nu suportă redarea video.
+            </video>
+          </div>
         </div>
       )}
 
