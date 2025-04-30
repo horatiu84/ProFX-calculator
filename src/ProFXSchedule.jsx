@@ -43,7 +43,7 @@ const schedule = [
 
 const ProFXSchedule = () => {
   return (
-    <div className="bg-[#0b0f1a] min-h-screen text-white font-sans max-w-5xl px-4 py-10 mx-auto">
+    <div className="bg-[#0b0f1a]  text-white font-sans max-w-5xl px-4 py-10 mx-auto">
       <div className="w-full text-center">
         <h1 className="text-4xl font-bold text-yellow-400 tracking-wide">
           PROGRAM SĂPTĂMÂNAL

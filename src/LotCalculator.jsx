@@ -441,6 +441,9 @@ export default function LotCalculator() {
           <p className="text-sm text-gray-400 mt-2">
             *Dacă devine roșu, e mai mult de 1% pierderea
           </p>
+          
+            <p className="italic text-sm text-gray-400 mt-2">Mărimea contului este valoarea sumei început zi : <span className="font-bold">{startOfDay}</span> $ </p>
+          
         </div>
       )}
 
@@ -449,6 +452,9 @@ export default function LotCalculator() {
           <h2 className="text-2xl font-semibold mb-4 text-center ">
             Calculator Lot
           </h2>
+          <div className="text-center mb-4">
+            <p className="italic">Mărimea contului este valoarea sumei început zi : <span className="font-bold">{startOfDay}</span> $ </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div>
               <label className="block mb-2">Selectează Pips SL:</label>
