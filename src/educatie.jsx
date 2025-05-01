@@ -137,6 +137,15 @@ const Educatie = () => {
             📥 Descarcă ghidul de conectare MT5 mobile
           </a>
         </div>
+        <div className="text-center mt-6">
+          <a
+            href="/ProFX - Introducere-in-Formatiile-de-Lumanari ( Mitica ).pdf"
+            download
+            className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+          >
+            📥 Descarcă ghidul de Introducere in Formatiile de Lumanari
+          </a>
+        </div>
       
       </div>
     )
