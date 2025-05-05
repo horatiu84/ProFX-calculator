@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ProFXSchedule from "./ProFXSchedule";
 import Educatie from "./educatie";
+import Simulare from "./Simulare";
+
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -161,9 +163,20 @@ export default function LotCalculator() {
         >
           🗓️ Agenda ProFX
         </button>
+        <button
+          className={`px-4 py-2 rounded ${
+            activeTab === "simulare"
+              ? "bg-yellow-500 text-black"
+              : "bg-gray-800 text-white"
+          }`}
+          onClick={() => setActiveTab("simulare")}
+        >
+          💵 Afiliere 
+        </button>
       </div>
 
       {activeTab === "agenda" && <ProFXSchedule />}
+      {activeTab === "simulare" && <Simulare />}
 
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">
