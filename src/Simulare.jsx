@@ -102,7 +102,7 @@ export default function Simulare() {
                   key={level}
                   className="text-center font-semibold text-white bg-gray-800 transition duration-300 hover:bg-yellow-700 hover:scale-[1.015] hover:shadow-md"
                   style={{
-                    width: `${65 + index * 10}%`,
+                    width: `${60 + index * 10}%`,
                     marginLeft: `${index * 5}px`,
                     marginRight: `${index * 5}px`,
                     paddingTop: `${padding}px`,
@@ -110,17 +110,23 @@ export default function Simulare() {
                     clipPath: "polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%)",
                   }}
                 >
-                  <span className="text-yellow-300">{level}</span>:{" "}
-                  <span className="text-green-400">${Math.round(total)}</span>{" "}
-                  <span className="text-blue-300 font-semibold">
-                    ({percentage}%)
-                  </span>
+                  <div className="flex flex-col sm:inline text-center">
+                    <span>
+                      <span className="text-yellow-300">{level}</span>:{" "}
+                      <span className="text-green-400">
+                        ${Math.round(total)} {" "}
+                      </span>
+                    </span>
+                    <span className="text-blue-300 font-semibold">
+                      ({percentage}%)
+                    </span>
+                  </div>
                 </div>
               );
             })}
           </div>
 
-          <div >
+          <div>
             <div className=" text-center text-lg font-bold">
               <span className="text-white">Total cash flow:</span>{" "}
               <span className="text-blue-400 font-bold text-xl">
