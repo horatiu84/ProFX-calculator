@@ -95,6 +95,28 @@ export default function Simulare() {
           </div>
 
           <div className="pt-4 space-y-2 flex flex-col items-center">
+          <div
+      
+                  className="text-center font-semibold text-white bg-gray-800 transition duration-300 hover:bg-yellow-700 hover:scale-[1.015] hover:shadow-md"
+                  style={{
+                    width: `${47}%`,
+                    marginLeft: `${10}px`,
+                    marginRight: `${ 10}px`,
+                    paddingTop: `${25}px`,
+                    paddingBottom: `${10}px`,
+                    clipPath: "polygon(50% 0%, 50% 0%, 100% 100%, 0% 100%)",
+                  }}
+                >
+                 <div className="flex flex-col sm:inline text-center">
+                    <span>
+                      <span className="text-white-400">
+                        Pro {" "}
+                      </span>
+                      <span className="text-yellow-300">FX</span>
+                    </span>
+                  </div>
+
+                </div>
             {commissions.map(({ level, total, percentage }, index) => {
               const padding = 12;
               return (
