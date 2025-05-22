@@ -4,32 +4,30 @@ const schedule = [
   {
     day: "LUNI",
     activities: [
-      { time: "8:45", text: "LIVE TRADING YOUTUBE" },
-      { time: "14:45", text: "LIVE TRADING YOUTUBE" },
-      { time: "20:00", text: "Webinar" },
+      { time: "", text: "MINIM DOUĂ SESIUNI LIVE" },
+      { time: "", text: "WEBINAR" },
     ],
   },
   {
     day: "MARȚI",
-    activities: [{ time: "", text: "SESIUNI PRIVATE DE LIVE TRADING" }],
+    activities: [{ time: "", text: "MINIM DOUĂ SESIUNI LIVE" },{ time: "", text: "WEBINAR ÎNCEPĂTORI" },],
   },
   {
     day: "MIERCURI",
     activities: [
-      { time: "8:45", text: "LIVE TRADING YOUTUBE" },
-      { time: "14:45", text: "LIVE TRADING YOUTUBE" },
+      { time: "", text: "MINIM DOUĂ SESIUNI LIVE" }
     ],
   },
   {
     day: "JOI",
     activities: [
-      { time: "", text: "SESIUNI PRIVATE DE LIVE TRADING" },
-      { time: "20:00", text: "SESIUNE Q&A" },
+      { time: "", text: "MINIM DOUĂ SESIUNI LIVE" },
+      { time: "", text: "WEBINAR AVANSAȚI" },
     ],
   },
   {
     day: "VINERI",
-    activities: [{ time: "", text: "SESIUNI PRIVATE DE LIVE TRADING" }],
+    activities: [{ time: "", text: "MINIM DOUĂ SESIUNI LIVE" }],
   },
   {
     day: "SÂMBĂTĂ",
@@ -37,7 +35,7 @@ const schedule = [
   },
   {
     day: "DUMINICĂ",
-    activities: [{ time: "", text: "SESIUNE Q&A cu Flavius" }],
+    activities: [{ time: "", text: "WEBINAR BACKTESTING" }],
   },
 ];
 
