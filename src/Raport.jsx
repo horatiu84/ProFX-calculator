@@ -8,7 +8,7 @@ const Raport = () => {
       </h2>
       <p className="flex justify-center">
         <a
-          href="/public/Rapoarte/RaportMai.html"
+          href="/Rapoarte/RaportMai.html"
           target="_blank"
           rel="noopener noreferrer"
           className="
