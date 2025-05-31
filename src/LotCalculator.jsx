@@ -3,6 +3,7 @@ import ProFXSchedule from "./ProFXSchedule";
 import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
+import Training from "./Training.jsx";
 
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
@@ -156,6 +157,16 @@ export default function LotCalculator() {
         </button>
         <button
           className={`px-4 py-2 rounded ${
+            activeTab === "training"
+              ? "bg-yellow-500 text-black"
+              : "bg-gray-800 text-white"
+          }`}
+          onClick={() => setActiveTab("training")}
+        >
+          🧑‍🏫 Training
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${
             activeTab === "agenda"
               ? "bg-yellow-500 text-black"
               : "bg-gray-800 text-white"
@@ -187,6 +198,7 @@ export default function LotCalculator() {
       </div>
 
       {activeTab === "agenda" && <ProFXSchedule />}
+      {activeTab === "training" && <Training />}
       {activeTab === "simulare" && <Simulare />}
       {activeTab === "raport" && <Raport />}
 
