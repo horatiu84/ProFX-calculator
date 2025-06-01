@@ -113,7 +113,27 @@ const Educatie = () => {
           Browserul tău nu suportă redarea video.
         </video>
       </div>
-       <div className="text-center mt-6">
+       <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 mt-10 max-w-3xl mx-auto">
+        <h2 className="text-xl font-bold mb-4">🎬 Videoclip: MT5 pe Android</h2>
+        <video
+          controls
+          className="w-full max-w-xl mx-auto aspect-video rounded-lg"
+        >
+          <source src="/tudor android.mp4" type="video/mp4" />
+          Browserul tău nu suportă redarea video.
+        </video>
+      </div>
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 mt-10 max-w-3xl mx-auto">
+        <h2 className="text-xl font-bold mb-4">🎬 Videoclip: MT5 pe iPhone</h2>
+        <video
+          controls
+          className="w-full max-w-xl mx-auto aspect-video rounded-lg"
+        >
+          <source src="/tudor iphone.mp4" type="video/mp4" />
+          Browserul tău nu suportă redarea video.
+        </video>
+      </div>
+      <div className="text-center mt-6">
         <a
           href="/Dictionar ProFX.pdf"
           download
@@ -140,7 +160,7 @@ const Educatie = () => {
           📥 Descarcă ghidul de conectare MT5 mobile
         </a>
       </div>
-     
+
       <div className="text-center mt-6">
         <a
           href="/ProFX - Introducere-in-Formatiile-de-Lumanari ( Mitica ).pdf"
