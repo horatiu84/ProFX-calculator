@@ -4,14 +4,12 @@ import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
-
+import FlipCard from "./FlipCard.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
 
 export default function LotCalculator() {
- 
-
   const [startOfTrade, setStartOfTrade] = useState(() => {
     const saved = localStorage.getItem("startOfTrade");
     return saved !== null ? Number(saved) : 0;
@@ -183,7 +181,7 @@ export default function LotCalculator() {
           }`}
           onClick={() => setActiveTab("simulare")}
         >
-          💵 Afiliere 
+          💵 Afiliere
         </button>
         <button
           className={`px-4 py-2 rounded ${
@@ -193,7 +191,7 @@ export default function LotCalculator() {
           }`}
           onClick={() => setActiveTab("raport")}
         >
-          📝 Jurnal 
+          📝 Jurnal
         </button>
       </div>
 
@@ -202,9 +200,11 @@ export default function LotCalculator() {
       {activeTab === "simulare" && <Simulare />}
       {activeTab === "raport" && <Raport />}
 
-
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">
+          <div>
+            <FlipCard />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
               <label className="block mb-2">Suma început zi:</label>
@@ -309,7 +309,7 @@ export default function LotCalculator() {
           </div>
         </div>
       )}
-      {activeTab === "educatie" && <Educatie /> }
+      {activeTab === "educatie" && <Educatie />}
 
       {activeTab === "pierdere" && (
         <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 max-w-md mx-auto">
@@ -347,9 +347,11 @@ export default function LotCalculator() {
           <p className="text-sm text-gray-400 mt-2">
             *Dacă devine roșu, e mai mult de 1% pierderea
           </p>
-          
-            <p className="italic text-sm text-gray-400 mt-2">Mărimea contului este valoarea sumei început zi : <span className="font-bold">{startOfDay}</span> $ </p>
-          
+
+          <p className="italic text-sm text-gray-400 mt-2">
+            Mărimea contului este valoarea sumei început zi :{" "}
+            <span className="font-bold">{startOfDay}</span> ${" "}
+          </p>
         </div>
       )}
 
@@ -359,7 +361,10 @@ export default function LotCalculator() {
             Calculator Lot
           </h2>
           <div className="text-center mb-4">
-            <p className="italic">Mărimea contului este valoarea sumei început zi : <span className="font-bold">{startOfDay}</span> $ </p>
+            <p className="italic">
+              Mărimea contului este valoarea sumei început zi :{" "}
+              <span className="font-bold">{startOfDay}</span> ${" "}
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div>
