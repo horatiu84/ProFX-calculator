@@ -5,6 +5,7 @@ import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
 import FlipCard from "./FlipCard.jsx";
+import InvestmentCalculator from "./InvestmentCalculator.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -307,6 +308,7 @@ export default function LotCalculator() {
             <h2 className="text-lg">Procentaj trade</h2>
             <p className="text-xl font-bold text-yellow-400">{tradeChange}%</p>
           </div>
+          <div ><InvestmentCalculator /></div>
         </div>
       )}
       {activeTab === "educatie" && <Educatie />}
