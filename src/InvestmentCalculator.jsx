@@ -3,21 +3,24 @@ import { useState } from "react";
 export default function InvestmentCalculator() {
   const [amount, setAmount] = useState("");
   const [months, setMonths] = useState("");
+  const [rate, setRate] = useState("");
   const [result, setResult] = useState(null);
 
   const calculateGrowth = () => {
     const principal = parseFloat(amount);
     const period = parseInt(months, 10);
+    const growthRate = parseFloat(rate) / 100;
 
-    if (principal > 0 && period >= 0) {
-      const total = principal * Math.pow(1.2, period);
+    if (principal > 0 && period >= 0 && growthRate >= 0) {
+      const growthFactor = 1 + growthRate;
+      const total = principal * Math.pow(growthFactor, period);
       setResult(total.toFixed(2));
     }
   };
 
   return (
     <div className="calculator-container">
-      <h2>Simulare Creștere Lunară de 20%</h2>
+      <h2>Simulare Creștere Lunară</h2>
       <div className="input-group">
         <label>
           Suma inițială ($):
@@ -29,7 +32,6 @@ export default function InvestmentCalculator() {
           />
         </label>
       </div>
-
       <div className="input-group">
         <label>
           Număr de luni:
@@ -41,21 +43,30 @@ export default function InvestmentCalculator() {
           />
         </label>
       </div>
-
+      <div className="input-group">
+        <label>
+          Procent de creștere lunară (%):
+          <input
+            type="number"
+            min="1"
+            max="100"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
+        </label>
+      </div>
       <button className="calc-btn" onClick={calculateGrowth}>
         Calculează
       </button>
-
       {result && (
         <div className="result">
           <h3>Rezultat:</h3>
           <p>
-            Valoarea contului după <strong>{months}</strong> luni: <br />
+            Valoarea contului după <strong>{months}</strong> luni cu o creștere lunară de <strong>{rate}%</strong>: <br />
             <span className="total">{result}$</span>
           </p>
         </div>
       )}
-
       <style jsx>{`
         .calculator-container {
           background: #181e2a;
@@ -67,14 +78,12 @@ export default function InvestmentCalculator() {
           max-width: 400px;
           margin: 24px auto 0 auto;
         }
-
         .calculator-container label {
           color: #fff;
           font-weight: 500;
           margin-bottom: 8px;
           display: block;
         }
-
         .calculator-container input {
           background: #232a3b;
           color: #fff;
@@ -86,18 +95,15 @@ export default function InvestmentCalculator() {
           width: 100%;
           box-sizing: border-box;
         }
-
         .calculator-container h2 {
           color: #fff;
           margin-bottom: 20px;
         }
-
         .calculator-container .result {
           color: #ffd700;
           font-weight: bold;
           margin-top: 16px;
         }
-
         .calc-btn {
           background: #ffd700;
           color: #181e2a;
@@ -111,12 +117,10 @@ export default function InvestmentCalculator() {
           cursor: pointer;
           transition: all 0.2s ease;
         }
-
         .calc-btn:hover {
           background: #ffea80;
           transform: translateY(-1px);
         }
-
         .calc-btn:active {
           transform: translateY(0);
         }
