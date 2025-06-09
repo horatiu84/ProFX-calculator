@@ -167,34 +167,82 @@
       <div class="entry">2. Usd/Cad: -29 pips Ny Pre Open Hane ❌</div>
       <div class="entry">3. Xau/usd : 30 pips NY Pre Open ✔️</div>
       <div class="entry">4. Xau/usd : 15 pips Stiri Usd ✔️</div>
-      <div class="entry">4. Xau/usd : BE Stiri Usd 🟰</div>
-      <div class="entry">4. Xau/usd : -40 pips Stiri Usd ❌</div>
+      <div class="entry">5. Xau/usd : BE Stiri Usd 🟰</div>
+      <div class="entry">6. Xau/usd : -40 pips Stiri Usd ❌</div>
       <div class="summary">➡️ 2 profitabile, 3 pe minus, 1 BE</div>
-      <div class="total negative">Total: -44 pips </div>
+      <div class="total negative">Total: -44 pips</div>
     </div>
 
-   
+    <div class="day">
+      <div class="date">Marti 03</div>
+      <div class="entry">1. Xau/usd : 30 pips Hane Asia ✔️</div>
+      <div class="entry">2. Xau/usd : 50 pips London Live ✔️</div>
+      <div class="entry">3. Xau/usd : 20 pips NY Pre Open ✔️</div>
+      <div class="entry">4. Xau/usd : 45 pips Stiri Usd ✔️</div>
+      <div class="entry">5. Xau/usd : -45 pips NY ❌</div>
+      <div class="summary">➡️ 4 profitabile, 1 pe minus</div>
+      <div class="total positive">Total: 100 pips</div>
+    </div>
 
+    <div class="day">
+      <div class="date">Miercuri 04</div>
+      <div class="entry">1. Xau/Usd : 15 pips Hane Aida ✔️</div>
+      <div class="entry">2. Xau/usd : 30 pips Londra Open ✔️</div>
+      <div class="entry">3. Xau/usd : 40 pips NY Pre Open ✔️</div>
+      <div class="entry">4. GBP/USD: 50 pips Ny Open Hane ✔️</div>
+      <div class="entry">5. Xau/usd : -55 pips NY ❌</div>
+      <div class="summary">➡️ 4 profitabile, 1 pe minus</div>
+      <div class="total positive">Total: 80 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Joi 05</div>
+      <div class="entry">1. Xau/Usd : -35 pips Ny Pre-Open ❌</div>
+      <div class="entry">2. Gbp/Jpy : 30 pips Ny Open ✔️</div>
+      <div class="entry">3. Xau/usd : 50 pips NY Open ✔️</div>
+      <div class="summary">➡️ 2 profitabile, 1 pe minus</div>
+      <div class="total positive">Total: 45 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Vineri 06</div>
+      <div class="entry">1. Xau/Usd : 20 pips Asia Hane ✔️</div>
+      <div class="entry">2. Xau/Usd : 15 pips Ny Pre Open ✔️</div>
+      <div class="entry">3. Xau/usd : -15 pips NY Pre Open ❌</div>
+      <div class="entry">4. Xau/usd : -50 pips Stiri ❌</div>
+      <div class="entry">5. Xau/usd : 100 pips Stiri USD ✔️</div>
+      <div class="summary">➡️ 3 profitabile, 2 pe minus</div>
+      <div class="total positive">Total: 70 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Luni 09</div>
+      <div class="entry">1. Xau/usd : 30 pips Hane Asia Sesion ✔️</div>
+      <div class="summary">➡️ 1 profitabilă</div>
+      <div class="total positive">Total: 30 pips</div>
+    </div>
+
+    <!-- Rezumatul actualizat -->
     <div class="rezumat-box">
       <div class="rezumat-item">
         <span class="rezumat-icon">📊</span>
         <span class="rezumat-label">Total trades</span>
-        <span class="rezumat-value">...</span>
+        <span class="rezumat-value">24</span>
       </div>
       <div class="rezumat-item">
         <span class="rezumat-icon">✅</span>
         <span class="rezumat-label">Profitabile</span>
-        <span class="rezumat-value positive">..</span>
+        <span class="rezumat-value positive">16</span>
       </div>
       <div class="rezumat-item">
         <span class="rezumat-icon">❌</span>
         <span class="rezumat-label">Pe minus</span>
-        <span class="rezumat-value negative">...</span>
+        <span class="rezumat-value negative">8</span>
       </div>
       <div class="rezumat-item">
         <span class="rezumat-icon">🏆</span>
         <span class="rezumat-label">Rata de Win</span>
-        <span class="rezumat-value percent">...%</span>
+        <span class="rezumat-value percent">66.7%</span>
       </div>
     </div>
 
@@ -210,7 +258,57 @@
       "
     >
       Total lunar al pips-urilor:
-      <span style="font-size: 1.2em">... pips</span>
+      <span style="font-size: 1.2em">281 pips</span>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Inițializare variabile
+        let totalTrades = 0;
+        let profitable = 0;
+        let negative = 0;
+        let totalPips = 0;
+
+        // Parcurgem fiecare intrare
+        document.querySelectorAll(".entry").forEach((entry) => {
+          const text = entry.textContent;
+
+          // Verificăm dacă e tranzacție cu pips
+          if (text.includes("pips") && !text.includes("BE")) {
+            totalTrades++;
+
+            // Extragem valoarea pips
+            const match = text.match(/(-?\d+)\s*pips/);
+            if (match) {
+              const pips = parseInt(match[1]);
+              totalPips += pips;
+
+              // Clasificăm tranzacția
+              if (pips > 0) profitable++;
+              if (pips < 0) negative++;
+            }
+          }
+        });
+
+        // Calculăm rata de succes
+        const winRate =
+          totalTrades > 0 ? ((profitable / totalTrades) * 100).toFixed(1) : 0;
+
+        // Actualizăm DOM-ul
+        document.querySelector(
+          ".rezumat-value:not(.positive):not(.negative):not(.percent)"
+        ).textContent = totalTrades;
+        document.querySelector(".rezumat-value.positive").textContent =
+          profitable;
+        document.querySelector(".rezumat-value.negative").textContent =
+          negative;
+        document.querySelector(
+          ".rezumat-value.percent"
+        ).textContent = `${winRate}%`;
+        document.querySelector(
+          '[style*="background: #3498db"] span'
+        ).textContent = `${totalPips} pips`;
+      });
+    </script>
   </body>
 </html>
