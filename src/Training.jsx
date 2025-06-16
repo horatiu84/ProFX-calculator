@@ -9,6 +9,10 @@ const beginnerLinks = [
     title: "Paternuri",
     url: "https://youtu.be/6VlTjwkCMUY?si=Jwj892KeW2ySAvxd",
   },
+  {
+    title: "Webinar Incepatori 10/06/2025",
+    url: "https://youtu.be/phhoKeZH44k?si=OH46WM0V3o6NUpAB",
+  },
 ];
 
 const advancedLinks = [
@@ -64,6 +68,18 @@ const advancedLinks = [
     title: "Intrările pe Impuls & liquidity",
     url: "https://youtu.be/3Wa8vkqHiFg?si=Bohn8hbXmt54L7lv",
   },
+  {
+    title: "Cand dam o a 2a sansa tranzactiei & Market Structure",
+    url: "https://youtu.be/yYkRlBA_cHs?si=2Ax-urncY2_Kzs2O",
+  },
+  {
+    title: "Corelarea intre timeframe urile M30 si M15",
+    url: "https://youtu.be/iBy8WbNq9bs?si=Uryhns8QgR79ekbr",
+  },
+  {
+    title: "Backtesting Session - 15/06/2025",
+    url: "https://youtu.be/-5Z7re53Uf8?si=37vS7j6RD5C_Nz8E",
+  },
 ];
 
 const Training = () => (
@@ -73,13 +89,19 @@ const Training = () => (
         Salutare ProFx Fam!
       </h1>
       <p className="text-gray-300 text-center mb-6">
-        Cei care v-ați alăturat comunității în ultima perioadă:<br />
-        Aveți aici înregistrarea webinariilor despre execuție <span className="font-bold text-blue-300">PRICE ACTION</span> și sesiunile de Q&A!
+        Cei care v-ați alăturat comunității în ultima perioadă:
+        <br />
+        Aveți aici înregistrarea webinariilor despre execuție{" "}
+        <span className="font-bold text-blue-300">PRICE ACTION</span> și
+        sesiunile de Q&A!
       </p>
       <div className="bg-blue-950 rounded-lg p-4 mb-6">
         <p className="text-blue-200 font-semibold text-center">
-          Vă recomand să treceți prin ele cu pix și foaie!<br />
-          <span className="italic text-blue-400">Note takers are money makers!</span>
+          Vă recomand să treceți prin ele cu pix și foaie!
+          <br />
+          <span className="italic text-blue-400">
+            Note takers are money makers!
+          </span>
         </p>
       </div>
 

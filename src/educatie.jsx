@@ -113,7 +113,7 @@ const Educatie = () => {
           Browserul tău nu suportă redarea video.
         </video>
       </div>
-       <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 mt-10 max-w-3xl mx-auto">
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 mt-10 max-w-3xl mx-auto">
         <h2 className="text-xl font-bold mb-4">🎬 Videoclip: MT5 pe Android</h2>
         <video
           controls
@@ -132,6 +132,24 @@ const Educatie = () => {
           <source src="/tudor iphone.mp4" type="video/mp4" />
           Browserul tău nu suportă redarea video.
         </video>
+      </div>
+      <div className="flex justify-center gap-4 mt-6">
+        <a
+          href="/Curs ProFX - Lectia 1.pdf"
+          download
+          className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+        >
+          📥 Descarcă Curs ProFX - Lecția 1
+        </a>
+      </div>
+         <div className="flex justify-center gap-4 mt-6">
+        <a
+          href="/Curs ProFX - Lectia 2.pdf"
+          download
+          className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+        >
+          📥 Descarcă Curs ProFX - Lecția 2
+        </a>
       </div>
       <div className="text-center mt-6">
         <a
