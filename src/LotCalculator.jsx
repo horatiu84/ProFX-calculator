@@ -345,7 +345,7 @@ export default function LotCalculator() {
             ${calculatedLoss}
           </div>
           <p className="text-sm text-gray-400 mt-2">
-            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> {(calculatedLoss / startOfDay*100).toFixed(2)}%</strong>
+            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> { (calculatedLoss / startOfDay*100).toFixed(2) > 2000 ? 0 : (calculatedLoss / startOfDay*100).toFixed(2)}%</strong>
           </p>
 
           <p className="italic text-sm text-gray-400 mt-2">
