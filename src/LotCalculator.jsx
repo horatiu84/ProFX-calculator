@@ -347,7 +347,7 @@ export default function LotCalculator() {
             ${calculatedLoss}
           </div>
           <p className="text-sm text-gray-400 mt-2">
-            *Dacă devine roșu, e mai mult de 1% pierderea
+            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> {(calculatedLoss / startOfDay*100).toFixed(2)} %</strong>
           </p>
 
           <p className="italic text-sm text-gray-400 mt-2">
@@ -376,7 +376,7 @@ export default function LotCalculator() {
                 value={selectedPips}
                 onChange={(e) => setSelectedPips(Number(e.target.value))}
               >
-                {[10, 15, 20, 25, 30, 35, 40, 50].map((pips) => (
+                {[10, 15, 20, 25, 30, 35, 40, 45, 50].map((pips) => (
                   <option key={pips} value={pips}>
                     {pips} Pips ({pips * 10} Puncte)
                   </option>
