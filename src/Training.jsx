@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import FlipCard from "./FlipCard";
 
-const correctPassword = "profx2025"; // 🔑 parola curentă
-const PASSWORD_KEY = "profx_access_password"; // cheia în sessionStorage
+const correctPassword = "profx2025";
+const PASSWORD_KEY = "profx_access_password";
 
 const Training = () => {
   const [password, setPassword] = useState("");
@@ -219,6 +220,9 @@ const Training = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div>
+        <FlipCard />
       </div>
     </div>
   );

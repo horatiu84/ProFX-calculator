@@ -203,9 +203,7 @@ export default function LotCalculator() {
 
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">
-          <div>
-            <FlipCard />
-          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
               <label className="block mb-2">Suma început zi:</label>
@@ -347,7 +345,7 @@ export default function LotCalculator() {
             ${calculatedLoss}
           </div>
           <p className="text-sm text-gray-400 mt-2">
-            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> {(calculatedLoss / startOfDay*100).toFixed(2)} %</strong>
+            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> {(calculatedLoss / startOfDay*100).toFixed(2)}%</strong>
           </p>
 
           <p className="italic text-sm text-gray-400 mt-2">
