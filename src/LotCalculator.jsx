@@ -4,7 +4,7 @@ import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
-import FlipCard from "./FlipCard.jsx";
+import logo from '../public/logo.jpg';
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
@@ -103,12 +103,7 @@ export default function LotCalculator() {
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="flex flex-col items-center mb-6">
-        <div className="flex items-center">
-          <span className="text-4xl font-light text-white">Pro</span>
-          <span className="ml-2 text-4xl font-bold px-2 bg-yellow-500 text-black rounded animate-pulse">
-            FX
-          </span>
-        </div>
+         <img src={logo} alt="Logo ProFX" style={{ width: '350px'}}  />
         <span className="text-xl text-gray-400 mt-2 text-center block">
           Învață să tranzacționezi gratuit, de la zero
         </span>
@@ -203,7 +198,6 @@ export default function LotCalculator() {
 
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
               <label className="block mb-2">Suma început zi:</label>
@@ -306,7 +300,9 @@ export default function LotCalculator() {
             <h2 className="text-lg">Procentaj trade</h2>
             <p className="text-xl font-bold text-yellow-400">{tradeChange}%</p>
           </div>
-          <div ><InvestmentCalculator /></div>
+          <div>
+            <InvestmentCalculator />
+          </div>
         </div>
       )}
       {activeTab === "educatie" && <Educatie />}
@@ -345,7 +341,15 @@ export default function LotCalculator() {
             ${calculatedLoss}
           </div>
           <p className="text-sm text-gray-400 mt-2">
-            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea actuala este <strong> { (calculatedLoss / startOfDay*100).toFixed(2) > 2000 ? 0 : (calculatedLoss / startOfDay*100).toFixed(2)}%</strong>
+            *Dacă devine roșu, e mai mult de 1% pierderea, <br></br> pierderea
+            actuala este{" "}
+            <strong>
+              {" "}
+              {((calculatedLoss / startOfDay) * 100).toFixed(2) > 2000
+                ? 0
+                : ((calculatedLoss / startOfDay) * 100).toFixed(2)}
+              %
+            </strong>
           </p>
 
           <p className="italic text-sm text-gray-400 mt-2">
