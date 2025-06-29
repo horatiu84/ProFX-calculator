@@ -4,7 +4,7 @@ import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
-import logo from '../public/logo.jpg';
+import logo from '../src/logo.jpg';
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
