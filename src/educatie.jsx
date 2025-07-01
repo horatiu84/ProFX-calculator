@@ -151,13 +151,22 @@ const Educatie = () => {
           📥 Descarcă Curs ProFX - Lecția 2
         </a>
       </div>
-          <div className="flex justify-center gap-4 mt-6">
+      <div className="flex justify-center gap-4 mt-6">
         <a
           href="/Curs ProFX - Lectia 3.pdf"
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
           📥 Descarcă Curs ProFX - Lecția 3
+        </a>
+      </div>
+      <div className="flex justify-center gap-4 mt-6">
+        <a
+          href="/Curs ProFX - Lectia 4.pdf"
+          download
+          className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+        >
+          📥 Descarcă Curs ProFX - Lecția 4
         </a>
       </div>
       <div className="text-center mt-6">
