@@ -132,6 +132,10 @@ const Training = () => {
       title: "Backtesting XauUsd 22.06.2025",
       url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
     },
+     {
+      title: "Webinar cu Mihai Tiepac 08 07 2025 ",
+      url: "https://youtu.be/52FKs74rpjs?si=dWIo5ida-deg2TIJ",
+    },
   ];
 
   if (!accessGranted) {
