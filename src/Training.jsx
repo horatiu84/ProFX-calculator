@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FlipCard from "./FlipCard";
 
-const correctPassword = "profx2025";
+const correctPassword = "1224";
 const PASSWORD_KEY = "profx_access_password";
 
 const Training = () => {
@@ -48,9 +48,16 @@ const Training = () => {
     },
   ];
 
+  const materiale = [
+    {
+      title: "Ce este un model de tip cupă și mâner? - by Daniel Sarbu",
+      url: "https://sirbudcfx.blogspot.com/2025/06/ce-este-un-model-de-tip-cupa-si-maner.html",
+    },
+  ];
+
   const advancedLinks = [
     {
-      title: "Lecțiile de la 1 - 7 de pe canalul nostru de Youtube",
+      title: "Lecțiile de la 1 - 8 de pe canalul nostru de Youtube",
       url: "https://youtube.com/@profx-romania?si=wA7daxrGD2nedUBj",
     },
     {
@@ -112,6 +119,18 @@ const Training = () => {
     {
       title: "Backtesting Session - 15/06/2025",
       url: "https://youtu.be/-5Z7re53Uf8?si=37vS7j6RD5C_Nz8E",
+    },
+    {
+      title: "Risk Management 1.0",
+      url: "https://youtu.be/Ai10kdtbNvM?si=xBMzktL-xp5xAvK8",
+    },
+    {
+      title: "Risk Management 2.0",
+      url: "https://youtu.be/iuv_itQfepM?si=ccaph62qj29LMgRZ",
+    },
+    {
+      title: "Backtesting XauUsd 22.06.2025",
+      url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
     },
   ];
 
@@ -197,6 +216,26 @@ const Training = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-yellow-300 hover:text-yellow-100 underline underline-offset-4 transition"
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-purple-300 mb-3 flex items-center gap-2">
+            🟣 Materiale
+          </h2>
+          <ol className="space-y-3 list-decimal list-inside">
+            {materiale.map((item, idx) => (
+              <li key={idx}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-200 underline underline-offset-4 transition"
                 >
                   {item.title}
                 </a>

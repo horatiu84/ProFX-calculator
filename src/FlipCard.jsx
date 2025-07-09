@@ -3,7 +3,7 @@ import React from "react";
 const FlipCard = () => {
   return (
     <div className="flex justify-center items-center py-10">
-      <div className="group [perspective:1000px] w-[370px] h-[330px]">
+      <div className="group [perspective:1000px] w-[370px] h-[355px]">
         <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
           {/* Fața cardului */}
           <div className="absolute w-full h-full bg-[#1e1e2f] rounded-2xl shadow-xl flex flex-col justify-start items-start px-6 py-5 text-left text-gray-200 [backface-visibility:hidden]">
@@ -52,7 +52,7 @@ const FlipCard = () => {
             </p>
             <ul className="list-disc pl-5 text-gray-300 space-y-2">
               <li>
-                La peste <strong className="text-white">8 pips</strong>: mut SL
+                La peste <strong className="text-white">12 pips</strong>: mut SL
                 la BE
               </li>
               <li>
