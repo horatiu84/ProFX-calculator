@@ -54,11 +54,11 @@ const Training = () => {
       url: "https://sirbudcfx.blogspot.com/2025/06/ce-este-un-model-de-tip-cupa-si-maner.html",
     },
     {
-      title: "Masterclass “Divergențe în Trading”",
+      title: "Masterclass “Divergențe în Trading” - cu Mihai Tiepac",
       url: "https://youtu.be/K4diseWETYQ?si=Tc6tHJSVAGmEYN6i",
     },
     {
-      title: "Masterclass “Divergențe în Trading - 2”",
+      title: "Masterclass “Divergențe în Trading - 2” -cu Mihai Tiepac",
       url: "https://youtu.be/soJP3FEIY08",
     },
     {
