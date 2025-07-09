@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FlipCard from "./FlipCard";
 
-const correctPassword = "1224";
+const correctPassword = "12-24";
 const PASSWORD_KEY = "profx_access_password";
 
 const Training = () => {
