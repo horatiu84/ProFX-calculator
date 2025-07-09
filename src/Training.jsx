@@ -160,6 +160,18 @@ const Training = () => {
             Accesează
           </button>
         </form>
+        <p className="text-center text-sm text-gray-400 mt-4">
+          Nu ești încă membru al comunității ProFX?{" "}
+          <a
+            href="https://t.me/ProFX_Community"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline"
+          >
+            Intră pe canalul nostru de Telegram
+          </a>{" "}
+          și urmează pașii pentru acces complet la materialele educaționale.
+        </p>
       </div>
     );
   }
