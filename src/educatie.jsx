@@ -1,8 +1,75 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+const correctPassword = "1224";
+const PASSWORD_KEY = "profx_educatie_access";
 
 const Educatie = () => {
+  const [password, setPassword] = useState("");
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [error, setError] = useState("");
   const [pipLotInput, setPipLotInput] = useState(0.01);
+
+  useEffect(() => {
+    const savedPassword = sessionStorage.getItem(PASSWORD_KEY);
+    if (savedPassword === correctPassword) {
+      setAccessGranted(true);
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password === correctPassword) {
+      sessionStorage.setItem(PASSWORD_KEY, correctPassword);
+      setAccessGranted(true);
+      setError("");
+    } else {
+      setError("Parolă greșită. Încearcă din nou.");
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(PASSWORD_KEY);
+    setAccessGranted(false);
+    setPassword("");
+  };
+
+  if (!accessGranted) {
+    return (
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md mx-auto mt-10">
+        <h2 className="text-xl font-bold text-blue-400 mb-4 text-center">
+          Acces Materiale Educaționale ProFX
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="password"
+            placeholder="Introdu parola"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition"
+          >
+            Accesează
+          </button>
+        </form>
+        <p className="text-center text-sm text-gray-400 mt-4">
+          Nu ești încă membru al comunității ProFX?{" "}
+          <a
+            href="https://t.me/ProFX_Community"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline"
+          >
+            Intră pe canalul nostru de Telegram
+          </a>{" "}
+          și urmează pașii pentru acces complet.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -205,6 +272,15 @@ const Educatie = () => {
         >
           📥 Descarcă ghidul de Introducere in Formatiile de Lumanari
         </a>
+      </div>
+
+      <div className="text-center mt-10">
+        <button
+          onClick={handleLogout}
+          className="text-sm text-red-400 hover:text-red-300 underline"
+        >
+          Ieși din sesiune
+        </button>
       </div>
     </div>
   );
