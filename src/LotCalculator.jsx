@@ -6,7 +6,7 @@ import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
 import logo from "../src/logo.jpg";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
-import useGoldPrice from "./useGoldPrice";
+
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -43,7 +43,7 @@ export default function LotCalculator() {
     const saved = localStorage.getItem("endOfWeek");
     return saved !== null ? Number(saved) : 0;
   });
-  const { goldPrice, fetchGoldPrice, loading } = useGoldPrice();
+
 
   useEffect(() => {
     localStorage.setItem("startOfDay", startOfDay);
@@ -109,20 +109,6 @@ export default function LotCalculator() {
         <span className="text-xl text-gray-400 mt-2 text-center block">
           Învață să tranzacționezi gratuit, de la zero
         </span>
-        <div className="text-yellow-400 text-sm mt-2 text-center flex items-center justify-center gap-3">
-          🟡 XAU/USD: {goldPrice ? `$${goldPrice}` : "Se încarcă..."}
-          <button
-            onClick={fetchGoldPrice}
-            disabled={loading}
-            className={`px-2 py-1 rounded text-xs font-bold transition ${
-              loading
-                ? "bg-gray-600 text-white cursor-wait"
-                : "bg-yellow-500 text-black hover:bg-yellow-400"
-            }`}
-          >
-            {loading ? "Actualizează..." : "🔄 Actualizează preț"}
-          </button>
-        </div>
       </div>
       <div className="flex flex-wrap justify-center gap-2 mb-8">
         <button
