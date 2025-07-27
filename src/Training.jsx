@@ -54,6 +54,10 @@ const Training = () => {
       url: "https://sirbudcfx.blogspot.com/2025/06/ce-este-un-model-de-tip-cupa-si-maner.html",
     },
     {
+      title: "Head and shoulders pattern - by Daniel Sarbu",
+      url: "https://sirbudcfx.blogspot.com/2025/07/head-and-shoulders-pattern-in-aceasta.html",
+    },
+    {
       title: "Masterclass “Divergențe în Trading” - cu Mihai Tiepac",
       url: "https://youtu.be/K4diseWETYQ?si=Tc6tHJSVAGmEYN6i",
     },
@@ -135,6 +139,18 @@ const Training = () => {
     {
       title: "Backtesting XauUsd 22.06.2025",
       url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
+    },
+     {
+      title: "Backtesting Session 06/07/2025",
+      url: "https://youtu.be/IG7DvagZq7I?si=UUJX0kDhnkBDZoyz",
+    },
+      {
+      title: "Sesiune practica pentru avansati - 10/07/2025",
+      url: "https://youtu.be/Lqsq3aF_sKw?si=PKpQ3QOwclYwGSEO",
+    },
+      {
+      title: "Backtesting Session - 13/07/2025",
+      url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI",
     },
   ];
 

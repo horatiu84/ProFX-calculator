@@ -236,6 +236,15 @@ const Educatie = () => {
           📥 Descarcă Curs ProFX - Lecția 4
         </a>
       </div>
+         <div className="flex justify-center gap-4 mt-6">
+        <a
+          href="/Curs ProFX - Lectia 5.pdf"
+          download
+          className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
+        >
+          📥 Descarcă Curs ProFX - Lecția 5
+        </a>
+      </div>
       <div className="text-center mt-6">
         <a
           href="/Dictionar ProFX.pdf"
