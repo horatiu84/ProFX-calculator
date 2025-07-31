@@ -6,7 +6,7 @@ import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
 import logo from "../src/logo.jpg";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
-
+import Evenimente from "./Evenimente.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -191,12 +191,23 @@ export default function LotCalculator() {
         >
           📝 Jurnal
         </button>
+         <button
+          className={`px-4 py-2 rounded ${
+            activeTab === "evenimente"
+              ? "bg-yellow-500 text-black"
+              : "bg-gray-800 text-white"
+          }`}
+          onClick={() => setActiveTab("evenimente")}
+        >
+          🏝️ Evenimente
+        </button>
       </div>
 
       {activeTab === "agenda" && <ProFXSchedule />}
       {activeTab === "training" && <Training />}
       {activeTab === "simulare" && <Simulare />}
       {activeTab === "raport" && <Raport />}
+      {activeTab === "evenimente" && <Evenimente />}
 
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">
