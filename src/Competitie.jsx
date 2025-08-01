@@ -94,7 +94,7 @@ const CompetitionBanner = () => {
               <li><b>Data de start:</b> Începe în prima zi a fiecărei luni</li>
               <li><b>Perioada concursului:</b> 3 săptămâni</li>
               <li><b>Drawdown:</b> LIBER <span className="text-gray-500 italic">(recomandăm cât mai mic)</span></li>
-              <li><b>Număr minim tranzacții:</b> 20/lună</li>
+              <li><b>Număr minim tranzacții:</b> 20/lună luate în minim 14 zile</li>
             </ol>
           </div>
           <div className="bg-yellow-50/90 rounded-xl p-5 shadow-md border border-yellow-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-right">
