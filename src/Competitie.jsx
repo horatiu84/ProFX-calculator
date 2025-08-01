@@ -30,7 +30,7 @@ const CompetitionBanner = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-blue-100 via-indigo-100 to-yellow-200 rounded-3xl shadow-xl max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto my-10 overflow-hidden border border-blue-300 transition-all duration-300 hover:shadow-2xl">
+    <div className="bg-gradient-to-br from-blue-100 via-indigo-100 to-yellow-200 rounded-3xl shadow-xl max-w-3xl md:max-w-5xl  mx-auto my-10 overflow-hidden border border-blue-300 transition-all duration-300 hover:shadow-2xl">
       <div className="p-6 sm:p-8 md:p-10">
         <div className="flex items-center justify-center mb-4 animate-fade-in">
           <span className="text-3xl sm:text-4xl font-bold text-red-600 animate-pulse mr-3">🚨</span>
