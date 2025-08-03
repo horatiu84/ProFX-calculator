@@ -45,3 +45,69 @@
 .PhoneInputCountryIcon {
   filter: brightness(0.8); /* Ajustează steagurile pentru dark mode dacă e nevoie */
 }
+
+
+.shiny-border::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(130deg, #777, #bbb, #999); /* dark silver tones */
+  background-size: 300% 300%;
+  animation: shine 3s linear infinite;
+  z-index: -1;
+  border-radius: 0.5rem;
+  opacity: 0.6; /* subtil */
+  pointer-events: none; /* să nu afecteze hover-ul */
+}
+@keyframes shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.shiny-border {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fill întunecat peste buton */
+.shiny-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* overlay dark */
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+/* VIP text centrat, deasupra fill-ului */
+.shiny-border::after {
+  content: "⭐ VIP";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  font-weight: 800;
+  color: #facc15; /* galben închis - ProFX style */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* Hover activează overlay-ul + textul VIP */
+.shiny-border:hover::before,
+.shiny-border:hover::after {
+  opacity: 1;
+}

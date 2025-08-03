@@ -201,7 +201,7 @@ const Dashboard = () => {
         </table>
       )}
       
-      <a href="/" className="block mt-6 text-center text-blue-400 hover:underline">Înapoi la Training</a>
+      <a href="/" className="block mt-6 text-center text-blue-400 hover:underline">Înapoi in aplicatie</a>
     </div>
   );
 };

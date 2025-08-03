@@ -44,7 +44,6 @@ export default function LotCalculator() {
     return saved !== null ? Number(saved) : 0;
   });
 
-
   useEffect(() => {
     localStorage.setItem("startOfDay", startOfDay);
     localStorage.setItem("endOfDay", endOfDay);
@@ -141,26 +140,33 @@ export default function LotCalculator() {
         >
           ⚙️ Pierdere manuală
         </button>
-        <button
-          className={`px-4 py-2 rounded ${
+       <button
+          className={`px-4 py-2 rounded relative z-10 ${
             activeTab === "educatie"
-              ? "bg-yellow-500 text-black"
-              : "bg-gray-800 text-white"
+              ? "bg-yellow-500 text-black" // Fără shiny-border dacă e activ
+              : "bg-gray-300 text-black shiny-border"
           }`}
           onClick={() => setActiveTab("educatie")}
         >
           ℹ️ Educație
+          <span className="absolute top-0 right-0 text-yellow-400 text-xs">
+            ⭐
+          </span>
         </button>
         <button
-          className={`px-4 py-2 rounded ${
+          className={`px-4 py-2 rounded relative z-10 ${
             activeTab === "training"
-              ? "bg-yellow-500 text-black"
-              : "bg-gray-800 text-white"
+              ? "bg-yellow-500 text-black" // Fără shiny-border dacă e activ
+              : "bg-gray-300 text-black shiny-border"
           }`}
           onClick={() => setActiveTab("training")}
         >
           🧑‍🏫 Training
+          <span className="absolute top-0 right-0 text-yellow-400 text-xs">
+            ⭐
+          </span>
         </button>
+
         <button
           className={`px-4 py-2 rounded ${
             activeTab === "agenda"
@@ -191,7 +197,7 @@ export default function LotCalculator() {
         >
           📝 Jurnal
         </button>
-         <button
+        <button
           className={`px-4 py-2 rounded ${
             activeTab === "evenimente"
               ? "bg-yellow-500 text-black"
