@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { db } from "./db/FireBase";
+import { doc, getDoc } from "firebase/firestore";
 import FormularInscriere from "./components/FormularInscriere";
 
-const correctPassword = "1224";
 const PASSWORD_KEY = "profx_educatie_access";
 
 const Educatie = () => {
@@ -9,13 +10,31 @@ const Educatie = () => {
   const [accessGranted, setAccessGranted] = useState(false);
   const [error, setError] = useState("");
   const [pipLotInput, setPipLotInput] = useState(0.01);
-  const [showSignup, setShowSignup] = useState(false); // State nou pentru a afișa formularul de înscriere
+  const [showSignup, setShowSignup] = useState(false);
+  const [correctPassword, setCorrectPassword] = useState(null);
 
   useEffect(() => {
-    const savedPassword = sessionStorage.getItem(PASSWORD_KEY);
-    if (savedPassword === correctPassword) {
-      setAccessGranted(true);
-    }
+    const fetchPassword = async () => {
+      try {
+        const docRef = doc(db, "settings", "educatieAccess");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const storedPassword = docSnap.data().password;
+          setCorrectPassword(storedPassword);
+          const savedPassword = sessionStorage.getItem(PASSWORD_KEY);
+          if (savedPassword === storedPassword) {
+            setAccessGranted(true);
+          }
+        } else {
+          setError("Documentul de acces nu a fost găsit.");
+        }
+      } catch (error) {
+        console.error("Eroare la accesarea parolei:", error);
+        setError("Eroare la verificarea parolei. Încearcă din nou.");
+      }
+    };
+
+    fetchPassword();
   }, []);
 
   const handleSubmit = (e) => {
@@ -35,9 +54,8 @@ const Educatie = () => {
     setPassword("");
   };
 
-  
   const toggleSignup = () => {
-    setShowSignup(!showSignup); // Toggle pentru a afișa/ascunde formularul
+    setShowSignup(!showSignup);
   };
 
   if (!accessGranted) {
@@ -62,15 +80,13 @@ const Educatie = () => {
             Accesează
           </button>
         </form>
-         <button
+        <button
           onClick={toggleSignup}
           className="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition"
         >
           {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
         </button>
-        {showSignup && <FormularInscriere />} {/* Afișează formularul condițional */}
-       
-        
+        {showSignup && <FormularInscriere />}
       </div>
     );
   }

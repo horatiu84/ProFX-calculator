@@ -1,31 +1,50 @@
 import React, { useState, useEffect } from "react";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "./db/FireBase.js";
 import FlipCard from "./FlipCard";
 import FormularInscriere from "./components/FormularInscriere";
-const correctPassword = "1224";
+
 const PASSWORD_KEY = "profx_access_password";
 
 const Training = () => {
   const [password, setPassword] = useState("");
   const [accessGranted, setAccessGranted] = useState(false);
   const [error, setError] = useState("");
-  const [showSignup, setShowSignup] = useState(false); // State nou pentru a afișa formularul de înscriere
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
     const savedPassword = sessionStorage.getItem(PASSWORD_KEY);
-    if (savedPassword === correctPassword) {
-      setAccessGranted(true);
+    if (savedPassword) {
+      verifyPassword(savedPassword);
     }
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (password === correctPassword) {
-      setAccessGranted(true);
-      sessionStorage.setItem(PASSWORD_KEY, correctPassword);
-      setError("");
-    } else {
-      setError("Parolă greșită. Încearcă din nou.");
+  const verifyPassword = async (inputPassword) => {
+    try {
+      const docRef = doc(db, "settings", "trainingAccess");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const storedPassword = docSnap.data().password;
+        if (inputPassword === storedPassword) {
+          setAccessGranted(true);
+          sessionStorage.setItem(PASSWORD_KEY, inputPassword);
+          setError("");
+        } else {
+          setError("Parolă greșită. Încearcă din nou.");
+        }
+      } else {
+        setError("Eroare: parola nu este disponibilă.");
+      }
+    } catch (err) {
+      console.error("Eroare la verificarea parolei:", err);
+      setError("Eroare la verificarea parolei. Încearcă din nou.");
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await verifyPassword(password);
   };
 
   const handleLogout = () => {
@@ -35,7 +54,7 @@ const Training = () => {
   };
 
   const toggleSignup = () => {
-    setShowSignup(!showSignup); // Toggle pentru a afișa/ascunde formularul
+    setShowSignup(!showSignup);
   };
 
   const beginnerLinks = [
@@ -145,15 +164,15 @@ const Training = () => {
       title: "Backtesting XauUsd 22.06.2025",
       url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
     },
-     {
+    {
       title: "Backtesting Session 06/07/2025",
       url: "https://youtu.be/IG7DvagZq7I?si=UUJX0kDhnkBDZoyz",
     },
-      {
+    {
       title: "Sesiune practica pentru avansati - 10/07/2025",
       url: "https://youtu.be/Lqsq3aF_sKw?si=PKpQ3QOwclYwGSEO",
     },
-      {
+    {
       title: "Backtesting Session - 13/07/2025",
       url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI",
     },
@@ -187,12 +206,10 @@ const Training = () => {
         >
           {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
         </button>
-        {showSignup && <FormularInscriere />} {/* Afișează formularul condițional */}
-       
+        {showSignup && <FormularInscriere />}
       </div>
     );
   }
-
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 max-w-3xl mx-auto">
       <div className="max-w-2xl mx-auto bg-gray-900 rounded-2xl shadow-2xl p-8">
