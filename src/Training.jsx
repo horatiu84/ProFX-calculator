@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FlipCard from "./FlipCard";
-
+import FormularInscriere from "./components/FormularInscriere";
 const correctPassword = "1224";
 const PASSWORD_KEY = "profx_access_password";
 
@@ -8,6 +8,7 @@ const Training = () => {
   const [password, setPassword] = useState("");
   const [accessGranted, setAccessGranted] = useState(false);
   const [error, setError] = useState("");
+  const [showSignup, setShowSignup] = useState(false); // State nou pentru a afișa formularul de înscriere
 
   useEffect(() => {
     const savedPassword = sessionStorage.getItem(PASSWORD_KEY);
@@ -31,6 +32,10 @@ const Training = () => {
     sessionStorage.removeItem(PASSWORD_KEY);
     setAccessGranted(false);
     setPassword("");
+  };
+
+  const toggleSignup = () => {
+    setShowSignup(!showSignup); // Toggle pentru a afișa/ascunde formularul
   };
 
   const beginnerLinks = [
@@ -176,18 +181,14 @@ const Training = () => {
             Accesează
           </button>
         </form>
-        <p className="text-center text-sm text-gray-400 mt-4">
-          Nu ești încă membru al comunității ProFX?{" "}
-          <a
-            href="https://t.me/ProFX_Community"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
-          >
-            Intră pe canalul nostru de Telegram
-          </a>{" "}
-          și urmează pașii pentru acces complet la materialele educaționale.
-        </p>
+        <button
+          onClick={toggleSignup}
+          className="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition"
+        >
+          {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
+        </button>
+        {showSignup && <FormularInscriere />} {/* Afișează formularul condițional */}
+       
       </div>
     );
   }

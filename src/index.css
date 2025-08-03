@@ -1,3 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Stiluri custom pentru react-phone-number-input în dark mode */
+.PhoneInput {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.PhoneInputInput {
+  background-color: #2a2a2a !important; /* Fundal dark */
+  color: white !important; /* Text alb */
+  border: 1px solid #4b5563 !important; /* Border gri închis */
+  border-radius: 0.375rem !important; /* Rounded */
+  padding: 0.5rem !important; /* Padding consistent */
+  outline: none !important;
+}
+
+.PhoneInputInput:focus {
+  border-color: #3b82f6 !important; /* Blue focus */
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+.PhoneInputCountry {
+  background-color: #2a2a2a !important; /* Dropdown fundal dark */
+  color: white !important;
+  border: 1px solid #4b5563 !important;
+  border-radius: 0.375rem 0 0 0.375rem !important; /* Rounded stânga */
+  padding: 0.25rem !important;
+}
+
+.PhoneInputCountrySelect {
+  background-color: #2a2a2a !important; /* Select fundal */
+  color: white !important;
+  border: none !important;
+}
+
+.PhoneInputCountrySelect option {
+  background-color: #1e1e1e !important; /* Opțiuni dark */
+  color: white !important;
+}
+
+.PhoneInputCountryIcon {
+  filter: brightness(0.8); /* Ajustează steagurile pentru dark mode dacă e nevoie */
+}
