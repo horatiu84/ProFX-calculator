@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore'; // Pentru db
+import { getAuth } from 'firebase/auth'; // Corect: getAuth e aici
 
-// Configurația Firebase (pune-o aici o dată)
+// Configurația Firebase 
 const firebaseConfig = {
   apiKey: "AIzaSyDsJSj5vDeXigoMWC9Zbr6xeGKKKf4ttUY",
   authDomain: "profx-academy.firebaseapp.com",
@@ -15,5 +16,6 @@ const firebaseConfig = {
 // Inițializează app-ul și exportă ce ai nevoie
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-export { app, db };
+export { db, auth };
