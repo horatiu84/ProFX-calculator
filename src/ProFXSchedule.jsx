@@ -6,7 +6,7 @@ const weeklyWebinars = [
     dayOfWeek: 1, // Luni
     title: "WEBINAR GRATUIT",
     subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-    presenters: "Sergiu Cîntea & Ionuț Pometcu",
+    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
     ora: 20, // 20:00
     details:
       "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX",
@@ -14,7 +14,7 @@ const weeklyWebinars = [
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
-    subtitle: "Cum încep să fac trading (pentru începători)",
+    subtitle: "Cum încep să fac trading",
     presenters: "Eli & Cosmin",
     ora: 20,
     details: "Webinar practic pentru începători, cu Eli și Cosmin.",
