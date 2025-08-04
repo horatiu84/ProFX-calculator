@@ -78,7 +78,7 @@ const FormularInscriere = () => {
   return (
     <div className="bg-[#1e1e1e] p-4 rounded-lg mt-5 max-w-md mx-auto text-white">
       <h2 className="text-center text-lg font-semibold mb-3">
-        Înscriere la Training ProFX
+        Înscriere în ProFX
       </h2>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
         <label className="text-left text-sm text-gray-300" htmlFor="nume">
