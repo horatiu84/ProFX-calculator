@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import Sergiu from "./pics/Sergiu.jpg";
+import John from "./pics/John.jpg";
 
 // Lista cu toate webinariile săptămânale
 const weeklyWebinars = [
@@ -6,26 +8,32 @@ const weeklyWebinars = [
     dayOfWeek: 1, // Luni
     title: "WEBINAR GRATUIT",
     subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
-    ora: 20, // 20:00
+    presenters: "Sergiu Cîntea & Ionuț Pometcu",
+    mentors: [
+      { name: "Sergiu Cîntea", img: Sergiu },
+      { name: "Ionuț Pometcu", img: John },
+    ],
+    ora: 20,
     details:
-      "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX",
+    "Participă la webinarul despre trading de la zero cu Sergiu și Ionuț.",
   },
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
-    subtitle: "Cum încep să fac trading",
+    subtitle: "Cum încep să fac trading (pentru începători)",
     presenters: "Eli & Cosmin",
+    mentors: [],
     ora: 20,
     details: "Webinar practic pentru începători, cu Eli și Cosmin.",
   },
   {
     dayOfWeek: 4, // Joi
     title: "WEBINAR AVANSAȚI",
-    subtitle: "Trading avansat cu John",
-    presenters: "John",
+    subtitle: "Trading avansat cu Ionuț Pometcu",
+    presenters: "Ionuț Pometcu",
+    mentors: [{ name: "Ionuț Pometcu", img: John }],
     ora: 20,
-    details: "Pentru traderii avansați, cu John.",
+    details: "Pentru traderii avansați, cu Ionuț Pometcu.",
   },
 ];
 
@@ -85,7 +93,7 @@ const CountdownTimer = ({ targetDate, onExpire }) => {
 
   return (
     <span className="text-yellow-400 font-semibold text-xl">
-      {days > 0 && `${days}z `}
+      {days > 0 && `${days} zile `}
       {hours.toString().padStart(2, "0")}:{minutes.toString().padStart(2, "0")}:
       {seconds.toString().padStart(2, "0")} până la webinar
     </span>
@@ -94,22 +102,57 @@ const CountdownTimer = ({ targetDate, onExpire }) => {
 
 // Card pentru webinarul următor
 const UpcomingWebinarCard = ({ event, onExpire }) => (
-  <div className="w-full max-w-xl mx-auto mb-10 bg-gradient-to-br from-[#1e293b] via-[#111827] to-[#0b0f1a] rounded-xl shadow-lg border-2 border-yellow-400 p-6 text-white flex flex-col items-center">
-    <span className="uppercase text-xs text-yellow-400 tracking-widest font-bold mb-1">
+  <div
+    className="w-full max-w-xl mx-auto mb-10 bg-gradient-to-br from-[#1e293b] via-[#111827] to-[#0b0f1a] rounded-xl shadow-lg border-2 border-yellow-400 p-5 md:p-7 text-white flex flex-col items-center"
+    style={{ boxSizing: "border-box" }}
+  >
+    <span className="uppercase text-xs text-yellow-400 tracking-widest font-bold mb-2 text-center">
       Upcoming Webinar
     </span>
-    <h2 className="text-2xl font-bold text-yellow-400 mb-2">{event.title}</h2>
-    <div className="text-sm text-gray-200 mb-2">{event.subtitle}</div>
-    <div className="flex gap-4 mb-2 text-sm text-gray-300">
-      <span className="font-bold">
+    <h2 className="text-2xl font-bold text-yellow-400 mb-1 text-center">
+      {event.title}
+    </h2>
+    <div className="text-sm text-gray-200 mb-3 text-center">
+      {event.subtitle}
+    </div>
+    <div className="flex flex-col items-center mb-3 w-full text-center">
+      <div className="font-bold text-white text-base mb-2">
         {event.date.toLocaleDateString("ro-RO", { weekday: "long" })}, ora{" "}
         {event.ora}:00
-      </span>
-      {" | "}
-      <span>{event.presenters}</span>
+      </div>
+      <div className="flex flex-row flex-wrap justify-center items-end gap-x-4 gap-y-5 w-full">
+        {event.mentors && event.mentors.length > 0 ? (
+          event.mentors.map((mentor, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col items-center justify-center min-w-[80px]"
+            >
+              <span className="text-sm text-white font-medium mb-1">
+                {mentor.name}
+              </span>
+              <img
+                src={mentor.img}
+                alt={mentor.name}
+                style={{
+                  width: 154,
+                  height: 154,
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  background: "#23272f",
+                }}
+                className="shadow-md"
+              />
+            </div>
+          ))
+        ) : (
+          <span className="text-sm text-gray-300">{event.presenters}</span>
+        )}
+      </div>
     </div>
-    <CountdownTimer targetDate={event.date} onExpire={onExpire} />
-    <div className="mt-4 text-xs text-gray-400 italic text-center">
+    <div className="my-3 text-lg font-semibold text-yellow-400 text-center">
+      <CountdownTimer targetDate={event.date} onExpire={onExpire} />
+    </div>
+    <div className="mt-1 text-xs text-gray-400 italic text-center">
       {event.details}
     </div>
   </div>
