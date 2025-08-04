@@ -15,7 +15,7 @@ const weeklyWebinars = [
     ],
     ora: 20,
     details:
-    "Participă la webinarul despre trading de la zero cu Sergiu și Ionuț.",
+    "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
   },
   {
     dayOfWeek: 2, // Marți
