@@ -8,9 +8,9 @@ const weeklyWebinars = [
     dayOfWeek: 1, // Luni
     title: "WEBINAR GRATUIT",
     subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-    presenters: "Sergiu Cîntea & Ionuț Pometcu",
+    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
     mentors: [
-      { name: "Sergiu Cîntea", img: Sergiu },
+      { name: "Sergiu Cîrstea", img: Sergiu },
       { name: "Ionuț Pometcu", img: John },
     ],
     ora: 20,
