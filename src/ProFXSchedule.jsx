@@ -15,7 +15,7 @@ const weeklyWebinars = [
     ],
     ora: 20,
     details:
-    "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
+      "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
   },
   {
     dayOfWeek: 2, // Marți
@@ -37,35 +37,48 @@ const weeklyWebinars = [
   },
 ];
 
-// Determină următorul webinar (data și ora exactă)
 function getNextWebinar() {
   const now = new Date();
-  for (let i = 0; i < weeklyWebinars.length; i++) {
-    const event = weeklyWebinars[i];
-    let nextDate = new Date(
+
+  let soonestEvent = null;
+
+  for (const event of weeklyWebinars) {
+    const webinarDayOffset = (event.dayOfWeek - now.getDay() + 7) % 7;
+    const nextDate = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate() + ((event.dayOfWeek - now.getDay() + 7) % 7),
+      now.getDate() + webinarDayOffset,
       event.ora,
       0,
       0,
       0
     );
-    if (nextDate <= now) continue; // a trecut deja, trecem la următorul
-    return { ...event, date: nextDate };
+
+    if (nextDate > now) {
+      if (!soonestEvent || nextDate < soonestEvent.date) {
+        soonestEvent = { ...event, date: nextDate };
+      }
+    }
   }
-  // Dacă toate au trecut în săptămâna asta, iei primul din săptămâna următoare
-  const firstEvent = weeklyWebinars[0];
-  let nextDate = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + ((firstEvent.dayOfWeek - now.getDay() + 7) % 7 || 7) + 7,
-    firstEvent.ora,
-    0,
-    0,
-    0
-  );
-  return { ...firstEvent, date: nextDate };
+
+  // Dacă nu s-a găsit niciun webinar în viitorul apropiat,
+  // alegem PRIMUL din săptămâna viitoare
+  if (!soonestEvent) {
+    const firstEvent = weeklyWebinars[0];
+    const webinarDayOffset = (firstEvent.dayOfWeek - now.getDay() + 7) % 7;
+    const nextDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + webinarDayOffset + 7,
+      firstEvent.ora,
+      0,
+      0,
+      0
+    );
+    return { ...firstEvent, date: nextDate };
+  }
+
+  return soonestEvent;
 }
 
 // Timer dinamic pentru orice dată țintă
