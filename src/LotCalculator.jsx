@@ -7,6 +7,7 @@ import Training from "./Training.jsx";
 import logo from "../src/logo.jpg";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
 import Evenimente from "./Evenimente.jsx";
+import Contact from "./Contact.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -140,7 +141,7 @@ export default function LotCalculator() {
         >
           ⚙️ Pierdere manuală
         </button>
-       <button
+        <button
           className={`px-4 py-2 rounded relative z-10 ${
             activeTab === "educatie"
               ? "bg-yellow-500 text-black" // Fără shiny-border dacă e activ
@@ -207,6 +208,16 @@ export default function LotCalculator() {
         >
           🏝️ Evenimente
         </button>
+        <button
+          className={`px-4 py-2 rounded ${
+            activeTab === "contact"
+              ? "bg-yellow-500 text-black"
+              : "bg-gray-800 text-white"
+          }`}
+          onClick={() => setActiveTab("contact")}
+        >
+          💬 Contact
+        </button>
       </div>
 
       {activeTab === "agenda" && <ProFXSchedule />}
@@ -214,6 +225,7 @@ export default function LotCalculator() {
       {activeTab === "simulare" && <Simulare />}
       {activeTab === "raport" && <Raport />}
       {activeTab === "evenimente" && <Evenimente />}
+      {activeTab === "contact" && <Contact />}
 
       {activeTab === "evolutie" && (
         <div className="max-w-3xl mx-auto">

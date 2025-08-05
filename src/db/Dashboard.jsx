@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'; // Importuri Auth
-import { db, auth } from './FireBase.js'; // Importă auth
+import { collection, getDocs } from 'firebase/firestore';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { db, auth } from './FireBase.js';
+
+const formatDate = (createdAt) => {
+  if (!createdAt) return 'N/A';
+  if (createdAt.toDate) {
+    // Firestore Timestamp
+    return createdAt.toDate().toLocaleString();
+  }
+  // Alte formate (string/Date)
+  try {
+    return new Date(createdAt).toLocaleString();
+  } catch {
+    return 'N/A';
+  }
+};
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  
+
   const [inscrieri, setInscrieri] = useState([]);
   const [allInscrieri, setAllInscrieri] = useState([]);
   const [searchNume, setSearchNume] = useState('');
@@ -18,13 +32,19 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const [feedbackAnonim, setFeedbackAnonim] = useState([]);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [errorFeedback, setErrorFeedback] = useState('');
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         fetchAllInscrieri();
+        fetchFeedbackAnonim();
       } else {
         setLoading(false);
+        setLoadingFeedback(false);
       }
     });
     return unsubscribe;
@@ -60,6 +80,20 @@ const Dashboard = () => {
     }
   };
 
+  const fetchFeedbackAnonim = async () => {
+    setLoadingFeedback(true);
+    setErrorFeedback('');
+    try {
+      const snapshot = await getDocs(collection(db, 'formularAnonim'));
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFeedbackAnonim(data);
+    } catch (err) {
+      setErrorFeedback('Eroare la încărcarea feedback-ului anonim: ' + err.message);
+    } finally {
+      setLoadingFeedback(false);
+    }
+  };
+
   const applyFiltersAndSort = (data) => {
     let filtered = data.filter(item => {
       const numeMatch = searchNume ? item.nume.toLowerCase().includes(searchNume.toLowerCase()) : true;
@@ -74,9 +108,9 @@ const Dashboard = () => {
       } else if (sortBy === 'nume-desc') {
         return b.nume.toLowerCase().localeCompare(a.nume.toLowerCase());
       } else if (sortBy === 'data-asc') {
-        return (a.createdAt?.toDate() || new Date(0)) - (b.createdAt?.toDate() || new Date(0));
+        return (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) - (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt));
       } else {
-        return (b.createdAt?.toDate() || new Date(0)) - (a.createdAt?.toDate() || new Date(0));
+        return (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) - (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt));
       }
     });
 
@@ -95,7 +129,7 @@ const Dashboard = () => {
 
   if (!user) {
     return (
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md mx-auto mt-10 text-white">
+      <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg max-w-md w-full mx-auto mt-10 text-white">
         <h1 className="text-2xl font-bold text-blue-400 mb-6 text-center">Login Admin Dashboard</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
@@ -122,13 +156,13 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-3xl mx-auto mt-10 text-white">
-      <div className="flex justify-between items-center mb-6">
+    <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg max-w-7xl w-full mx-auto mt-6 sm:mt-10 text-white">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-blue-400">Dashboard Înscrieri ProFX</h1>
         <button onClick={handleLogout} className="text-red-400 hover:underline">Logout</button>
       </div>
       
-      <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-6">
+      <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6">
         <input
           type="text"
           placeholder="Caută după nume (partial)"
@@ -171,37 +205,81 @@ const Dashboard = () => {
       {loading ? (
         <p className="text-center">Se încarcă...</p>
       ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-800">
-              <th className="p-2 border border-gray-700">Nume</th>
-              <th className="p-2 border border-gray-700">Telefon</th>
-              <th className="p-2 border border-gray-700">Email</th>
-              <th className="p-2 border border-gray-700">Data Creării</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inscrieri.length > 0 ? (
-              inscrieri.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-700">
-                  <td className="p-2 border border-gray-700">{item.nume}</td>
-                  <td className="p-2 border border-gray-700">{item.telefon}</td>
-                  <td className="p-2 border border-gray-700">{item.email}</td>
-                  <td className="p-2 border border-gray-700">
-                    {item.createdAt ? item.createdAt.toDate().toLocaleString() : 'N/A'}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="p-2 text-center">Nicio înscriere găsită.</td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-800">
+                <th className="p-2 border border-gray-700">Nume</th>
+                <th className="p-2 border border-gray-700">Telefon</th>
+                <th className="p-2 border border-gray-700">Email</th>
+                <th className="p-2 border border-gray-700">Data Creării</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {inscrieri.length > 0 ? (
+                inscrieri.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-700">
+                    <td className="p-2 border border-gray-700">{item.nume}</td>
+                    <td className="p-2 border border-gray-700">{item.telefon}</td>
+                    <td className="p-2 border border-gray-700">{item.email}</td>
+                    <td className="p-2 border border-gray-700">
+                      {formatDate(item.createdAt)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="p-2 text-center">Nicio înscriere găsită.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-      
-      <a href="/" className="block mt-6 text-center text-blue-400 hover:underline">Înapoi in aplicatie</a>
+
+      {/* Secțiunea nouă: Feedback Anonim */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold text-blue-400 mb-4">Feedback Anonim</h2>
+        {errorFeedback && (
+          <p className="text-red-400 mb-4">{errorFeedback}</p>
+        )}
+        {loadingFeedback ? (
+          <p>Se încarcă feedback-ul anonim...</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-sm">
+              <thead>
+                <tr className="bg-gray-800">
+                  <th className="p-2 border border-gray-700 text-center">Educație</th>
+                  <th className="p-2 border border-gray-700 text-center">Sesiuni Live/Trade</th>
+                  <th className="p-2 border border-gray-700">Mesaj</th>
+                  <th className="p-2 border border-gray-700">Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                {feedbackAnonim.length > 0 ? (
+                  feedbackAnonim.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-700 align-top">
+                      <td className="p-2 border border-gray-700 text-center">{item.educatie}</td>
+                      <td className="p-2 border border-gray-700 text-center">{item.liveTrade}</td>
+                      <td className="p-2 border border-gray-700 whitespace-pre-wrap">{item.mesaj}</td>
+                      <td className="p-2 border border-gray-700">
+                        {formatDate(item.createdAt)}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="p-2 text-center">Niciun feedback anonim înregistrat.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <a href="/" className="block mt-6 text-center text-blue-400 hover:underline">Înapoi în aplicație</a>
     </div>
   );
 };
