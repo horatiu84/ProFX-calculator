@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Sergiu from "./pics/Sergiu.jpg";
 import John from "./pics/John.jpg";
+import Eli from "./pics/Eli.jpg";
+import Tudor from "./pics/Tudor.jpg";
+import Dan from "./pics/Dan.jpg";
+import Cosmin from "./pics/Cosmin.jpg";
+import Adrian from "./pics/Adrian.jpg";
 
 // Lista cu toate webinariile săptămânale
 const weeklyWebinars = [
@@ -20,9 +25,12 @@ const weeklyWebinars = [
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
-    subtitle: "Cum încep să fac trading (pentru începători)",
+    subtitle: "Cum să devii trader pas cu pas",
     presenters: "Eli & Cosmin",
-    mentors: [],
+    mentors: [
+      { name: "Eli", img: Eli },
+      { name: "Cosmin", img: Cosmin },
+    ],
     ora: 20,
     details: "Webinar practic pentru începători, cu Eli și Cosmin.",
   },
@@ -147,8 +155,8 @@ const UpcomingWebinarCard = ({ event, onExpire }) => (
                 src={mentor.img}
                 alt={mentor.name}
                 style={{
-                  width: 154,
-                  height: 154,
+                  width: 134,
+                  height: 134,
                   objectFit: "cover",
                   borderRadius: "10px",
                   background: "#23272f",
@@ -165,11 +173,33 @@ const UpcomingWebinarCard = ({ event, onExpire }) => (
     <div className="my-3 text-lg font-semibold text-yellow-400 text-center">
       <CountdownTimer targetDate={event.date} onExpire={onExpire} />
     </div>
-    <div className="mt-1 text-xs text-gray-400 italic text-center">
+    <div className="mt-1 text-xs text-gray-400 italic text-center mb-6">
       {event.details}
+    </div>
+
+    {/* 🔗 Detalii Zoom */}
+    <div className="w-full mt-3 pt-4 border-t border-gray-700 text-sm text-center">
+      <h3 className="text-md font-semibold text-yellow-400 mb-2">
+        🔗 Detalii conectare Zoom
+      </h3>
+      <p>
+        Link:{" "}
+        <a
+          href="https://zoom.us/j/86783293224"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline break-all"
+        >
+          https://zoom.us/j/86783293224
+        </a>
+      </p>
+      <p>
+        Parolă: <span className="font-bold">2022</span>
+      </p>
     </div>
   </div>
 );
+
 
 const schedule = [
   {

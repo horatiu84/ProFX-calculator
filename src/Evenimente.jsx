@@ -3,7 +3,6 @@ import HotelImg from "./utils/Hotel.jpg"; // Atenție la calea și denumirea ima
 import CompetitionBanner from "./Competitie";
 import HallOfFameCarousel from "./components/ui/Carusel";
 
-
 function formatNumber(n) {
   return n.toString().padStart(2, "0");
 }
@@ -12,6 +11,8 @@ const BootcampBanner = () => {
   const deadline = new Date("2025-09-09T00:00:00");
   const [timeLeft, setTimeLeft] = useState(null); // null = nu afișezi nimic/loader
   const [showModal, setShowModal] = useState(false);
+  const [copiedRON, setCopiedRON] = useState(false);
+  const [copiedEUR, setCopiedEUR] = useState(false);
   const intervalRef = useRef();
 
   // Face calculul timpului rămas
@@ -29,6 +30,23 @@ const BootcampBanner = () => {
       return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
   }
+
+  const copyToClipboard = (text, which) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        if (which === "ron") {
+          setCopiedRON(true);
+          setTimeout(() => setCopiedRON(false), 1800);
+        } else {
+          setCopiedEUR(true);
+          setTimeout(() => setCopiedEUR(false), 1800);
+        }
+      })
+      .catch((err) => {
+        // Fail silently sau afișează opțional alt mesaj
+      });
+  };
 
   useEffect(() => {
     // Primul calcul imediat la montare
@@ -106,11 +124,27 @@ const BootcampBanner = () => {
         <div className="mb-3 text-gray-900 text-sm">
           <b>Cont bancar:</b>
           <br />
-          <span className="block mt-1">
+          <span
+            className="block cursor-pointer select-all"
+            onClick={() =>
+              copyToClipboard("Ro09 RZBR 0000 0600 2690 6576", "ron")
+            }
+          >
             <b>Ron:</b> Ro09 RZBR 0000 0600 2690 6576
+            {copiedRON && (
+              <span className="ml-2 text-gray-400 italic">copiat!</span>
+            )}
           </span>
-          <span className="block">
+          <span
+            className="block cursor-pointer select-all"
+            onClick={() =>
+              copyToClipboard("Ro79 RZBR 0000 0600 2690 6577", "eur")
+            }
+          >
             <b>Eur:</b> Ro79 RZBR 0000 0600 2690 6577
+            {copiedEUR && (
+              <span className="ml-2 text-gray-400 italic">copiat!</span>
+            )}
           </span>
         </div>
       </div>
@@ -217,7 +251,7 @@ const BootcampBanner = () => {
         {showModal && <Modal />}
       </div>
       <CompetitionBanner />
-     <HallOfFameCarousel />
+      <HallOfFameCarousel />
     </>
   );
 };
