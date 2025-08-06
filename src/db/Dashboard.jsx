@@ -35,6 +35,7 @@ const Dashboard = () => {
   const [feedbackAnonim, setFeedbackAnonim] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState('');
+  const [feedbackSortBy, setFeedbackSortBy] = useState('desc'); // Aici starea pentru sortare feedback anonim
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -113,7 +114,6 @@ const Dashboard = () => {
         return (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) - (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt));
       }
     });
-
     setInscrieri(filtered);
   };
 
@@ -126,6 +126,15 @@ const Dashboard = () => {
     setSortBy(e.target.value);
     applyFiltersAndSort(allInscrieri);
   };
+
+  // Sortează feedback-ul anonim după data selectată
+  const sortedFeedback = feedbackAnonim
+    .slice()
+    .sort((a, b) => {
+      const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+      const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+      return feedbackSortBy === 'asc' ? aDate - bDate : bDate - aDate;
+    });
 
   if (!user) {
     return (
@@ -157,11 +166,12 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg max-w-7xl w-full mx-auto mt-6 sm:mt-10 text-white">
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-blue-400">Dashboard Înscrieri ProFX</h1>
         <button onClick={handleLogout} className="text-red-400 hover:underline">Logout</button>
       </div>
-      
+
       <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6">
         <input
           type="text"
@@ -189,8 +199,8 @@ const Dashboard = () => {
 
       <div className="mb-4">
         <label className="text-gray-300 mr-2">Sortare:</label>
-        <select 
-          value={sortBy} 
+        <select
+          value={sortBy}
           onChange={handleSortChange}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
         >
@@ -240,9 +250,24 @@ const Dashboard = () => {
       {/* Secțiunea nouă: Feedback Anonim */}
       <div className="mt-12">
         <h2 className="text-xl font-bold text-blue-400 mb-4">Feedback Anonim</h2>
+
+        {/* Selector sortare feedback anonim */}
+        <div className="mb-3 flex gap-2 items-center">
+          <label className="text-gray-300 font-semibold">Sortare feedback:</label>
+          <select
+            value={feedbackSortBy}
+            onChange={e => setFeedbackSortBy(e.target.value)}
+            className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
+          >
+            <option value="desc">Data (recent primul)</option>
+            <option value="asc">Data (vechi primul)</option>
+          </select>
+        </div>
+
         {errorFeedback && (
           <p className="text-red-400 mb-4">{errorFeedback}</p>
         )}
+
         {loadingFeedback ? (
           <p>Se încarcă feedback-ul anonim...</p>
         ) : (
@@ -250,6 +275,7 @@ const Dashboard = () => {
             <table className="min-w-full border-collapse text-sm">
               <thead>
                 <tr className="bg-gray-800">
+                  <th className="p-2 border border-gray-700 text-center">#</th>
                   <th className="p-2 border border-gray-700 text-center">Educație</th>
                   <th className="p-2 border border-gray-700 text-center">Sesiuni Live/Trade</th>
                   <th className="p-2 border border-gray-700">Mesaj</th>
@@ -257,9 +283,10 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {feedbackAnonim.length > 0 ? (
-                  feedbackAnonim.map((item) => (
+                {sortedFeedback.length > 0 ? (
+                  sortedFeedback.map((item, idx) => (
                     <tr key={item.id} className="hover:bg-gray-700 align-top">
+                      <td className="p-2 border border-gray-700 text-center font-semibold">{idx + 1}</td>
                       <td className="p-2 border border-gray-700 text-center">{item.educatie}</td>
                       <td className="p-2 border border-gray-700 text-center">{item.liveTrade}</td>
                       <td className="p-2 border border-gray-700 whitespace-pre-wrap">{item.mesaj}</td>
@@ -270,7 +297,7 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="p-2 text-center">Niciun feedback anonim înregistrat.</td>
+                    <td colSpan="5" className="p-2 text-center">Niciun feedback anonim înregistrat.</td>
                   </tr>
                 )}
               </tbody>
