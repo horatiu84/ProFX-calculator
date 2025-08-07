@@ -185,21 +185,24 @@ const UpcomingWebinarCard = ({ event, onExpire }) => (
       <p>
         Link:{" "}
         <a
-          href="https://zoom.us/j/86783293224"
+          href="https://us06web.zoom.us/j/81705355401?pwd=0nz57CLmLzfBh0iexJPy2yNMK5ngRK.1"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-400 underline break-all"
         >
-          https://zoom.us/j/86783293224
+          Zoom Link
         </a>
       </p>
+
       <p>
-        Parolă: <span className="font-bold">2022</span>
+        Meeting ID: <span className="font-bold"> 817 0535 5401</span>
+      </p>
+      <p>
+        Parolă: <span className="font-bold">958772</span>
       </p>
     </div>
   </div>
 );
-
 
 const schedule = [
   {
