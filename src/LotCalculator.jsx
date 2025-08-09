@@ -8,6 +8,7 @@ import logo from "../src/logo.jpg";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
 import Evenimente from "./Evenimente.jsx";
 import Contact from "./Contact.jsx";
+import Test from "./Test.jsx";
 
 const riskLabels = ["0.5%", "1%", "1.5%", "2%", "2.5%", "3%", "3.5%"];
 const riskValues = [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035];
@@ -210,6 +211,16 @@ export default function LotCalculator() {
         </button>
         <button
           className={`px-4 py-2 rounded ${
+            activeTab === "test"
+              ? "bg-yellow-500 text-black"
+              : "bg-gray-800 text-white"
+          }`}
+          onClick={() => setActiveTab("test")}
+        >
+          📝 Test
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${
             activeTab === "contact"
               ? "bg-yellow-500 text-black"
               : "bg-gray-800 text-white"
@@ -225,6 +236,7 @@ export default function LotCalculator() {
       {activeTab === "simulare" && <Simulare />}
       {activeTab === "raport" && <Raport />}
       {activeTab === "evenimente" && <Evenimente />}
+       {activeTab === "test" && <Test />}
       {activeTab === "contact" && <Contact />}
 
       {activeTab === "evolutie" && (
