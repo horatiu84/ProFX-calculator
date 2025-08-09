@@ -82,16 +82,21 @@ const Training = () => {
       url: "https://sirbudcfx.blogspot.com/2025/07/head-and-shoulders-pattern-in-aceasta.html",
     },
     {
-      title: "Masterclass “Divergențe în Trading” - cu Mihai Tiepac",
+      title: "Masterclass “Divergențe în Trading - cu Mihai Tiepac",
       url: "https://youtu.be/K4diseWETYQ?si=Tc6tHJSVAGmEYN6i",
     },
     {
-      title: "Masterclass “Divergențe în Trading - 2” -cu Mihai Tiepac",
+      title: "Masterclass “Divergențe în Trading - 2 -cu Mihai Tiepac",
       url: "https://youtu.be/soJP3FEIY08",
     },
     {
       title: "Webinar cu Mihai Tiepac 08 07 2025 ",
       url: "https://youtu.be/52FKs74rpjs?si=dWIo5ida-deg2TIJ",
+    },
+    {
+      title: "Curs inflatie Forex ",
+      url: "../public/Curs Inflatie Forex.pdf",
+      type: "pdf",
     },
   ];
 
@@ -174,7 +179,23 @@ const Training = () => {
     },
     {
       title: "Backtesting Session - 13/07/2025",
-      url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI",
+      url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI", //https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f
+    },
+    {
+      title: "Backtesting Session - 03/08/2025",
+      url: "https://youtu.be/OioK9t2lc8M",
+    },
+    {
+      title: "Sesiune Practica Mentorat 17.07.2025",
+      url: "https://youtu.be/jbZwc7KCOiw?si=BOHXtNDyUnmKuO2G",
+    },
+    {
+      title: " Fakeouts - Cum le poti gestiona si risk Managementul lor",
+      url: "https://youtu.be/UsPmwdhrl_M?si=leP1b7fzCtkuhw90",
+    },
+    {
+      title: "Macro Economie - Ep.1 Inflatie",
+      url: "https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f",
     },
   ];
 
@@ -286,8 +307,12 @@ const Training = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-purple-400 hover:text-purple-200 underline underline-offset-4 transition"
+                  {...(item.type === "pdf" ? { download: true } : {})}
                 >
                   {item.title}
+                  {item.type === "pdf" && (
+                    <span className="ml-1 text-gray-400"> &#40;download format PDF&#41;</span>
+                  )}
                 </a>
               </li>
             ))}

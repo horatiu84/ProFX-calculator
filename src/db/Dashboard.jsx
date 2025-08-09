@@ -10,11 +10,7 @@ import { db, auth } from "./FireBase.js";
 
 const formatDate = (createdAt) => {
   if (!createdAt) return "N/A";
-  if (createdAt.toDate) {
-    // Firestore Timestamp
-    return createdAt.toDate().toLocaleString();
-  }
-  // Alte formate (string/Date)
+  if (createdAt.toDate) return createdAt.toDate().toLocaleString();
   try {
     return new Date(createdAt).toLocaleString();
   } catch {
@@ -40,7 +36,15 @@ const Dashboard = () => {
   const [feedbackAnonim, setFeedbackAnonim] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState("");
-  const [feedbackSortBy, setFeedbackSortBy] = useState("desc"); // Aici starea pentru sortare feedback anonim
+  const [feedbackSortBy, setFeedbackSortBy] = useState("desc");
+
+  // PAGINARE
+  const [currentPage, setCurrentPage] = useState(1);
+  const feedbackPerPage = 10;
+
+  // MEDII
+  const [mediaEducatie, setMediaEducatie] = useState("0.00");
+  const [mediaLiveTrade, setMediaLiveTrade] = useState("0.00");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -54,6 +58,7 @@ const Dashboard = () => {
       }
     });
     return unsubscribe;
+    // eslint-disable-next-line
   }, []);
 
   const handleLogin = async (e) => {
@@ -92,6 +97,26 @@ const Dashboard = () => {
     try {
       const snapshot = await getDocs(collection(db, "formularAnonim"));
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      // Calcul medii
+      const educValues = data
+        .map((f) => parseFloat(f.educatie))
+        .filter((v) => !isNaN(v));
+      const liveValues = data
+        .map((f) => parseFloat(f.liveTrade))
+        .filter((v) => !isNaN(v));
+
+      setMediaEducatie(
+        educValues.length
+          ? (educValues.reduce((a, b) => a + b, 0) / educValues.length).toFixed(2)
+          : "0.00"
+      );
+      setMediaLiveTrade(
+        liveValues.length
+          ? (liveValues.reduce((a, b) => a + b, 0) / liveValues.length).toFixed(2)
+          : "0.00"
+      );
+
       setFeedbackAnonim(data);
     } catch (err) {
       setErrorFeedback(
@@ -105,13 +130,13 @@ const Dashboard = () => {
   const applyFiltersAndSort = (data) => {
     let filtered = data.filter((item) => {
       const numeMatch = searchNume
-        ? item.nume.toLowerCase().includes(searchNume.toLowerCase())
+        ? item.nume?.toLowerCase().includes(searchNume.toLowerCase())
         : true;
       const telefonMatch = searchTelefon
-        ? item.telefon.includes(searchTelefon)
+        ? item.telefon?.includes(searchTelefon)
         : true;
       const emailMatch = searchEmail
-        ? item.email.toLowerCase().includes(searchEmail.toLowerCase())
+        ? item.email?.toLowerCase().includes(searchEmail.toLowerCase())
         : true;
       return numeMatch && telefonMatch && emailMatch;
     });
@@ -146,7 +171,8 @@ const Dashboard = () => {
     applyFiltersAndSort(allInscrieri);
   };
 
-  // Sortează feedback-ul anonim după data selectată
+  // --- FEEDBACK: SORTARE & PAGINARE ---
+
   const sortedFeedback = feedbackAnonim.slice().sort((a, b) => {
     const aDate = a.createdAt?.toDate
       ? a.createdAt.toDate()
@@ -156,6 +182,31 @@ const Dashboard = () => {
       : new Date(b.createdAt);
     return feedbackSortBy === "asc" ? aDate - bDate : bDate - aDate;
   });
+
+  const indexOfLastFeedback = currentPage * feedbackPerPage;
+  const indexOfFirstFeedback = indexOfLastFeedback - feedbackPerPage;
+  const currentFeedback = sortedFeedback.slice(
+    indexOfFirstFeedback,
+    indexOfLastFeedback
+  );
+
+  const totalPages = Math.ceil(sortedFeedback.length / feedbackPerPage);
+
+  const exportFeedbackToExcel = () => {
+    if (feedbackAnonim.length === 0) return;
+    const dataToExport = feedbackAnonim.map((item, idx) => ({
+      Nr: idx + 1,
+      Educație: item.educatie || "",
+      "Sesiuni Live/Trade": item.liveTrade || "",
+      Mesaj: item.mesaj || "",
+      "Data Creării": formatDate(item.createdAt),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Feedback Anonim");
+    XLSX.writeFile(workbook, "feedback-anonim.xlsx");
+  };
 
   if (!user) {
     return (
@@ -193,24 +244,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const exportFeedbackToExcel = () => {
-    if (feedbackAnonim.length === 0) return;
-
-    const dataToExport = feedbackAnonim.map((item, idx) => ({
-      Nr: idx + 1,
-      Educație: item.educatie || "",
-      "Sesiuni Live/Trade": item.liveTrade || "",
-      Mesaj: item.mesaj || "",
-      "Data Creării": formatDate(item.createdAt),
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Feedback Anonim");
-
-    XLSX.writeFile(workbook, "feedback-anonim.xlsx");
-  };
 
   return (
     <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg max-w-7xl w-full mx-auto mt-6 sm:mt-10 text-white">
@@ -310,13 +343,16 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Secțiunea nouă: Feedback Anonim */}
+      {/* === Secțiunea Feedback Anonim === */}
       <div className="mt-12">
-        <h2 className="text-xl font-bold text-blue-400 mb-4">
+        <h2 className="text-xl font-bold text-blue-400 mb-2">
           Feedback Anonim
         </h2>
+        <div className="mb-4 text-green-400 font-semibold text-sm">
+          Media Educație: {mediaEducatie} &nbsp; | &nbsp; Media Sesiuni Live/Trade: {mediaLiveTrade}
+        </div>
 
-        {/* Buton Export Excel */}
+        {/* Export Excel */}
         <div className="flex justify-end mb-4">
           <button
             onClick={exportFeedbackToExcel}
@@ -326,14 +362,17 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Selector sortare feedback anonim */}
+        {/* Sortare */}
         <div className="mb-3 flex gap-2 items-center">
           <label className="text-gray-300 font-semibold">
             Sortare feedback:
           </label>
           <select
             value={feedbackSortBy}
-            onChange={(e) => setFeedbackSortBy(e.target.value)}
+            onChange={(e) => {
+              setFeedbackSortBy(e.target.value);
+              setCurrentPage(1); // Când schimb sortarea, revine la pagina 1
+            }}
             className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
           >
             <option value="desc">Data (recent primul)</option>
@@ -346,52 +385,82 @@ const Dashboard = () => {
         {loadingFeedback ? (
           <p>Se încarcă feedback-ul anonim...</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse text-sm">
-              <thead>
-                <tr className="bg-gray-800">
-                  <th className="p-2 border border-gray-700 text-center">#</th>
-                  <th className="p-2 border border-gray-700 text-center">
-                    Educație
-                  </th>
-                  <th className="p-2 border border-gray-700 text-center">
-                    Sesiuni Live/Trade
-                  </th>
-                  <th className="p-2 border border-gray-700">Mesaj</th>
-                  <th className="p-2 border border-gray-700">Data</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedFeedback.length > 0 ? (
-                  sortedFeedback.map((item, idx) => (
-                    <tr key={item.id} className="hover:bg-gray-700 align-top">
-                      <td className="p-2 border border-gray-700 text-center font-semibold">
-                        {idx + 1}
-                      </td>
-                      <td className="p-2 border border-gray-700 text-center">
-                        {item.educatie}
-                      </td>
-                      <td className="p-2 border border-gray-700 text-center">
-                        {item.liveTrade}
-                      </td>
-                      <td className="p-2 border border-gray-700 whitespace-pre-wrap">
-                        {item.mesaj}
-                      </td>
-                      <td className="p-2 border border-gray-700">
-                        {formatDate(item.createdAt)}
+          <>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-gray-800">
+                    <th className="p-2 border border-gray-700 text-center">#</th>
+                    <th className="p-2 border border-gray-700 text-center">Educație</th>
+                    <th className="p-2 border border-gray-700 text-center">Sesiuni Live/Trade</th>
+                    <th className="p-2 border border-gray-700">Mesaj</th>
+                    <th className="p-2 border border-gray-700">Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentFeedback.length > 0 ? (
+                    currentFeedback.map((item, idx) => (
+                      <tr key={item.id} className="hover:bg-gray-700 align-top">
+                        <td className="p-2 border border-gray-700 text-center font-semibold">
+                          {indexOfFirstFeedback + idx + 1}
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          {item.educatie}
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          {item.liveTrade}
+                        </td>
+                        <td className="p-2 border border-gray-700 whitespace-pre-wrap">
+                          {item.mesaj}
+                        </td>
+                        <td className="p-2 border border-gray-700">
+                          {formatDate(item.createdAt)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="p-2 text-center">
+                        Niciun feedback anonim înregistrat.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="p-2 text-center">
-                      Niciun feedback anonim înregistrat.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {/* PAGINARE */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-4 gap-2">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                >
+                  Anterior
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-1 rounded ${
+                      currentPage === i + 1
+                        ? "bg-blue-600"
+                        : "bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="px-3 py-1 bg-gray-700 rounded disabled:opacity-50"
+                >
+                  Următor
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
