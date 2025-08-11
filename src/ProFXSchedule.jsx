@@ -9,30 +9,30 @@ import Adrian from "./pics/Adrian.jpg";
 
 // Lista cu toate webinariile săptămânale
 const weeklyWebinars = [
-  {
-    dayOfWeek: 1, // Luni
-    title: "WEBINAR GRATUIT",
-    subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
-    mentors: [
-      { name: "Sergiu Cîrstea", img: Sergiu },
-      { name: "Ionuț Pometcu", img: John },
-    ],
-    ora: 20,
-    details:
-      "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
-  },
+  // {
+  //   dayOfWeek: 1, // Luni
+  //   title: "WEBINAR GRATUIT",
+  //   subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
+  //   presenters: "Sergiu Cîrstea & Ionuț Pometcu",
+  //   mentors: [
+  //     { name: "Sergiu Cîrstea", img: Sergiu },
+  //     { name: "Ionuț Pometcu", img: John },
+  //   ],
+  //   ora: 20,
+  //   details:
+  //     "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
+  // },
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
-    subtitle: "Cum să devii trader pas cu pas",
-    presenters: "Eli & Cosmin",
+    subtitle: "Cum să luăm tranzacții în Forex",
+    presenters: "Eli & Dan",
     mentors: [
       { name: "Eli", img: Eli },
-      { name: "Cosmin", img: Cosmin },
+      { name: "Dan", img: Dan },
     ],
     ora: 20,
-    details: "Webinar practic pentru începători, cu Eli și Cosmin.",
+    details: "Webinar practic pentru începători, cu Eli și Dan.",
   },
   {
     dayOfWeek: 4, // Joi
