@@ -175,17 +175,17 @@ export default function BuyTPSLTrainer({
   // lumânări demo (ajustate pentru a semăna cu graficul XAUUSD)
   const candles = [
    
-    { xPct: 0.20, open: 0.60, close: 0.62, high: 0.63, low: 0.59, color: "green" }, // small green
-    { xPct: 0.25, open: 0.62, close: 0.58, high: 0.62, low: 0.57, color: "red" }, // red down
-    { xPct: 0.30, open: 0.58, close: 0.50, high: 0.58, low: 0.48, color: "red" }, // bigger red
-    { xPct: 0.35, open: 0.50, close: 0.55, high: 0.56, low: 0.49, color: "green" }, // green up
-    { xPct: 0.40, open: 0.55, close: 0.52, high: 0.55, low: 0.51, color: "red" }, // small red
-    { xPct: 0.45, open: 0.52, close: 0.48, high: 0.52, low: 0.47, color: "red" }, // red down
-    { xPct: 0.50, open: 0.48, close: 0.60, high: 0.62, low: 0.47, color: "green" }, // big green up
-    { xPct: 0.55, open: 0.60, close: 0.55, high: 0.61, low: 0.54, color: "red" }, // red down
+    { xPct: 0.20, open: 0.60, close: 0.62, high: 0.63, low: 0.59, color: "red" }, // small green
+    { xPct: 0.25, open: 0.62, close: 0.58, high: 0.62, low: 0.57, color: "green" }, // red down
+    { xPct: 0.30, open: 0.58, close: 0.50, high: 0.58, low: 0.48, color: "green" }, // bigger red
+    { xPct: 0.35, open: 0.50, close: 0.55, high: 0.56, low: 0.49, color: "red" }, // green up
+    { xPct: 0.40, open: 0.55, close: 0.52, high: 0.55, low: 0.51, color: "green" }, // small red
+    { xPct: 0.45, open: 0.52, close: 0.48, high: 0.52, low: 0.47, color: "green" }, // red down
+    { xPct: 0.50, open: 0.48, close: 0.60, high: 0.62, low: 0.47, color: "red" }, // big green up
+    { xPct: 0.55, open: 0.60, close: 0.55, high: 0.61, low: 0.54, color: "green" }, // red down
     { xPct: 0.60, open: 0.55, close: 0.55, high: 0.67, low: 0.54, color: "green" }, // big green up
     { xPct: 0.65, open: 0.65, close: 0.50, high: 0.66, low: 0.48, color: "red" }, // big red down
-    { xPct: 0.70, open: 0.50, close: 0.52, high: 0.53, low: 0.49, color: "green" }, // small green
+    { xPct: 0.70, open: 0.55, close: 0.52, high: 0.53, low: 0.49, color: "green" }, // small green
     { xPct: 0.75, open: 0.52, close: 0.45, high: 0.52, low: 0.44, color: "red" }, // red down
     { xPct: 0.80, open: 0.45, close: 0.55, high: 0.56, low: 0.44, color: "green" }, // green up
     { xPct: 0.85, open: 0.55, close: 0.50, high: 0.55, low: 0.49, color: "red" }, // red down
