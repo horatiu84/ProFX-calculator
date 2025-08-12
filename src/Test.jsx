@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import BuyStopTrainer from "./components/BuyStopTrainer";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Brand style
@@ -1457,6 +1458,19 @@ const Test = () => {
           </li>
         </ul>
       </Card>
+      <div style={{ padding: 16 }}>
+        <BuyStopTrainer
+          resistance={{
+            mode: "pct",
+            topPctDesktop: 0.18,
+            heightPctDesktop: 0.09,
+            topPctMobile: 0.19,
+            heightPctMobile: 0.10,
+          }}
+          aspect={16 / 11}
+          enableHaptics
+        />
+      </div>
     </div>
   );
 };
