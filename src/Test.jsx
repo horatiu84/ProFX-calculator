@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import BuyStopTrainer from "./components/BuyStopTrainer";
+import BuyTPSLTrainer from "./components/TpSlTrainer";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Brand style
@@ -1471,6 +1472,7 @@ const Test = () => {
           enableHaptics
         />
       </div>
+      <BuyTPSLTrainer />
     </div>
   );
 };
