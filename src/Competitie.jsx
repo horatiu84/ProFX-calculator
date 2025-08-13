@@ -214,15 +214,7 @@ const CompetitionBanner = () => {
           știți să gestionați riscul și să vă maximizați profitul!
         </div>
         <div className="text-center text-sm text-gray-700 mb-4 animate-fade-in-up delay-300">
-          Pentru înscriere și detalii suplimentare, contactați-l pe {" "}
-          <a
-            href="https://t.me/JohnPometcu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-yellow-700 underline font-bold hover:text-yellow-900 transition"
-          >
-             John Pometcu
-          </a>
+          Pentru înscriere completați formularul de mai jos!
           <br />
           Comunitatea <b>PROFX</b>
         </div>
