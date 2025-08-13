@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { DateTime } from "luxon"; // Adaugă dependența: npm install luxon
 import Sergiu from "./pics/Sergiu.jpg";
 import John from "./pics/John.jpg";
 import Eli from "./pics/Eli.jpg";
@@ -9,19 +10,19 @@ import Adrian from "./pics/Adrian.jpg";
 
 // Lista cu toate webinariile săptămânale
 const weeklyWebinars = [
-  // {
-  //   dayOfWeek: 1, // Luni
-  //   title: "WEBINAR GRATUIT",
-  //   subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-  //   presenters: "Sergiu Cîrstea & Ionuț Pometcu",
-  //   mentors: [
-  //     { name: "Sergiu Cîrstea", img: Sergiu },
-  //     { name: "Ionuț Pometcu", img: John },
-  //   ],
-  //   ora: 20,
-  //   details:
-  //     "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
-  // },
+  {
+    dayOfWeek: 1, // Luni
+    title: "WEBINAR GRATUIT",
+    subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
+    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
+    mentors: [
+      { name: "Sergiu Cîrstea", img: Sergiu },
+      { name: "Ionuț Pometcu", img: John },
+    ],
+    ora: 20,
+    details:
+      "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
+  },
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
@@ -46,44 +47,38 @@ const weeklyWebinars = [
 ];
 
 function getNextWebinar() {
-  const now = new Date();
+  const tz = "Europe/Bucharest";
+  const now = DateTime.now();
+  const nowInTz = now.setZone(tz);
 
   let soonestEvent = null;
 
   for (const event of weeklyWebinars) {
-    const webinarDayOffset = (event.dayOfWeek - now.getDay() + 7) % 7;
-    const nextDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + webinarDayOffset,
-      event.ora,
-      0,
-      0,
-      0
-    );
+    let offset = (event.dayOfWeek - nowInTz.weekday + 7) % 7;
+    let candidateDt = nowInTz.plus({ days: offset }).set({
+      hour: event.ora,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
 
-    if (nextDate > now) {
-      if (!soonestEvent || nextDate < soonestEvent.date) {
-        soonestEvent = { ...event, date: nextDate };
-      }
+    if (candidateDt <= nowInTz) {
+      offset += 7;
+      candidateDt = nowInTz.plus({ days: offset }).set({
+        hour: event.ora,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
     }
-  }
 
-  // Dacă nu s-a găsit niciun webinar în viitorul apropiat,
-  // alegem PRIMUL din săptămâna viitoare
-  if (!soonestEvent) {
-    const firstEvent = weeklyWebinars[0];
-    const webinarDayOffset = (firstEvent.dayOfWeek - now.getDay() + 7) % 7;
-    const nextDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + webinarDayOffset + 7,
-      firstEvent.ora,
-      0,
-      0,
-      0
-    );
-    return { ...firstEvent, date: nextDate };
+    if (!soonestEvent || candidateDt < soonestEvent.dt) {
+      soonestEvent = {
+        ...event,
+        dt: candidateDt,
+        date: candidateDt.toJSDate(),
+      };
+    }
   }
 
   return soonestEvent;
@@ -113,92 +108,118 @@ const CountdownTimer = ({ targetDate, onExpire }) => {
   const seconds = totalSeconds % 60;
 
   return (
-    <span className="text-yellow-400 font-semibold text-xl">
-      {days > 0 && `${days} zile `}
-      {hours.toString().padStart(2, "0")}:{minutes.toString().padStart(2, "0")}:
-      {seconds.toString().padStart(2, "0")} până la webinar
-    </span>
+    <div className="flex flex-nowrap justify-center items-center gap-2 my-4">
+      {days > 0 && (
+        <div className="flex flex-col items-center">
+          <div className="bg-yellow-400 text-black font-bold text-xl px-3 py-1 rounded-lg shadow-md min-w-[40px] text-center">
+            {days}
+          </div>
+          <span className="text-white text-xs mt-1">Zile</span>
+        </div>
+      )}
+      <div className="flex flex-col items-center">
+        <div className="bg-yellow-400 text-black font-bold text-xl px-3 py-1 rounded-lg shadow-md min-w-[40px] text-center">
+          {hours.toString().padStart(2, "0")}
+        </div>
+        <span className="text-white text-xs mt-1">Ore</span>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-yellow-400 text-black font-bold text-xl px-3 py-1 rounded-lg shadow-md min-w-[40px] text-center">
+          {minutes.toString().padStart(2, "0")}
+        </div>
+        <span className="text-white text-xs mt-1">Minute</span>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-yellow-400 text-black font-bold text-xl px-3 py-1 rounded-lg shadow-md min-w-[40px] text-center">
+          {seconds.toString().padStart(2, "0")}
+        </div>
+        <span className="text-white text-xs mt-1">Secunde</span>
+      </div>
+    </div>
   );
 };
 
 // Card pentru webinarul următor
-const UpcomingWebinarCard = ({ event, onExpire }) => (
-  <div
-    className="w-full max-w-xl mx-auto mb-10 bg-gradient-to-br from-[#1e293b] via-[#111827] to-[#0b0f1a] rounded-xl shadow-lg border-2 border-yellow-400 p-5 md:p-7 text-white flex flex-col items-center"
-    style={{ boxSizing: "border-box" }}
-  >
-    <span className="uppercase text-xs text-yellow-400 tracking-widest font-bold mb-2 text-center">
-      Upcoming Webinar
-    </span>
-    <h2 className="text-2xl font-bold text-yellow-400 mb-1 text-center">
-      {event.title}
-    </h2>
-    <div className="text-sm text-gray-200 mb-3 text-center">
-      {event.subtitle}
-    </div>
-    <div className="flex flex-col items-center mb-3 w-full text-center">
-      <div className="font-bold text-white text-base mb-2">
-        {event.date.toLocaleDateString("ro-RO", { weekday: "long" })}, ora{" "}
-        {event.ora}:00
-      </div>
-      <div className="flex flex-row flex-wrap justify-center items-end gap-x-4 gap-y-5 w-full">
-        {event.mentors && event.mentors.length > 0 ? (
-          event.mentors.map((mentor, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-center justify-center min-w-[80px]"
-            >
-              <span className="text-sm text-white font-medium mb-1">
-                {mentor.name}
-              </span>
-              <img
-                src={mentor.img}
-                alt={mentor.name}
-                style={{
-                  width: 134,
-                  height: 134,
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                  background: "#23272f",
-                }}
-                className="shadow-md"
-              />
-            </div>
-          ))
-        ) : (
-          <span className="text-sm text-gray-300">{event.presenters}</span>
-        )}
-      </div>
-    </div>
-    <div className="my-3 text-lg font-semibold text-yellow-400 text-center">
-      <CountdownTimer targetDate={event.date} onExpire={onExpire} />
-    </div>
-    <div className="mt-1 text-xs text-gray-400 italic text-center mb-6">
-      {event.details}
-    </div>
+const UpcomingWebinarCard = ({ event, onExpire }) => {
+  const localDt = DateTime.fromJSDate(event.date).toLocal();
 
-    {/* 🔗 Detalii Zoom */}
-    <div className="w-full mt-3 pt-4 border-t border-gray-700 text-sm text-center">
-      <h3 className="text-md font-semibold text-yellow-400 mb-2">
-        🔗 Detalii conectare Zoom
-      </h3>
-      <p>
-        Link:{" "}
-        <a
-          href="https://zoom.us/j/86783293224"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 underline break-all"
-        >
-          Zoom Link
-        </a>
-      </p>
-      <p>
-        Parolă: <span className="font-bold">2022</span>
-      </p>
+  return (
+    <div
+      className="w-full max-w-xl mx-auto mb-10 bg-gradient-to-br from-[#1e293b] via-[#111827] to-[#0b0f1a] rounded-xl shadow-lg border-2 border-yellow-400 p-5 md:p-7 text-white flex flex-col items-center"
+      style={{ boxSizing: "border-box" }}
+    >
+      <span className="uppercase text-xs text-yellow-400 tracking-widest font-bold mb-2 text-center">
+        Upcoming Webinar
+      </span>
+      <h2 className="text-2xl font-bold text-yellow-400 mb-1 text-center">
+        {event.title}
+      </h2>
+      <div className="text-sm text-gray-200 mb-3 text-center">
+        {event.subtitle}
+      </div>
+      <div className="flex flex-col items-center mb-3 w-full text-center">
+        <div className="font-bold text-white text-base mb-2">
+          {localDt.toFormat("cccc, 'ora' HH:mm", { locale: "ro" })}
+        </div>
+        <div className="flex flex-row flex-wrap justify-center items-end gap-x-4 gap-y-5 w-full">
+          {event.mentors && event.mentors.length > 0 ? (
+            event.mentors.map((mentor, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center justify-center min-w-[80px]"
+              >
+                <span className="text-sm text-white font-medium mb-1">
+                  {mentor.name}
+                </span>
+                <img
+                  src={mentor.img}
+                  alt={mentor.name}
+                  style={{
+                    width: 134,
+                    height: 134,
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                    background: "#23272f",
+                  }}
+                  className="shadow-md"
+                />
+              </div>
+            ))
+          ) : (
+            <span className="text-sm text-gray-300">{event.presenters}</span>
+          )}
+        </div>
+      </div>
+      <div className="my-3 text-lg font-semibold text-yellow-400 text-center w-full">
+        <CountdownTimer targetDate={event.date} onExpire={onExpire} />
+      </div>
+      <div className="mt-1 text-xs text-gray-400 italic text-center mb-6">
+        {event.details}
+      </div>
+
+      {/* 🔗 Detalii Zoom */}
+      <div className="w-full mt-3 pt-4 border-t border-gray-700 text-sm text-center">
+        <h3 className="text-md font-semibold text-yellow-400 mb-2">
+          🔗 Detalii conectare Zoom
+        </h3>
+        <p>
+          Link:{" "}
+          <a
+            href="https://zoom.us/j/86783293224"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline break-all"
+          >
+            Zoom Link
+          </a>
+        </p>
+        <p>
+          Parolă: <span className="font-bold">2022</span>
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const schedule = [
   {

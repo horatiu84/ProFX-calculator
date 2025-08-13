@@ -226,7 +226,7 @@ const Educatie = () => {
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
-          📥 Descarcă Curs ProFX - Lecția 1
+          📥 Descarcă Lecția 1 - Introducere 
         </a>
       </div>
       <div className="flex justify-center gap-4 mt-6">
@@ -235,7 +235,7 @@ const Educatie = () => {
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
-          📥 Descarcă Curs ProFX - Lecția 2
+          📥 Descarcă Lecția 2 - Grafice. Lumânări
         </a>
       </div>
       <div className="flex justify-center gap-4 mt-6">
@@ -244,7 +244,7 @@ const Educatie = () => {
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
-          📥 Descarcă Curs ProFX - Lecția 3
+          📥 Descarcă Lecția 3 - Trenduri
         </a>
       </div>
       <div className="flex justify-center gap-4 mt-6">
@@ -253,7 +253,7 @@ const Educatie = () => {
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
-          📥 Descarcă Curs ProFX - Lecția 4
+          📥 Descarcă Lecția 4 - Acțiunea Prețului
         </a>
       </div>
          <div className="flex justify-center gap-4 mt-6">
@@ -262,7 +262,7 @@ const Educatie = () => {
           download
           className="inline-block px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-500"
         >
-          📥 Descarcă Curs ProFX - Lecția 5
+          📥 Descarcă Lecția 5 - Risk Management
         </a>
       </div>
       <div className="text-center mt-6">
