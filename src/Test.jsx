@@ -934,6 +934,133 @@ const BASE_QUESTIONS = {
       },
     ],
   },
+  indicatori: {
+  id: "indicatori",
+  title: "Indicatori Macroeconomici Esențiali",
+  questions: [
+    {
+      id: "q1",
+      prompt: "Ce măsoară PIB-ul unei țări?",
+      choices: [
+        { id: "a", text: "Valoarea bunurilor intermediare produse" },
+        { id: "b", text: "Valoarea monetară a bunurilor și serviciilor finale produse într-o perioadă" },
+        { id: "c", text: "Doar exporturile nete" },
+        { id: "d", text: "Veniturile salariale totale" },
+      ],
+      answerId: "b",
+      explanation: "PIB = valoarea totală a bunurilor și serviciilor finale produse într-o perioadă dată.",
+    },
+    {
+      id: "q2",
+      prompt: "Care este cea mai mare componentă a PIB-ului SUA?",
+      choices: [
+        { id: "a", text: "Investițiile private brute" },
+        { id: "b", text: "Cheltuielile guvernamentale" },
+        { id: "c", text: "Consumului gospodăriilor" },
+        { id: "d", text: "Exporturile nete" },
+      ],
+      answerId: "c",
+      explanation: "Consumului gospodăriilor ≈ 70% din PIB-ul SUA.",
+    },
+    {
+      id: "q3",
+      prompt: "Ce este PIB-ul real?",
+      choices: [
+        { id: "a", text: "PIB calculat la prețurile curente" },
+        { id: "b", text: "PIB ajustat cu inflația pentru a reflecta schimbările reale" },
+        { id: "c", text: "PIB raportat la populație" },
+        { id: "d", text: "PIB-ul maxim teoretic al economiei" },
+      ],
+      answerId: "b",
+      explanation: "PIB real = PIB nominal ajustat cu inflația.",
+    },
+    {
+      id: "q4",
+      prompt: "Ce măsoară raportul Non-Farm Payrolls (NFP)?",
+      choices: [
+        { id: "a", text: "Numărul locurilor de muncă în agricultură" },
+        { id: "b", text: "Schimbarea netă a locurilor de muncă în afara agriculturii din SUA" },
+        { id: "c", text: "Rata șomajului în SUA" },
+        { id: "d", text: "Salariile medii lunare" },
+      ],
+      answerId: "b",
+      explanation: "NFP = numărul locurilor de muncă adăugate sau pierdute, excluzând agricultura.",
+    },
+    {
+      id: "q5",
+      prompt: "De ce este important NFP pentru traderi?",
+      choices: [
+        { id: "a", text: "Nu influențează piețele" },
+        { id: "b", text: "Poate mișca rapid Forex, acțiuni și aur datorită corelării cu politica Fed" },
+        { id: "c", text: "Este relevant doar pentru piața agricolă" },
+        { id: "d", text: "Este calculat o dată la 5 ani" },
+      ],
+      answerId: "b",
+      explanation: "NFP influențează direct așteptările legate de dobânzi și mișcările pe multiple piețe.",
+    },
+    {
+      id: "q6",
+      prompt: "Ce indică o creștere neașteptată a cererilor de șomaj?",
+      choices: [
+        { id: "a", text: "O economie care se întărește" },
+        { id: "b", text: "O posibilă slăbire a economiei și un USD mai slab" },
+        { id: "c", text: "O creștere a exporturilor" },
+        { id: "d", text: "O reducere a șomajului" },
+      ],
+      answerId: "b",
+      explanation: "Mai multe cereri de șomaj = semnal de încetinire economică și așteptări de dobânzi mai mici.",
+    },
+    {
+      id: "q7",
+      prompt: "Ce măsoară rata șomajului U-3?",
+      choices: [
+        { id: "a", text: "Toate persoanele fără loc de muncă, inclusiv cele descurajate" },
+        { id: "b", text: "Procentul persoanelor active care caută activ un loc de muncă" },
+        { id: "c", text: "Doar persoanele care lucrează part-time" },
+        { id: "d", text: "Totalul populației inactive" },
+      ],
+      answerId: "b",
+      explanation: "U-3 = rata oficială a șomajului, include doar persoanele care caută activ un job.",
+    },
+    {
+      id: "q8",
+      prompt: "Care este diferența dintre U-3 și U-6 (ratele șomajului)?",
+      choices: [
+        { id: "a", text: "Nu există nicio diferență" },
+        { id: "b", text: "U-6 include și persoanele descurajate și cele care lucrează part-time forțat" },
+        { id: "c", text: "U-6 măsoară doar șomajul agricol" },
+        { id: "d", text: "U-3 este întotdeauna mai mare decât U-6" },
+      ],
+      answerId: "b",
+      explanation: "U-6 = indicator extins, include și persoane descurajate sau part-time forțat.",
+    },
+    {
+      id: "q9",
+      prompt: "Cum reacționează de obicei EUR/USD la un PIB puternic al SUA?",
+      choices: [
+        { id: "a", text: "EUR/USD crește (USD se slăbește)" },
+        { id: "b", text: "EUR/USD scade (USD se întărește)" },
+        { id: "c", text: "Nu există nicio corelație" },
+        { id: "d", text: "EUR/USD rămâne constant" },
+      ],
+      answerId: "b",
+      explanation: "Un PIB puternic întărește USD, ducând la scăderea perechii EUR/USD.",
+    },
+    {
+      id: "q10",
+      prompt: "De ce contează revizuirile PIB-ului pentru piețe?",
+      choices: [
+        { id: "a", text: "Nu influențează percepția investitorilor" },
+        { id: "b", text: "Schimbă doar datele statistice, dar nu mișcă piața" },
+        { id: "c", text: "Pot schimba complet direcția pieței, chiar dacă publicarea inițială a fost diferită" },
+        { id: "d", text: "Sunt relevante doar pentru exporturi" },
+      ],
+      answerId: "c",
+      explanation: "Revizuirile PIB pot schimba drastic sentimentul pieței și direcția trendurilor.",
+    },
+  ],
+}
+
 };
 
 // ──────────────────────────────────────────────────────────────────────────────

@@ -98,6 +98,11 @@ const Training = () => {
       url: "../public/Curs Inflatie Forex.pdf",
       type: "pdf",
     },
+      {
+      title: "Indicatori Macroeconomici",
+      url: "../public/Indicatori Macroeconomici.pdf",
+      type: "pdf",
+    },
   ];
 
   const advancedLinks = [

@@ -141,7 +141,7 @@ export default function Calculator() {
       <div className="bg-blue-900 bg-opacity-50 p-6 rounded-lg">
         <h3 className="text-lg font-semibold mb-3">💡 Sfaturi pentru managementul riscului:</h3>
         <ul className="space-y-2 text-sm">
-          <li>• Niciodată nu risca mai mult de 1-2% din cont pe un singur trade</li>
+          <li>• Niciodată nu risca mai mult de 1-1.5% din cont pe un singur trade</li>
           <li>• Calculează întotdeauna lotul în funcție de distanța până la stop loss</li>
           <li>• Lotul este rotunjit în jos pentru a nu depăși riscul calculat</li>
           <li>• Verifică de două ori calculele înainte de a deschide poziția</li>

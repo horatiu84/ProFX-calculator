@@ -46,22 +46,26 @@ export default function LotCalculator() {
     const isActive = activeTab === item.key;
     
     let buttonClasses = `
-      relative px-4 py-2 rounded-lg font-medium transition-all duration-200 
-      hover:scale-105 border
+      relative px-4 py-2.5 rounded-xl font-medium transition-all duration-300 
+      ease-in-out hover:scale-105 active:scale-95 shadow-sm hover:shadow-md
+      border border-transparent
     `;
     
     if (isActive) {
       buttonClasses += ` 
-        bg-yellow-500 text-black border-yellow-400 shadow-md
+        bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 
+        shadow-amber-300/20 hover:shadow-amber-300/30
       `;
     } else if (item.isSpecial) {
       buttonClasses += ` 
-        bg-gradient-to-r from-purple-600 to-purple-700 text-white 
-        hover:from-purple-500 hover:to-purple-600 border-purple-500
+        bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
+        hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/20
+        hover:shadow-indigo-500/30
       `;
     } else {
       buttonClasses += ` 
-        bg-gray-800 text-white hover:bg-gray-700 border-gray-700
+        bg-gray-800/80 backdrop-blur-sm text-gray-200 
+        hover:bg-gray-700/80 shadow-gray-700/20 hover:shadow-gray-700/30
       `;
     }
 
@@ -73,7 +77,7 @@ export default function LotCalculator() {
       >
         {item.label}
         {item.isSpecial && (
-          <span className="absolute -top-0.5 right-3 w-2 h-2 text-xs  text-black rounded-full">VIP</span>
+          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold text-indigo-100 bg-indigo-500/80 rounded-full shadow-sm">VIP</span>
         )}
       </button>
     );
@@ -83,22 +87,24 @@ export default function LotCalculator() {
     const isActive = activeTab === item.key;
     
     let buttonClasses = `
-      relative w-full px-4 py-3 rounded-lg font-medium transition-all duration-200
-      border text-left
+      relative w-full px-4 py-3.5 rounded-lg font-medium transition-all duration-300
+      ease-in-out border border-transparent text-left shadow-sm
     `;
     
     if (isActive) {
       buttonClasses += ` 
-        bg-yellow-500 text-black border-yellow-400
+        bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 
+        shadow-amber-300/20
       `;
     } else if (item.isSpecial) {
       buttonClasses += ` 
-        bg-gradient-to-r from-purple-600 to-purple-700 text-white 
-        border-purple-500
+        bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
+        shadow-indigo-500/20
       `;
     } else {
       buttonClasses += ` 
-        bg-gray-800 text-white border-gray-700
+        bg-gray-800/80 backdrop-blur-sm text-gray-200 
+        shadow-gray-700/20
       `;
     }
 
@@ -114,7 +120,7 @@ export default function LotCalculator() {
         <span className="flex items-center justify-between">
           <span>{item.label}</span>
           {item.isSpecial && (
-            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+            <span className="px-1.5 py-0.5 text-xs font-bold text-indigo-100 bg-indigo-500/80 rounded-full shadow-sm">VIP</span>
           )}
         </span>
       </button>
@@ -127,23 +133,23 @@ export default function LotCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white p-6 md:p-8">
       {/* Header */}
-      <div className="flex flex-col items-center mb-6">
+      <div className="flex flex-col items-center mb-8">
         <img 
           src={logo} 
           alt="Logo ProFX" 
-          className="w-80 md:w-96 h-auto" 
-          style={{ width: "350px" }}
+          className="w-64 md:w-80 h-auto mb-2 transition-all duration-300"
+          style={{ maxWidth: "350px" }}
         />
-        <span className="text-xl text-gray-400 mt-2 text-center">
+        <span className="text-lg md:text-xl text-gray-300 font-light tracking-wide">
           Învață să tranzacționezi gratuit, de la zero
         </span>
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden lg:block mb-8">
-        <div className="flex flex-wrap justify-center gap-2">
+      <div className="hidden lg:block mb-10">
+        <div className="flex flex-wrap justify-center gap-3 max-w-7xl mx-auto">
           {menuItems.map(renderDesktopButton)}
         </div>
       </div>
@@ -154,14 +160,15 @@ export default function LotCalculator() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 
-                     flex items-center justify-between transition-colors hover:bg-gray-700"
+            className="w-full bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-3.5 
+                     flex items-center justify-between transition-all duration-300 hover:bg-gray-700/80 
+                     shadow-sm hover:shadow-md active:scale-95"
           >
-            <span className="font-medium">
+            <span className="font-medium text-gray-200">
               {menuItems.find(item => item.key === activeTab)?.label || "Selectează opțiunea"}
             </span>
             <svg
-              className={`w-5 h-5 transition-transform duration-200 ${
+              className={`w-5 h-5 transition-transform duration-300 text-gray-400 ${
                 isMobileMenuOpen ? 'rotate-180' : ''
               }`}
               fill="none"
@@ -174,12 +181,10 @@ export default function LotCalculator() {
 
           {/* Mobile Dropdown Menu */}
           {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 right-0 mt-2 z-50">
-              <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
-                <div className="max-h-96 overflow-y-auto">
-                  <div className="p-2 space-y-1">
-                    {menuItems.map(renderMobileButton)}
-                  </div>
+            <div className="absolute top-full left-0 right-0 mt-2 z-50 animate-fadeIn">
+              <div className="bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+                <div className="max-h-[70vh] overflow-y-auto p-2 space-y-1.5">
+                  {menuItems.map(renderMobileButton)}
                 </div>
               </div>
             </div>
@@ -188,8 +193,8 @@ export default function LotCalculator() {
       </div>
 
       {/* Tablet Navigation */}
-      <div className="hidden md:block lg:hidden mb-8">
-        <div className="grid grid-cols-2 gap-2 max-w-4xl mx-auto">
+      <div className="hidden md:block lg:hidden mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-4xl mx-auto">
           {menuItems.map(renderDesktopButton)}
         </div>
       </div>
