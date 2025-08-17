@@ -87,7 +87,6 @@ export default function Calculator() {
         {accountSize > 0 && (
           <div className="mt-4 text-sm text-gray-400">
             <p>Pentru {selectedPips} pips SL și {riskLabels[selectedRiskIndex]} risc</p>
-            <p>Pierderea maximă: <span className="text-red-400 font-bold">${(accountSize * riskPercent).toFixed(2)}</span></p>
             <div className="mt-3 p-3 bg-blue-800 bg-opacity-50 rounded border-l-4 border-blue-400">
               <p className="text-blue-200 text-xs">
                 ⚠️ Lotul este rotunjit în jos pentru un management mai bun al riscului
