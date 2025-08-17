@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProFXSchedule from "./ProFXSchedule";
 import Educatie from "./educatie";
 import Simulare from "./Simulare";
@@ -16,6 +16,7 @@ import Pierdere from "./Pierdere.jsx";
 export default function LotCalculator() {
   const [activeTab, setActiveTab] = useState("evolutie");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const menuItems = [
     { key: "evolutie", label: "📈 Evoluție", component: <Evolutie /> },
@@ -38,9 +39,41 @@ export default function LotCalculator() {
     { key: "raport", label: "📝 Jurnal", component: <Raport /> },
     { key: "evenimente", label: "🏝️ Evenimente", component: <Evenimente /> },
     { key: "test", label: "📝 Test", component: <Test /> },
-    //{ key: "roadmap", label: "🎯 RoadMap", component: <RoadmapComponent /> },
     { key: "contact", label: "💬 Contact", component: <Contact /> }
   ];
+
+  // Verifică URL parameters la încărcarea componentei
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    
+    const validTabs = menuItems.map(item => item.key);
+    if (tab && validTabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, []);
+
+  // Actualizează URL-ul când se schimbă tab-ul cu animație
+  const handleTabChange = (newTab) => {
+    if (newTab === activeTab) return; // Nu face nimic dacă e același tab
+    
+    setIsTransitioning(true);
+    
+    // Scurt delay pentru animația de fade out
+    setTimeout(() => {
+      setActiveTab(newTab);
+      
+      // Actualizează URL-ul
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('tab', newTab);
+      window.history.pushState({}, '', newUrl);
+      
+      // Scurt delay pentru animația de fade in
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
+    }, 150);
+  };
 
   const renderDesktopButton = (item) => {
     const isActive = activeTab === item.key;
@@ -73,7 +106,7 @@ export default function LotCalculator() {
       <button
         key={item.key}
         className={buttonClasses}
-        onClick={() => setActiveTab(item.key)}
+        onClick={() => handleTabChange(item.key)}
       >
         {item.label}
         {item.isSpecial && (
@@ -113,7 +146,7 @@ export default function LotCalculator() {
         key={item.key}
         className={buttonClasses}
         onClick={() => {
-          setActiveTab(item.key);
+          handleTabChange(item.key);
           setIsMobileMenuOpen(false);
         }}
       >
@@ -157,7 +190,6 @@ export default function LotCalculator() {
       {/* Mobile Navigation */}
       <div className="lg:hidden mb-8">
         <div className="relative">
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="w-full bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-3.5 
@@ -179,7 +211,6 @@ export default function LotCalculator() {
             </svg>
           </button>
 
-          {/* Mobile Dropdown Menu */}
           {isMobileMenuOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 z-50 animate-fadeIn">
               <div className="bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
@@ -199,10 +230,37 @@ export default function LotCalculator() {
         </div>
       </div>
 
-      {/* Content Container */}
-      <div className="content-container">
-        {getCurrentComponent()}
+      {/* Content Container cu animație */}
+      <div className="content-container relative">
+        <div 
+          className={`transition-all duration-300 ease-out ${
+            isTransitioning 
+              ? 'opacity-0 translate-y-2 scale-98' 
+              : 'opacity-100 translate-y-0 scale-100'
+          }`}
+        >
+          {getCurrentComponent()}
+        </div>
+        
+
       </div>
+
+      <style jsx>{`
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
