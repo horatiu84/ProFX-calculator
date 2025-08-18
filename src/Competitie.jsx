@@ -56,7 +56,8 @@ const CompetitionBanner = () => {
           </span>
         </div>
         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-800 text-center mb-4 tracking-tight animate-fade-in">
-          Trading Competition ProFX & FPMarkets
+          Trading Competition ProFX & <span className="text-blue-500">FPM</span>{" "}
+          <span className="text-black">Trading</span>
         </h3>
         <div className="bg-white/90 rounded-xl p-4 sm:p-6 max-w-lg mx-auto mb-6 shadow-lg border border-indigo-200 text-center transform transition-all duration-300 hover:scale-105">
           <h4 className="font-bold text-indigo-800 mb-2 text-lg">
@@ -91,21 +92,25 @@ const CompetitionBanner = () => {
         </div>
         <p className="text-gray-800 text-center mb-6 max-w-2xl mx-auto leading-relaxed animate-fade-in-up">
           ProFX vă invită să participați la <b>TRADING COMPETITION</b> în
-          parteneriat cu <b>FPMarkets</b>, unde vă puteți testa strategiile și
-          abilitățile într-un mediu real, cu șanse de a câștiga premii
-          atractive!
+          parteneriat cu{" "}
+          <b>
+            <span className="text-blue-500">FPM</span>{" "}
+            <span className="text-black">Trading</span>
+          </b>
+          , unde vă puteți testa strategiile și abilitățile într-un mediu real,
+          cu șanse de a câștiga premii atractive!
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <a
-            href="https://smartlnks.com/ProFx"
+            href="https://smartlnks.com/ProFxRomania"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-blue-700 hover:scale-110 transition-transform duration-300 ease-in-out transform animate-pulse-slow"
           >
-            👉 Creează cont FPMarkets
+            👉 Creează cont FPM Trading
           </a>
           <a
-            href="https://youtu.be/5Ov5OR4kEOw"
+            href="https://youtu.be/SnxXpX1Iei8"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-md hover:bg-yellow-500 hover:scale-110 transition-transform duration-300 ease-in-out transform animate-pulse-slow"
@@ -122,7 +127,8 @@ const CompetitionBanner = () => {
               <li>
                 <b>Suma contului:</b> minim 100 USD (cont{" "}
                 <span className="uppercase text-green-700 font-bold">REAL</span>{" "}
-                la FP Markets)
+                la <span className="text-blue-500">FPM</span>{" "}
+                <span className="text-black">Trading</span>)
               </li>
               <li>
                 <b>Tipul contului:</b> Standard sau Raw
@@ -170,7 +176,7 @@ const CompetitionBanner = () => {
               <li className="flex items-center justify-between bg-white/50 rounded-lg p-3 transition-all duration-200 hover:bg-white hover:shadow-md">
                 <span className="font-bold text-blue-700">Locul 4 & 5:</span>
                 <span className="flex items-center">
-                  Travel Backpack FPMarkets{" "}
+                  Travel Backpack FPM Trading{" "}
                   <span className="ml-2 text-blue-500">🎒</span>
                 </span>
               </li>

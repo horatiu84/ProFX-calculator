@@ -7,7 +7,6 @@ import John from "./pics/John.jpg";
 import Eli from "./pics/Eli.jpg";
 import Tudor from "./pics/Tudor.jpg";
 import Dan from "./pics/Dan.jpg";
-import Cosmin from "./pics/Cosmin.jpg";
 import Adrian from "./pics/Adrian.jpg";
 
 /**

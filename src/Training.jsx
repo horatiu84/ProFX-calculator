@@ -82,11 +82,11 @@ const Training = () => {
       url: "https://sirbudcfx.blogspot.com/2025/07/head-and-shoulders-pattern-in-aceasta.html",
     },
     {
-      title: "Masterclass “Divergențe în Trading - cu Mihai Tiepac",
+      title: "Masterclass Divergențe în Trading - cu Mihai Tiepac",
       url: "https://youtu.be/K4diseWETYQ?si=Tc6tHJSVAGmEYN6i",
     },
     {
-      title: "Masterclass “Divergențe în Trading - 2 -cu Mihai Tiepac",
+      title: "Masterclass 'Divergențe în Trading - 2 -cu Mihai Tiepac",
       url: "https://youtu.be/soJP3FEIY08",
     },
     {
@@ -201,6 +201,17 @@ const Training = () => {
     {
       title: "Macro Economie - Ep.1 Inflatie",
       url: "https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f",
+    },
+     {
+      title: "Backtesting Session - 17/08/2025",
+      url: "https://youtu.be/RjdGXZxft5s?si=dAFFjSmwY95u7Dvm",
+    },
+  ];
+
+  const analizeSaptamanale = [
+    {
+      title: "Analiza saptamanala 18 08 2025",
+      url: "https://youtu.be/e2z0ecJj2pQ?si=Pwu51YoUXXt82XHL",
     },
   ];
 
@@ -318,6 +329,26 @@ const Training = () => {
                   {item.type === "pdf" && (
                     <span className="ml-1 text-gray-400"> &#40;download format PDF&#41;</span>
                   )}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-orange-300 mb-3 flex items-center gap-2">
+            📊 Analiză săptămânală macroeconomie
+          </h2>
+          <ol className="space-y-3 list-decimal list-inside">
+            {analizeSaptamanale.map((item, idx) => (
+              <li key={idx}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-orange-400 hover:text-orange-200 underline underline-offset-4 transition"
+                >
+                  {item.title}
                 </a>
               </li>
             ))}
