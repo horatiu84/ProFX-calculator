@@ -56,23 +56,30 @@ export default function LotCalculator() {
     }
   }, []);
 
-  const handleTabChange = (newTab) => {
-    if (newTab === activeTab) return;
+const handleTabChange = (newTab) => {
+  if (newTab === activeTab) return;
+  
+  setIsTransitioning(true);
+  
+  // Scroll la începutul paginii
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // pentru o animație mai frumoasă
+  });
+  
+  setTimeout(() => {
+    setActiveTab(newTab);
     
-    setIsTransitioning(true);
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('tab', newTab);
+    window.history.pushState({}, '', newUrl);
     
     setTimeout(() => {
-      setActiveTab(newTab);
-      
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.set('tab', newTab);
-      window.history.pushState({}, '', newUrl);
-      
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 50);
-    }, 150);
-  };
+      setIsTransitioning(false);
+    }, 50);
+  }, 150);
+};
+
 
   // Sidebar button component
   const SidebarButton = ({ item }) => {
