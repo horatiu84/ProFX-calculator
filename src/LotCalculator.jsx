@@ -217,7 +217,7 @@ export default function LotCalculator() {
                 ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
               `}>
                 <h2 className="font-bold text-white">ProFX Academy</h2>
-                <p className="text-xs text-gray-400">Learning Platform</p>
+                <p className="text-xs text-gray-400">Best place to learn trading</p>
               </div>
             </div>
           </div>
