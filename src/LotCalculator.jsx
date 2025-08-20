@@ -12,9 +12,10 @@ import RoadmapComponent from "./RoadMap.jsx";
 import Evolutie from "./Evolutie.jsx";
 import Calculator from "./Calculator.jsx";
 import Pierdere from "./Pierdere.jsx";
+import Home from "./Home.jsx";
 
 export default function LotCalculator() {
-  const [activeTab, setActiveTab] = useState("evolutie");
+  const [activeTab, setActiveTab] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -53,33 +54,41 @@ export default function LotCalculator() {
     const validTabs = menuItems.map(item => item.key);
     if (tab && validTabs.includes(tab)) {
       setActiveTab(tab);
+    } else {
+      setActiveTab("home");
     }
   }, []);
 
-const handleTabChange = (newTab) => {
-  if (newTab === activeTab) return;
-  
-  setIsTransitioning(true);
-  
-  // Scroll la începutul paginii
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth' // pentru o animație mai frumoasă
-  });
-  
-  setTimeout(() => {
-    setActiveTab(newTab);
+  const handleTabChange = (newTab) => {
+    if (newTab === activeTab) return;
     
-    const newUrl = new URL(window.location);
-    newUrl.searchParams.set('tab', newTab);
-    window.history.pushState({}, '', newUrl);
+    setIsTransitioning(true);
+    
+    // Scroll la început
+    window.scrollTo(0, 0);
     
     setTimeout(() => {
-      setIsTransitioning(false);
-    }, 50);
-  }, 150);
-};
+      setActiveTab(newTab);
+      
+      // Actualizează URL doar dacă nu e home
+      const newUrl = new URL(window.location);
+      if (newTab === "home") {
+        newUrl.searchParams.delete('tab');
+      } else {
+        newUrl.searchParams.set('tab', newTab);
+      }
+      window.history.pushState({}, '', newUrl);
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
+    }, 150);
+  };
 
+  // Funcție pentru a merge la home când se dă click pe logo
+  const goToHome = () => {
+    handleTabChange("home");
+  };
 
   // Sidebar button component
   const SidebarButton = ({ item }) => {
@@ -144,7 +153,34 @@ const handleTabChange = (newTab) => {
     );
   };
 
-  // Mobile button component (păstrat din original)
+  // Logo Section - clickable
+  const LogoSection = ({ isExpanded, onClick }) => (
+    <div className="p-4 border-b border-gray-700/50">
+      <div 
+        className={`
+          flex items-center transition-all duration-300 cursor-pointer
+          hover:bg-gray-800/50 rounded-xl p-2 -m-2
+          ${isExpanded ? 'justify-start' : 'justify-center'}
+        `}
+        onClick={onClick}
+      >
+        <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-gray-900 transition-colors">
+          <span className="text-white font-bold text-sm">
+            Pro<span className="text-yellow-400">FX</span>
+          </span>
+        </div>
+        <div className={`
+          ml-3 transition-all duration-300 overflow-hidden
+          ${isExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
+        `}>
+          <h2 className="font-bold text-white">ProFX Academy</h2>
+          <p className="text-xs text-gray-400">Click pentru home</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Mobile button component
   const renderMobileButton = (item) => {
     const isActive = activeTab === item.key;
     
@@ -190,6 +226,10 @@ const handleTabChange = (newTab) => {
   };
 
   const getCurrentComponent = () => {
+    if (activeTab === "home") {
+      return <Home menuItems={menuItems} onTabSelect={handleTabChange} />;
+    }
+    
     const currentItem = menuItems.find(item => item.key === activeTab);
     return currentItem ? currentItem.component : null;
   };
@@ -208,26 +248,8 @@ const handleTabChange = (newTab) => {
           onMouseEnter={() => setIsSidebarExpanded(true)}
           onMouseLeave={() => setIsSidebarExpanded(false)}
         >
-          {/* Logo Section */}
-          <div className="p-4 border-b border-gray-700/50">
-            <div className={`
-              flex items-center transition-all duration-300
-              ${isSidebarExpanded ? 'justify-start' : 'justify-center'}
-            `}>
-              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">
-                  Pro<span className="text-yellow-400">FX</span>
-                </span>
-              </div>
-              <div className={`
-                ml-3 transition-all duration-300 overflow-hidden
-                ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
-              `}>
-                <h2 className="font-bold text-white">ProFX Academy</h2>
-                <p className="text-xs text-gray-400">Best place to learn trading</p>
-              </div>
-            </div>
-          </div>
+          {/* Logo Section - clickable */}
+          <LogoSection isExpanded={isSidebarExpanded} onClick={goToHome} />
 
           {/* Navigation Items */}
           <nav className="flex-1 p-4">
@@ -255,7 +277,7 @@ const handleTabChange = (newTab) => {
           ${isSidebarExpanded ? 'ml-64' : 'ml-20'}
         `}>
           <div className="p-8">
-            {/* Header */}
+            {/* Header - logo clickable doar pe mobile/tablet */}
             <div className="flex flex-col items-center mb-8">
               <img 
                 src={logo} 
@@ -284,19 +306,23 @@ const handleTabChange = (newTab) => {
         </div>
       </div>
 
-      {/* Mobile/Tablet Layout (păstrat din original) */}
+      {/* Mobile/Tablet Layout */}
       <div className="lg:hidden min-h-screen p-6 md:p-8">
-        {/* Header */}
+        {/* Header - clickable */}
         <div className="flex flex-col items-center mb-8">
           <img 
             src={logo} 
             alt="Logo ProFX" 
-            className="w-64 md:w-80 h-auto mb-2 transition-all duration-300"
+            className="w-64 md:w-80 h-auto mb-2 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
             style={{ maxWidth: "350px" }}
+            onClick={goToHome}
           />
           <span className="text-lg md:text-xl text-gray-300 font-light tracking-wide">
             Învață să tranzacționezi gratuit, de la zero
           </span>
+          {activeTab === "home" && (
+            <p className="text-sm text-gray-400 mt-2">Apasă pe logo oricând pentru a reveni aici</p>
+          )}
         </div>
 
         {/* Mobile Navigation */}
@@ -309,7 +335,8 @@ const handleTabChange = (newTab) => {
                        shadow-sm hover:shadow-md active:scale-95"
             >
               <span className="font-medium text-gray-200">
-                {menuItems.find(item => item.key === activeTab)?.icon} {menuItems.find(item => item.key === activeTab)?.label || "Selectează opțiunea"}
+                {activeTab === "home" ? "🏠 Home" : 
+                 `${menuItems.find(item => item.key === activeTab)?.icon} ${menuItems.find(item => item.key === activeTab)?.label}` || "Selectează opțiunea"}
               </span>
               <svg
                 className={`w-5 h-5 transition-transform duration-300 text-gray-400 ${
