@@ -14,30 +14,30 @@ import Adrian from "./pics/Adrian.jpg";
  * dayOfWeek: 1 = Luni, 2 = Marți, 3 = Miercuri, 4 = Joi, 5 = Vineri, 6 = Sâmbătă, 7 = Duminică
  */
 const weeklyWebinars = [
-  // {
-  //   dayOfWeek: 1, // Luni
-  //   title: "WEBINAR GRATUIT",
-  //   subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
-  //   presenters: "Sergiu Cîrstea & Ionuț Pometcu",
-  //   mentors: [
-  //     { name: "Sergiu Cîrstea", img: Sergiu },
-  //     { name: "Ionuț Pometcu", img: John },
-  //   ],
-  //   ora: 20, // Ora de start (20:00)
-  //   details:
-  //     "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
-  // },
+  {
+    dayOfWeek: 1, // Luni
+    title: "WEBINAR GRATUIT",
+    subtitle: "Ce este tradingul și cum poți învăța Gratuit cu ProFX?",
+    presenters: "Sergiu Cîrstea & Ionuț Pometcu",
+    mentors: [
+      { name: "Sergiu Cîrstea", img: Sergiu },
+      { name: "Ionuț Pometcu", img: John },
+    ],
+    ora: 20, // Ora de start (20:00)
+    details:
+      "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
+  },
   {
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
     subtitle: "Cum să luăm tranzacții în Forex",
     presenters: "Eli & Adrian",
     mentors: [
-      { name: "Eli", img: Eli },
-      { name: "Adrian", img: Adrian },
+      { name: "Tudor", img: Tudor },
+      { name: "Dan", img: Dan },
     ],
     ora: 20,
-    details: "Webinar practic pentru începători, cu Eli și Adrian.",
+    details: "Webinar practic pentru începători, cu Tudor și Dan.",
   },
   {
     dayOfWeek: 4, // Joi
