@@ -21,9 +21,11 @@ const Home = ({ menuItems, onTabSelect }) => {
             className={`
               group relative p-6 rounded-2xl border transition-all duration-300 
               cursor-pointer hover:scale-105 hover:shadow-xl active:scale-95
-              ${item.isSpecial 
-                ? 'bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-indigo-500/30 hover:border-indigo-400/50' 
-                : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-400/50 hover:bg-gray-800/70'
+              ${item.isAfiliere
+                ? 'bg-gradient-to-br from-emerald-600/20 to-teal-600/20 border-emerald-500/30 hover:border-emerald-400/50'
+                : item.isSpecial 
+                  ? 'bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-indigo-500/30 hover:border-indigo-400/50' 
+                  : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-400/50 hover:bg-gray-800/70'
               }
             `}
           >
@@ -31,16 +33,24 @@ const Home = ({ menuItems, onTabSelect }) => {
             <div className="flex items-start justify-between mb-4">
               <div className={`
                 text-4xl p-3 rounded-xl transition-all duration-300 group-hover:scale-110
-                ${item.isSpecial 
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg' 
-                  : 'bg-gray-700/50 group-hover:bg-amber-400/20'
+                ${item.isAfiliere
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg'
+                  : item.isSpecial 
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg' 
+                    : 'bg-gray-700/50 group-hover:bg-amber-400/20'
                 }
               `}>
                 {item.icon}
               </div>
               
               {item.isSpecial && (
-                <span className="px-2 py-1 text-xs font-bold text-indigo-100 bg-indigo-500/80 rounded-full">
+                <span className={`
+                  px-2 py-1 text-xs font-bold rounded-full
+                  ${item.isAfiliere
+                    ? 'text-emerald-100 bg-emerald-500/80'
+                    : 'text-indigo-100 bg-indigo-500/80'
+                  }
+                `}>
                   VIP
                 </span>
               )}
@@ -49,7 +59,12 @@ const Home = ({ menuItems, onTabSelect }) => {
             {/* Titlu */}
             <h3 className={`
               text-xl font-semibold mb-2 transition-colors duration-300
-              ${item.isSpecial ? 'text-indigo-200' : 'text-white group-hover:text-amber-400'}
+              ${item.isAfiliere
+                ? 'text-emerald-200'
+                : item.isSpecial 
+                  ? 'text-indigo-200' 
+                  : 'text-white group-hover:text-amber-400'
+              }
             `}>
               {item.label}
             </h3>

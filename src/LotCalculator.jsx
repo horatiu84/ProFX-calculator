@@ -39,7 +39,14 @@ export default function LotCalculator() {
       isSpecial: true
     },
     { key: "agenda", label: "Agenda ProFX", icon: "🗓️", component: <ProFXSchedule /> },
-    { key: "simulare", label: "Afiliere", icon: "💵", component: <Simulare /> },
+    { 
+      key: "simulare", 
+      label: "Afiliere", 
+      icon: "💵", 
+      component: <Simulare />, 
+      isSpecial: true,
+      isAfiliere: true
+    },
     { key: "raport", label: "Jurnal", icon: "📝", component: <Raport /> },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
@@ -103,9 +110,11 @@ export default function LotCalculator() {
             ease-in-out hover:scale-105 active:scale-95 shadow-sm hover:shadow-md
             ${isActive 
               ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 shadow-amber-300/20 hover:shadow-amber-300/30' 
-              : item.isSpecial
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/20 hover:shadow-indigo-500/30'
-                : 'bg-gray-800/80 backdrop-blur-sm text-gray-200 hover:bg-gray-700/80 shadow-gray-700/20 hover:shadow-gray-700/30'
+              : item.isAfiliere
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-500 hover:to-teal-500 shadow-emerald-500/20 hover:shadow-emerald-500/30'
+                : item.isSpecial
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/20 hover:shadow-indigo-500/30'
+                  : 'bg-gray-800/80 backdrop-blur-sm text-gray-200 hover:bg-gray-700/80 shadow-gray-700/20 hover:shadow-gray-700/30'
             }
           `}
         >
@@ -122,9 +131,12 @@ export default function LotCalculator() {
           
           {item.isSpecial && (
             <span className={`
-              absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold text-indigo-100 
-              bg-indigo-500/80 rounded-full shadow-sm transition-all duration-300
+              absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm transition-all duration-300
               ${isSidebarExpanded ? 'translate-x-0' : 'translate-x-2'}
+              ${item.isAfiliere 
+                ? 'text-emerald-100 bg-emerald-500/80'
+                : 'text-indigo-100 bg-indigo-500/80'
+              }
             `}>
               VIP
             </span>
@@ -141,7 +153,13 @@ export default function LotCalculator() {
           ">
             {item.label}
             {item.isSpecial && (
-              <span className="ml-2 px-1.5 py-0.5 text-xs font-bold text-indigo-100 bg-indigo-500/80 rounded-full">
+              <span className={`
+                ml-2 px-1.5 py-0.5 text-xs font-bold rounded-full
+                ${item.isAfiliere 
+                  ? 'text-emerald-100 bg-emerald-500/80'
+                  : 'text-indigo-100 bg-indigo-500/80'
+                }
+              `}>
                 VIP
               </span>
             )}
@@ -194,6 +212,11 @@ export default function LotCalculator() {
         bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 
         shadow-amber-300/20
       `;
+    } else if (item.isAfiliere) {
+      buttonClasses += ` 
+        bg-gradient-to-r from-emerald-600 to-teal-600 text-white 
+        shadow-emerald-500/20
+      `;
     } else if (item.isSpecial) {
       buttonClasses += ` 
         bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
@@ -218,7 +241,15 @@ export default function LotCalculator() {
         <span className="flex items-center justify-between">
           <span>{item.icon} {item.label}</span>
           {item.isSpecial && (
-            <span className="px-1.5 py-0.5 text-xs font-bold text-indigo-100 bg-indigo-500/80 rounded-full shadow-sm">VIP</span>
+            <span className={`
+              px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm
+              ${item.isAfiliere 
+                ? 'text-emerald-100 bg-emerald-500/80'
+                : 'text-indigo-100 bg-indigo-500/80'
+              }
+            `}>
+              VIP
+            </span>
           )}
         </span>
       </button>

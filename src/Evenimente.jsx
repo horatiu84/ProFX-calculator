@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import HotelImg from "./utils/Hotel.jpg"; // Atenție la calea și denumirea imaginii
+import HotelImg from "./utils/Hotel.jpg"; 
 import CompetitionBanner from "./Competitie";
 import HallOfFameCarousel from "./components/ui/Carusel";
 import FormularInscriereConcurs from "./components/FormularConcurs";

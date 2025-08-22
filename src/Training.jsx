@@ -72,6 +72,115 @@ const Training = () => {
     },
   ];
 
+  const advancedGeneralLinks = [
+    {
+      title: "Lecțiile de la 1 - 8 de pe canalul nostru de Youtube",
+      url: "https://youtube.com/@profx-romania?si=wA7daxrGD2nedUBj",
+    },
+    {
+      title: "Webinar Fakeouts + Fibo",
+      url: "https://youtu.be/F_7HqZYjipM?si=T8hmZTTa4EzuLBXA",
+    },
+    {
+      title: "Cum să executați ideile de Trade ale lui Flaviu",
+      url: "https://youtu.be/fBqbevzaIaU?si=Mkhv_hpvNa-H_JsL",
+    },
+    {
+      title: "Strategie executie actiunea pretului si Q&A",
+      url: "https://youtu.be/92jGomG6dnA",
+    },
+    {
+      title: "Fakeouts + Q&A (Trader Daniel)",
+      url: "https://youtu.be/gJV8eGQTE3I",
+    },
+    {
+      title: "Intrările pe Impuls & liquidity",
+      url: "https://youtu.be/3Wa8vkqHiFg?si=Bohn8hbXmt54L7lv",
+    },
+    {
+      title: "Cand dam o a 2a sansa tranzactiei & Market Structure",
+      url: "https://youtu.be/yYkRlBA_cHs?si=2Ax-urncY2_Kzs2O",
+    },
+    {
+      title: "Corelarea intre timeframe urile M30 si M15",
+      url: "https://youtu.be/iBy8WbNq9bs?si=Uryhns8QgR79ekbr",
+    },
+    {
+      title: "Risk Management 1.0",
+      url: "https://youtu.be/Ai10kdtbNvM?si=xBMzktL-xp5xAvK8",
+    },
+    {
+      title: "Risk Management 2.0",
+      url: "https://youtu.be/iuv_itQfepM?si=ccaph62qj29LMgRZ",
+    },
+    {
+      title: "Sesiune practica pentru avansati - 10/07/2025",
+      url: "https://youtu.be/Lqsq3aF_sKw?si=PKpQ3QOwclYwGSEO",
+    },
+    {
+      title: "Sesiune Practica Mentorat 17.07.2025",
+      url: "https://youtu.be/jbZwc7KCOiw?si=BOHXtNDyUnmKuO2G",
+    },
+    {
+      title: " Fakeouts - Cum le poti gestiona si risk Managementul lor",
+      url: "https://youtu.be/UsPmwdhrl_M?si=leP1b7fzCtkuhw90",
+    },
+  ];
+
+  const backtestingLinks = [
+    {
+      title: "Webinar backtesting si Q&A - 1",
+      url: "https://youtu.be/x7LwzhMsbvo",
+    },
+    {
+      title: "Webinar backtesting si Q&A - 2",
+      url: "https://www.youtube.com/live/rd9Sy8nLlM8?si=Jj3vhPsEGDkGzsC8",
+    },
+    {
+      title: "Webinar Backtesting si Q&A + Viziunea ProFx",
+      url: "https://youtu.be/TsCk6YDlJVs?si=l-n_VhvZ0ta92Qqt",
+    },
+    {
+      title: "Webinar backtesting + Q&A",
+      url: "https://youtu.be/5NEbOwgwkUc?si=jm5XkdP4DGfVvXNg",
+    },
+    {
+      title: "Backtesting Session - 15/06/2025",
+      url: "https://youtu.be/-5Z7re53Uf8?si=37vS7j6RD5C_Nz8E",
+    },
+    {
+      title: "Backtesting XauUsd 22.06.2025",
+      url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
+    },
+    {
+      title: "Backtesting Session 06/07/2025",
+      url: "https://youtu.be/IG7DvagZq7I?si=UUJX0kDhnkBDZoyz",
+    },
+    {
+      title: "Backtesting Session - 13/07/2025",
+      url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI",
+    },
+    {
+      title: "Backtesting Session - 03/08/2025",
+      url: "https://youtu.be/OioK9t2lc8M",
+    },
+    {
+      title: "Backtesting Session - 17/08/2025",
+      url: "https://youtu.be/RjdGXZxft5s?si=dAFFjSmwY95u7Dvm",
+    },
+  ];
+
+  const macroeconomieLinks = [
+    {
+      title: "Macroeconomie - Ep.1 Inflatie",
+      url: "https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f",
+    },
+    {
+      title: "Macroeconomie - PIB",
+      url: "https://youtu.be/4f7-xg7lRhI?si=2oherYO-dG4QxQAs",
+    },
+  ];
+
   const materiale = [
     {
       title: "Ce este un model de tip cupă și mâner? - by Daniel Sarbu",
@@ -98,113 +207,10 @@ const Training = () => {
       url: "../public/Curs Inflatie Forex.pdf",
       type: "pdf",
     },
-      {
+    {
       title: "Indicatori Macroeconomici",
       url: "../public/Indicatori Macroeconomici.pdf",
       type: "pdf",
-    },
-  ];
-
-  const advancedLinks = [
-    {
-      title: "Lecțiile de la 1 - 8 de pe canalul nostru de Youtube",
-      url: "https://youtube.com/@profx-romania?si=wA7daxrGD2nedUBj",
-    },
-    {
-      title: "Webinar Fakeouts + Fibo",
-      url: "https://youtu.be/F_7HqZYjipM?si=T8hmZTTa4EzuLBXA",
-    },
-    {
-      title: "Cum să executați ideile de Trade ale lui Flaviu",
-      url: "https://youtu.be/fBqbevzaIaU?si=Mkhv_hpvNa-H_JsL",
-    },
-    {
-      title: "Strategie executie actiunea pretului si Q&A",
-      url: "https://youtu.be/92jGomG6dnA",
-    },
-    {
-      title: "Webinar backtesting si Q&A - 1",
-      url: "https://youtu.be/x7LwzhMsbvo",
-    },
-    {
-      title: "Webinar backtesting si Q&A - 2",
-      url: "https://www.youtube.com/live/rd9Sy8nLlM8?si=Jj3vhPsEGDkGzsC8",
-    },
-    {
-      title: "Webinar Q&A + Viziunea ProFx",
-      url: "https://youtu.be/TsCk6YDlJVs?si=l-n_VhvZ0ta92Qqt",
-    },
-    {
-      title: "Webinar backtesting + Q&A",
-      url: "https://youtu.be/5NEbOwgwkUc?si=jm5XkdP4DGfVvXNg",
-    },
-    {
-      title: "Webinar backtesting + Q&A (alt link)",
-      url: "https://youtu.be/F_7HqZYjipM?si=vGqR7j_UKxUjV_wU",
-    },
-    {
-      title: "Fakeouts + Q&A (Trader Daniel)",
-      url: "https://youtu.be/gJV8eGQTE3I",
-    },
-    {
-      title: "Intrările pe Impuls & liquidity",
-      url: "https://youtu.be/3Wa8vkqHiFg?si=Bohn8hbXmt54L7lv",
-    },
-    {
-      title: "Cand dam o a 2a sansa tranzactiei & Market Structure",
-      url: "https://youtu.be/yYkRlBA_cHs?si=2Ax-urncY2_Kzs2O",
-    },
-    {
-      title: "Corelarea intre timeframe urile M30 si M15",
-      url: "https://youtu.be/iBy8WbNq9bs?si=Uryhns8QgR79ekbr",
-    },
-    {
-      title: "Backtesting Session - 15/06/2025",
-      url: "https://youtu.be/-5Z7re53Uf8?si=37vS7j6RD5C_Nz8E",
-    },
-    {
-      title: "Risk Management 1.0",
-      url: "https://youtu.be/Ai10kdtbNvM?si=xBMzktL-xp5xAvK8",
-    },
-    {
-      title: "Risk Management 2.0",
-      url: "https://youtu.be/iuv_itQfepM?si=ccaph62qj29LMgRZ",
-    },
-    {
-      title: "Backtesting XauUsd 22.06.2025",
-      url: "https://youtu.be/lpwGUmIFpL0?si=Z3zILXu2_EVSpkPo",
-    },
-    {
-      title: "Backtesting Session 06/07/2025",
-      url: "https://youtu.be/IG7DvagZq7I?si=UUJX0kDhnkBDZoyz",
-    },
-    {
-      title: "Sesiune practica pentru avansati - 10/07/2025",
-      url: "https://youtu.be/Lqsq3aF_sKw?si=PKpQ3QOwclYwGSEO",
-    },
-    {
-      title: "Backtesting Session - 13/07/2025",
-      url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI", //https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f
-    },
-    {
-      title: "Backtesting Session - 03/08/2025",
-      url: "https://youtu.be/OioK9t2lc8M",
-    },
-    {
-      title: "Sesiune Practica Mentorat 17.07.2025",
-      url: "https://youtu.be/jbZwc7KCOiw?si=BOHXtNDyUnmKuO2G",
-    },
-    {
-      title: " Fakeouts - Cum le poti gestiona si risk Managementul lor",
-      url: "https://youtu.be/UsPmwdhrl_M?si=leP1b7fzCtkuhw90",
-    },
-    {
-      title: "Macro Economie - Ep.1 Inflatie",
-      url: "https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f",
-    },
-     {
-      title: "Backtesting Session - 17/08/2025",
-      url: "https://youtu.be/RjdGXZxft5s?si=dAFFjSmwY95u7Dvm",
     },
   ];
 
@@ -293,16 +299,56 @@ const Training = () => {
 
         <section className="mb-8">
           <h2 className="text-xl font-bold text-yellow-300 mb-3 flex items-center gap-2">
-            🟠 Avansați
+            🟠 Avansați - Lecții generale
           </h2>
           <ol className="space-y-3 list-decimal list-inside">
-            {advancedLinks.map((item, idx) => (
+            {advancedGeneralLinks.map((item, idx) => (
               <li key={idx}>
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-yellow-300 hover:text-yellow-100 underline underline-offset-4 transition"
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-red-300 mb-3 flex items-center gap-2">
+            📈 Sesiuni Backtesting
+          </h2>
+          <ol className="space-y-3 list-decimal list-inside">
+            {backtestingLinks.map((item, idx) => (
+              <li key={idx}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-400 hover:text-red-200 underline underline-offset-4 transition"
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-green-300 mb-3 flex items-center gap-2">
+            🌍 Macroeconomie
+          </h2>
+          <ol className="space-y-3 list-decimal list-inside">
+            {macroeconomieLinks.map((item, idx) => (
+              <li key={idx}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-400 hover:text-green-200 underline underline-offset-4 transition"
                 >
                   {item.title}
                 </a>
@@ -327,7 +373,10 @@ const Training = () => {
                 >
                   {item.title}
                   {item.type === "pdf" && (
-                    <span className="ml-1 text-gray-400"> &#40;download format PDF&#41;</span>
+                    <span className="ml-1 text-gray-400">
+                      {" "}
+                      &#40;download format PDF&#41;
+                    </span>
                   )}
                 </a>
               </li>

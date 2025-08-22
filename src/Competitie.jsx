@@ -102,7 +102,7 @@ const CompetitionBanner = () => {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <a
-            href="https://smartlnks.com/ProFxRomania"
+            href="https://smartlnks.com/PROFX-Romania"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-blue-700 hover:scale-110 transition-transform duration-300 ease-in-out transform animate-pulse-slow"
