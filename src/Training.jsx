@@ -1,4 +1,4 @@
-Pimport React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import FlipCard from "./FlipCard";
