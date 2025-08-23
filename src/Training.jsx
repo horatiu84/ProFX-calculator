@@ -213,7 +213,7 @@ const Training = () => {
       type: "pdf",
     },
      {
-      title: "Intelegerea PIB-ulu",
+      title: "Înțelegerea PIB-ului: Coloana vertebral a analizei economice",
       url: "../public/Intelegerea PIB-ului.pdf",
       type: "pdf",
     },
