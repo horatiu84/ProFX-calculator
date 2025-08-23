@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+Pimport React, { useState, useEffect } from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import FlipCard from "./FlipCard";
@@ -176,7 +176,7 @@ const Training = () => {
       url: "https://youtu.be/IPtfRhvQJgs?si=dRMTSPR9yPZ9Ap6f",
     },
     {
-      title: "Macroeconomie - PIB",
+      title: "Macroeconomie - EP.2 PIB",
       url: "https://youtu.be/4f7-xg7lRhI?si=2oherYO-dG4QxQAs",
     },
   ];
@@ -266,10 +266,10 @@ const Training = () => {
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 max-w-3xl mx-auto">
       <div className="max-w-2xl mx-auto bg-gray-900 rounded-2xl shadow-2xl p-8">
         <h1 className="text-3xl font-extrabold text-blue-400 mb-2 text-center">
-          Salutare ProFx Fam!
+          Bun venit la Sectiunea Training!
         </h1>
         <p className="text-gray-300 text-center mb-6">
-          Cei care v-ați alăturat comunității în ultima perioadă:
+          Cei care v-ați alăturat comunității:
           <br />
           Aveți aici înregistrarea webinariilor despre execuție{" "}
           <span className="font-bold text-blue-300">PRICE ACTION</span> și
@@ -278,7 +278,7 @@ const Training = () => {
 
         <div className="bg-blue-950 rounded-lg p-4 mb-6">
           <p className="text-blue-200 font-semibold text-center">
-            Vă recomand să treceți prin ele cu pix și foaie!
+            Recomandat este să treceți prin ele cu pix și foaie!
             <br />
             <span className="italic text-blue-400">
               Note takers are money makers!
