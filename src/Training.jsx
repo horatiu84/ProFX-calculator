@@ -212,6 +212,11 @@ const Training = () => {
       url: "../public/Indicatori Macroeconomici.pdf",
       type: "pdf",
     },
+     {
+      title: "Intelegerea PIB-ulu",
+      url: "../public/Intelegerea PIB-ului.pdf",
+      type: "pdf",
+    },
   ];
 
   const analizeSaptamanale = [
