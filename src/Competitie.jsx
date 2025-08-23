@@ -7,13 +7,43 @@ const CompetitionBanner = () => {
     minutes: 0,
     seconds: 0,
   });
+  const [phase, setPhase] = useState(""); // "waiting", "running", "ended"
 
   useEffect(() => {
-    const endDate = new Date("2025-08-22T23:59:00");
-
     const updateTimer = () => {
       const now = new Date();
-      const timeDifference = endDate - now;
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+      
+      // Data de început a concursului curent (1 a lunii curente)
+      const startDate = new Date(currentYear, currentMonth, 1, 0, 0, 0);
+      
+      // Data de sfârșit a concursului curent (19 a lunii curente, 23:59:59)
+      const endDate = new Date(currentYear, currentMonth, 19, 23, 59, 59);
+      
+      // Data de început a concursului următor (1 a lunii următoare)
+      const nextStartDate = new Date(currentYear, currentMonth + 1, 1, 0, 0, 0);
+
+      let targetDate;
+      let currentPhase;
+
+      if (now < startDate) {
+        // Înainte de începerea concursului
+        targetDate = startDate;
+        currentPhase = "waiting";
+      } else if (now >= startDate && now <= endDate) {
+        // În timpul concursului
+        targetDate = endDate;
+        currentPhase = "running";
+      } else {
+        // După terminarea concursului, așteaptă următorul
+        targetDate = nextStartDate;
+        currentPhase = "waiting";
+      }
+
+      setPhase(currentPhase);
+
+      const timeDifference = targetDate - now;
 
       if (timeDifference <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -38,6 +68,30 @@ const CompetitionBanner = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Funcție pentru a obține textul corespunzător fazei
+  const getTimerText = () => {
+    switch (phase) {
+      case "waiting":
+        return "Timp rămas până începe concursul:";
+      case "running":
+        return "Timp rămas până la finalul concursului:";
+      default:
+        return "Timp rămas:";
+    }
+  };
+
+  // Funcție pentru a obține culoarea corespunzătoare fazei
+  const getTimerColor = () => {
+    switch (phase) {
+      case "waiting":
+        return "text-blue-800";
+      case "running":
+        return "text-red-800";
+      default:
+        return "text-indigo-800";
+    }
+  };
+
   return (
     <div className="relative bg-gradient-to-br from-blue-100 via-indigo-100 to-yellow-200 rounded-3xl shadow-xl max-w-3xl md:max-w-5xl  mx-auto my-10 overflow-hidden border border-blue-300 transition-all duration-300 hover:shadow-2xl">
       {/* Subtle background animation */}
@@ -55,13 +109,35 @@ const CompetitionBanner = () => {
             🚨
           </span>
         </div>
+        
+        {/* Status indicators */}
+        {phase === "waiting" && (
+          <div className="text-center mb-6">
+            <div className="inline-block bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
+              ✅ ÎNSCRIERILE SUNT DESCHISE! ✅
+            </div>
+            <p className="text-lg font-semibold text-green-700 max-w-2xl mx-auto">
+              🎯 Completează formularul de mai jos pentru a te înscrie la următorul concurs și să-ți asiguri locul în competiție!
+            </p>
+          </div>
+        )}
+        
+        {phase === "running" && (
+          <div className="text-center mb-4">
+            <span className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
+              🔥 CONCURSUL ESTE ÎN DESFĂȘURARE! 🔥
+            </span>
+          </div>
+        )}
+        
         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-800 text-center mb-4 tracking-tight animate-fade-in">
           Trading Competition ProFX & <span className="text-blue-500">FPM</span>{" "}
           <span className="text-black">Trading</span>
         </h3>
+        
         <div className="bg-white/90 rounded-xl p-4 sm:p-6 max-w-lg mx-auto mb-6 shadow-lg border border-indigo-200 text-center transform transition-all duration-300 hover:scale-105">
-          <h4 className="font-bold text-indigo-800 mb-2 text-lg">
-            Timp rămas până la finalul concursului:
+          <h4 className={`font-bold mb-2 text-lg ${getTimerColor()}`}>
+            {getTimerText()}
           </h4>
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
             <div className="flex flex-col items-center bg-yellow-400 rounded-lg p-2 animate-bounce-slow">
@@ -90,6 +166,7 @@ const CompetitionBanner = () => {
             </div>
           </div>
         </div>
+
         <p className="text-gray-800 text-center mb-6 max-w-2xl mx-auto leading-relaxed animate-fade-in-up">
           ProFX vă invită să participați la <b>TRADING COMPETITION</b> în
           parteneriat cu{" "}
@@ -100,6 +177,7 @@ const CompetitionBanner = () => {
           , unde vă puteți testa strategiile și abilitățile într-un mediu real,
           cu șanse de a câștiga premii atractive!
         </p>
+        
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <a
             href="https://smartlnks.com/PROFX-Romania"
@@ -118,6 +196,7 @@ const CompetitionBanner = () => {
             ▶ Tutorial înregistrare
           </a>
         </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white/90 rounded-xl p-5 shadow-md border border-indigo-200 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-left">
             <h4 className="font-bold text-indigo-800 mb-3 text-center text-lg">
@@ -137,7 +216,7 @@ const CompetitionBanner = () => {
                 <b>Data de start:</b> Începe în prima zi a fiecărei luni
               </li>
               <li>
-                <b>Perioada concursului:</b> 3 săptămâni
+                <b>Perioada concursului:</b> 3 săptămâni (până pe 19 a lunii)
               </li>
               <li>
                 <b>Drawdown:</b> LIBER{" "}
@@ -183,6 +262,7 @@ const CompetitionBanner = () => {
             </ul>
           </div>
         </div>
+        
         <div className="mb-6 bg-indigo-50/90 rounded-xl p-5 shadow-md border border-indigo-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up">
           <h4 className="font-bold text-indigo-900 mb-2 text-center text-lg">
             Cum se stabilește câștigătorul:
@@ -202,6 +282,7 @@ const CompetitionBanner = () => {
             </li>
           </ol>
         </div>
+        
         <div className="mb-6 text-center animate-fade-in">
           <span className="text-red-700 font-bold uppercase text-lg block mb-2 animate-bounce">
             🚨 Toată lumea trebuie să își lege contul la MyFXbook! 🚨
@@ -215,15 +296,39 @@ const CompetitionBanner = () => {
             MyFXbook Video
           </a>
         </div>
+        
         <div className="text-center text-gray-800 mb-4 max-w-2xl mx-auto animate-fade-in-up delay-200">
           Vă așteptăm să vă alăturați acestei provocări și să demonstrați că
           știți să gestionați riscul și să vă maximizați profitul!
         </div>
+        
+        {phase === "waiting" && (
+          <div className="text-center bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 mb-4 border-2 border-blue-200 animate-fade-in-up delay-100">
+            <div className="text-lg font-bold text-blue-800 mb-2">
+              📝 Înscrie-te ACUM pentru următorul concurs!
+            </div>
+            <div className="text-green-700 font-semibold">
+              Completează formularul de mai jos și asigură-ți locul în competiție! 🎯
+            </div>
+          </div>
+        )}
+        
         <div className="text-center text-sm text-gray-700 mb-4 animate-fade-in-up delay-300">
-          Pentru înscriere completați formularul de mai jos!
+          {phase === "waiting" ? (
+            <>
+              Pentru înscriere completează formularul de mai jos!
+              <br />
+              <span className="text-blue-600 font-bold">Nu rata șansa de a participa!</span>
+            </>
+          ) : (
+            <>
+              Pentru informații suplimentare, contactează echipa ProFX!
+            </>
+          )}
           <br />
           Comunitatea <b>PROFX</b>
         </div>
+        
         <div className="text-center font-bold text-green-700 text-lg animate-fade-in-up delay-400">
           Mult succes și tranzacții profitabile!
           <br />
