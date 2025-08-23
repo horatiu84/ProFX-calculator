@@ -219,6 +219,10 @@ const Training = () => {
       title: "Analiza saptamanala 18 08 2025",
       url: "https://youtu.be/e2z0ecJj2pQ?si=Pwu51YoUXXt82XHL",
     },
+    {
+      title: "Analiza saptamanala 22 08 2025",
+      url: "https://youtu.be/0ujRUpll_Ao?si=ryhpYYbq3xn0ZMm7",
+    },
   ];
 
   if (!accessGranted) {

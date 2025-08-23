@@ -323,7 +323,7 @@ const Educatie = () => {
             <div className="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center mr-4">
               <BookOpen className="w-6 h-6 text-blue-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Lecții de Curs</h2>
+            <h2 className="text-2xl font-bold text-white">Lecții în format PDF</h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -370,7 +370,7 @@ const Educatie = () => {
             <div className="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center mr-4">
               <Download className="w-6 h-6 text-green-400" />
             </div>
-            Resurse Adiționale
+            Resurse Adiționale PDF
           </h2>
 
           <div className="grid md:grid-cols-2 gap-6">
