@@ -156,7 +156,7 @@ export default function Pierdere() {
 
       {/* Sfaturi */}
       <div className="mt-6 bg-blue-900 bg-opacity-50 p-4 rounded-lg">
-        <h4 className="font-semibold mb-2">💡 Sfaturi pentru managementul riscului:</h4>
+        <h4 className="font-semibold mb-2">💡 Ghid pentru managementul riscului:</h4>
         <ul className="text-sm space-y-1 text-gray-200">
           <li>• Niciodată nu risca mai mult de 1-1.5% din cont pe un trade</li>
           <li>• Dacă rezultatul devine roșu, redu lotul sau ajusteaza SL</li>
