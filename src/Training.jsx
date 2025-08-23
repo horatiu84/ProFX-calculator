@@ -204,17 +204,17 @@ const Training = () => {
     },
     {
       title: "Curs inflatie Forex ",
-      url: "../public/Curs Inflatie Forex.pdf",
+      url: "/Curs Inflatie Forex.pdf",
       type: "pdf",
     },
     {
       title: "Indicatori Macroeconomici",
-      url: "../public/Indicatori Macroeconomici.pdf",
+      url: "/Indicatori Macroeconomici.pdf",
       type: "pdf",
     },
      {
       title: "Înțelegerea PIB-ului: Coloana vertebral a analizei economice",
-      url: "../public/Intelegerea PIB-ului.pdf",
+      url: "/Intelegerea PIB-ului.pdf",
       type: "pdf",
     },
   ];
