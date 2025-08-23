@@ -10,6 +10,7 @@ const Home = ({ menuItems, onTabSelect }) => {
         </h1>
         <p className="text-xl text-gray-300 max-w-3xl mx-auto">
           Învață trading simplu, rapid și eficient – totul într-un singur loc. 
+          
           Alege una dintre opțiunile de mai jos pentru a începe călătoria ta în lumea Forex.
         </p>
       </div>
