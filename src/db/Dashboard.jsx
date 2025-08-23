@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -32,6 +32,9 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState("data-desc");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updatingId, setUpdatingId] = useState(null); // Pentru loading pe toggle
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmData, setConfirmData] = useState({ id: null, currentVerified: null, nume: "" });
 
   const [feedbackAnonim, setFeedbackAnonim] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
@@ -98,6 +101,43 @@ const Dashboard = () => {
       setError("Eroare la încărcare: " + err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Funcție pentru deschiderea modalului de confirmare
+  const openConfirmModal = (id, currentVerified, nume) => {
+    setConfirmData({ id, currentVerified, nume });
+    setShowConfirmModal(true);
+  };
+
+  // Funcție pentru închiderea modalului
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+    setConfirmData({ id: null, currentVerified: null, nume: "" });
+  };
+
+  // Funcție pentru toggle verified status cu confirmare
+  const confirmToggleVerified = async () => {
+    const { id, currentVerified } = confirmData;
+    setUpdatingId(id);
+    closeConfirmModal();
+    
+    try {
+      const docRef = doc(db, "inscrieri", id);
+      await updateDoc(docRef, {
+        verified: !currentVerified
+      });
+      
+      // Actualizez datele local
+      const updatedAllInscrieri = allInscrieri.map(item => 
+        item.id === id ? { ...item, verified: !currentVerified } : item
+      );
+      setAllInscrieri(updatedAllInscrieri);
+      applyFiltersAndSort(updatedAllInscrieri);
+    } catch (err) {
+      setError("Eroare la actualizarea statusului: " + err.message);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -195,6 +235,24 @@ const Dashboard = () => {
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
     applyFiltersAndSort(allInscrieri);
+  };
+
+  // Export cu verified status
+  const exportInscrieriToExcel = () => {
+    if (inscrieri.length === 0) return;
+    const dataToExport = inscrieri.map((item, idx) => ({
+      Nr: idx + 1,
+      Nume: item.nume || "",
+      Telefon: item.telefon || "",
+      Email: item.email || "",
+      Verificat: item.verified ? "DA" : "NU",
+      "Data Creării": formatDate(item.createdAt),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Înscrieri");
+    XLSX.writeFile(workbook, "inscrieri-profx.xlsx");
   };
 
   // --- FEEDBACK: SORTARE & PAGINARE ---
@@ -352,18 +410,27 @@ const Dashboard = () => {
         </button>
       </form>
 
-      <div className="mb-4">
-        <label className="text-gray-300 mr-2">Sortare:</label>
-        <select
-          value={sortBy}
-          onChange={handleSortChange}
-          className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
+      <div className="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+        <div>
+          <label className="text-gray-300 mr-2">Sortare:</label>
+          <select
+            value={sortBy}
+            onChange={handleSortChange}
+            className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
+          >
+            <option value="data-desc">Data (recentă primul)</option>
+            <option value="data-asc">Data (veche primul)</option>
+            <option value="nume-asc">Nume (A-Z)</option>
+            <option value="nume-desc">Nume (Z-A)</option>
+          </select>
+        </div>
+        
+        <button
+          onClick={exportInscrieriToExcel}
+          className="p-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
         >
-          <option value="data-desc">Data (recentă primul)</option>
-          <option value="data-asc">Data (veche primul)</option>
-          <option value="nume-asc">Nume (A-Z)</option>
-          <option value="nume-desc">Nume (Z-A)</option>
-        </select>
+          Exportă Înscrieri în Excel
+        </button>
       </div>
 
       {error && <p className="text-red-400 mb-4 text-center">{error}</p>}
@@ -377,6 +444,7 @@ const Dashboard = () => {
                 <th className="p-2 border border-gray-700">Nume</th>
                 <th className="p-2 border border-gray-700">Telefon</th>
                 <th className="p-2 border border-gray-700">Email</th>
+                <th className="p-2 border border-gray-700">Verificat</th>
                 <th className="p-2 border border-gray-700">Data Creării</th>
               </tr>
             </thead>
@@ -389,6 +457,25 @@ const Dashboard = () => {
                       {item.telefon}
                     </td>
                     <td className="p-2 border border-gray-700">{item.email}</td>
+                    <td className="p-2 border border-gray-700 text-center">
+                      <button
+                        onClick={() => openConfirmModal(item.id, item.verified, item.nume)}
+                        disabled={updatingId === item.id}
+                        className={`px-3 py-1 rounded text-sm font-semibold min-w-[70px] ${
+                          item.verified
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-red-600 hover:bg-red-700 text-white"
+                        } ${updatingId === item.id ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        {updatingId === item.id ? (
+                          "..."
+                        ) : item.verified ? (
+                          "DA"
+                        ) : (
+                          "NU"
+                        )}
+                      </button>
+                    </td>
                     <td className="p-2 border border-gray-700">
                       {formatDate(item.createdAt)}
                     </td>
@@ -396,7 +483,7 @@ const Dashboard = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="p-2 text-center">
+                  <td colSpan="5" className="p-2 text-center">
                     Nicio înscriere găsită.
                   </td>
                 </tr>
@@ -658,6 +745,43 @@ const Dashboard = () => {
       >
         Înapoi în aplicație
       </a>
+
+      {/* Modal de confirmare */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold text-white mb-4">
+              Confirmare modificare status
+            </h3>
+            <p className="text-gray-300 mb-6">
+              Ești sigur că vrei să schimbi statusul de verificare pentru{" "}
+              <span className="font-semibold text-blue-400">{confirmData.nume}</span>{" "}
+              din{" "}
+              <span className={`font-semibold ${confirmData.currentVerified ? 'text-green-400' : 'text-red-400'}`}>
+                {confirmData.currentVerified ? "VERIFICAT" : "NEVERIFICAT"}
+              </span>{" "}
+              în{" "}
+              <span className={`font-semibold ${!confirmData.currentVerified ? 'text-green-400' : 'text-red-400'}`}>
+                {!confirmData.currentVerified ? "VERIFICAT" : "NEVERIFICAT"}
+              </span>?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={closeConfirmModal}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={confirmToggleVerified}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Confirmă
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
