@@ -5,6 +5,7 @@ import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
 import logo from "../src/logo.jpg";
+import brainIcon from "../src/brainIcon.png";
 import Evenimente from "./Evenimente.jsx";
 import Contact from "./Contact.jsx";
 import Test from "./Test.jsx";
@@ -14,11 +15,321 @@ import Calculator from "./Calculator.jsx";
 import Pierdere from "./Pierdere.jsx";
 import Home from "./Home.jsx";
 
+// Brain Loading Screen Component
+const BrainLoadingScreen = ({ onLoadingComplete }) => {
+  const [progress, setProgress] = useState(0);
+  const [showItems, setShowItems] = useState(false);
+  const [visibleItems, setVisibleItems] = useState([]);
+
+  const menuItems = [
+    { key: "evolutie", label: "Evoluție", icon: "📈", angle: 0 },
+    { key: "lot", label: "Calculator Lot", icon: "📉", angle: 32.7 },
+    { key: "pierdere", label: "Pierdere manuală", icon: "⚙️", angle: 65.4 },
+    { key: "educatie", label: "Educație", icon: "ℹ️", angle: 98.1 },
+    { key: "training", label: "Training", icon: "🧑‍🏫", angle: 130.8 },
+    { key: "agenda", label: "Agenda ProFX", icon: "🗓️", angle: 163.5 },
+    { key: "simulare", label: "Afiliere", icon: "💵", angle: 196.2 },
+    { key: "raport", label: "Jurnal", icon: "📝", angle: 228.9 },
+    { key: "evenimente", label: "Evenimente", icon: "🏝️", angle: 261.6 },
+    { key: "test", label: "Test", icon: "📋", angle: 294.3 },
+    { key: "contact", label: "Contact", icon: "💬", angle: 327 }
+  ];
+
+  useEffect(() => {
+    // Prima fază: arată creierul
+    const timer1 = setTimeout(() => {
+      setShowItems(true);
+      
+      // Fă elementele să apară progresiv, una câte una - 4 secunde total
+      menuItems.forEach((_, index) => {
+        setTimeout(() => {
+          setVisibleItems(prev => [...prev, index]);
+        }, index * 300); // 11 elemente × 364ms ≈ 4000ms
+      });
+    }, 500);
+
+    // Progres gradual pentru 4 secunde total
+    const progressTimer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressTimer);
+          setTimeout(() => {
+            onLoadingComplete();
+          }, 500);
+          return 100;
+        }
+        return prev + 2.5; // 100 / (4000ms / 100ms) = 2.5 pentru 4 secunde
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timer1);
+      clearInterval(progressTimer);
+    };
+  }, [onLoadingComplete]);
+
+  return (
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-900 flex items-center justify-center z-50 overflow-hidden">
+      {/* Background neural network effect */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-gradient-radial from-amber-400/20 via-transparent to-transparent"></div>
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-amber-400/30 rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative w-full h-full flex items-center justify-center">
+        {/* Main container - ajustat pentru mobil */}
+        <div className="relative w-80 h-80 md:w-96 md:h-96">
+          {/* Brain in center - ajustat pentru mobil */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 z-10" 
+               style={{ top: window.innerWidth <= 768 ? '15%' : '50%', transform: 'translateX(-50%) translateY(-50%)' }}>
+            <div className="relative">
+              {/* Brain glow effect */}
+              <div className="absolute inset-0 bg-gradient-radial from-amber-400/40 via-amber-400/20 to-transparent rounded-full blur-xl scale-150 animate-pulse"></div>
+              
+              {/* Brain icon with pulsing effect - dimensiune ajustată pentru mobil */}
+              <div className={`
+                filter drop-shadow-2xl transition-all duration-1000 flex items-center justify-center
+                ${showItems ? 'animate-pulse scale-110' : 'scale-100'}
+              `}>
+                <img 
+                  src={brainIcon}
+                  alt="Brain Icon"
+                  className="w-16 h-16 md:w-24 md:h-24 object-contain"
+                  style={{ 
+                    filter: 'brightness(1.2) drop-shadow(0 0 20px rgba(251, 191, 36, 0.5))',
+                    transition: 'all 0.3s ease'
+                  }}
+                />
+              </div>
+
+              {/* Neural activity circles - ajustate pentru mobil */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute rounded-full border-2 border-amber-400/30 animate-ping"
+                    style={{
+                      width: `${(window.innerWidth <= 768 ? 80 : 120) + i * (window.innerWidth <= 768 ? 30 : 40)}px`,
+                      height: `${(window.innerWidth <= 768 ? 80 : 120) + i * (window.innerWidth <= 768 ? 30 : 40)}px`,
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: '2s'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Menu items orbiting around brain - ajustat pentru mobil */}
+          {showItems && menuItems.map((item, index) => {
+            const isVisible = visibleItems.includes(index);
+            const radius = window.innerWidth <= 768 ? 120 : 180; // Raza mai mică pe mobil
+            const angle = (item.angle * Math.PI) / 180;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            const brainTopOffset = window.innerWidth <= 768 ? '15%' : '50%';
+
+            return (
+              <div key={item.key} className="absolute left-1/2 transform -translate-x-1/2" 
+                   style={{ top: brainTopOffset, transform: 'translateX(-50%) translateY(-50%)' }}>
+                {/* Connection line to brain - linie simplă cu div, perfect centrată */}
+                {isVisible && (
+                  <div
+                    className="absolute bg-gradient-to-r from-amber-400/60 to-amber-400/10 animate-pulse-slow"
+                    style={{
+                      width: `${radius}px`,
+                      height: '1.5px',
+                      left: '0px',
+                      top: '0px',
+                      transformOrigin: '0 50%',
+                      transform: `rotate(${item.angle}deg)`,
+                      filter: 'drop-shadow(0 0 3px rgba(251, 191, 36, 0.3))',
+                      animationDelay: `${index * 0.1}s`,
+                      opacity: isVisible ? 1 : 0,
+                      transition: 'opacity 0.5s ease-in-out, transform 0.7s ease-out',
+                      transitionDelay: `${index * 36}ms`,
+                      zIndex: 1
+                    }}
+                  />
+                )}
+
+                {/* Menu item - cu animație de apariție graduală, dimensiune ajustată */}
+                <div
+                  className={`
+                    absolute flex flex-col items-center transition-all duration-700 ease-out z-10
+                    ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-4'}
+                  `}
+                  style={{
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    transform: 'translate(-50%, -50%)',
+                    transitionDelay: `${index * 36}ms`
+                  }}
+                >
+                  {/* Item glow */}
+                  <div className="absolute inset-0 bg-gradient-radial from-amber-400/20 via-transparent to-transparent rounded-full blur-lg scale-150"></div>
+                  
+                  {/* Item container - dimensiune ajustată pentru mobil */}
+                  <div className="relative bg-gray-800/70 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-3 border border-amber-400/20 shadow-lg hover:scale-110 transition-transform">
+                    <div className="text-lg md:text-2xl mb-1 filter drop-shadow-sm">
+                      {item.icon}
+                    </div>
+                    <div className="text-xs text-amber-200 font-medium text-center whitespace-nowrap max-w-16 md:max-w-20 truncate">
+                      {item.label}
+                    </div>
+                  </div>
+
+                  {/* Floating particles around item - cu animație mai lentă */}
+                  {isVisible && [...Array(2)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 bg-amber-400/40 rounded-full animate-float-slow"
+                      style={{
+                        left: `${Math.random() * 40 - 20}px`,
+                        top: `${Math.random() * 40 - 20}px`,
+                        animationDelay: `${Math.random() * 3}s`,
+                        animationDuration: `${3 + Math.random() * 2}s`
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ProFX Logo and progress - ajustat pentru mobil */}
+        <div className="absolute bottom-16 md:bottom-20 left-1/2 transform -translate-x-1/2 text-center px-4">
+          <div className="mb-4 md:mb-6">
+            <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
+              Pro<span className="text-amber-400">FX</span> Academy
+            </h1>
+            <p className="text-gray-400 text-xs md:text-sm">Inițializare sistem de învățare...</p>
+          </div>
+
+          {/* Progress bar - ajustat pentru mobil */}
+          <div className="w-48 md:w-64 h-2 bg-gray-800 rounded-full overflow-hidden mx-auto">
+            <div
+              className="h-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="mt-2 text-amber-400 text-sm font-medium">
+            {Math.round(progress)}%
+          </div>
+        </div>
+
+        {/* Neural network connections background - ajustat pentru mobil */}
+        {showItems && (
+          <div className="absolute inset-0 pointer-events-none">
+            {menuItems.map((item, i) => (
+              menuItems.slice(i + 1).map((item2, j) => {
+                const actualJ = i + 1 + j;
+                if (Math.random() > 0.2) return null; // Mai puține conexiuni
+                
+                const radius = window.innerWidth <= 768 ? 120 : 180;
+                const centerOffset = window.innerWidth <= 768 ? 96 : 192; // Ajustat pentru poziția brain-ului
+                const x1 = centerOffset + Math.cos((item.angle * Math.PI) / 180) * radius;
+                const y1 = centerOffset + Math.sin((item.angle * Math.PI) / 180) * radius;
+                const x2 = centerOffset + Math.cos((item2.angle * Math.PI) / 180) * radius;
+                const y2 = centerOffset + Math.sin((item2.angle * Math.PI) / 180) * radius;
+
+                const bothVisible = visibleItems.includes(i) && visibleItems.includes(actualJ);
+
+                return bothVisible ? (
+                  <svg 
+                    key={`${i}-${actualJ}`} 
+                    className="absolute left-1/2 transform -translate-x-1/2 w-80 h-80 md:w-96 md:h-96"
+                    style={{ top: window.innerWidth <= 768 ? '15%' : '50%', transform: 'translateX(-50%) translateY(-50%)' }}
+                  >
+                    <line
+                      x1={x1} y1={y1}
+                      x2={x2} y2={y2}
+                      stroke="rgba(251, 191, 36, 0.06)"
+                      strokeWidth="0.8"
+                      className="animate-pulse-slow"
+                      style={{ 
+                        animationDelay: `${Math.random() * 3}s`,
+                        animationDuration: '4s'
+                      }}
+                    />
+                  </svg>
+                ) : null;
+              })
+            )).flat().filter(Boolean)}
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes orbit-item {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3) rotate(-10deg);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
+          }
+        }
+
+        @keyframes float-slow {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.3;
+          }
+          50% {
+            transform: translateY(-8px) rotate(180deg);
+            opacity: 0.6;
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.4;
+          }
+          50% {
+            opacity: 0.8;
+          }
+        }
+
+        .bg-gradient-radial {
+          background: radial-gradient(circle, var(--tw-gradient-stops));
+        }
+
+        .animate-orbit-item {
+          animation: orbit-item 1s ease-out forwards;
+        }
+
+        .animate-float-slow {
+          animation: float-slow 4s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
+  );
+};
+
 export default function LotCalculator() {
   const [activeTab, setActiveTab] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const menuItems = [
     { key: "evolutie", label: "Evoluție", icon: "📈", component: <Evolutie /> },
@@ -55,16 +366,24 @@ export default function LotCalculator() {
 
   // URL parameters logic
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    
-    const validTabs = menuItems.map(item => item.key);
-    if (tab && validTabs.includes(tab)) {
-      setActiveTab(tab);
-    } else {
-      setActiveTab("home");
+    // Only run URL logic after loading is complete
+    if (!isLoading) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      
+      const validTabs = menuItems.map(item => item.key);
+      if (tab && validTabs.includes(tab)) {
+        setActiveTab(tab);
+      } else {
+        setActiveTab("home");
+      }
     }
-  }, []);
+  }, [isLoading]);
+
+  // Handle loading completion
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
 
   const handleTabChange = (newTab) => {
     if (newTab === activeTab) return;
@@ -96,6 +415,11 @@ export default function LotCalculator() {
   const goToHome = () => {
     handleTabChange("home");
   };
+
+  // Show loading screen
+  if (isLoading) {
+    return <BrainLoadingScreen onLoadingComplete={handleLoadingComplete} />;
+  }
 
   // Sidebar button component
   const SidebarButton = ({ item }) => {
