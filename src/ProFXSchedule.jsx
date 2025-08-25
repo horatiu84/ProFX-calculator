@@ -300,7 +300,7 @@ const UpcomingWebinarCard = ({ event, onExpire }) => {
           Meeting ID: <span className="font-bold"> 817 0535 5401</span>
         </p> */}
         <p>
-          Parolă: <span className="font-bold">2025</span>
+          Parolă: <span className="font-bold">2022</span>
         </p>
       </div>
     </div>
