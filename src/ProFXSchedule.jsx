@@ -286,8 +286,9 @@ const UpcomingWebinarCard = ({ event, onExpire }) => {
         <p>
           Link:{" "}
           <a
-            // href="https://zoom.us/j/86783293224" // Link alternativ comentat
-            href="https://us06web.zoom.us/j/81705355401"
+            // href="https://zoom.us/j/86783293224" // Link 1 
+           // href="https://us06web.zoom.us/j/81705355401" // Link alternativ
+            href="https://zoom.us/j/86783293224"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 underline break-all"

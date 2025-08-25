@@ -227,6 +227,9 @@ const Training = () => {
     {
       title: "Analiza saptamanala 22 08 2025",
       url: "https://youtu.be/0ujRUpll_Ao?si=ryhpYYbq3xn0ZMm7",
+    }, {
+      title: "Analiza Saptamanala  25 08 2025",
+      url: "https://youtu.be/chmtZv2jwig?si=aGicjTJnVgtIMNZu",
     },
   ];
 
