@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Slider from "react-slick";
+import { createPortal } from "react-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -14,7 +16,12 @@ import iunie3 from "../../utils/Iunie 3.jpg";
 import iulie1 from "../../utils/Iulie 1.jpg";
 import iulie2 from "../../utils/Iulie 2.jpg";
 import iulie3 from "../../utils/Iulie 3.jpg";
-// ... importă restul imaginilor
+import august1 from "../../utils/August 1.jpg";
+import august2 from "../../utils/August 2.jpg";
+import august3 from "../../utils/August 3.jpg";
+import august4 from "../../utils/August 4.jpg";
+import august5 from "../../utils/August 5.jpg";
+
 
 const hallOfFame = [
   { img: aprilie1, name: "Ciprian Penisoara", title: " Locul 1 Aprile 2025" },
@@ -27,30 +34,79 @@ const hallOfFame = [
   { img: iunie3, name: "Mihai Vlada", title: "Locul 3 Iunie 2025" },
   { img: iulie1, name: "Romeo Bradeanu", title: "Locul 1 Iulie 2025" },
   { img: iulie2, name: "Mihai Vlada", title: "Locul 2 Iulie 2025" },
-  { img: iulie3, name: "Lucian", title: "Locul 3Iulie 2025" },
+  { img: iulie3, name: "Lucian Solomonean", title: "Locul 3 Iulie 2025" },
+  { img: august1, name: "Lavinia Sabau", title: "Locul 1 August 2025" },
+  { img: august2, name: "Marian Tanase", title: "Locul 2 August 2025" },
+  { img: august3, name: "Erik Cirstea", title: "Locul 3 August 2025" },
+  { img: august4, name: "Romeo Bradeanu", title: "Locul 4 August 2025" },
+  { img: august5, name: "Adela Mercea", title: "Locul 5 August 2025" },
 
-  // ... restul pozelor
 ];
 
 const HallOfFameCarousel = () => {
   const [modalImg, setModalImg] = useState(null);
+
+  // Blochează scroll-ul pe body când modalul e deschis
+  useEffect(() => {
+    if (modalImg) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [modalImg]);
+
+  // Închidere cu ESC
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setModalImg(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <>
       <h2 className="text-3xl sm:text-5xl font-extrabold text-yellow-600 font-[Montserrat] mb-6 tracking-wider text-center drop-shadow">
         Galeria Campionilor ProFX
       </h2>
-      {modalImg && (
-        <div
-          className="fixed inset-0 bg-black/75 flex items-center justify-center z-50"
-          onClick={() => setModalImg(null)}
-        >
-          <img
-            src={modalImg}
-            className="max-w-[90vw] max-h-[80vh] rounded-2xl border-4 border-yellow-400 shadow-2xl"
-            alt="Expanded"
-          />
-        </div>
+
+      {createPortal(
+        <AnimatePresence>
+          {modalImg && (
+            <motion.div
+              className="fixed inset-0 z-[9999] bg-black/75 flex items-center justify-center p-4"
+              onClick={() => setModalImg(null)}
+              aria-modal="true"
+              role="dialog"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.img
+                src={modalImg}
+                alt="Expanded"
+                className="max-w-[92vw] max-h-[85vh] rounded-2xl border-4 border-yellow-400 shadow-2xl"
+                onClick={(e) => e.stopPropagation()} // nu închide când dai click pe imagine
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+              />
+
+              {/* buton închidere */}
+              <button
+                onClick={() => setModalImg(null)}
+                className="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold shadow"
+                aria-label="Închide"
+              >
+                ✕
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
 
       <div className="flex justify-center items-center w-full">
