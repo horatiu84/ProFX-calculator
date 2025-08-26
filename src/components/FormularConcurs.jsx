@@ -76,7 +76,7 @@ const FormularInscriereConcurs = () => {
       </h2>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
         <label className="text-left text-sm text-gray-300" htmlFor="nume">
-          Nume:
+          Nume și prenume:
         </label>
         <input
           type="text"
