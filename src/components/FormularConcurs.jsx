@@ -84,7 +84,7 @@ const FormularInscriereConcurs = () => {
           value={nume}
           onChange={(e) => setNume(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          placeholder="Introdu numele tău"
+          placeholder="Introdu numelele și prenumele tău"
           required
         />
 
