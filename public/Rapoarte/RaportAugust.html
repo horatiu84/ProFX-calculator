@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jurnal Idei Executate - August 2025</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #f7f7f7;
+      }
+
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .day {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .date {
+        font-weight: bold;
+        color: #3498db;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .entry {
+        margin-left: 20px;
+        margin-bottom: 5px;
+      }
+
+      .total {
+        font-weight: bold;
+        margin-top: 10px;
+        font-size: 16px;
+        text-align: right;
+      }
+
+      .positive {
+        color: #27ae60;
+      }
+
+      .negative {
+        color: #e74c3c;
+      }
+
+      .neutral {
+        color: #f39c12;
+      }
+
+      .summary {
+        margin-top: 10px;
+        margin-left: 10px;
+        font-size: 15px;
+      }
+
+      .rezumat-box {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: linear-gradient(90deg, #e3f0fd 0%, #f7fafc 100%);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+        padding: 18px 0 10px 0;
+        margin-bottom: 32px;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .rezumat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 110px;
+        margin-bottom: 8px;
+      }
+
+      .rezumat-label {
+        font-size: 1.5em;
+        color: #2c3e50;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+
+      .rezumat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #3498db;
+      }
+
+      .rezumat-value.positive {
+        color: #27ae60;
+      }
+
+      .rezumat-value.negative {
+        color: #e74c3c;
+      }
+
+      .rezumat-value.percent {
+        color: #f39c12;
+      }
+
+      .rezumat-icon {
+        font-size: 1.7em;
+        margin-bottom: 2px;
+        opacity: 0.85;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        h1 {
+          font-size: 1.4em;
+        }
+        .date {
+          font-size: 1em;
+        }
+        .entry {
+          margin-left: 10px;
+          font-size: 0.95em;
+        }
+        .summary,
+        .total {
+          font-size: 0.95em;
+        }
+        .rezumat-box {
+          flex-direction: column;
+          gap: 6px;
+          padding: 12px 0;
+        }
+        .rezumat-item {
+          min-width: 0;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .rezumat-label {
+          font-size: 1.2em;
+        }
+
+        .rezumat-value {
+          font-size: 1.8em;
+        }
+
+        .rezumat-icon {
+          font-size: 2.2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Jurnal Idei Executate - August 2025</h1>
+
+    <div class="day">
+      <div class="date">Vineri 01 August</div>
+      <div class="entry">1. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">2. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">3. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">4. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">5. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">6. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">7. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">8. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">9. Xau/usd : 25 pips ✔️</div>
+      <div class="entry">10. Xau/usd : 25 pips ✔️</div>
+      <div class="summary">➡️ 10 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 250 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Luni 04 August</div>
+      <div class="entry">1. Xau/Usd : 15 pips Londra nu Live ✔️</div>
+      <div class="entry">2.  Xau/Usd : 25 pips Ny Live ✔️</div>
+      <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 40 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Marți 12 August</div>
+      <div class="entry">1. Xau/Usd : 45 pips Londra Live MIHAI ✔️</div>
+      <div class="entry">2.  Xau/Usd : 40 pips Ny Live ✔️</div>
+      <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 85 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Miercuri  13 August</div>
+      <div class="entry">1. Xau/Usd : 40 pips Londra  ELI  ✔️</div>
+      <div class="summary">➡️ 1 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 40 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Joi  14 August</div>
+      <div class="entry">1. Gbp/Jpy: 15  pips Londra ✔️</div>
+      <div class="entry">2. Eur/Usd : 80 pips Ny - DANIEL ✔️</div>
+      <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 95 pips</div>
+    </div>
+
+    <div class="day">
+      <div class="date">Vineri 15 August</div>
+      <div class="entry">1. Xau/Usd : 10 pips Londra  Live ✔️</div>
+      <div class="entry">2. Xau/Usd : 10 pips Ny  Live ✔️</div>
+      <div class="entry">3. Xau/Usd : 28 pips NY  Live ✔️</div>
+      <div class="entry">4. Xau/Usd : 30 pips Stiri USD ✔️</div>
+      <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 78 pips</div>
+    </div>
+    <div class="day">
+      <div class="date">Luni 18 August </div>
+      <div class="entry">1. Xau/Usd : 70 pips Londra Pre-Open (semnal oferit vineri) ✔️</div>
+      <div class="entry">2. Xau/Usd : 10 pips Londra Open ✔️</div>
+      <div class="entry">3. Xau/Usd : 25 pips Ny Pre Open ✔️</div>
+      <div class="entry">4. Xau/Usd : 30 pips Ny Live ✔️</div>
+      <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 135 pips</div>
+    </div>
+    <div class="day">
+      <div class="date">Marți 19 August </div>
+      <div class="entry">1. Xau/Usd : 25 pips Ny  Pre-Open  ✔️</div>
+      <div class="entry">2. Xau/Usd : 20 pips Ny Live ✔️</div>
+      <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+      <div class="total positive">Total: 45 pips</div>
+    </div>
+    <div class="day">
+      <div class="date">Joi  21 August</div>
+      <div class="entry">1. Nzd/jpy : 15 pips  știri  ✔️</div>
+      <div class="entry">2. Xau/Usd : 45 pips ny Pre Open  ✔️</div>
+      <div class="entry">3. Xau/Usd : -55 pips Ny Live  ❌</div>
+      <div class="entry">4. Xau/Usd : 40 pips Ny știri   ✔️</div>
+      <div class="summary">➡️ 3 profitabile, 1 pe minus</div>
+      <div class="total positive">Total: 15 pips</div>
+    </div>
+    <div class="day">
+      <div class="date">Vineri 22 August</div>
+      <div class="entry">1. Xau/Usd : 25  pips Ny știri ✔️</div>
+      <div class="entry">2. Xau/usd : 20 pips Mihai ✔️</div>
+      <div class="entry">3. Xau/usd : 50 pips Mihai ✔️</div>
+      <div class="entry">4. USD/JPY : 55 pips Mihai ✔️</div>
+      <div class="summary">➡️ 4 profitabila, 0 pe minus</div>
+      <div class="total positive">Total: 150 pips</div>
+    </div>
+    <div class="day">
+      <div class="date">Luni 25 August</div>
+      <div class="summary">➡️ 2 BE</div>
+      <div class="total neutral">Total: 0 pips</div>
+    </div>
+
+   
+    <!-- Rezumatul actualizat -->
+    <div class="rezumat-box">
+      <div class="rezumat-item">
+        <span class="rezumat-icon">📊</span>
+        <span class="rezumat-label">Total trades</span>
+        <span class="rezumat-value">24</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">✅</span>
+        <span class="rezumat-label">Profitabile</span>
+        <span class="rezumat-value positive">16</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">❌</span>
+        <span class="rezumat-label">Pe minus</span>
+        <span class="rezumat-value negative">8</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">🏆</span>
+        <span class="rezumat-label">Rata de Win</span>
+        <span class="rezumat-value percent">66.7%</span>
+      </div>
+    </div>
+
+    <div
+      style="
+        background: #27ae60;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 25px;
+        text-align: center;
+      "
+    >
+      Total lunar al pips-urilor din trades profitabile:
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+    <div
+      style="
+        background: #db3734;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 5px;
+        text-align: center;
+      "
+    >
+      Total lunar al pips-urilor din trades cu SL:
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+    <div
+      style="
+        background: #3498db;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 5px;
+        text-align: center;
+      "
+    >
+      Total profit net în pips (după pierderi):
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Inițializare variabile
+        let totalTrades = 0;
+        let profitable = 0;
+        let negative = 0;
+        let totalPips = 0;
+        let totalLossPips = 0;
+        let totalProfitPips = 0;
+
+        // Parcurgem fiecare intrare
+        document.querySelectorAll(".entry").forEach((entry) => {
+          const text = entry.textContent;
+
+          if (text.includes("pips") && !text.includes("BE")) {
+            totalTrades++;
+
+            const match = text.match(/(-?\d+)\s*pips/);
+            if (match) {
+              const pips = parseInt(match[1]);
+              totalPips += pips;
+
+              if (pips > 0) {
+                profitable++;
+                totalProfitPips += pips;
+              } else if (pips < 0) {
+                negative++;
+                totalLossPips += Math.abs(pips);
+              }
+            }
+          }
+        });
+
+        const winRate =
+          totalTrades > 0 ? ((profitable / totalTrades) * 100).toFixed(1) : 0;
+
+        document.querySelector(
+          ".rezumat-value:not(.positive):not(.negative):not(.percent)"
+        ).textContent = totalTrades;
+        document.querySelector(".rezumat-value.positive").textContent =
+          profitable;
+        document.querySelector(".rezumat-value.negative").textContent =
+          negative;
+        document.querySelector(
+          ".rezumat-value.percent"
+        ).textContent = `${winRate}%`;
+
+        document.querySelector(
+          '[style*="background: #3498db"] span'
+        ).textContent = `${totalPips} pips`;
+
+        document.querySelector(
+          '[style*="background: #db3734"] span'
+        ).textContent = `${totalLossPips} pips`;
+
+        document.querySelector(
+          '[style*="background: #27ae60"] span'
+        ).textContent = `${totalProfitPips} pips`;
+      });
+    </script>
+  </body>
+</html>
