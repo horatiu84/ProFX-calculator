@@ -31,7 +31,7 @@ const weeklyWebinars = [
     dayOfWeek: 2, // Marți
     title: "WEBINAR ÎNCEPĂTORI",
     subtitle: "Cum să luăm tranzacții în Forex",
-    presenters: "Eli & Adrian",
+    presenters: "Tudor & Dan",
     mentors: [
       { name: "Tudor", img: Tudor },
       { name: "Dan", img: Dan },
