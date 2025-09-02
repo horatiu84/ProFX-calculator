@@ -627,75 +627,75 @@ export default function LotCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white">
-      {/* Desktop Layout cu Sidebar */}
-      <div className="hidden lg:flex min-h-screen">
-        {/* Sidebar */}
+{/* Desktop Layout cu Sidebar */}
+<div className="hidden lg:flex min-h-screen">
+  {/* Sidebar */}
+  <div 
+    className={`
+      fixed left-0 top-0 h-full bg-gray-900/90 backdrop-blur-md border-r border-gray-700/50
+      transition-all duration-300 ease-in-out z-40 shadow-2xl flex flex-col
+      ${isSidebarExpanded ? 'w-64' : 'w-20'}
+    `}
+    onMouseEnter={() => setIsSidebarExpanded(true)}
+    onMouseLeave={() => setIsSidebarExpanded(false)}
+  >
+    {/* Logo Section - clickable */}
+    <LogoSection isExpanded={isSidebarExpanded} onClick={goToHome} />
+
+    {/* Navigation Items - Scrollable only when expanded and needed */}
+    <nav className={`
+      flex-1 p-4 transition-all duration-300
+      ${isSidebarExpanded ? 'overflow-y-auto scrollbar-none' : 'overflow-hidden'}
+    `}>
+      <div className="space-y-2">
+        {menuItems.map((item) => (
+          <SidebarButton key={item.key} item={item} />
+        ))}
+      </div>
+    </nav>
+
+    {/* Footer - Always visible at bottom */}
+    <div className="p-4 border-t border-gray-700/50 flex-shrink-0">
+      <div className={`
+        text-center transition-all duration-300
+        ${isSidebarExpanded ? 'opacity-100' : 'opacity-0'}
+      `}>
+        <p className="text-xs text-gray-500">Învață trading gratuit</p>
+      </div>
+    </div>
+  </div>
+
+  {/* Main Content Area */}
+  <div className="flex-1 ml-20 transition-all duration-300">
+    <div className="p-8">
+      {/* Header - logo clickable doar pe mobile/tablet */}
+      <div className="flex flex-col items-center mb-8">
+        <img 
+          src={logo} 
+          alt="Logo ProFX" 
+          className="w-64 md:w-80 h-auto mb-2 transition-all duration-300"
+          style={{ maxWidth: "350px" }}
+        />
+        <span className="text-lg text-gray-300 font-light tracking-wide">
+          Învață să tranzacționezi gratuit, de la zero
+        </span>
+      </div>
+
+      {/* Content Container cu animație */}
+      <div className="content-container relative">
         <div 
-          className={`
-            fixed left-0 top-0 h-full bg-gray-900/90 backdrop-blur-md border-r border-gray-700/50
-            transition-all duration-300 ease-in-out z-40 shadow-2xl
-            ${isSidebarExpanded ? 'w-64' : 'w-20'}
-          `}
-          onMouseEnter={() => setIsSidebarExpanded(true)}
-          onMouseLeave={() => setIsSidebarExpanded(false)}
+          className={`transition-all duration-300 ease-out ${
+            isTransitioning 
+              ? 'opacity-0 translate-y-2 scale-98' 
+              : 'opacity-100 translate-y-0 scale-100'
+          }`}
         >
-          {/* Logo Section - clickable */}
-          <LogoSection isExpanded={isSidebarExpanded} onClick={goToHome} />
-
-          {/* Navigation Items */}
-          <nav className="flex-1 p-4">
-            <div className="space-y-2">
-              {menuItems.map((item) => (
-                <SidebarButton key={item.key} item={item} />
-              ))}
-            </div>
-          </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-700/50">
-            <div className={`
-              text-center transition-all duration-300
-              ${isSidebarExpanded ? 'opacity-100' : 'opacity-0'}
-            `}>
-              <p className="text-xs text-gray-500">Învață trading gratuit</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className={`
-          flex-1 transition-all duration-300
-          ${isSidebarExpanded ? 'ml-64' : 'ml-20'}
-        `}>
-          <div className="p-8">
-            {/* Header - logo clickable doar pe mobile/tablet */}
-            <div className="flex flex-col items-center mb-8">
-              <img 
-                src={logo} 
-                alt="Logo ProFX" 
-                className="w-64 md:w-80 h-auto mb-2 transition-all duration-300"
-                style={{ maxWidth: "350px" }}
-              />
-              <span className="text-lg text-gray-300 font-light tracking-wide">
-                Învață să tranzacționezi gratuit, de la zero
-              </span>
-            </div>
-
-            {/* Content Container cu animație */}
-            <div className="content-container relative">
-              <div 
-                className={`transition-all duration-300 ease-out ${
-                  isTransitioning 
-                    ? 'opacity-0 translate-y-2 scale-98' 
-                    : 'opacity-100 translate-y-0 scale-100'
-                }`}
-              >
-                {getCurrentComponent()}
-              </div>
-            </div>
-          </div>
+          {getCurrentComponent()}
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       {/* Mobile/Tablet Layout */}
       <div className="lg:hidden min-h-screen p-6 md:p-8">
