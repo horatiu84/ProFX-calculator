@@ -1,220 +1,179 @@
-import React, { useState, useEffect, useRef } from "react";
-import HotelImgage from "./utils/Hotel.jpg";
+import React from 'react';
+import { Calendar, MapPin, Users, Brain, Trophy, Waves, Sun, Clock, User, Coffee, BookOpen, TrendingUp, PartyPopper, Star } from 'lucide-react';
 
-const HotelImg = HotelImgage;
-
-const Bootcamp = () => {
-  const deadline = new Date("2025-09-09T00:00:00");
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [showPaymentInfo, setShowPaymentInfo] = useState(false);
-  const [copiedIBAN, setCopiedIBAN] = useState(false);
-  const [copiedSWIFT, setCopiedSWIFT] = useState(false);
-  const intervalRef = useRef();
-
-  function calculateTimeLeft() {
-    const now = new Date();
-    const total = deadline - now;
-    if (total > 0) {
-      return {
-        days: Math.floor(total / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((total / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((total / 1000 / 60) % 60),
-        seconds: Math.floor((total / 1000) % 60),
-      };
-    } else {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+const BootcampSchedule = () => {
+  const scheduleData = [
+    {
+      date: "9 Sept",
+      dayName: "Marți",
+      color: "from-blue-500 to-cyan-400",
+      activities: [
+        { time: "După amiază", title: "Mingle / Socializare", type: "social", icon: Users }
+      ]
+    },
+    {
+      date: "10 Sept",
+      dayName: "Miercuri", 
+      color: "from-purple-500 to-pink-400",
+      activities: [
+        { time: "03:45-07:00", title: "Mihai Vlada (Asia)", type: "session", icon: TrendingUp },
+        { time: "08:30-09:30", title: "Flavius Londra live", type: "live", icon: Star },
+        { time: "10:00-11:00", title: "John (Analiza săpt.)", type: "analysis", icon: BookOpen },
+        { time: "11:00-12:00", title: "Darius Hotima - Psihologie", type: "session", icon: Brain },
+        { time: "12:00-14:00", title: "Pauza de masă", type: "break", icon: Coffee },
+        { time: "14:30-16:00", title: "Flavius Live/Știri", type: "live", icon: Star },
+        { time: "16:00-17:00", title: "Mihai Tiepac", type: "session", icon: TrendingUp },
+        { time: "17:00", title: "Plajă", type: "beach", icon: Waves }
+      ]
+    },
+    {
+      date: "11 Sept",
+      dayName: "Joi",
+      color: "from-green-500 to-emerald-400", 
+      activities: [
+        { time: "03:45-07:00", title: "Mihai Vlada (Asia)", type: "session", icon: TrendingUp },
+        { time: "08:15-11:00", title: "Flavius Londra Live", type: "live", icon: Star },
+        { time: "11:00-12:00", title: "Mihai Vlada", type: "session", icon: User },
+        { time: "12:00-12:30", title: "Darius Hotima - Psihologie", type: "practice", icon: Brain },
+        { time: "12:30-14:00", title: "Pauza", type: "break", icon: Coffee },
+        { time: "14:00-16:00", title: "Live Trading + Știri", type: "trading", icon: TrendingUp },
+        { time: "16:00-17:00", title: "Julia", type: "session", icon: User }
+      ]
+    },
+    {
+      date: "12 Sept", 
+      dayName: "Vineri",
+      color: "from-orange-500 to-red-400",
+      activities: [
+        { time: "03:45-07:00", title: "Mihai Vlada (Asia)", type: "session", icon: TrendingUp },
+        { time: "08:00-10:00", title: "Flavius Londra live", type: "live", icon: Star },
+        { time: "10:00-11:00", title: "Macroeconomie - John", type: "theory", icon: BookOpen },
+        { time: "11:00-12:00", title: "Testimoniale Eric + Mentori", type: "testimonial", icon: Users },
+        { time: "14:00-16:00", title: "Flavius Live & Știri", type: "live", icon: Star },
+        { time: "16:00-17:00", title: "Darius Hotima - Psihologie", type: "session", icon: Brain }
+      ]
+    },
+    {
+      date: "13 Sept",
+      dayName: "Sâmbătă",
+      color: "from-indigo-500 to-purple-400",
+      activities: [
+        { time: "12:00-13:00", title: "Darius Hotima - Psihologie", type: "practice", icon: Brain },
+        { time: "13:00-14:00", title: "Mihai Tiepac", type: "session", icon: TrendingUp },
+        { time: "14:30-15:00", title: "Sergiu Cîrstea", type: "session", icon: User },
+        { time: "Seara", title: "White Party - Fun 🎉", type: "party", icon: PartyPopper }
+      ]
     }
-  }
-
-  const formatNumber = (num) => String(num).padStart(2, "0");
-
-  const copyToClipboard = (text, type) => {
-    navigator.clipboard.writeText(text).then(() => {
-      if (type === "iban") {
-        setCopiedIBAN(true);
-        setTimeout(() => setCopiedIBAN(false), 2000);
-      } else if (type === "swift") {
-        setCopiedSWIFT(true);
-        setTimeout(() => setCopiedSWIFT(false), 2000);
-      }
-    });
-  };
-
-  useEffect(() => {
-    setTimeLeft(calculateTimeLeft());
-    intervalRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        const next = calculateTimeLeft();
-        if (Object.values(next).every((x) => x === 0)) {
-          clearInterval(intervalRef.current);
-        }
-        return next;
-      });
-    }, 1000);
-
-    return () => clearInterval(intervalRef.current);
-  }, []);
-
-  const timerItems = [
-    { label: "ZILE", value: timeLeft?.days ?? 0 },
-    { label: "ORE", value: timeLeft?.hours ?? 0 },
-    { label: "MIN", value: timeLeft?.minutes ?? 0 },
-    { label: "SEC", value: timeLeft?.seconds ?? 0 },
   ];
 
-  if (timeLeft === null) return null;
+  const getActivityTypeStyles = (type) => {
+    const styles = {
+      social: "bg-blue-100 text-blue-700",
+      session: "bg-gray-100 text-gray-700", 
+      live: "bg-red-100 text-red-700",
+      analysis: "bg-green-100 text-green-700",
+      break: "bg-yellow-100 text-yellow-700",
+      beach: "bg-cyan-100 text-cyan-700",
+      practice: "bg-purple-100 text-purple-700",
+      trading: "bg-emerald-100 text-emerald-700",
+      theory: "bg-indigo-100 text-indigo-700",
+      testimonial: "bg-pink-100 text-pink-700",
+      party: "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700"
+    };
+    return styles[type] || styles.session;
+  };
 
-  // Banner la expirare
-  if (Object.values(timeLeft).every((x) => x === 0))
-    return (
-      <div className="bg-white rounded-3xl shadow-2xl max-w-3xl md:max-w-5xl mx-auto my-8 sm:my-12 overflow-hidden">
-        <div className="relative w-full" style={{ paddingTop: "46%" }}>
-          <img
-            src={HotelImg}
-            alt="Hotel & Piscină"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: "center top" }}
-          />
-        </div>
-        <div className="p-4 sm:p-10 text-center">
-          <h1 className="text-2xl sm:text-4xl font-bold text-yellow-600 mb-2">
-            Trading BootCamp Accelerator
-          </h1>
-          <h2 className="text-lg sm:text-2xl text-gray-700 mb-4">
-            9-14 august • ProFX Academy
-          </h2>
-          <div className="text-red-600 text-base sm:text-xl font-bold animate-pulse my-4">
-            Bootcampul a început!
-          </div>
-        </div>
-      </div>
-    );
-
-  // COMPONENTA CU INFORMATII PLATA (în loc de modal) - apare când apeși "Inscrie-te ACUM"
-  if (showPaymentInfo) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-auto p-8 border-2 border-yellow-400 relative">
-          <button
-            className="absolute top-4 right-5 text-gray-600 hover:text-black text-2xl font-bold"
-            onClick={() => setShowPaymentInfo(false)}
-            aria-label="Închide informații plată"
-          >
-            ×
-          </button>
-          <h3 className="text-xl sm:text-2xl font-bold text-yellow-700 mb-5 text-center">
-            Dragilor, am dat drumul la înscrieri!
-          </h3>
-          <div className="mb-4 text-base font-medium text-gray-800 text-center">
-            Aveți aici conturile în care puteți vira banii!
-          </div>
-          <div className="mb-3 font-semibold text-red-600 text-center">
-            Data limită este 24 AUGUST!
-          </div>
-          <div className="mb-4 text-gray-700 text-sm">
-            După ce ați achitat, vă rog să trimiteți <b>în privat dovada</b> lui{" "}
-            <a
-              href="https://t.me/sergiucirstea"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-yellow-700 underline font-bold hover:text-yellow-900 transition"
-            >
-              Sergiu Cîrstea
-            </a>
-           
-          </div>
-          <div className="mb-2 text-gray-900 text-sm">
-            <b>Beneficiar:</b> Sergiu Cîrstea
-          </div>
-          <div className="mb-2 text-gray-900 text-sm">
-            <b>IBAN:</b>{" "}
-            <span
-              className="cursor-pointer select-all hover:bg-gray-100 p-1 rounded inline-block font-mono"
-              onClick={() => copyToClipboard("RO08 REVO 0000 1173 4878 7455", "iban")}
-              title="Click pentru copiere"
-            >
-              RO08 REVO 0000 1173 4878 7455
-              {copiedIBAN && <span className="ml-2 text-green-500 italic font-semibold">✓ copiat!</span>}
-            </span>
-          </div>
-          <div className="mb-2 text-gray-900 text-sm">
-            <b>Cod BIC/SWIFT:</b>{" "}
-            <span
-              className="cursor-pointer select-all hover:bg-gray-100 p-1 rounded inline-block font-mono"
-              onClick={() => copyToClipboard("REVOROBB", "swift")}
-              title="Click pentru copiere"
-            >
-              REVOROBB
-              {copiedSWIFT && <span className="ml-2 text-green-500 italic font-semibold">✓ copiat!</span>}
-            </span>
-          </div>
-          <div className="mt-4 pt-2 text-center">
-            <button
-              className="bg-yellow-500 text-white font-bold px-8 py-2 rounded-full shadow hover:bg-yellow-600 transition"
-              onClick={() => setShowPaymentInfo(false)}
-            >
-              Înapoi la Bootcamp
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Banner cu countdown activ
   return (
-    <div className="bg-gradient-to-br from-yellow-400 via-white to-blue-500 rounded-3xl shadow-2xl max-w-3xl md:max-w-5xl mx-auto my-8 sm:my-12 overflow-hidden">
-      <div className="relative w-full" style={{ paddingTop: "46%" }}>
-        <img src={HotelImg} alt="Hotel & Piscină" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: "center top" }} />
-      </div>
-      <div className="p-4 sm:p-10">
-        <div className="text-center mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-yellow-600 mb-2 drop-shadow">
-            Trading BootCamp Accelerator
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 print:bg-white print:text-black">
+      {/* Compact Header */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 print:bg-gray-100 print:border-b-2 print:border-gray-300">
+        <div className="absolute bottom-0 left-0 right-0 print:hidden">
+          <svg viewBox="0 0 1440 60" className="w-full h-8 fill-slate-900">
+            <path d="M0,32L48,34.7C96,37,192,43,288,40C384,37,480,27,576,24C672,21,768,27,864,34.7C960,43,1056,53,1152,56C1248,59,1344,53,1392,50.7L1440,48L1440,60L1392,60C1344,60,1248,60,1152,60C1056,60,960,60,864,60C768,60,672,60,576,60C480,60,384,60,288,60C192,60,96,60,48,60L0,60Z"></path>
+          </svg>
+        </div>
+        
+        <div className="relative px-4 py-6 text-center text-white print:text-black print:py-4">
+          <h1 className="text-2xl font-bold mb-2 print:text-black">
+            Bootcamp ProFX
           </h1>
-          <h2 className="text-base sm:text-xl md:text-2xl text-gray-700 mb-3 sm:mb-5">
-            9-14 august • ProFX Academy
-          </h2>
-        </div>
-        <div className="flex justify-center gap-2 sm:gap-6 mb-6 sm:mb-10 flex-wrap">
-          {timerItems.map((item) => (
-            <div
-              key={item.label}
-              className="flex flex-col items-center bg-gray-900/90 text-white px-4 sm:px-6 py-2 sm:py-4 rounded-xl shadow-md text-lg sm:text-3xl mb-2 sm:mb-0"
-            >
-              <span className="font-bold tracking-widest">{formatNumber(item.value)}</span>
-              <span className="text-xs uppercase text-yellow-300 mt-1 sm:mt-2">{item.label}</span>
+          <div className="flex items-center justify-center gap-3 mb-2 text-sm">
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4" />
+              <span>9-14 Septembrie</span>
             </div>
-          ))}
+            <div className="w-1 h-1 bg-current rounded-full"></div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span>Eforie Nord</span>
+            </div>
+          </div>
+          <p className="text-sm opacity-90 print:opacity-100">
+            5 zile intense de educație și practică alături de traderi pasionați
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 text-base sm:text-lg">
-          <ul className="list-disc list-inside space-y-2 sm:space-y-3 text-gray-700 font-medium pl-2">
-            <li>Lecții live cu mentori de top</li>
-            <li>Sesiuni practice de trading</li>
-            <li>Live trading în echipă</li>
-            <li>Strategii profitabile & psihologie</li>
-            <li>Educație financiară aplicată</li>
-            <li>Networking & petrecere exclusivistă</li>
-          </ul>
-          <div className="flex flex-col gap-3 sm:gap-4 justify-center items-start md:items-end">
-            <p className="bg-yellow-600/80 py-2 sm:py-3 px-4 sm:px-8 rounded-lg font-bold text-lg sm:text-xl hover:bg-yellow-700 transition">
-              500€ / cameră single
+      </div>
+
+      {/* Ultra Compact Schedule Grid */}
+      <div className="px-3 py-4 print:px-2 print:py-2">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 print:grid-cols-2 print:gap-2">
+            {scheduleData.map((day, index) => (
+              <div
+                key={index}
+                className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden print:shadow-none print:border print:border-gray-300"
+              >
+                {/* Ultra compact header */}
+                <div className={`bg-gradient-to-r ${day.color} p-2 print:bg-gray-200 print:text-black`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white print:text-black">
+                        {day.dayName}
+                      </h3>
+                      <p className="text-white/90 text-xs print:text-black">{day.date}</p>
+                    </div>
+                    <Clock className="w-3 h-3 text-white/80 print:text-black" />
+                  </div>
+                </div>
+
+                {/* Ultra compact activities */}
+                <div className="p-2 space-y-1">
+                  {day.activities.map((activity, actIndex) => {
+                    const Icon = activity.icon;
+                    return (
+                      <div
+                        key={actIndex}
+                        className="flex items-center gap-1.5 p-1.5 rounded bg-gray-50 hover:bg-gray-100 print:hover:bg-gray-50 print:border-b print:border-gray-200 print:last:border-b-0"
+                      >
+                        <div className={`p-1 rounded text-xs ${getActivityTypeStyles(activity.type)} print:bg-gray-100 print:text-black`}>
+                          <Icon className="w-2.5 h-2.5" />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1 mb-0.5">
+                            <span className="text-xs font-medium text-gray-600 bg-gray-200 px-1.5 py-0.5 rounded print:bg-gray-100 print:text-black">
+                              {activity.time}
+                            </span>
+                          </div>
+                          <h4 className="font-medium text-xs text-gray-900 leading-tight print:text-black">
+                            {activity.title}
+                          </h4>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Minimal Footer */}
+          <div className="mt-4 text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-3 text-white print:bg-gray-100 print:text-black print:border print:border-gray-300">
+            <Trophy className="w-5 h-5 mx-auto mb-1" />
+            <h3 className="text-sm font-bold">Pregătește-te pentru o experiență de neuitat!</h3>
+            <p className="text-xs opacity-90 print:opacity-100">
+              Învață, practică și relaxează-te la malul Mării Negre 🌊
             </p>
-            <p className="bg-yellow-500/80 py-2 sm:py-3 px-4 sm:px-8 rounded-lg font-bold text-base sm:text-lg hover:bg-yellow-600 transition">
-              700€ / cameră dublă
-            </p>
-            <p className="bg-gray-500 py-2 sm:py-3 px-4 sm:px-8 rounded-lg font-bold">
-              200€ / fără cazare
-            </p>
-            <p className="text-xs sm:text-sm text-gray-600 mt-2 text-right">
-              * Mic dejun, Coffee break zilnic și Cină festivă cu toate băuturile incluse
-            </p>
-            <button
-              className="mt-1 sm:mt-3 bg-yellow-500 text-white font-bold px-6 sm:px-8 py-2 sm:py-3 rounded-full shadow-md hover:bg-yellow-600 transition text-base sm:text-lg animate-bounce"
-              onClick={() => setShowPaymentInfo(true)}
-            >
-              Înscrie-te ACUM!
-            </button>
           </div>
         </div>
       </div>
@@ -222,4 +181,4 @@ const Bootcamp = () => {
   );
 };
 
-export default Bootcamp;
+export default BootcampSchedule;
