@@ -34,7 +34,7 @@ const weeklyWebinars = [
     presenters: "Eli & Adrian",
     mentors: [
       { name: "Adrian", img: Adrian },
-      { name: "Eli", img: Adrian },
+      { name: "Eli", img: Eli },
     ],
     ora: 20,
     details: "Webinar practic pentru începători, cu Adrian și Eli.",
