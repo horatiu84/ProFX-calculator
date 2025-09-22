@@ -14,6 +14,7 @@ import Evolutie from "./Evolutie.jsx";
 import Calculator from "./Calculator.jsx";
 import Pierdere from "./Pierdere.jsx";
 import Home from "./Home.jsx";
+import EventPhotoGallery from "./Galerie.jsx";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -28,11 +29,11 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
     { key: "educatie", label: "Educație", icon: "ℹ️", angle: 98.1 },
     { key: "training", label: "Training", icon: "🧑‍🏫", angle: 130.8 },
     { key: "agenda", label: "Agenda ProFX", icon: "🗓️", angle: 163.5 },
-    { key: "simulare", label: "Afiliere", icon: "💵", angle: 196.2 },
+    { key: "galerie", label: "Galerie ProFX", icon: "📷", angle: 196.2 },
     { key: "raport", label: "Jurnal", icon: "📝", angle: 228.9 },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", angle: 261.6 },
     { key: "test", label: "Test", icon: "📋", angle: 294.3 },
-    { key: "contact", label: "Contact", icon: "💬", angle: 327 }
+    { key: "contact", label: "Feedback", icon: "💬", angle: 327 },
   ];
 
   useEffect(() => {
@@ -386,18 +387,19 @@ export default function LotCalculator() {
       isSpecial: true
     },
     { key: "agenda", label: "Agenda ProFX", icon: "🗓️", component: <ProFXSchedule /> },
-    { 
-      key: "simulare", 
-      label: "Afiliere", 
-      icon: "💵", 
-      component: <Simulare />, 
-      isSpecial: true,
-      isAfiliere: true
-    },
+    // { 
+    //   key: "simulare", 
+    //   label: "Afiliere", 
+    //   icon: "💵", 
+    //   component: <Simulare />, 
+    //   isSpecial: true,
+    //   isAfiliere: true
+    // },
     { key: "raport", label: "Jurnal", icon: "📝", component: <Raport /> },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
-    { key: "contact", label: "Contact", icon: "💬", component: <Contact /> }
+    { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
+    { key: "galerie", label: "Galerie ProFX", icon: "📷", component: <EventPhotoGallery /> }
   ];
 
   // URL parameters logic

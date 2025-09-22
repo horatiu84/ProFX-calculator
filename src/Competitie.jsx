@@ -216,7 +216,7 @@ const CompetitionBanner = () => {
                 <b>Data de start:</b> Începe în prima zi a fiecărei luni
               </li>
               <li>
-                <b>Perioada concursului:</b> 3 săptămâni (până pe 19 a lunii)
+                <b>Perioada concursului:</b> 3 săptămâni (până pe 24 a lunii)
               </li>
               <li>
                 <b>Drawdown:</b> LIBER{" "}

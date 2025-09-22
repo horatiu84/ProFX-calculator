@@ -106,12 +106,13 @@ const getItemDescription = (key) => {
     pierdere: "Calculează rapid pierderea potențială și procentajul de risc înainte de a deschide o tranzacție",
     educatie: "Aici găsești lecțiile de bază și ghidurile ProFX - primul pas in a înțelege cum funcționează tradingul",
     training: "Aici găsești tot ce ai nevoie pentru a-ți construi disciplina și strategia - de la bazele MT5 până la execuții avansate cu Price Action",
-    simulare: "Secțiunea de afiliere este dedicată partenerilor ProFX",
+    //simulare: "Secțiunea de afiliere este dedicată partenerilor ProFX",
     agenda: "Agenda săptămânală ProFX - ca să știi mereu când e timpul să înveți și să crești alături de noi",
     raport: "Jurnal detaliat lunar al tranzacțiilor ProFX",
     evenimente: "Evenimente speciale, concursuri și bootcamp ProFX",
     test: "Testează-ți cunoștințele cu quiz-uri interactive și primește feedback instant",
-    contact: "Ai o idee, o sugestie sau un gând? Spune-ne părerea ta! Feedback-ul tău anonim ne ajută să facem ProFX tot mai bun"
+    contact: "Ai o idee, o sugestie sau un gând? Spune-ne părerea ta! Feedback-ul tău anonim ne ajută să facem ProFX tot mai bun",
+    galerie:"Imagini care spun povestea comunității ProFX: muncă, distracție și evoluție împreună"
   };
   
   return descriptions[key] || "Explorează această secțiune pentru mai multe informații.";

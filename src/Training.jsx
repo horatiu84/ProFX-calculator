@@ -78,10 +78,6 @@ const Training = () => {
       url: "https://youtube.com/@profx-romania?si=wA7daxrGD2nedUBj",
     },
     {
-      title: "Webinar Fakeouts + Fibo",
-      url: "https://youtu.be/F_7HqZYjipM?si=T8hmZTTa4EzuLBXA",
-    },
-    {
       title: "Cum să executați ideile de Trade ale lui Flaviu",
       url: "https://youtu.be/fBqbevzaIaU?si=Mkhv_hpvNa-H_JsL",
     },
@@ -197,10 +193,6 @@ const Training = () => {
     {
       title: "Masterclass 'Divergențe în Trading - 2 -cu Mihai Tiepac",
       url: "https://youtu.be/soJP3FEIY08",
-    },
-    {
-      title: "Webinar cu Mihai Tiepac 08 07 2025 ",
-      url: "https://youtu.be/52FKs74rpjs?si=dWIo5ida-deg2TIJ",
     },
     {
       title: "Curs inflatie Forex ",
