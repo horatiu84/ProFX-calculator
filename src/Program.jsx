@@ -261,9 +261,6 @@ const WeeklySchedule = () => {
           <h1 className="text-2xl md:text-4xl font-bold text-yellow-400 mb-2">
             PROGRAM SĂPTĂMÂNAL
           </h1>
-          <p className="text-gray-400 mb-1 text-sm md:text-base">
-            Învață să tranzacționezi gratuit, de la zero
-          </p>
           <p className="text-xs md:text-sm text-gray-500">
             Astăzi este{" "}
             {
