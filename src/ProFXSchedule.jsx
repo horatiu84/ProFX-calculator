@@ -36,20 +36,20 @@ const weeklyWebinars = [
     presenters: "Eli & Dan",
     mentors: [
       { name: "Dan", img: Dan },
-      { name: "Eli", img: Eli },
+      { name: "Tudor", img: Tudor },
     ],
     ora: 20,
     details: "Webinar practic pentru începători, cu Dan și Eli.",
   },
-  {
-    dayOfWeek: 4, // Joi
-    title: "WEBINAR AVANSAȚI",
-    subtitle: "Trading avansat cu Ionuț Pometcu",
-    presenters: "Ionuț Pometcu",
-    mentors: [{ name: "Ionuț Pometcu", img: John }],
-    ora: 20,
-    details: "Pentru traderii avansați, cu Ionuț Pometcu.",
-  },
+  // {
+  //   dayOfWeek: 4, // Joi
+  //   title: "WEBINAR AVANSAȚI",
+  //   subtitle: "Trading avansat cu Ionuț Pometcu",
+  //   presenters: "Ionuț Pometcu",
+  //   mentors: [{ name: "Ionuț Pometcu", img: John }],
+  //   ora: 20,
+  //   details: "Pentru traderii avansați, cu Ionuț Pometcu.",
+  // },
 ];
 
 /**

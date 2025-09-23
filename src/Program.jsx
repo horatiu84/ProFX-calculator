@@ -33,7 +33,7 @@ const WeeklySchedule = () => {
       },
     ], // Luni
     1: [{ name: "Webinar începători", time: "20:00", duration: 1 }], // Marți
-    3: [{ name: "Webinar avansați cu John", time: "20:00", duration: 1 }], // Joi
+    //3: [{ name: "Webinar avansați cu John", time: "20:00", duration: 1 }], // Joi
     4: [
       { name: "Analiza macro saptamanala cu John", time: "16:00", duration: 1 },
     ], // Vineri
