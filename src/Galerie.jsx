@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Filter, Calendar, MapPin } from "lucide-react";
+import { Filter, Calendar, MapPin, Video, Image } from "lucide-react";
 
-function ModalOverlay({ selectedPhoto, onClose, categories }) {
-  if (!selectedPhoto) return null;
+function ModalOverlay({ selectedMedia, onClose, categories }) {
+  if (!selectedMedia) return null;
+
+  const isVideo = selectedMedia.type === 'video';
 
   const content = (
     <div
@@ -27,7 +29,7 @@ function ModalOverlay({ selectedPhoto, onClose, categories }) {
       role="dialog"
     >
       <div
-        className="relative w-full max-w-4xl p-4 sm:p-8"
+        className="relative w-full max-w-5xl p-4 sm:p-8"
         style={{ maxHeight: "90vh" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -51,52 +53,110 @@ function ModalOverlay({ selectedPhoto, onClose, categories }) {
           </svg>
         </button>
 
-        <div className="relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
-          <img
-            src={selectedPhoto.src}
-            alt={selectedPhoto.alt}
-            className="max-w-full max-h-[70vh] object-contain rounded-xl"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-              const fallback = e.currentTarget.nextElementSibling;
-              if (fallback) fallback.setAttribute("style", "display:flex");
-            }}
-          />
-          <div className="min-h-[300px] w-full hidden items-center justify-center text-gray-400 text-center">
-            <div>
-              <Calendar size={48} className="text-yellow-500 mx-auto mb-4" />
-              <p className="text-xl font-medium">{selectedPhoto.src}</p>
-              <p className="text-gray-500 mt-2">
-                Imaginea nu s-a putut încărca
-              </p>
+{isVideo ? (
+          // Layout pentru video - fără overlay peste controale
+          <div className="relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl">
+            <video
+              src={selectedMedia.src}
+              className="w-full max-h-[70vh] object-contain rounded-t-xl"
+              controls
+              controlsList="nodownload"
+              autoPlay
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+                const fallback = e.currentTarget.nextElementSibling;
+                if (fallback) fallback.setAttribute("style", "display:flex");
+              }}
+            />
+            
+            <div className="min-h-[300px] w-full hidden items-center justify-center text-gray-400 text-center p-8">
+              <div>
+                <Video size={48} className="text-yellow-500 mx-auto mb-4" />
+                <p className="text-xl font-medium">{selectedMedia.src}</p>
+                <p className="text-gray-500 mt-2">
+                  Video-ul nu s-a putut încărca
+                </p>
+              </div>
+            </div>
+
+            {/* Informații sub video pentru a nu interfere cu controalele */}
+            <div className="p-6 bg-slate-900 border-t border-slate-800">
+              <div className="flex items-center gap-2 mb-2">
+                <Video size={20} className="text-yellow-400" />
+                <h3 className="text-2xl font-bold text-white">
+                  {selectedMedia.title}
+                </h3>
+              </div>
+              <p className="text-gray-300 mb-3">{selectedMedia.alt}</p>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                  selectedMedia.category === "birou"
+                    ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                    : selectedMedia.category === "herculane"
+                    ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                    : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                }`}
+              >
+                {
+                  categories.find((cat) => cat.id === selectedMedia.category)
+                    ?.name
+                }
+              </span>
             </div>
           </div>
+        ) : (
+          // Layout pentru imagini - cu overlay ca înainte
+          <div className="relative bg-slate-900 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+            <img
+              src={selectedMedia.src}
+              alt={selectedMedia.alt}
+              className="max-w-full max-h-[70vh] object-contain rounded-xl"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+                const fallback = e.currentTarget.nextElementSibling;
+                if (fallback) fallback.setAttribute("style", "display:flex");
+              }}
+            />
+            
+            <div className="min-h-[300px] w-full hidden items-center justify-center text-gray-400 text-center">
+              <div>
+                <Calendar size={48} className="text-yellow-500 mx-auto mb-4" />
+                <p className="text-xl font-medium">{selectedMedia.src}</p>
+                <p className="text-gray-500 mt-2">
+                  Imaginea nu s-a putut încărca
+                </p>
+              </div>
+            </div>
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-            <h3 className="text-2xl font-bold text-white mb-2">
-              {selectedPhoto.title}
-            </h3>
-            <p className="text-gray-300 mb-3">{selectedPhoto.alt}</p>
-            <span
-              className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                selectedPhoto.category === "birou"
-                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                  : selectedPhoto.category === "herculane"
-                  ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                  : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-              }`}
-            >
-              {
-                categories.find((cat) => cat.id === selectedPhoto.category)
-                  ?.name
-              }
-            </span>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Image size={20} className="text-yellow-400" />
+                <h3 className="text-2xl font-bold text-white">
+                  {selectedMedia.title}
+                </h3>
+              </div>
+              <p className="text-gray-300 mb-3">{selectedMedia.alt}</p>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                  selectedMedia.category === "birou"
+                    ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                    : selectedMedia.category === "herculane"
+                    ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                    : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                }`}
+              >
+                {
+                  categories.find((cat) => cat.id === selectedMedia.category)
+                    ?.name
+                }
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="text-center mt-4">
           <p className="text-gray-400 text-sm">
-            Apasă ESC sau click în afara imaginii pentru a închide
+            Apasă ESC sau click în afara {isVideo ? 'video-ului' : 'imaginii'} pentru a închide
           </p>
         </div>
       </div>
@@ -108,17 +168,18 @@ function ModalOverlay({ selectedPhoto, onClose, categories }) {
 
 const EventPhotoGallery = () => {
   const [activeCategory, setActiveCategory] = useState("toate");
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [mediaType, setMediaType] = useState("toate"); // "toate", "photos", "videos"
+  const [selectedMedia, setSelectedMedia] = useState(null);
 
   // ESC + body lock + clasă pentru a evita transform pe strămoși
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.key === "Escape" || event.keyCode === 27) {
-        setSelectedPhoto(null);
+        setSelectedMedia(null);
       }
     };
 
-    if (selectedPhoto) {
+    if (selectedMedia) {
       document.addEventListener("keydown", handleEsc);
       document.body.style.overflow = "hidden";
       document.body.classList.add("modal-open");
@@ -132,7 +193,7 @@ const EventPhotoGallery = () => {
       document.body.style.overflow = "unset";
       document.body.classList.remove("modal-open");
     };
-  }, [selectedPhoto]);
+  }, [selectedMedia]);
 
   const photos = [
     {
@@ -141,6 +202,7 @@ const EventPhotoGallery = () => {
       alt: "Birou ProFX - Echipa la lucru",
       category: "birou",
       title: "Fondatorii ProFX",
+      type: "photo"
     },
     {
       id: 2,
@@ -148,20 +210,15 @@ const EventPhotoGallery = () => {
       alt: "Birou ProFX - Spațiul de lucru",
       category: "birou",
       title: "Spațiul nostru de lucru",
+      type: "photo"
     },
-    // {
-    //   id: 3,
-    //   src: "Birou3.jpg",
-    //   alt: "Birou ProFX - Meeting room",
-    //   category: "birou",
-    //   title: "Sala de ședințe",
-    // },
     {
       id: 4,
       src: "/Galerie/BootcampHerculane1.jpg",
       alt: "Bootcamp Herculane - Prima zi",
       category: "herculane",
       title: "Prima zi la Herculane",
+      type: "photo"
     },
     {
       id: 5,
@@ -169,20 +226,15 @@ const EventPhotoGallery = () => {
       alt: "Bootcamp Herculane - In natura",
       category: "herculane",
       title: "Workshop intensiv",
+      type: "photo"
     },
-    // {
-    //   id: 6,
-    //   src: "/Galerie/BootcampHerculane3.jpg",
-    //   alt: "Bootcamp Herculane - Team building",
-    //   category: "herculane",
-    //   title: "Activități team building",
-    // },
     {
       id: 7,
       src: "/Galerie/BootcampEforie1.jpg",
       alt: "Bootcamp Eforie - La cina",
       category: "eforie",
       title: "Evolutie",
+      type: "photo"
     },
     {
       id: 8,
@@ -190,6 +242,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Pe terasa",
+      type: "photo"
     },
     {
       id: 9,
@@ -197,6 +250,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 10,
@@ -204,6 +258,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 11,
@@ -211,6 +266,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 12,
@@ -218,6 +274,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 13,
@@ -225,6 +282,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 14,
@@ -232,6 +290,7 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
     {
       id: 15,
@@ -239,20 +298,80 @@ const EventPhotoGallery = () => {
       alt: "",
       category: "eforie",
       title: "Eforie Nord 2025",
+      type: "photo"
     },
   ];
 
+  const videos = [
+    {
+      id: 16,
+      src: "/Galerie/bootcamp-eforie-1.mp4",
+      alt: "",
+      category: "eforie",
+      title: "Ziua 1",
+      type: "video"
+    },
+    {
+      id: 17,
+      src: "/Galerie/bootcamp-eforie-2.mp4",
+      alt: "",
+      category: "eforie",
+      title: "Ziua 2",
+      type: "video"
+    },
+    {
+      id: 18,
+      src: "/Galerie/Bootcamp-eforie-3.mp4",
+      alt: "",
+      category: "eforie",
+      title: "Ziua 3",
+      type: "video"
+    },
+    {
+      id: 19,
+      src: "/Galerie/Bootcamp-eforie-4.mp4",
+      alt: "",
+      category: "eforie",
+      title: "Ziua 4",
+      type: "video"
+    },
+  ];
+
+  const allMedia = [...photos, ...videos];
+
   const categories = [
-    { id: "toate", name: "Toate pozele", icon: Filter },
+    { id: "toate", name: "Toate albumele", icon: Filter },
     { id: "birou", name: "Birou ProFX", icon: MapPin },
     { id: "herculane", name: "Bootcamp Herculane", icon: Calendar },
     { id: "eforie", name: "Bootcamp Eforie Nord", icon: Calendar },
   ];
 
-  const filteredPhotos =
-    activeCategory === "toate"
-      ? photos
-      : photos.filter((photo) => photo.category === activeCategory);
+  const mediaTypes = [
+    { id: "toate", name: "Toate categoriile", icon: Filter },
+    { id: "photos", name: "Poze", icon: Image },
+    { id: "videos", name: "Videos", icon: Video },
+  ];
+
+  // Filtrare complexă
+  const getFilteredMedia = () => {
+    let filtered = allMedia;
+
+    // Filtrează după tip de media
+    if (mediaType === "photos") {
+      filtered = filtered.filter(item => item.type === "photo");
+    } else if (mediaType === "videos") {
+      filtered = filtered.filter(item => item.type === "video");
+    }
+
+    // Filtrează după categorie
+    if (activeCategory !== "toate") {
+      filtered = filtered.filter(item => item.category === activeCategory);
+    }
+
+    return filtered;
+  };
+
+  const filteredMedia = getFilteredMedia();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 to-slate-900 py-12 px-4">
@@ -267,9 +386,39 @@ const EventPhotoGallery = () => {
           </p>
         </div>
 
+        {/* Media Type Filter */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {mediaTypes.map((type) => {
+            const IconComponent = type.icon;
+            return (
+              <button
+                key={type.id}
+                onClick={() => setMediaType(type.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                  mediaType === type.id
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25"
+                    : "bg-slate-800 text-gray-300 hover:bg-slate-700 shadow-md border border-slate-700"
+                }`}
+              >
+                <IconComponent size={20} />
+                {type.name}
+                <span className="bg-white/20 text-xs px-2 py-1 rounded-full ml-1">
+                  {type.id === "toate" ? allMedia.length : 
+                   type.id === "photos" ? photos.length : videos.length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {categories.map((category) => {
             const IconComponent = category.icon;
+            const categoryCount = allMedia.filter(item => 
+              category.id === "toate" ? true : item.category === category.id
+            ).length;
+            
             return (
               <button
                 key={category.id}
@@ -282,99 +431,137 @@ const EventPhotoGallery = () => {
               >
                 <IconComponent size={20} />
                 {category.name}
+                <span className="bg-white/20 text-xs px-2 py-1 rounded-full ml-1">
+                  {categoryCount}
+                </span>
               </button>
             );
           })}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPhotos.map((photo) => (
-            <div
-              key={photo.id}
-              className="bg-slate-900 rounded-xl overflow-hidden shadow-lg shadow-black/50 hover:shadow-2xl hover:shadow-yellow-500/10 transform hover:scale-105 transition-all duration-300 border border-slate-800 cursor-pointer"
-              onClick={() => setSelectedPhoto(photo)}
-            >
-              <div className="aspect-[4/3] bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center relative overflow-hidden border-b border-slate-800">
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                    const fallback = e.currentTarget.nextElementSibling;
-                    if (fallback)
-                      fallback.setAttribute("style", "display:flex");
-                  }}
-                />
+          {filteredMedia.map((item) => {
+            const isVideo = item.type === 'video';
+            return (
+              <div
+                key={item.id}
+                className="bg-slate-900 rounded-xl overflow-hidden shadow-lg shadow-black/50 hover:shadow-2xl hover:shadow-yellow-500/10 transform hover:scale-105 transition-all duration-300 border border-slate-800 cursor-pointer"
+                onClick={() => setSelectedMedia(item)}
+              >
+                <div className="aspect-[4/3] bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center relative overflow-hidden border-b border-slate-800">
+                  {isVideo ? (
+                    <>
+                      <video
+                        src={item.src}
+                        className="w-full h-full object-cover"
+                        muted
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget.nextElementSibling;
+                          if (fallback)
+                            fallback.setAttribute("style", "display:flex");
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
+                          <Video size={24} className="text-black ml-1" />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      src={item.src}
+                      alt={item.alt}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        const fallback = e.currentTarget.nextElementSibling;
+                        if (fallback)
+                          fallback.setAttribute("style", "display:flex");
+                      }}
+                    />
+                  )}
 
-                <div className="absolute inset-0 hidden bg-gradient-to-br from-slate-800 to-slate-700 items-center justify-center text-gray-400 text-center p-4">
-                  <div>
-                    <div className="w-16 h-16 mx-auto mb-3 bg-slate-700 rounded-full flex items-center justify-center border border-slate-600">
-                      <Calendar size={24} className="text-yellow-500" />
+                  <div className="absolute inset-0 hidden bg-gradient-to-br from-slate-800 to-slate-700 items-center justify-center text-gray-400 text-center p-4">
+                    <div>
+                      <div className="w-16 h-16 mx-auto mb-3 bg-slate-700 rounded-full flex items-center justify-center border border-slate-600">
+                        {isVideo ? (
+                          <Video size={24} className="text-yellow-500" />
+                        ) : (
+                          <Calendar size={24} className="text-yellow-500" />
+                        )}
+                      </div>
+                      <p className="font-medium text-gray-300">{item.src}</p>
+                      <p className="text-sm mt-1 text-gray-400">
+                        {isVideo ? "Video-ul nu s-a putut încărca" : "Imaginea nu s-a putut încărca"}
+                      </p>
                     </div>
-                    <p className="font-medium text-gray-300">{photo.src}</p>
-                    <p className="text-sm mt-1 text-gray-400">
-                      Imaginea nu s-a putut încărca
-                    </p>
+                  </div>
+
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+                    <div className="text-yellow-400 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                      <p className="text-lg font-semibold">
+                        Click pentru a {isVideo ? 'reda' : 'vedea'}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
-                  <div className="text-yellow-400 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <p className="text-lg font-semibold">
-                      Click pentru a vedea
-                    </p>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    {isVideo ? (
+                      <Video size={16} className="text-yellow-400" />
+                    ) : (
+                      <Image size={16} className="text-gray-400" />
+                    )}
+                    <h3 className="text-xl font-semibold text-white">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-400">{item.alt}</p>
+                  <div className="mt-4">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                        item.category === "birou"
+                          ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                          : item.category === "herculane"
+                          ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      }`}
+                    >
+                      {categories.find((cat) => cat.id === item.category)?.name}
+                    </span>
                   </div>
                 </div>
               </div>
-
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {photo.title}
-                </h3>
-                <p className="text-gray-400">{photo.alt}</p>
-                <div className="mt-4">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                      photo.category === "birou"
-                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                        : photo.category === "herculane"
-                        ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                        : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                    }`}
-                  >
-                    {categories.find((cat) => cat.id === photo.category)?.name}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {filteredPhotos.length === 0 && (
+        {filteredMedia.length === 0 && (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
               <Filter size={32} className="text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Nu există poze în această categorie
+              Nu există conținut în această categorie
             </h3>
             <p className="text-gray-400">
-              Încearcă să selectezi o altă categorie sau adaugă poze noi.
+              Încearcă să selectezi alte filtre.
             </p>
           </div>
         )}
 
         {/* Modal via Portal */}
         <ModalOverlay
-          selectedPhoto={selectedPhoto}
-          onClose={() => setSelectedPhoto(null)}
+          selectedMedia={selectedMedia}
+          onClose={() => setSelectedMedia(null)}
           categories={categories}
         />
 
         <div className="text-center mt-16 pt-8 border-t border-slate-800">
           <p className="text-gray-400">
-            Galerie foto ProFX • {new Date().getFullYear()}
+            Galerie foto și video ProFX • {new Date().getFullYear()}
           </p>
         </div>
       </div>

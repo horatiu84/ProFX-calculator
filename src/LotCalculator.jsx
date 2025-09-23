@@ -386,7 +386,7 @@ export default function LotCalculator() {
       component: <Training />,
       isSpecial: true
     },
-    { key: "agenda", label: "Agenda ProFX", icon: "🗓️", component: <ProFXSchedule /> },
+    { key: "agenda", label: "Program ProFX", icon: "🗓️", component: <ProFXSchedule /> },
     // { 
     //   key: "simulare", 
     //   label: "Afiliere", 
