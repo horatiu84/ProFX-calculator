@@ -39,7 +39,7 @@ const weeklyWebinars = [
       { name: "Tudor", img: Tudor },
     ],
     ora: 20,
-    details: "Webinar practic pentru începători, cu Dan și Eli.",
+    details: "Webinar practic pentru începători, cu Dan și Tudor.",
   },
   // {
   //   dayOfWeek: 4, // Joi
