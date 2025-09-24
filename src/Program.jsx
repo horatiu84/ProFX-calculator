@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import MihaiVlada from './pics/Mihai.jpg';
+import SergiuC from './pics/Sergiu.jpg';
+import John from './pics/John.jpg';
+import FlaviusR from './pics/Flavius.jpg';
 
 const WeeklySchedule = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -16,6 +20,37 @@ const WeeklySchedule = () => {
     "SÂMBĂTĂ",
     "DUMINICĂ",
   ];
+
+  // Avatarurile mentorilor
+  const mentorAvatars = {
+    "Mihai Vlada": MihaiVlada,
+    "Flavius Radu": FlaviusR,
+    "Sergiu Cirstea": SergiuC,
+    "John Pometcu": John
+  };
+
+  // Funcție pentru a extrage numele mentorului din textul evenimentului
+  const extractMentorName = (eventName) => {
+    const lowerName = eventName.toLowerCase();
+    if (lowerName.includes("mihai")) return "Mihai Vlada";
+    if (lowerName.includes("flavius")) return "Flavius Radu";
+    if (lowerName.includes("sergiu")) return "Sergiu Cirstea";
+    if (lowerName.includes("john")) return "John Pometcu";
+    return null;
+  };
+
+  // Funcție pentru a extrage toți mentorii dintr-un eveniment
+  const extractAllMentors = (eventName) => {
+    const mentors = [];
+    const lowerName = eventName.toLowerCase();
+    
+    if (lowerName.includes("mihai")) mentors.push("Mihai Vlada");
+    if (lowerName.includes("flavius")) mentors.push("Flavius Radu");
+    if (lowerName.includes("sergiu")) mentors.push("Sergiu Cirstea");
+    if (lowerName.includes("john")) mentors.push("John Pometcu");
+    
+    return mentors;
+  };
 
   const weekdayEvents = [
     { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 2 },
@@ -114,11 +149,76 @@ const WeeklySchedule = () => {
     return "scheduled";
   };
 
+  // Componenta pentru avatar-ul mentorului
+  const MentorAvatar = ({ mentorName, size = "sm", status }) => {
+    if (!mentorName || !mentorAvatars[mentorName]) return null;
+
+    const sizeClasses = {
+      sm: "w-8 h-8",
+      md: "w-10 h-10",
+      lg: "w-12 h-12"
+    };
+
+    return (
+      <div className="relative">
+        <img
+          src={mentorAvatars[mentorName]}
+          alt={mentorName}
+          className={`${sizeClasses[size]} rounded-full object-cover border-2 transition-all duration-300 ${
+            status === "passed" 
+              ? "border-gray-600 opacity-50" 
+              : "border-yellow-400 hover:scale-110"
+          }`}
+          onError={(e) => {
+            // Fallback dacă imaginea nu se încarcă
+            e.target.style.display = 'none';
+            e.target.nextSibling.style.display = 'flex';
+          }}
+        />
+        <div 
+          className={`${sizeClasses[size]} rounded-full bg-slate-700 border-2 border-yellow-400 items-center justify-center text-xs font-bold text-yellow-400 hidden`}
+        >
+          {mentorName.charAt(0)}
+        </div>
+      </div>
+    );
+  };
+
+  // Componenta pentru multiple avataruri
+  const MultipleAvatars = ({ mentors, status }) => {
+    if (!mentors || mentors.length === 0) return null;
+
+    if (mentors.length === 1) {
+      return <MentorAvatar mentorName={mentors[0]} size="md" status={status} />;
+    }
+
+    return (
+      <div className="flex ">
+        {mentors.slice(0, 3).map((mentor, index) => (
+          <MentorAvatar 
+            key={mentor} 
+            mentorName={mentor} 
+            size="sm" 
+            status={status}
+          />
+        ))}
+        {mentors.length > 3 && (
+          <div className={`w-8 h-8 rounded-full bg-slate-600 border-2 border-yellow-400 flex items-center justify-center text-xs font-bold text-white ${
+            status === "passed" ? "opacity-50" : ""
+          }`}>
+            +{mentors.length - 3}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const EventCard = ({ event, dayIndex, isWebinar = false }) => {
     const status = getEventStatus(event, dayIndex);
     const [hours, minutes] = event.time.split(":");
     const duration = event.duration || 1;
     const endHour = String(parseInt(hours) + duration).padStart(2, "0");
+    const mentors = extractAllMentors(event.name);
 
     return (
       <div
@@ -136,14 +236,27 @@ const WeeklySchedule = () => {
 
         <div className="p-3 md:p-4">
           <div className="flex justify-between items-start mb-2 md:mb-3">
-            <div className="flex-1">
-              <h3
-                className={`font-semibold mb-1 md:mb-2 text-sm md:text-base ${
-                  status === "passed" ? "text-gray-400" : "text-white"
-                }`}
-              >
-                {event.name}
-              </h3>
+            <div className="flex-1 mr-3">
+              <div className="flex items-start gap-3 mb-2">
+                <MultipleAvatars mentors={mentors} status={status} />
+                <div className="flex-1">
+                  <h3
+                    className={`font-semibold mb-1 text-sm md:text-base ${
+                      status === "passed" ? "text-gray-400" : "text-white"
+                    }`}
+                  >
+                    {event.name}
+                  </h3>
+                  {mentors.length > 0 && (
+                    <p className={`text-xs ${
+                      status === "passed" ? "text-gray-500" : "text-gray-300"
+                    }`}>
+                      Mentor{mentors.length > 1 ? "i" : ""}: {mentors.join(", ")}
+                    </p>
+                  )}
+                </div>
+              </div>
+              
               <div className="flex flex-col md:flex-row md:items-center md:space-x-2 space-y-1 md:space-y-0 mb-1 md:mb-2">
                 <div
                   className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium w-fit ${
@@ -170,7 +283,7 @@ const WeeklySchedule = () => {
             </div>
 
             <div
-              className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold uppercase ml-2 ${
+              className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold uppercase ${
                 status === "live"
                   ? "bg-red-500 text-white animate-pulse"
                   : status === "passed"
