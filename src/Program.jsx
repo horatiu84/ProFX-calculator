@@ -74,6 +74,32 @@ const WeeklySchedule = () => {
     ], // Vineri
   };
 
+  // Navigare cu tastatura - LEFT/RIGHT arrows
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Verificăm dacă nu suntem într-un input sau textarea
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        setActiveTab(prevTab => prevTab > 0 ? prevTab - 1 : 6); // Merge la ultima zi dacă suntem la prima
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        setActiveTab(prevTab => prevTab < 6 ? prevTab + 1 : 0); // Merge la prima zi dacă suntem la ultima
+      }
+    };
+
+    // Adăugăm event listener-ul
+    window.addEventListener('keydown', handleKeyPress);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
   // Detectează dimensiunea ecranului pentru mobile
   useEffect(() => {
     const handleResize = () => {
