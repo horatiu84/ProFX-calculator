@@ -482,7 +482,7 @@ const Calculator = () => {
                       </span>
                       <p className="text-sm text-gray-400">
                         Setează procentul din cont pe care ești dispus să îl
-                        riști (recomandat: 1-2%)
+                        riști (recomandat: 1-1.5%)
                       </p>
                     </div>
                   </div>
