@@ -103,7 +103,7 @@ const getItemDescription = (key) => {
   const descriptions = {
     evolutie: "Monitorizează-ți evoluția zilnică, săptămânală și profitul per trade pentru a-ți urmări progresul în timp real",
     lot: "Calculează dimensiunea optimă a lot-ului pentru fiecare tranzacție bazată pe riscul dorit",
-    pierdere: "Calculează rapid pierderea potențială și procentajul de risc înainte de a deschide o tranzacție",
+    pierdere: "'Shortcut-urile' tale în lumea tradingului: ghiduri simple, rapide și la obiect pentru MT5 și termeni Forex.",
     educatie: "Aici găsești lecțiile de bază și ghidurile ProFX - primul pas in a înțelege cum funcționează tradingul",
     training: "Aici găsești tot ce ai nevoie pentru a-ți construi disciplina și strategia - de la bazele MT5 până la execuții avansate cu Price Action",
     //simulare: "Secțiunea de afiliere este dedicată partenerilor ProFX",

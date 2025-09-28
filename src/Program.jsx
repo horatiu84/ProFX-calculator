@@ -29,6 +29,13 @@ const WeeklySchedule = () => {
     "John Pometcu": John
   };
 
+  // Link-urile pentru sesiuni
+  const sessionLinks = {
+    "Sesiune Asia cu Mihai": "https://us06web.zoom.us/j/83711922820?pwd=TZsnKZAW7menapFMuqpu5CTyi2Alzv.1",
+    "Sesiune Londra cu Flavius": "", // Va fi completat mai târziu
+    "Sesiune New York cu Flavius": "", // Va fi completat mai târziu
+  };
+
   // Funcție pentru a extrage numele mentorului din textul evenimentului
   const extractMentorName = (eventName) => {
     const lowerName = eventName.toLowerCase();
@@ -140,39 +147,57 @@ const WeeklySchedule = () => {
   }, [dropdownOpen]);
 
   const getEventStatus = (event, dayIndex) => {
-    const now = new Date();
-    const currentDay = now.getDay();
-    const mondayBasedCurrentDay = currentDay === 0 ? 6 : currentDay - 1;
+  const now = new Date();
+  const currentDay = now.getDay();
+  const mondayBasedCurrentDay = currentDay === 0 ? 6 : currentDay - 1;
 
-    // Dacă evenimentul e într-o zi trecută
-    if (dayIndex < mondayBasedCurrentDay) {
+  // Dacă suntem duminică (currentDay === 0), toate evenimentele săptămânii următoare sunt "scheduled"
+  if (currentDay === 0) {
+    return "scheduled";
+  }
+
+  // Dacă evenimentul e într-o zi trecută
+  if (dayIndex < mondayBasedCurrentDay) {
+    return "passed";
+  }
+
+  // Dacă evenimentul e într-o zi viitoare
+  if (dayIndex > mondayBasedCurrentDay) {
+    return "scheduled";
+  }
+
+  // Dacă evenimentul e în ziua curentă
+  if (dayIndex === mondayBasedCurrentDay) {
+    const [hours, minutes] = event.time.split(":").map(Number);
+    const eventStartTime = new Date();
+    eventStartTime.setHours(hours, minutes, 0, 0);
+
+    const eventEndTime = new Date(eventStartTime);
+    eventEndTime.setHours(hours + (event.duration || 1), minutes, 0, 0);
+
+    if (now >= eventStartTime && now <= eventEndTime) {
+      return "live";
+    } else if (now > eventEndTime) {
       return "passed";
-    }
-
-    // Dacă evenimentul e într-o zi viitoare
-    if (dayIndex > mondayBasedCurrentDay) {
+    } else {
       return "scheduled";
     }
+  }
 
-    // Dacă evenimentul e în ziua curentă
-    if (dayIndex === mondayBasedCurrentDay) {
-      const [hours, minutes] = event.time.split(":").map(Number);
-      const eventStartTime = new Date();
-      eventStartTime.setHours(hours, minutes, 0, 0);
+  return "scheduled";
+};
 
-      const eventEndTime = new Date(eventStartTime);
-      eventEndTime.setHours(hours + (event.duration || 1), minutes, 0, 0);
-
-      if (now >= eventStartTime && now <= eventEndTime) {
-        return "live";
-      } else if (now > eventEndTime) {
-        return "passed";
-      } else {
-        return "scheduled";
-      }
+  // Funcție pentru a gestiona click-ul pe sesiune
+  const handleSessionClick = (eventName) => {
+    const link = sessionLinks[eventName];
+    if (link) {
+      window.open(link, '_blank');
     }
+  };
 
-    return "scheduled";
+  // Verifică dacă evenimentul are link disponibil
+  const hasSessionLink = (eventName) => {
+    return sessionLinks[eventName] && sessionLinks[eventName] !== "";
   };
 
   // Componenta pentru avatar-ul mentorului
@@ -245,16 +270,19 @@ const WeeklySchedule = () => {
     const duration = event.duration || 1;
     const endHour = String(parseInt(hours) + duration).padStart(2, "0");
     const mentors = extractAllMentors(event.name);
+    const hasLink = hasSessionLink(event.name);
+    const isClickable = hasLink && status !== "passed";
 
     return (
       <div
-        className={`relative bg-slate-800 rounded-lg border transition-all duration-300 hover:scale-105 ${
+        className={`relative bg-slate-800 rounded-lg border transition-all duration-300 ${
           status === "passed"
             ? "border-slate-600 bg-opacity-50"
             : isWebinar
             ? "border-yellow-400 shadow-lg shadow-yellow-400/20"
             : "border-slate-600 hover:border-yellow-400"
-        }`}
+        } ${isClickable ? "cursor-pointer hover:scale-105" : "hover:scale-105"}`}
+        onClick={isClickable ? () => handleSessionClick(event.name) : undefined}
       >
         {status === "passed" && (
           <div className="absolute inset-0 bg-gray-900 opacity-60 rounded-lg pointer-events-none"></div>
@@ -299,13 +327,21 @@ const WeeklySchedule = () => {
                   </div>
                 )}
               </div>
-              <p
-                className={`text-xs ${
-                  status === "passed" ? "text-gray-500" : "text-gray-400"
-                }`}
-              >
-                Durată: {duration} {duration === 1 ? "oră" : "ore"}
-              </p>
+              <div className="flex items-center justify-between">
+                <p
+                  className={`text-xs ${
+                    status === "passed" ? "text-gray-500" : "text-gray-400"
+                  }`}
+                >
+                  Durată: {duration} {duration === 1 ? "oră" : "ore"}
+                </p>
+                {hasLink && status !== "passed" && (
+                  <div className="flex items-center space-x-1 text-xs text-blue-400">
+                    <span>🔗</span>
+                    <span>Click pentru Zoom</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div

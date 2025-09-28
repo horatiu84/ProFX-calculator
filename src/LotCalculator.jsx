@@ -15,6 +15,7 @@ import Calculator from "./Calculator.jsx";
 import Pierdere from "./Pierdere.jsx";
 import Home from "./Home.jsx";
 import EventPhotoGallery from "./Galerie.jsx";
+import HowTo from "./HowTo.jsx";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -371,7 +372,7 @@ export default function LotCalculator() {
   const menuItems = [
     { key: "evolutie", label: "Evoluție", icon: "📈", component: <Evolutie /> },
     { key: "lot", label: "Calculator Lot", icon: "📉", component: <Calculator /> },
-    { key: "pierdere", label: "Pierdere manuală", icon: "⚙️", component: <Pierdere /> },
+    { key: "pierdere", label: "How to", icon: "⚙️", component: <HowTo /> },
     {
       key: "educatie",
       label: "Educație",
