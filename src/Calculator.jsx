@@ -177,6 +177,20 @@ const Calculator = () => {
     setSearchTerm("");
   };
 
+  // Funcție pentru formatarea numerelor cu separatori de mii
+  const formatNumber = (number, decimals = 2) => {
+    if (isNaN(number) || number === 0) return "0,00";
+    
+    const formattedNumber = number.toFixed(decimals);
+    const parts = formattedNumber.split('.');
+    
+    // Adaugă puncte ca separatori de mii
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Înlocuiește punctul zecimal cu virgula
+    return parts.join(',');
+  };
+
   return (
     <div className="min-h-screen text-white p-6">
       <div className="max-w-7xl mx-auto">
@@ -342,7 +356,7 @@ const Calculator = () => {
                       Mărimea lotului:
                     </span>
                     <span className="text-2xl font-bold text-blue-400">
-                      {results.lotSize.toFixed(2)} loturi
+                      {formatNumber(results.lotSize)} loturi
                     </span>
                   </div>
                 </div>
@@ -353,7 +367,7 @@ const Calculator = () => {
                       Valoarea Stop Loss:
                     </span>
                     <span className="text-2xl font-bold text-red-400">
-                      -${results.stopLossValue.toFixed(2)}
+                      -${formatNumber(results.stopLossValue)}
                     </span>
                   </div>
                 </div>
@@ -365,7 +379,7 @@ const Calculator = () => {
                         Valoarea Take Profit:
                       </span>
                       <span className="text-2xl font-bold text-green-400">
-                        +${results.takeProfitValue.toFixed(2)}
+                        +${formatNumber(results.takeProfitValue)}
                       </span>
                     </div>
                   </div>
@@ -379,9 +393,7 @@ const Calculator = () => {
                       </span>
                       <span className="text-2xl font-bold text-yellow-400">
                         1:
-                        {(
-                          results.takeProfitValue / results.stopLossValue
-                        ).toFixed(2)}
+                        {formatNumber(results.takeProfitValue / results.stopLossValue)}
                       </span>
                     </div>
                   </div>
