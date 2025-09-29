@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import CompetitionBanner from "./Competitie";
 import HallOfFameCarousel from "./components/ui/Carusel";
 import FormularInscriereConcurs from "./components/FormularConcurs";
-import HowTo from "./HowTo";
+
 
 
 function formatNumber(n) {
@@ -13,7 +13,6 @@ const BootcampBanner = () => {
   // Banner cu countdown activ
   return (
     <>
-      <HowTo />
       <CompetitionBanner />
       <FormularInscriereConcurs />
       <HallOfFameCarousel />
