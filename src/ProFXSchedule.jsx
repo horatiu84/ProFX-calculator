@@ -29,18 +29,18 @@ const weeklyWebinars = [
     details:
       "Participă și tu la webinarul interactiv unde vei afla ce este tradingul, cum funcționează piețele financiare și cum poți începe să înveți gratuit alături de comunitatea ProFX!",
   },
-  {
-    dayOfWeek: 2, // Marți
-    title: "WEBINAR ÎNCEPĂTORI",
-    subtitle: "Cum să luăm tranzacții în Forex",
-    presenters: "Eli & Dan",
-    mentors: [
-      { name: "Dan", img: Dan },
-      { name: "Tudor", img: Tudor },
-    ],
-    ora: 20,
-    details: "Webinar practic pentru începători, cu Dan și Tudor.",
-  },
+  // {
+  //   dayOfWeek: 2, // Marți
+  //   title: "WEBINAR ÎNCEPĂTORI",
+  //   subtitle: "Cum să luăm tranzacții în Forex",
+  //   presenters: "Eli & Dan",
+  //   mentors: [
+  //     { name: "Dan", img: Dan },
+  //     { name: "Tudor", img: Tudor },
+  //   ],
+  //   ora: 20,
+  //   details: "Webinar practic pentru începători, cu Dan și Tudor.",
+  // },
   // {
   //   dayOfWeek: 4, // Joi
   //   title: "WEBINAR AVANSAȚI",
