@@ -82,6 +82,25 @@ const Raport = () => {
           Luna August 2025
         </a>
       </p>
+           <p className="flex justify-center mt-2">
+        <a
+          href="/Rapoarte/RaportSeptembrie.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            px-5 py-2
+            bg-blue-600 text-white font-semibold rounded-full
+            shadow-md
+            transition
+            duration-200
+            hover:bg-blue-700 hover:scale-105
+            focus:outline-none focus:ring-2 focus:ring-blue-400
+            active:scale-95
+          "
+        >
+          Luna Septembrie 2025
+        </a>
+      </p>
     </div>
   );
 };
