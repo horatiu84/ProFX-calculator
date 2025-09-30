@@ -16,6 +16,7 @@ import Pierdere from "./Pierdere.jsx";
 import Home from "./Home.jsx";
 import EventPhotoGallery from "./Galerie.jsx";
 import HowTo from "./HowTo.jsx";
+import ProFXChecklist from "./Clase1La20.jsx";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -400,7 +401,8 @@ export default function LotCalculator() {
     { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
     { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
-    { key: "galerie", label: "Galerie ProFX", icon: "📷", component: <EventPhotoGallery /> }
+    { key: "galerie", label: "Galerie ProFX", icon: "📷", component: <EventPhotoGallery /> },
+    { key: "Clase", label: "Clasa 1:20", icon: "📋", component: <ProFXChecklist /> }
   ];
 
   // URL parameters logic

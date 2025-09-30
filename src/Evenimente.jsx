@@ -4,11 +4,6 @@ import HallOfFameCarousel from "./components/ui/Carusel";
 import FormularInscriereConcurs from "./components/FormularConcurs";
 
 
-
-function formatNumber(n) {
-  return n.toString().padStart(2, "0");
-}
-
 const BootcampBanner = () => {
   // Banner cu countdown activ
   return (
