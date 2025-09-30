@@ -50,18 +50,11 @@ const ProFXChecklist = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
-        {/* Trading Chart Background Image */}
         <div
           className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/Chart.png')`,
-          }}
+          style={{ backgroundImage: `url('/Chart.png')` }}
         />
-
-        {/* Overlay Gradient for better readability */}
         <div className="fixed inset-0 bg-gradient-to-br from-gray-950/95 via-black/90 to-gray-950/95" />
-
-        {/* Login Form */}
         <div className="relative z-10 backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 p-8 shadow-2xl max-w-md w-full">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
@@ -92,7 +85,7 @@ const ProFXChecklist = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-yellow-500/50 hover:scale-105 active:scale-95"
             >
-              Accesează Clasa 1
+              Accesează Clasa 1 La 20
             </button>
           </form>
         </div>
@@ -202,39 +195,23 @@ const ProFXChecklist = () => {
       if (subtaskIndex !== null) {
         const key = `${itemId}-${subtaskIndex}`;
         updated[key] = !prev[key];
-
-        // Verifică dacă toate subtask-urile sunt completate
         const item = checklistData.find((i) => i.id === itemId);
         if (item && item.subtasks.length > 0) {
-          const allSubtasksChecked = item.subtasks.every((_, idx) => {
-            if (idx === subtaskIndex) {
-              return updated[`${itemId}-${idx}`];
-            }
-            return updated[`${itemId}-${idx}`];
-          });
-
-          // Auto-completează task-ul principal dacă toate subtask-urile sunt bifate
-          if (allSubtasksChecked) {
-            updated[itemId] = true;
-          } else {
-            // Debifează task-ul principal dacă nu toate subtask-urile sunt bifate
-            updated[itemId] = false;
-          }
+          const allSubtasksChecked = item.subtasks.every((_, idx) =>
+            updated[`${itemId}-${idx}`]
+          );
+          updated[itemId] = allSubtasksChecked;
         }
       } else {
-        // Dacă se bifează task-ul principal
         const newState = !prev[itemId];
         updated[itemId] = newState;
-
-        // Dacă task-ul are subtask-uri, bifează/debifează-le pe toate
         const item = checklistData.find((i) => i.id === itemId);
         if (item && item.subtasks.length > 0) {
           item.subtasks.forEach((_, idx) => {
-            updated[`${itemId}-${idx}`] = newState;
+            updated[`${item.id}-${idx}`] = newState;
           });
         }
       }
-
       return updated;
     });
   };
@@ -248,25 +225,38 @@ const ProFXChecklist = () => {
     checklistData.forEach((item) => {
       total += item.subtasks.length;
     });
-
     const completed = Object.values(checkedItems).filter(Boolean).length;
     return Math.round((completed / total) * 100);
   };
 
+  // ✅ Funcție care transformă linkurile în clickable
+  const renderTextWithLinks = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, index) =>
+      urlRegex.test(part) ? (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 transition"
+        >
+          {part}
+        </a>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Trading Chart Background Image */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('/Chart.png')`,
-        }}
+        style={{ backgroundImage: `url('/Chart.png')` }}
       />
-
-      {/* Overlay Gradient for better readability */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-950/90 via-black/90 to-gray-950/90" />
-
-      {/* Content */}
       <div className="relative z-10 p-4 sm:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header Card */}
@@ -285,8 +275,6 @@ const ProFXChecklist = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Reset Button */}
               <button
                 onClick={resetProgress}
                 className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30 hover:scale-105 active:scale-95 text-sm sm:text-base w-full sm:w-auto"
@@ -294,7 +282,6 @@ const ProFXChecklist = () => {
                 Reset Progres
               </button>
             </div>
-
             {/* Progress Bar */}
             <div className="mt-4 sm:mt-6">
               <div className="flex justify-between items-center mb-2">
@@ -313,7 +300,6 @@ const ProFXChecklist = () => {
               </div>
             </div>
           </div>
-
           {/* Checklist */}
           <div className="space-y-3 sm:space-y-4">
             {checklistData.map((item, index) => (
@@ -321,7 +307,6 @@ const ProFXChecklist = () => {
                 key={item.id}
                 className="backdrop-blur-xl bg-white/5 rounded-xl border border-white/10 p-4 sm:p-6 shadow-xl hover:bg-white/10 transition-all duration-300"
               >
-                {/* Main Item */}
                 <div className="flex items-start gap-3 sm:gap-4">
                   <button
                     onClick={() => toggleItem(item.id)}
@@ -338,12 +323,9 @@ const ProFXChecklist = () => {
                       />
                     )}
                   </button>
-
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-2 sm:gap-3">
-                      <span
-                        className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-lg`}
-                      >
+                      <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-lg">
                         {index + 1}
                       </span>
                       <h3
@@ -356,8 +338,6 @@ const ProFXChecklist = () => {
                         {item.title}
                       </h3>
                     </div>
-
-                    {/* Subtasks */}
                     {item.subtasks.length > 0 && (
                       <div className="mt-3 sm:mt-4 ml-9 sm:ml-11 space-y-2">
                         {item.subtasks.map((subtask, subIndex) => (
@@ -387,7 +367,7 @@ const ProFXChecklist = () => {
                                   : "text-gray-300"
                               }`}
                             >
-                              {subtask}
+                              {renderTextWithLinks(subtask)}
                             </span>
                           </div>
                         ))}
@@ -398,7 +378,6 @@ const ProFXChecklist = () => {
               </div>
             ))}
           </div>
-
           {/* Footer Note */}
           <div className="mt-6 sm:mt-8 backdrop-blur-xl bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/20 p-4 sm:p-6 shadow-xl">
             <div className="flex items-start gap-3 sm:gap-4">

@@ -74,7 +74,7 @@ const Training = () => {
 
   const advancedGeneralLinks = [
     {
-      title: "Lecțiile de la 1 - 8 de pe canalul nostru de Youtube",
+      title: "Lecțiile de la 1 - 10 de pe canalul nostru de Youtube",
       url: "https://youtube.com/@profx-romania?si=wA7daxrGD2nedUBj",
     },
     {
