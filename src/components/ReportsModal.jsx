@@ -126,12 +126,12 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
     const totalProfitLoss = filtered.reduce((sum, t) => sum + t.profitLoss, 0);
     const avgProfitLoss = totalProfitLoss / totalTrades;
     
-    // Calculate risk/reward ratio
-    const avgWin = winningTrades.length > 0 ? 
-      winningTrades.reduce((sum, t) => sum + t.profitLoss, 0) / winningTrades.length : 0;
-    const avgLoss = losingTrades.length > 0 ? 
-      Math.abs(losingTrades.reduce((sum, t) => sum + t.profitLoss, 0)) / losingTrades.length : 0;
-    const riskRewardRatio = avgLoss > 0 ? avgWin / avgLoss : 0;
+    // Calculate risk/reward ratio using totals
+    const totalWins = winningTrades.length > 0 ? 
+      winningTrades.reduce((sum, t) => sum + t.profitLoss, 0) : 0;
+    const totalLosses = losingTrades.length > 0 ? 
+      Math.abs(losingTrades.reduce((sum, t) => sum + t.profitLoss, 0)) : 0;
+    const riskRewardRatio = totalLosses > 0 ? totalWins / totalLosses : 0;
 
     // Prepare chart data
     const profitLossOverTime = calculateCumulativeProfitLoss(filtered);
@@ -150,6 +150,15 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
     ];
     
     const currencyPairPerformance = calculateCurrencyPairPerformance(filtered);
+    
+    // Calculate best and worst trades
+    const bestTrade = filtered.length > 0 ? filtered.reduce((best, current) => 
+      current.profitLoss > best.profitLoss ? current : best
+    ) : null;
+    
+    const worstTrade = filtered.length > 0 ? filtered.reduce((worst, current) => 
+      current.profitLoss < worst.profitLoss ? current : worst
+    ) : null;
 
     setReportData({
       totalTrades,
@@ -162,7 +171,9 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
       profitLossOverTime,
       winLossDistribution,
       tradeTypeDistribution,
-      currencyPairPerformance
+      currencyPairPerformance,
+      bestTrade,
+      worstTrade
     });
   };
 
@@ -341,17 +352,125 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                   </div>
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
                     <h3 className={`text-sm font-medium ${reportData.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      Profit/Pierdere Total
+                      Profit Net Total
                     </h3>
                     <p className={`text-2xl font-bold ${reportData.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       ${reportData.totalProfitLoss.toFixed(2)}
                     </p>
                   </div>
-                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
-                    <h3 className="text-sm font-medium text-purple-400">Risc/Recompensă</h3>
-                    <p className="text-2xl font-bold text-white">{reportData.riskRewardRatio.toFixed(2)}</p>
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl group relative">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-purple-400">Performanță P/L</h3>
+                      <div className="relative">
+                        <span className="text-purple-400 cursor-help text-xs">ⓘ</span>
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-80 bg-gray-900 border border-purple-400/30 rounded-xl p-4 text-xs text-gray-300 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                          <div className="text-purple-400 font-semibold mb-2">Formula: Câștig Total ÷ Pierderi Totale</div>
+                          <div className="space-y-1 mb-3">
+                            <div><span className="text-green-400">• &gt; 1.0:</span> Excelent! Câștigi total mai mult decât pierzi</div>
+                            <div><span className="text-yellow-400">• = 1.0:</span> Echilibrat - câștigi total cât pierzi total</div>
+                            <div><span className="text-red-400">• &lt; 1.0:</span> Risc mare - pierzi total mai mult decât câștigi</div>
+                          </div>
+                          <div className="text-xs text-gray-400 border-t border-gray-700 pt-2">
+                            <strong>Exemplu:</strong> Câștigi $1000 total, pierzi $400 total → 1000÷400 = 2.5 (excelent!)
+                          </div>
+                          {/* Tooltip arrow */}
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-2xl font-bold text-white">{reportData.riskRewardRatio.toFixed(2)}</p>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        reportData.riskRewardRatio > 1.5 ? 'bg-green-500/20 text-green-400' :
+                        reportData.riskRewardRatio > 1.0 ? 'bg-yellow-500/20 text-yellow-400' :
+                        reportData.riskRewardRatio > 0.8 ? 'bg-orange-500/20 text-orange-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>
+                        {reportData.riskRewardRatio > 1.5 ? 'Excelent' :
+                         reportData.riskRewardRatio > 1.0 ? 'Bun' :
+                         reportData.riskRewardRatio > 0.8 ? 'Acceptabil' :
+                         'Risc Mare'}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Best and Worst Trades */}
+                {(reportData.bestTrade || reportData.worstTrade) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    {/* Best Trade */}
+                    {reportData.bestTrade && reportData.bestTrade.profitLoss > 0 && (
+                      <div className="bg-white/5 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 shadow-2xl">
+                        <div className="flex items-center mb-3">
+                          <span className="text-2xl mr-2">🏆</span>
+                          <h3 className="text-lg font-semibold text-green-400">Cel mai bun trade</h3>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Pereche:</span>
+                            <span className="text-yellow-400 font-semibold">{reportData.bestTrade.pair}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Data:</span>
+                            <span className="text-white">{reportData.bestTrade.displayDate || reportData.bestTrade.date}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Tip:</span>
+                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                              reportData.bestTrade.type === 'buy' 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              {reportData.bestTrade.type.toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center mt-4 pt-3 border-t border-green-500/20">
+                            <span className="text-gray-300">Profit:</span>
+                            <span className="text-2xl font-bold text-green-400">
+                              +${reportData.bestTrade.profitLoss.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Worst Trade */}
+                    {reportData.worstTrade && reportData.worstTrade.profitLoss < 0 && (
+                      <div className="bg-white/5 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 shadow-2xl">
+                        <div className="flex items-center mb-3">
+                          <span className="text-2xl mr-2">💔</span>
+                          <h3 className="text-lg font-semibold text-red-400">Cea mai mare pierdere</h3>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Pereche:</span>
+                            <span className="text-yellow-400 font-semibold">{reportData.worstTrade.pair}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Data:</span>
+                            <span className="text-white">{reportData.worstTrade.displayDate || reportData.worstTrade.date}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Tip:</span>
+                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                              reportData.worstTrade.type === 'buy' 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              {reportData.worstTrade.type.toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center mt-4 pt-3 border-t border-red-500/20">
+                            <span className="text-gray-300">Pierdere:</span>
+                            <span className="text-2xl font-bold text-red-400">
+                              -${Math.abs(reportData.worstTrade.profitLoss).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
