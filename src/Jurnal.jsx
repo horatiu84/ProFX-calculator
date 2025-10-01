@@ -1,0 +1,684 @@
+import React, { useState, useEffect } from "react";
+
+const TradingJournal = () => {
+  const [accountBalance, setAccountBalance] = useState(() => {
+    const saved = localStorage.getItem("accountBalance");
+    return saved ? parseFloat(saved) : 0;
+  });
+  const [initialBalance, setInitialBalance] = useState(() => {
+    const saved = localStorage.getItem("initialBalance");
+    return saved ? parseFloat(saved) : 0;
+  });
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [trades, setTrades] = useState(() => {
+    const saved = localStorage.getItem("trades");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTrade, setNewTrade] = useState({
+    pair: "",
+    lotSize: "",
+    type: "buy",
+    pips: "",
+    result: "tp",
+    source: "semnale",
+    mentor: "Mihai",
+    notes: "",
+  });
+
+  const tradingPairs = {
+    Commodities: {
+      XAUUSD: { pipValue: 10, pipLocation: 2 },
+      XTIUSD: { pipValue: 10, pipLocation: 2 },
+      XAGUSD: { pipValue: 50, pipLocation: 3 },
+    },
+    "Forex Majors": {
+      AUDUSD: { pipValue: 10, pipLocation: 4 },
+      EURUSD: { pipValue: 10, pipLocation: 4 },
+      GBPUSD: { pipValue: 10, pipLocation: 4 },
+      NZDUSD: { pipValue: 10, pipLocation: 4 },
+      USDCAD: { pipValue: 6.93, pipLocation: 4 },
+      USDCHF: { pipValue: 11.08, pipLocation: 4 },
+      USDJPY: { pipValue: 6.65, pipLocation: 2 },
+    },
+    "Forex Cross": {
+      AUDCAD: { pipValue: 6.93, pipLocation: 4 },
+      AUDCHF: { pipValue: 11.08, pipLocation: 4 },
+      AUDJPY: { pipValue: 6.65, pipLocation: 2 },
+      AUDNZD: { pipValue: 5.6, pipLocation: 4 },
+      CADCHF: { pipValue: 11.08, pipLocation: 4 },
+      CADJPY: { pipValue: 6.65, pipLocation: 2 },
+      CHFJPY: { pipValue: 6.65, pipLocation: 2 },
+      EURAUD: { pipValue: 6.21, pipLocation: 4 },
+      EURCAD: { pipValue: 6.93, pipLocation: 4 },
+      EURCHF: { pipValue: 11.08, pipLocation: 4 },
+      EURGBP: { pipValue: 12.6, pipLocation: 4 },
+      EURJPY: { pipValue: 6.65, pipLocation: 2 },
+      EURNZD: { pipValue: 5.6, pipLocation: 4 },
+      GBPAUD: { pipValue: 6.21, pipLocation: 4 },
+      GBPCAD: { pipValue: 6.93, pipLocation: 4 },
+      GBPCHF: { pipValue: 11.08, pipLocation: 4 },
+      GBPJPY: { pipValue: 6.65, pipLocation: 2 },
+      GBPNZD: { pipValue: 5.6, pipLocation: 4 },
+      NZDCAD: { pipValue: 6.93, pipLocation: 4 },
+      NZDCHF: { pipValue: 11.08, pipLocation: 4 },
+      NZDJPY: { pipValue: 6.65, pipLocation: 2 },
+    },
+    Indices: {
+      US30: { pipValue: 1, pipLocation: 0 },
+      US500: { pipValue: 1, pipLocation: 0 },
+      NAS100: { pipValue: 1, pipLocation: 0 },
+      DE30: { pipValue: 1, pipLocation: 0 },
+      UK100: { pipValue: 1, pipLocation: 0 },
+    },
+  };
+
+  const allPairs = Object.entries(tradingPairs).reduce(
+    (acc, [category, pairs]) => {
+      Object.entries(pairs).forEach(([pair, data]) => {
+        acc[pair] = { ...data, category };
+      });
+      return acc;
+    },
+    {}
+  );
+
+  const mentors = ["Mihai", "Flavius", "Eli", "Tudor", "John", "Daniel", "Altcineva"];
+
+  useEffect(() => {
+    localStorage.setItem("trades", JSON.stringify(trades));
+  }, [trades]);
+
+  useEffect(() => {
+    localStorage.setItem("accountBalance", accountBalance.toString());
+  }, [accountBalance]);
+
+  useEffect(() => {
+    localStorage.setItem("initialBalance", initialBalance.toString());
+  }, [initialBalance]);
+
+  useEffect(() => {
+    if (!initialBalance || initialBalance === 0) {
+      setShowBalanceModal(true);
+    }
+  }, []);
+
+  // Sincronizare localStorage între tab-uri și resize-uri
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "trades" && e.newValue) {
+        setTrades(JSON.parse(e.newValue));
+      }
+      if (e.key === "accountBalance" && e.newValue) {
+        setAccountBalance(parseFloat(e.newValue));
+      }
+      if (e.key === "initialBalance" && e.newValue) {
+        setInitialBalance(parseFloat(e.newValue));
+      }
+    };
+
+    // Funcție pentru a reîncărca datele din localStorage
+    const reloadFromStorage = () => {
+      const savedTrades = localStorage.getItem("trades");
+      const savedBalance = localStorage.getItem("accountBalance");
+      const savedInitial = localStorage.getItem("initialBalance");
+      
+      if (savedTrades) setTrades(JSON.parse(savedTrades));
+      if (savedBalance) setAccountBalance(parseFloat(savedBalance));
+      if (savedInitial) setInitialBalance(parseFloat(savedInitial));
+    };
+
+    // Event listener pentru modificări localStorage din alte tab-uri
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Event listener pentru resize (pentru dev tools)
+    window.addEventListener("resize", reloadFromStorage);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("resize", reloadFromStorage);
+    };
+  }, []);
+
+  const calculateProfitLoss = (pair, lotSize, pips, result) => {
+    const pairData = allPairs[pair];
+    if (!pairData) return 0;
+
+    const profitLoss = lotSize * pips * pairData.pipValue;
+    return result === "tp" ? profitLoss : -profitLoss;
+  };
+
+  const handleSetInitialBalance = (balance) => {
+    const bal = parseFloat(balance);
+    if (isNaN(bal) || bal <= 0) {
+      alert("Te rog introdu o valoare validă!");
+      return;
+    }
+    
+    // Dacă există deja trades, recalculăm accountBalance bazat pe noul sold inițial
+    if (trades.length > 0) {
+      const totalPL = trades.reduce((sum, trade) => sum + trade.profitLoss, 0);
+      setInitialBalance(bal);
+      setAccountBalance(bal + totalPL);
+    } else {
+      setInitialBalance(bal);
+      setAccountBalance(bal);
+    }
+    setShowBalanceModal(false);
+  };
+
+  const handleAddTrade = () => {
+    if (!newTrade.pair || !newTrade.lotSize || !newTrade.pips) {
+      alert("Te rog completează toate câmpurile obligatorii!");
+      return;
+    }
+
+    const profitLoss = calculateProfitLoss(
+      newTrade.pair,
+      parseFloat(newTrade.lotSize),
+      parseFloat(newTrade.pips),
+      newTrade.result
+    );
+
+    const trade = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString("ro-RO"),
+      time: new Date().toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" }),
+      ...newTrade,
+      lotSize: parseFloat(newTrade.lotSize),
+      pips: parseFloat(newTrade.pips),
+      profitLoss: profitLoss,
+    };
+
+    setTrades([trade, ...trades]);
+    setAccountBalance(accountBalance + profitLoss);
+    setShowAddModal(false);
+    setNewTrade({
+      pair: "",
+      lotSize: "",
+      type: "buy",
+      pips: "",
+      result: "tp",
+      source: "semnale",
+      mentor: "Mihai",
+      notes: "",
+    });
+  };
+
+  const handleDeleteTrade = (id) => {
+    const trade = trades.find((t) => t.id === id);
+    if (trade && window.confirm("Ești sigur că vrei să ștergi acest trade?")) {
+      setAccountBalance(accountBalance - trade.profitLoss);
+      setTrades(trades.filter((t) => t.id !== id));
+    }
+  };
+
+  const formatNumber = (number, decimals = 2) => {
+    if (isNaN(number)) return "0,00";
+    const formattedNumber = number.toFixed(decimals);
+    const parts = formattedNumber.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return parts.join(",");
+  };
+
+  const totalProfit = trades.reduce((sum, t) => sum + (t.profitLoss > 0 ? t.profitLoss : 0), 0);
+  const totalLoss = trades.reduce((sum, t) => sum + (t.profitLoss < 0 ? Math.abs(t.profitLoss) : 0), 0);
+  const winRate = trades.length > 0 ? (trades.filter(t => t.profitLoss > 0).length / trades.length * 100) : 0;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-3 sm:p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                📖 Jurnal Trade
+              </h1>
+              <p className="text-gray-400 mt-2 text-sm sm:text-base">Monitorizează-ți performanța de trading</p>
+            </div>
+            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => setShowBalanceModal(true)}
+                className="flex-1 sm:flex-none bg-gray-700 hover:bg-gray-600 text-white font-bold px-4 sm:px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-600 text-sm sm:text-base whitespace-nowrap"
+              >
+                ⚙️ <span className="hidden sm:inline">Modifică Sold</span><span className="sm:hidden">Sold</span>
+              </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex-1 sm:flex-none bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold px-4 sm:px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base whitespace-nowrap"
+              >
+                + <span className="hidden sm:inline">Adaugă Trade</span><span className="sm:hidden">Trade</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">Sold Cont</div>
+              <div className="text-2xl sm:text-3xl font-bold text-white">
+                ${formatNumber(accountBalance)}
+              </div>
+              <div className={`text-xs sm:text-sm mt-2 ${accountBalance >= initialBalance ? "text-green-400" : "text-red-400"}`}>
+                {accountBalance >= initialBalance ? "+" : ""}{formatNumber(accountBalance - initialBalance)} ({((accountBalance - initialBalance) / initialBalance * 100).toFixed(2)}%)
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">Total Profit</div>
+              <div className="text-2xl sm:text-3xl font-bold text-green-400">
+                ${formatNumber(totalProfit)}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-400 mt-2">
+                {trades.filter(t => t.profitLoss > 0).length} trades câștigătoare
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">Total Loss</div>
+              <div className="text-2xl sm:text-3xl font-bold text-red-400">
+                ${formatNumber(totalLoss)}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-400 mt-2">
+                {trades.filter(t => t.profitLoss < 0).length} trades pierzătoare
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">Win Rate</div>
+              <div className="text-2xl sm:text-3xl font-bold text-yellow-400">
+                {winRate.toFixed(1)}%
+              </div>
+              <div className="text-xs sm:text-sm text-gray-400 mt-2">
+                {trades.length} total trades
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trades Table */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+          {/* Mobile Cards View */}
+          <div className="block lg:hidden">
+            {trades.length === 0 ? (
+              <div className="px-6 py-12 text-center text-gray-400">
+                <div className="flex flex-col items-center">
+                  <div className="text-6xl mb-4">📊</div>
+                  <p className="text-lg">Nu ai niciun trade înregistrat încă</p>
+                  <p className="text-sm mt-2">Începe prin a adăuga primul tău trade!</p>
+                </div>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {trades.map((trade) => (
+                  <div key={trade.id} className="p-4 hover:bg-white/5 transition-colors">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <div className="font-semibold text-yellow-400 text-lg">{trade.pair}</div>
+                        <div className="text-xs text-gray-400">{trade.date} • {trade.time}</div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteTrade(trade.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors p-2"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Tip</div>
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                          trade.type === "buy" 
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                        }`}>
+                          {trade.type.toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Rezultat</div>
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                          trade.result === "tp" 
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                        }`}>
+                          {trade.result.toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Lot</div>
+                        <div className="text-sm font-medium">{formatNumber(trade.lotSize)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Pips</div>
+                        <div className="text-sm font-medium">{trade.pips}</div>
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-400 mb-1">P/L</div>
+                      <span className={`text-lg font-bold ${trade.profitLoss >= 0 ? "text-green-400" : "text-red-400"}`}>
+                        {trade.profitLoss >= 0 ? "+" : "-"}${formatNumber(Math.abs(trade.profitLoss))}
+                      </span>
+                    </div>
+
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-400 mb-1">Sursă</div>
+                      {trade.source === "semnale" ? (
+                        <div>
+                          <div className="text-purple-400 text-sm">Semnale</div>
+                          <div className="text-xs text-gray-400">{trade.mentor}</div>
+                        </div>
+                      ) : (
+                        <div className="text-blue-400 text-sm">Proprii</div>
+                      )}
+                    </div>
+
+                    {trade.notes && (
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Note</div>
+                        <div className="text-sm text-gray-300">{trade.notes}</div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-white/10 border-b border-white/10">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Data</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Pereche</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tip</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Lot</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Pips</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Rezultat</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">P/L</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Sursă</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Note</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Acțiuni</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {trades.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="px-6 py-12 text-center text-gray-400">
+                      <div className="flex flex-col items-center">
+                        <div className="text-6xl mb-4">📊</div>
+                        <p className="text-lg">Nu ai niciun trade înregistrat încă</p>
+                        <p className="text-sm mt-2">Începe prin a adăuga primul tău trade!</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  trades.map((trade) => (
+                    <tr key={trade.id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <div>{trade.date}</div>
+                        <div className="text-gray-400 text-xs">{trade.time}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="font-semibold text-yellow-400">{trade.pair}</span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          trade.type === "buy" 
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                        }`}>
+                          {trade.type.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">{formatNumber(trade.lotSize)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">{trade.pips}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          trade.result === "tp" 
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                        }`}>
+                          {trade.result.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`font-bold ${trade.profitLoss >= 0 ? "text-green-400" : "text-red-400"}`}>
+                          {trade.profitLoss >= 0 ? "+" : "-"}${formatNumber(Math.abs(trade.profitLoss))}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {trade.source === "semnale" ? (
+                          <div>
+                            <div className="text-purple-400">Semnale</div>
+                            <div className="text-xs text-gray-400">{trade.mentor}</div>
+                          </div>
+                        ) : (
+                          <div className="text-blue-400">Proprii</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm max-w-xs truncate" title={trade.notes}>
+                        {trade.notes || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleDeleteTrade(trade.id)}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          🗑️
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Initial Balance Modal */}
+      {showBalanceModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <h2 className="text-2xl font-bold mb-4 text-yellow-400">
+              {initialBalance > 0 ? "Modifică mărimea contului" : "Setează mărimea contului"}
+            </h2>
+            <p className="text-gray-300 mb-2">
+              {initialBalance > 0 
+                ? "Introdu noul sold inițial al contului:" 
+                : "Introdu soldul inițial al contului tău de trading:"}
+            </p>
+            {initialBalance > 0 && (
+              <p className="text-sm text-yellow-400 mb-4">
+                ⚠️ Soldul actual va fi recalculat automat bazat pe toate trade-urile existente
+              </p>
+            )}
+            <input
+              type="number"
+              defaultValue={initialBalance > 0 ? initialBalance : ""}
+              placeholder="10000"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 mb-6"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSetInitialBalance(e.target.value);
+                }
+              }}
+            />
+            <div className="flex gap-3">
+              {initialBalance > 0 && (
+                <button
+                  onClick={() => setShowBalanceModal(false)}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
+                >
+                  Anulează
+                </button>
+              )}
+              <button
+                onClick={(e) => {
+                  const input = e.target.parentElement.previousElementSibling;
+                  handleSetInitialBalance(input.value);
+                }}
+                className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold py-3 rounded-xl transition-all duration-200"
+              >
+                Confirmă
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Trade Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl p-8 max-w-2xl w-full shadow-2xl my-8">
+            <h2 className="text-2xl font-bold mb-6 text-yellow-400">Adaugă Trade Nou</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Pereche valutară *</label>
+                <select
+                  value={newTrade.pair}
+                  onChange={(e) => setNewTrade({ ...newTrade, pair: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="">Selectează...</option>
+                  {Object.entries(tradingPairs).map(([category, pairs]) => (
+                    <optgroup key={category} label={category}>
+                      {Object.keys(pairs).map((pair) => (
+                        <option key={pair} value={pair}>{pair}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Mărime lot *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={newTrade.lotSize}
+                  onChange={(e) => setNewTrade({ ...newTrade, lotSize: e.target.value })}
+                  placeholder="0.10"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Tip tranzacție</label>
+                <select
+                  value={newTrade.type}
+                  onChange={(e) => setNewTrade({ ...newTrade, type: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="buy">BUY</option>
+                  <option value="sell">SELL</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Pips *</label>
+                <input
+                  type="number"
+                  value={newTrade.pips}
+                  onChange={(e) => setNewTrade({ ...newTrade, pips: e.target.value })}
+                  placeholder="50"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Rezultat</label>
+                <select
+                  value={newTrade.result}
+                  onChange={(e) => setNewTrade({ ...newTrade, result: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="tp">Take Profit (TP)</option>
+                  <option value="sl">Stop Loss (SL)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Sursă</label>
+                <select
+                  value={newTrade.source}
+                  onChange={(e) => setNewTrade({ ...newTrade, source: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="semnale">Semnale mentor</option>
+                  <option value="proprii">Trade-uri proprii</option>
+                </select>
+              </div>
+
+              {newTrade.source === "semnale" && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">Mentor</label>
+                  <select
+                    value={newTrade.mentor}
+                    onChange={(e) => setNewTrade({ ...newTrade, mentor: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                  >
+                    {mentors.map((mentor) => (
+                      <option key={mentor} value={mentor}>{mentor}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className={newTrade.source === "semnale" ? "md:col-span-1" : "md:col-span-2"}>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Observații</label>
+                <textarea
+                  value={newTrade.notes}
+                  onChange={(e) => setNewTrade({ ...newTrade, notes: e.target.value })}
+                  placeholder="Adaugă note despre acest trade..."
+                  rows="3"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 resize-none"
+                />
+              </div>
+            </div>
+
+            {newTrade.pair && newTrade.lotSize && newTrade.pips && (
+              <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-sm text-gray-300 mb-2">Preview profit/pierdere:</div>
+                <div className={`text-2xl font-bold ${
+                  newTrade.result === "tp" ? "text-green-400" : "text-red-400"
+                }`}>
+                  {newTrade.result === "tp" ? "+" : "-"}$
+                  {formatNumber(Math.abs(calculateProfitLoss(
+                    newTrade.pair,
+                    parseFloat(newTrade.lotSize),
+                    parseFloat(newTrade.pips),
+                    newTrade.result
+                  )))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-4 mt-8">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={handleAddTrade}
+                className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold py-3 rounded-xl transition-all duration-200"
+              >
+                Salvează Trade
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TradingJournal;

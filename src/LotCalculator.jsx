@@ -17,6 +17,7 @@ import Home from "./Home.jsx";
 import EventPhotoGallery from "./Galerie.jsx";
 import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
+import TradingJournal from "./Jurnal.jsx";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -397,7 +398,8 @@ export default function LotCalculator() {
     //   isSpecial: true,
     //   isAfiliere: true
     // },
-    { key: "raport", label: "Jurnal", icon: "📝", component: <Raport /> },
+    { key: "raport", label: "Raport", icon: "📝", component: <Raport /> },
+    { key: "jurnal", label: "Jurnal", icon: "📝", component: <TradingJournal /> },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
     { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
