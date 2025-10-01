@@ -18,8 +18,8 @@ const CompetitionBanner = () => {
       // Data de început a concursului curent (1 a lunii curente)
       const startDate = new Date(currentYear, currentMonth, 1, 0, 0, 0);
       
-      // Data de sfârșit a concursului curent (19 a lunii curente, 23:59:59)
-      const endDate = new Date(currentYear, currentMonth, 19, 23, 59, 59);
+      // Data de sfârșit a concursului curent (24 a lunii curente, 23:59:59)
+      const endDate = new Date(currentYear, currentMonth, 24, 23, 59, 59);
       
       // Data de început a concursului următor (1 a lunii următoare)
       const nextStartDate = new Date(currentYear, currentMonth + 1, 1, 0, 0, 0);
