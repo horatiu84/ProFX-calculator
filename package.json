@@ -12,6 +12,8 @@
     "firebase": "^12.0.0",
     "focus-trap-react": "^11.0.4",
     "framer-motion": "^12.23.12",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.539.0",
     "luxon": "^3.7.1",
     "ogl": "^1.0.11",
@@ -21,6 +23,7 @@
     "react-phone-number-input": "^3.4.12",
     "react-router-dom": "^7.7.1",
     "react-slick": "^0.30.3",
+    "recharts": "^3.2.1",
     "slick-carousel": "^1.8.1",
     "xlsx": "^0.18.5"
   },
