@@ -227,39 +227,33 @@ const Training = () => {
 
   if (!accessGranted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-6">
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-2xl p-8 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">
-            Acces Training ProFx
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="password"
-              placeholder="Introdu parola"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-600/50 bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
-            />
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-            <button
-              type="submit"
-              className="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105"
-            >
-              Accesează
-            </button>
-          </form>
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md mx-auto mt-10">
+        <h2 className="text-xl font-bold text-blue-400 mb-4 text-center">
+          Acces Training ProFX
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="password"
+            placeholder="Introdu parola"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
           <button
-            onClick={toggleSignup}
-            className="w-full mt-4 bg-gray-600/50 hover:bg-gray-600/70 text-white font-bold py-3 px-4 rounded-lg transition-all border border-gray-500/50"
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition"
           >
-            {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
+            Accesează
           </button>
-          {showSignup && (
-            <div className="mt-6">
-              <FormularInscriere />
-            </div>
-          )}
-        </div>
+        </form>
+        <button
+          onClick={toggleSignup}
+          className="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition"
+        >
+          {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
+        </button>
+        {showSignup && <FormularInscriere />}
       </div>
     );
   }
