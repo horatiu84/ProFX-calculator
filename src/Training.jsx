@@ -227,204 +227,259 @@ const Training = () => {
 
   if (!accessGranted) {
     return (
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md mx-auto mt-10">
-        <h2 className="text-xl font-bold text-blue-400 mb-4 text-center">
-          Acces Training ProFx
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
-            placeholder="Introdu parola"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-6">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-2xl p-8 max-w-md w-full">
+          <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">
+            Acces Training ProFx
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="password"
+              placeholder="Introdu parola"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-600/50 bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
+            />
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            <button
+              type="submit"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105"
+            >
+              Accesează
+            </button>
+          </form>
           <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition"
+            onClick={toggleSignup}
+            className="w-full mt-4 bg-gray-600/50 hover:bg-gray-600/70 text-white font-bold py-3 px-4 rounded-lg transition-all border border-gray-500/50"
           >
-            Accesează
+            {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
           </button>
-        </form>
-        <button
-          onClick={toggleSignup}
-          className="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition"
-        >
-          {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
-        </button>
-        {showSignup && <FormularInscriere />}
+          {showSignup && (
+            <div className="mt-6">
+              <FormularInscriere />
+            </div>
+          )}
+        </div>
       </div>
     );
   }
   return (
-    <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 max-w-3xl mx-auto">
-      <div className="max-w-2xl mx-auto bg-gray-900 rounded-2xl shadow-2xl p-8">
-        <h1 className="text-3xl font-extrabold text-blue-400 mb-2 text-center">
-          Bun venit la Sectiunea Training!
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-2xl mb-6 shadow-xl">
+          <span className="text-4xl">🎯</span>
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          Training <span className="text-amber-400">ProFX</span>
         </h1>
-        <p className="text-gray-300 text-center mb-6">
-          Cei care v-ați alăturat comunității:
-          <br />
-          Aveți aici înregistrarea webinariilor despre execuție{" "}
-          <span className="font-bold text-blue-300">PRICE ACTION</span> și
-          sesiunile de Q&A!
+        <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          Cei care v-ați alăturat comunității: aveți aici înregistrarea webinariilor despre execuție{" "}
+          <span className="text-amber-400 font-semibold">PRICE ACTION</span> și sesiunile de Q&A!
         </p>
+      </div>
 
-        <div className="bg-blue-950 rounded-lg p-4 mb-6">
-          <p className="text-blue-200 font-semibold text-center">
+      {/* Note Card */}
+      <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-8 mb-12 shadow-xl hover:border-amber-400/50 hover:bg-gray-800/70 transition-all duration-300">
+        <div className="text-center">
+          <p className="text-xl text-gray-300 font-semibold mb-2">
             Recomandat este să treceți prin ele cu pix și foaie!
-            <br />
-            <span className="italic text-blue-400">
-              Note takers are money makers!
-            </span>
+          </p>
+          <p className="text-2xl text-amber-400 font-bold italic">
+            Note takers are money makers!
           </p>
         </div>
+      </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-blue-300 mb-3 flex items-center gap-2">
-            🟢 Începători
-          </h2>
+      {/* Training Sections Grid */}
+      <div className="grid lg:grid-cols-2 gap-8 mb-8">
+        {/* Începători Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-green-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-green-400/20 transition-all duration-300">
+              <span className="text-xl">🟢</span>
+            </div>
+            <h2 className="text-xl font-bold text-green-400">
+              Începători
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {beginnerLinks.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-200 underline underline-offset-4 transition"
+                  className="text-green-400 hover:text-green-300 underline underline-offset-4 transition-colors font-medium ml-2"
                 >
                   {item.title}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-yellow-300 mb-3 flex items-center gap-2">
-            🟠 Avansați - Lecții generale
-          </h2>
+        {/* Avansați Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-orange-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-orange-400/20 transition-all duration-300">
+              <span className="text-xl">🟠</span>
+            </div>
+            <h2 className="text-xl font-bold text-orange-400">
+              Avansați - Lecții generale
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {advancedGeneralLinks.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-yellow-300 hover:text-yellow-100 underline underline-offset-4 transition"
+                  className="text-orange-400 hover:text-orange-300 underline underline-offset-4 transition-colors font-medium ml-2"
                 >
                   {item.title}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
+      </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-red-300 mb-3 flex items-center gap-2">
-            📈 Sesiuni Backtesting
-          </h2>
+      <div className="grid lg:grid-cols-2 gap-8 mb-8">
+
+        {/* Backtesting Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-blue-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-blue-400/20 transition-all duration-300">
+              <span className="text-xl">📈</span>
+            </div>
+            <h2 className="text-xl font-bold text-blue-400">
+              Sesiuni Backtesting
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {backtestingLinks.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-400 hover:text-red-200 underline underline-offset-4 transition"
+                  className="text-blue-400 hover:text-blue-300 underline underline-offset-4 transition-colors font-medium ml-2"
                 >
                   {item.title}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-green-300 mb-3 flex items-center gap-2">
-            🌍 Macroeconomie
-          </h2>
+        {/* Macroeconomie Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-teal-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-teal-400/20 transition-all duration-300">
+              <span className="text-xl">🌍</span>
+            </div>
+            <h2 className="text-xl font-bold text-teal-400">
+              Macroeconomie
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {macroeconomieLinks.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-400 hover:text-green-200 underline underline-offset-4 transition"
+                  className="text-teal-400 hover:text-teal-300 underline underline-offset-4 transition-colors font-medium ml-2"
                 >
                   {item.title}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
+      </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-purple-300 mb-3 flex items-center gap-2">
-            🟣 Materiale
-          </h2>
+      <div className="grid lg:grid-cols-2 gap-8 mb-8">
+
+        {/* Materiale Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-purple-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-purple-400/20 transition-all duration-300">
+              <span className="text-xl">🟣</span>
+            </div>
+            <h2 className="text-xl font-bold text-purple-400">
+              Materiale
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {materiale.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-purple-400 hover:text-purple-200 underline underline-offset-4 transition"
+                  className="text-purple-400 hover:text-purple-300 underline underline-offset-4 transition-colors font-medium ml-2"
                   {...(item.type === "pdf" ? { download: true } : {})}
                 >
                   {item.title}
                   {item.type === "pdf" && (
-                    <span className="ml-1 text-gray-400">
-                      {" "}
-                      &#40;download format PDF&#41;
+                    <span className="ml-2 text-gray-400 text-sm">
+                      (PDF)
                     </span>
                   )}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
 
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-orange-300 mb-3 flex items-center gap-2">
-            📊 Analiză săptămânală macroeconomie
-          </h2>
+        {/* Analize Section */}
+        <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-6 shadow-xl hover:border-pink-400/50 hover:bg-gray-800/70 transition-all duration-300">
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center mr-3 hover:bg-pink-400/20 transition-all duration-300">
+              <span className="text-xl">📊</span>
+            </div>
+            <h2 className="text-xl font-bold text-pink-400">
+              Analiză săptămânală macroeconomie
+            </h2>
+          </div>
           <ol className="space-y-3 list-decimal list-inside">
             {analizeSaptamanale.map((item, idx) => (
-              <li key={idx}>
+              <li key={idx} className="text-gray-300 text-sm">
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-orange-400 hover:text-orange-200 underline underline-offset-4 transition"
+                  className="text-pink-400 hover:text-pink-300 underline underline-offset-4 transition-colors font-medium ml-2"
                 >
                   {item.title}
                 </a>
               </li>
             ))}
           </ol>
-        </section>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-300 font-semibold text-lg mb-2">
-            Vizionare productivă!
-          </p>
-          <span className="text-blue-400 font-bold">Echipa ProFx!</span>
-
-          <div className="mt-4">
-            <button
-              onClick={handleLogout}
-              className="text-sm text-red-400 hover:text-red-300 underline"
-            >
-              Ieși din sesiune
-            </button>
-          </div>
         </div>
       </div>
-      <div>
+
+      {/* Footer */}
+      <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-8 mb-8 shadow-xl hover:border-amber-400/50 hover:bg-gray-800/70 transition-all duration-300">
+        <div className="text-center">
+          <p className="text-2xl text-gray-300 font-semibold mb-2">
+            Vizionare productivă!
+          </p>
+          <p className="text-2xl text-amber-400 font-bold mb-6">Echipa ProFx!</p>
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center px-4 py-2 bg-red-600/20 border border-red-500/50 text-red-400 hover:bg-red-600/30 hover:text-red-300 rounded-xl transition-all duration-200"
+          >
+            Ieși din sesiune
+          </button>
+        </div>
+      </div>
+      
+      {/* FlipCard */}
+      <div className="mt-8">
         <FlipCard />
       </div>
     </div>
