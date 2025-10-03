@@ -302,6 +302,15 @@ const Training = () => {
       title: " Fakeouts - Cum le poti gestiona si risk Managementul lor",
       url: "https://youtu.be/UsPmwdhrl_M?si=leP1b7fzCtkuhw90",
     },
+    ,
+    {
+      title: "Webinar Eli - Strategia lumanarii pe 15 min si US30",
+      url: "https://youtu.be/FA8f9cco2xw?si=QHM45E6gRjjWOVR7",
+    },
+      {
+      title: "Webinar Mihai- Strategia consolidarii pe 15 minute-sesiunea ASIA",
+      url: "https://youtu.be/20dxanOrkUI?si=alOYeIumDYs8ucla",
+    },
     {
       title: "Cum sa va construiti un Plan de Succes in Trading",
       url: "https://youtu.be/31RKuSQZKOg?si=L5kZFkpuERPO9fBI",
@@ -382,6 +391,10 @@ const Training = () => {
     {
       title: "Masterclass 'Divergențe în Trading - 2 -cu Mihai Tiepac",
       url: "https://youtu.be/soJP3FEIY08",
+    },
+     {
+      title: "Podcast Mihai Tiepac cu  Florin Mircea : In trading, NU renunta niciodata",
+      url: "https://youtu.be/Bg39Knd1HEk?si=QFcwESFRKd5JUEs9",
     },
     {
       title: "Curs inflatie Forex ",
