@@ -20,8 +20,6 @@ const TradingJournal = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showReportsModal, setShowReportsModal] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [editedNotes, setEditedNotes] = useState('');
 
   // Pagination, sorting, and filtering state
   const [currentPage, setCurrentPage] = useState(1);
@@ -238,45 +236,7 @@ const TradingJournal = () => {
   // View details of a selected trade
   const handleViewTrade = (trade) => {
     setSelectedTrade(trade);
-    setEditedNotes(trade.notes || '');
-    setIsEditingNotes(false);
     setShowViewModal(true);
-  };
-
-  // Save edited notes for a trade
-  const handleSaveNotes = () => {
-    if (!selectedTrade) return;
-    
-    const updatedTrades = trades.map(trade => 
-      trade.id === selectedTrade.id 
-        ? { ...trade, notes: editedNotes }
-        : trade
-    );
-    
-    setTrades(updatedTrades);
-    setSelectedTrade({ ...selectedTrade, notes: editedNotes });
-    setIsEditingNotes(false);
-  };
-
-  // Cancel editing notes
-  const handleCancelEditNotes = () => {
-    setEditedNotes(selectedTrade.notes || '');
-    setIsEditingNotes(false);
-  };
-
-  // Handle modal close with unsaved changes check
-  const handleCloseViewModal = () => {
-    if (isEditingNotes && editedNotes !== (selectedTrade.notes || '')) {
-      if (window.confirm('Ai modificări nesalvate. Ești sigur că vrei să închizi fără să salvezi?')) {
-        setShowViewModal(false);
-        setIsEditingNotes(false);
-        setEditedNotes('');
-      }
-    } else {
-      setShowViewModal(false);
-      setIsEditingNotes(false);
-      setEditedNotes('');
-    }
   };
 
   // Format numbers to a specific decimal precision
@@ -975,7 +935,7 @@ const TradingJournal = () => {
       {showViewModal && selectedTrade && (
         <div 
           className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4"
-          onClick={handleCloseViewModal}
+          onClick={() => setShowViewModal(false)}
         >
           <div className="flex items-start justify-center min-h-screen py-4">
             <div 
@@ -985,7 +945,7 @@ const TradingJournal = () => {
               <div className="flex justify-between items-start mb-6">
                 <h2 className="text-2xl font-bold text-yellow-400">Detalii Trade</h2>
                 <button
-                  onClick={handleCloseViewModal}
+                  onClick={() => setShowViewModal(false)}
                   className="text-gray-400 hover:text-white text-2xl leading-none"
                 >
                   ×
@@ -1072,65 +1032,16 @@ const TradingJournal = () => {
                 )}
 
                 {/* Notes Section */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <div className="text-xs text-gray-400 mb-3 flex items-center justify-between">
-                    <div className="flex items-center">
+                {selectedTrade.notes && (
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="text-xs text-gray-400 mb-3 flex items-center">
                       <span className="mr-2">📝</span> Observații
                     </div>
-                    {!isEditingNotes ? (
-                      <button
-                        onClick={() => setIsEditingNotes(true)}
-                        className="text-yellow-400 hover:text-yellow-300 text-sm font-medium transition-colors flex items-center gap-1"
-                      >
-                        <span>✏️</span> Editează
-                      </button>
-                    ) : (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSaveNotes}
-                          className="text-green-400 hover:text-green-300 text-sm font-medium transition-colors flex items-center gap-1"
-                        >
-                          <span>✅</span> Salvează
-                        </button>
-                        <button
-                          onClick={handleCancelEditNotes}
-                          className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors flex items-center gap-1"
-                        >
-                          <span>❌</span> Anulează
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {!isEditingNotes ? (
-                    <div className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-900/50 rounded-lg p-4 border border-gray-700 min-h-[80px]">
-                      {selectedTrade.notes || (
-                        <span className="text-gray-500 italic">
-                          Nu sunt observații adăugate. Click pe "Editează" pentru a adăuga observații.
-                        </span>
-                      )}
+                    <div className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                      {selectedTrade.notes}
                     </div>
-                  ) : (
-                    <textarea
-                      value={editedNotes}
-                      onChange={(e) => setEditedNotes(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.ctrlKey && e.key === 'Enter') {
-                          e.preventDefault();
-                          handleSaveNotes();
-                        }
-                        if (e.key === 'Escape') {
-                          e.preventDefault();
-                          handleCancelEditNotes();
-                        }
-                      }}
-                      placeholder="Adaugă observații despre acest trade... (Ctrl+Enter pentru salvare, Esc pentru anulare)"
-                      className="w-full text-sm text-gray-200 bg-gray-900/50 border border-gray-600 rounded-lg p-4 resize-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 min-h-[120px]"
-                      rows="5"
-                      autoFocus
-                    />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Calculation Breakdown */}
                 <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-4 border border-yellow-500/20">
@@ -1153,7 +1064,7 @@ const TradingJournal = () => {
               {/* Close Button */}
               <div className="mt-6">
                 <button
-                  onClick={handleCloseViewModal}
+                  onClick={() => setShowViewModal(false)}
                   className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
                 >
                   Închide

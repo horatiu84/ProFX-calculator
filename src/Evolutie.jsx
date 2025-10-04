@@ -85,13 +85,17 @@ export default function Evolutie() {
       {/* Tracking zilnic și săptămânal */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {/* Card zilnic */}
-        <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">📈 Evoluție Zilnică</h3>
+        <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-emerald-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+          {/* Background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
-          <label className="block mb-2">Suma început zi:</label>
+          <div className="relative z-10">
+          <h3 className="text-lg font-semibold mb-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300">📈 Evoluție Zilnică</h3>
+          
+          <label className="block mb-2 text-gray-300">Suma început zi:</label>
           <input
             type="number"
-            className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+            className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50 hover:bg-gray-700/50 transition-all duration-300"
             value={startOfDay}
             onChange={(e) => setStartOfDay(e.target.value === "" ? "" : Number(e.target.value))}
             onFocus={(e) => {
@@ -99,10 +103,10 @@ export default function Evolutie() {
             }}
           />
           
-          <label className="block mb-2">Suma final zi:</label>
+          <label className="block mb-2 text-gray-300">Suma final zi:</label>
           <input
             type="number"
-            className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+            className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50 hover:bg-gray-700/50 transition-all duration-300"
             value={endOfDay}
             onChange={(e) => setEndOfDay(e.target.value === "" ? "" : Number(e.target.value))}
             onFocus={(e) => {
@@ -111,21 +115,26 @@ export default function Evolutie() {
           />
           
           <div className="text-center">
-            <h2 className="text-lg">Procentaj zi</h2>
+            <h2 className="text-lg text-gray-300 mb-2">Procentaj zi</h2>
             <p className={`text-2xl font-bold ${parseFloat(dayChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {dayChange}%
             </p>
           </div>
+          </div>
         </div>
 
         {/* Card săptămânal */}
-        <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">📊 Evoluție Săptămânală</h3>
+        <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+          {/* Background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
-          <label className="block mb-2">Suma început săptămână:</label>
+          <div className="relative z-10">
+          <h3 className="text-lg font-semibold mb-4 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">📊 Evoluție Săptămânală</h3>
+          
+          <label className="block mb-2 text-gray-300">Suma început săptămână:</label>
           <input
             type="number"
-            className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+            className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 hover:bg-gray-700/50 transition-all duration-300"
             value={startOfWeek}
             onChange={(e) => setStartOfWeek(e.target.value === "" ? "" : Number(e.target.value))}
             onFocus={(e) => {
@@ -133,10 +142,10 @@ export default function Evolutie() {
             }}
           />
           
-          <label className="block mb-2">Suma final săptămână:</label>
+          <label className="block mb-2 text-gray-300">Suma final săptămână:</label>
           <input
             type="number"
-            className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+            className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 hover:bg-gray-700/50 transition-all duration-300"
             value={endOfWeek}
             onChange={(e) => setEndOfWeek(e.target.value === "" ? "" : Number(e.target.value))}
             onFocus={(e) => {
@@ -145,22 +154,27 @@ export default function Evolutie() {
           />
           
           <div className="text-center">
-            <h2 className="text-lg">Procentaj săptămână</h2>
+            <h2 className="text-lg text-gray-300 mb-2">Procentaj săptămână</h2>
             <p className={`text-2xl font-bold ${parseFloat(weekChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {weekChange}%
             </p>
+          </div>
           </div>
         </div>
       </div>
 
       {/* Card pentru trade individual */}
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg mb-10 max-w-md mx-auto">
-        <h2 className="text-xl font-semibold mb-4 text-center">💰 Profit per trade</h2>
+      <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-md mx-auto hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+        {/* Background gradient effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
-        <label className="block mb-2">Suma început trade:</label>
+        <div className="relative z-10">
+        <h2 className="text-xl font-semibold mb-4 text-center text-amber-400 group-hover:text-amber-300 transition-colors duration-300">💰 Profit per trade</h2>
+        
+        <label className="block mb-2 text-gray-300">Suma început trade:</label>
         <input
           type="number"
-          className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+          className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 hover:bg-gray-700/50 transition-all duration-300"
           value={startOfTrade}
           onChange={(e) => setStartOfTrade(e.target.value === "" ? "" : Number(e.target.value))}
           onFocus={(e) => {
@@ -168,10 +182,10 @@ export default function Evolutie() {
           }}
         />
         
-        <label className="block mb-2">Suma după trade:</label>
+        <label className="block mb-2 text-gray-300">Suma după trade:</label>
         <input
           type="number"
-          className="w-full p-2 bg-gray-800 text-white rounded mb-4"
+          className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 hover:bg-gray-700/50 transition-all duration-300"
           value={endOfTrade}
           onChange={(e) => setEndOfTrade(e.target.value === "" ? "" : Number(e.target.value))}
           onFocus={(e) => {
@@ -180,20 +194,22 @@ export default function Evolutie() {
         />
         
         <div className="text-center">
-          <h2 className="text-lg">Procentaj trade</h2>
+          <h2 className="text-lg text-gray-300 mb-2">Procentaj trade</h2>
           <p className={`text-2xl font-bold ${parseFloat(tradeChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {tradeChange}%
           </p>
+        </div>
         </div>
       </div>
 
       {/* Buton reset */}
       <div className="text-center mb-10">
         <button
-          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded shadow transition-colors"
+          className="px-6 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600/50 hover:bg-gray-600/80 hover:border-red-400/50 text-white rounded-xl shadow-lg font-medium transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center space-x-2 mx-auto group"
           onClick={resetLocalData}
         >
-          🗑️ Reset toate datele
+          <span className="group-hover:text-red-400 transition-colors duration-300">🗑️</span>
+          <span className="group-hover:text-red-400 transition-colors duration-300">Reset toate datele</span>
         </button>
       </div>
 

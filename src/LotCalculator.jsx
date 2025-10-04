@@ -4,7 +4,7 @@ import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
-import logo from "../src/logo.jpg";
+import logo from "../src/logo.png";
 import brainIcon from "../src/brainIcon.png";
 import Evenimente from "./Evenimente.jsx";
 import Contact from "./Contact.jsx";
@@ -18,6 +18,7 @@ import EventPhotoGallery from "./Galerie.jsx";
 import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
 import TradingJournal from "./Jurnal.jsx";
+import "./LotCalculator.css";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -633,7 +634,7 @@ export default function LotCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-black text-white">
+    <div className="lot-calculator-app min-h-screen text-white">
 {/* Desktop Layout cu Sidebar */}
 <div className="hidden lg:flex min-h-screen">
   {/* Sidebar */}
@@ -674,7 +675,7 @@ export default function LotCalculator() {
 
   {/* Main Content Area */}
   <div className="flex-1 ml-20 transition-all duration-300">
-    <div className="p-8">
+    <div className="">
       {/* Header - logo clickable doar pe mobile/tablet */}
       <div className="flex flex-col items-center mb-8">
         <img 
@@ -705,7 +706,7 @@ export default function LotCalculator() {
 </div>
 
       {/* Mobile/Tablet Layout */}
-      <div className="lg:hidden min-h-screen p-6 md:p-8">
+      <div className="lg:hidden min-h-screen p-3 md:p-3">
         {/* Header - clickable */}
         <div className="flex flex-col items-center mb-8">
           <img 

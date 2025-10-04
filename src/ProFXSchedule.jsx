@@ -323,7 +323,7 @@ const ProFXSchedule = () => {
   }, []);
 
   return (
-    <div className="bg-[#0b0f1a] text-white font-sans max-w-5xl px-4 py-10 mx-auto">
+    <div className="text-white font-sans max-w-5xl px-4 py-10 mx-auto">
     
       <WeeklySchedule />
       {/* Card-ul cu următorul webinar */}

@@ -275,20 +275,19 @@ const WeeklySchedule = () => {
 
     return (
       <div
-        className={`relative bg-slate-800 rounded-lg border transition-all duration-300 ${
+        className={`group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-gray-600/50 overflow-hidden ${
           status === "passed"
-            ? "border-slate-600 bg-opacity-50"
+            ? "opacity-60"
             : isWebinar
-            ? "border-yellow-400 shadow-lg shadow-yellow-400/20"
-            : "border-slate-600 hover:border-yellow-400"
-        } ${isClickable ? "cursor-pointer hover:scale-105" : "hover:scale-105"}`}
+            ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
+            : ""
+        } ${isClickable ? "cursor-pointer" : ""}`}
         onClick={isClickable ? () => handleSessionClick(event.name) : undefined}
       >
-        {status === "passed" && (
-          <div className="absolute inset-0 bg-gray-900 opacity-60 rounded-lg pointer-events-none"></div>
-        )}
-
-        <div className="p-3 md:p-4">
+        {/* Background gradient effect */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${isWebinar ? 'from-amber-500/5' : 'from-blue-500/3'} via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+        
+        <div className="p-3 md:p-4 relative z-10">
           <div className="flex justify-between items-start mb-2 md:mb-3">
             <div className="flex-1 mr-3">
               <div className="flex items-start gap-3 mb-2">
@@ -429,26 +428,33 @@ const WeeklySchedule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen text-white">
       {/* Header */}
-      <div className="bg-slate-800 border-b border-slate-700">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8 text-center">
-          <h1 className="text-2xl md:text-4xl font-bold text-yellow-400 mb-2">
-            PROGRAM SĂPTĂMÂNAL
+      <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6">
+        <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 md:p-8 text-center hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+          {/* Background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors duration-300">
+            Program <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">Săptămânal</span>
           </h1>
-          <p className="text-xs md:text-sm text-gray-500">
+          <p className="text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Astăzi este{" "}
+            <span className="text-amber-400 font-medium">
             {
               daysOfWeek[
                 new Date().getDay() === 0 ? 6 : new Date().getDay() - 1
               ]
             }
-            ,{currentDateTime.toLocaleDateString("ro-RO")} -{" "}
+            </span>
+            , {currentDateTime.toLocaleDateString("ro-RO")} -{" "}
             {currentDateTime.toLocaleTimeString("ro-RO", {
               hour: "2-digit",
               minute: "2-digit",
             })}
           </p>
+          </div>
         </div>
       </div>
 
@@ -460,7 +466,7 @@ const WeeklySchedule = () => {
             <div className="relative">
               <button
                 onClick={handleDropdownClick}
-                className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 flex items-center justify-between text-white hover:border-yellow-400 transition-colors duration-200"
+                className="w-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-3 flex items-center justify-between text-white hover:bg-gray-800/50 hover:border-amber-400/50 transition-all duration-300"
               >
                 <div className="flex items-center space-x-3">
                   <span className="font-semibold text-yellow-400">
@@ -481,7 +487,7 @@ const WeeklySchedule = () => {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-2xl z-50 overflow-hidden">
                   {daysOfWeek.map((day, index) => {
                     const isToday =
                       index ===
@@ -492,9 +498,9 @@ const WeeklySchedule = () => {
                       <button
                         key={day}
                         onClick={() => handleDaySelect(index)}
-                        className={`w-full px-4 py-3 text-left hover:bg-slate-700 transition-colors duration-200 flex items-center justify-between ${
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-800/50 transition-all duration-300 flex items-center justify-between ${
                           activeTab === index
-                            ? "bg-slate-700 text-yellow-400"
+                            ? "bg-gray-800/50 text-amber-400"
                             : "text-white"
                         }`}
                       >
@@ -515,7 +521,7 @@ const WeeklySchedule = () => {
             </div>
           ) : (
             // Tabs pentru desktop
-            <div className="grid grid-cols-7 gap-2 bg-slate-800 p-2 rounded-lg">
+            <div className="grid grid-cols-7 gap-2 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-2 rounded-xl">
               {daysOfWeek.map((day, index) => {
                 const isToday =
                   index ===
@@ -526,10 +532,10 @@ const WeeklySchedule = () => {
                   <button
                     key={day}
                     onClick={() => setActiveTab(index)}
-                    className={`relative px-3 py-4 rounded-md font-bold text-sm transition-all duration-200 ${
+                    className={`relative px-3 py-4 rounded-xl font-bold text-sm transition-all duration-300 ${
                       activeTab === index
-                        ? "bg-yellow-400 text-black shadow-lg"
-                        : "text-gray-400 hover:text-white hover:bg-slate-700"
+                        ? "bg-amber-400 text-black"
+                        : "text-gray-400 hover:text-white hover:bg-gray-800/50"
                     }`}
                   >
                     {day}
@@ -547,8 +553,12 @@ const WeeklySchedule = () => {
         </div>
 
         {/* Conținutul tab-ului activ */}
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4 md:p-6 min-h-80 md:min-h-96">
+        <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 md:p-6 min-h-80 md:min-h-96 hover:border-gray-600/50 hover:bg-gray-800/50 transition-all duration-500 hover:scale-[1.01] overflow-hidden">
+          {/* Background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative z-10">
           {renderDayContent(activeTab)}
+          </div>
         </div>
 
         {/* Footer info */}
