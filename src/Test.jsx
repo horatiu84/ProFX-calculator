@@ -9,7 +9,9 @@ const brand = {
   accentText: "text-amber-400",
   accentBg: "bg-amber-500",
   accentRing: "ring-amber-500",
-  card: "rounded-2xl shadow-lg border border-white/10 bg-zinc-900/70 backdrop-blur",
+  // Glassmorphism card base similar cu Evolutie.jsx
+  card:
+    "group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden shadow-lg",
   subtle: "text-zinc-300/90",
 };
 
@@ -1117,13 +1119,28 @@ const Badge = ({ tone = "neutral", children }) => {
 };
 
 // UI primitives
-const Card = ({ className = "", children }) => (
-  <div className={`${brand.card} ${className}`}>{children}</div>
-);
+const Card = ({ className = "", children, accent = "amber" }) => {
+  const accentMap = {
+    amber: "from-amber-500/5",
+    blue: "from-blue-500/5",
+    emerald: "from-emerald-500/5",
+    sky: "from-sky-500/5",
+  };
+  const fromClass = accentMap[accent] || accentMap.amber;
+  return (
+    <div className={`${brand.card} ${className}`}>
+      {/* Background gradient effect */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${fromClass} via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+      />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+};
 
 const Button = ({ className = "", children, ...props }) => (
   <button
-    className={`px-4 py-2 rounded-xl font-semibold border border-white/10 bg-zinc-800/70 hover:bg-zinc-800 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+    className={`px-4 py-2 rounded-xl font-semibold border border-gray-600/50 bg-gray-800/50 text-white hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 active:scale-[0.99] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     {...props}
   >
     {children}
@@ -1132,7 +1149,7 @@ const Button = ({ className = "", children, ...props }) => (
 
 const Ghost = ({ className = "", children, ...props }) => (
   <button
-    className={`px-3 py-2 rounded-xl border border-white/10 hover:border-white/20 ${className}`}
+    className={`px-3 py-2 rounded-xl border border-gray-600/50 bg-gray-800/30 hover:bg-gray-700/30 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/40 transition-all duration-300 ${className}`}
     {...props}
   >
     {children}
@@ -1332,7 +1349,7 @@ const Test = () => {
         const user = answers[q.id];
         const ok = user === q.answerId;
         return (
-          <Card key={q.id} className="p-4">
+          <Card key={q.id} className="p-4" accent="emerald">
             <div className="flex items-start gap-3">
               <div
                 className={`mt-1 h-6 w-6 shrink-0 rounded-full ${
@@ -1391,7 +1408,7 @@ const Test = () => {
                 setChapter(e.target.value);
                 resetAll();
               }}
-              className="bg-zinc-800 rounded px-2 py-1 border border-white/10"
+              className="bg-gray-800/50 rounded-xl px-3 py-2 border border-gray-600/50 text-white hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 hover:border-amber-400/50 transition-all duration-300"
             >
               {Object.entries(BASE_QUESTIONS).map(([key, { title }]) => (
                 <option key={key} value={key}>
@@ -1433,7 +1450,7 @@ const Test = () => {
       </div>
 
       {/* Main card */}
-      <Card className="p-4 sm:p-6 mb-4">
+  <Card className="p-4 sm:p-6 mb-4" accent="amber">
         <div className="flex items-center gap-3 mb-3">
           <Progress value={finished ? 100 : pct} />
           <span className={`text-sm ${brand.subtle} whitespace-nowrap`}>
@@ -1481,7 +1498,7 @@ const Test = () => {
             </div>
 
             {showFeedback && (
-              <div className="mt-2 p-3 rounded-xl bg-white/5 border border-white/10">
+              <div className="mt-2 p-3 rounded-xl bg-gray-800/40 border border-gray-600/40">
                 <p className="text-sm">
                   <span className="font-semibold">Explicație:</span>{" "}
                   {current.explanation}
@@ -1542,7 +1559,7 @@ const Test = () => {
             {(() => {
               const v = verdict(scorePct, chapter);
               return (
-                <Card className="p-4">
+                <Card className="p-4" accent="sky">
                   <div className="flex items-center gap-3">
                     <Badge tone={v.tone}>{v.label}</Badge>
                     <p className="text-sm">{v.line}</p>
@@ -1565,7 +1582,7 @@ const Test = () => {
       </Card>
 
       {/* Tips */}
-      <Card className="p-4 sm:p-6">
+      <Card className="p-4 sm:p-6" accent="blue">
         <h4 className="font-semibold mb-2">Sfaturi de utilizare</h4>
         <ul className={`list-disc pl-5 space-y-1 text-sm ${brand.subtle}`}>
           <li>

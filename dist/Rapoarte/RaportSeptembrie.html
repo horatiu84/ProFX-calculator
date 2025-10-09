@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jurnal Idei Executate - Septembrie 2025</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #f7f7f7;
+      }
+
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .day {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .date {
+        font-weight: bold;
+        color: #3498db;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .entry {
+        margin-left: 20px;
+        margin-bottom: 5px;
+      }
+
+      .total {
+        font-weight: bold;
+        margin-top: 10px;
+        font-size: 16px;
+        text-align: right;
+      }
+
+      .positive {
+        color: #27ae60;
+      }
+
+      .negative {
+        color: #e74c3c;
+      }
+
+      .neutral {
+        color: #f39c12;
+      }
+
+      .summary {
+        margin-top: 10px;
+        margin-left: 10px;
+        font-size: 15px;
+      }
+
+      .rezumat-box {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: linear-gradient(90deg, #e3f0fd 0%, #f7fafc 100%);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+        padding: 18px 0 10px 0;
+        margin-bottom: 32px;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .rezumat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 110px;
+        margin-bottom: 8px;
+      }
+
+      .rezumat-label {
+        font-size: 1.5em;
+        color: #2c3e50;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+
+      .rezumat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #3498db;
+      }
+
+      .rezumat-value.positive {
+        color: #27ae60;
+      }
+
+      .rezumat-value.negative {
+        color: #e74c3c;
+      }
+
+      .rezumat-value.percent {
+        color: #f39c12;
+      }
+
+      .rezumat-icon {
+        font-size: 1.7em;
+        margin-bottom: 2px;
+        opacity: 0.85;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        h1 {
+          font-size: 1.4em;
+        }
+        .date {
+          font-size: 1em;
+        }
+        .entry {
+          margin-left: 10px;
+          font-size: 0.95em;
+        }
+        .summary,
+        .total {
+          font-size: 0.95em;
+        }
+        .rezumat-box {
+          flex-direction: column;
+          gap: 6px;
+          padding: 12px 0;
+        }
+        .rezumat-item {
+          min-width: 0;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .rezumat-label {
+          font-size: 1.2em;
+        }
+
+        .rezumat-value {
+          font-size: 1.8em;
+        }
+
+        .rezumat-icon {
+          font-size: 2.2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Jurnal Idei Executate - Septembrie 2025</h1>
+
+<div class="day">
+  <div class="date">Luni 1 Sept</div>
+  <div class="entry">1. Xau/Usd : 25 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 30 pips Londra Live - ADRIAN ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 55 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Marți 2 Sept</div>
+  <div class="entry">1. Jpy/Usd : 100 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : -35 pips Asia Live - MIHAI ❌</div>
+  <div class="entry">3. Xau/Usd : 50 pips Londra Live ✔️</div>
+  <div class="entry">4. Xau/Usd : 30 pips Ny Pre-Open ✔️</div>
+  <div class="entry">5. Xau/Usd : 40 pips Ny Live ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 1 pe minus</div>
+  <div class="total positive">Total: 185 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Miercuri 3 Sept</div>
+  <div class="entry">1. Xau/Usd : 65 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 30 pips Londra Live ✔️</div>
+  <div class="entry">3. Xau/Usd : 20 pips Ny Pre-Open ✔️</div>
+  <div class="entry">4. Xau/Usd : 20 pips Stiri ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 135 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Joi 4 Sept</div>
+  <div class="entry">1. Xau/Usd : 400 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 20 pips Londra Live ✔️</div>
+  <div class="entry">3. Xau/Usd : 8 pips Ny Pre-Open ✔️</div>
+  <div class="entry">4. Xau/Usd : 100 pips - STARUL nostru ELI ✔️</div>
+  <div class="entry">5. Xau/Usd : 33 pips - Ionut ✔️</div>
+  <div class="summary">➡️ 5 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 561 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Vineri 5 Sept</div>
+  <div class="entry">1. Xau/Usd : -60 pips Asia Live - MIHAI ❌</div>
+  <div class="entry">2. Xau/Usd : -270 pips Stiri NFP ❌</div>
+  <div class="entry">3. Xau/Usd : 210 pips Eli STARUL NOSTRU!!! ✔️</div>
+  <div class="entry">4. Eur/Usd : 60 pips Daniel The Beast!! ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 2 pe minus</div>
+  <div class="total negative">Total: -60 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Luni 8 Sept</div>
+  <div class="entry">1. Xau/Usd : 15 pips Londra Open ✔️</div>
+  <div class="entry">2. Xau/Usd : -60 pips Londra Open ❌</div>
+  <div class="entry">3. Xau/Usd : 15 pips Ny Pre-Open ✔️</div>
+  <div class="entry">4. Xau/Usd : -19 pips Ny Pre-Open ❌</div>
+  <div class="summary">➡️ 2 profitabile, 2 pe minus</div>
+  <div class="total negative">Total: -49 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Marți 9 Sept (Bootcamp Ziua 1)</div>
+  <div class="entry">1. Xau/Usd : 100 pips Londra Live ✔️</div>
+  <div class="entry">2. Xau/Usd : -45 pips Ny Live ❌</div>
+  <div class="entry">3. Xau/Usd : 65 pips Ny Live ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 1 pe minus</div>
+  <div class="total positive">Total: 120 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Miercuri 10 Sept (Bootcamp Ziua 2)</div>
+  <div class="entry">1. Xau/Usd : 40 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 15 pips Londra Live ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 55 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Joi 11 Sept (Bootcamp Ziua 3)</div>
+  <div class="entry">1. Xau/Usd : 140 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 45 pips Londra Live ✔️</div>
+  <div class="entry">3. Xau/Usd : 40 pips Ny Pre-Open - STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">4. Xau/Usd : 65 pips Ny Live Stiri ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 290 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Vineri 12 Sept (Bootcamp Ziua 4)</div>
+  <div class="entry">1. Xau/Usd : 100 pips Asia Live - MIHAI ✔️</div>
+  <div class="entry">2. Xau/Usd : 40 pips Londra Live ✔️</div>
+  <div class="entry">3. Xau/Usd : 20 pips Live ✔️</div>
+  <div class="entry">4. Xau/Usd : 20 pips Ny Live Stiri ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 180 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Luni 15 Sept</div>
+  <div class="entry">1. Xau/Usd : 15 pips Londra Open ✔️</div>
+  <div class="entry">2. Xau/Usd : -30 pips Ny Pre-Open ❌</div>
+  <div class="entry">3. Xau/Usd : 30 pips Ny Live ✔️</div>
+  <div class="entry">4. Xau/Usd : 90 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">5. Gbp/Jpy : -26 pips John ❌</div>
+  <div class="summary">➡️ 3 profitabile, 2 pe minus</div>
+  <div class="total positive">Total: 79 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Marți 16 Sept</div>
+  <div class="entry">1. Xau/Usd : 20 pips Londra Live ✔️</div>
+  <div class="entry">2. Xau/Usd : 20 pips Ny Pre-Open ✔️</div>
+  <div class="entry">3. Xau/Usd : 40 pips Stiri Live ✔️</div>
+  <div class="entry">4. Xau/Usd : 80 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 160 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Miercuri 17 Sept</div>
+  <div class="entry">1. Xau/Usd : 25 pips Londra Live ✔️</div>
+  <div class="entry">2. Xau/Usd : -30 pips Ny Live ❌</div>
+  <div class="entry">3. Xau/Usd : 60 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">4. Xau/Usd : 70 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 3 profitabile, 1 pe minus</div>
+  <div class="total positive">Total: 125 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Joi 18 Sept</div>
+  <div class="entry">1. Xau/Usd : 24 pips Londra Live ✔️</div>
+  <div class="entry">2. Xau/Usd : -30 pips Ny Live - Asia Mihai ❌</div>
+  <div class="entry">3. Gbp/Jpy : -22 pips Pre Ny ❌</div>
+  <div class="entry">4. Xau/Usd : 30 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">5. Xau/Usd : 120 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 3 profitabile, 2 pe minus</div>
+  <div class="total positive">Total: 122 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Vineri 19 Sept</div>
+  <div class="entry">1. Xau/Usd : 100 pips Asia Mihai ✔️</div>
+  <div class="entry">2. Xau/Usd : 53 pips Londra Open ✔️</div>
+  <div class="entry">3. Xau/Usd : 60 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">4. Xau/Usd : 80 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 293 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Luni 22 Sept</div>
+  <div class="entry">1. Xau/Usd : -60 pips Asia Mihai ❌</div>
+  <div class="entry">2. Xau/Usd : -37 pips Londra Open ❌</div>
+  <div class="entry">3. Xau/Usd : 30 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">4. Xau/Usd : 90 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">5. Xau/Usd : 15 pips Ny Open ✔️</div>
+  <div class="summary">➡️ 3 profitabile, 2 pe minus</div>
+  <div class="total positive">Total: 48 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Marți 23 Sept</div>
+  <div class="entry">1. Xau/Usd : 50 pips Asia Mihai ✔️</div>
+  <div class="entry">2. Xau/Usd : 80 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 130 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Miercuri 24 Sept</div>
+  <div class="entry">1. Xau/Usd : 30 pips Londra Open ✔️</div>
+  <div class="entry">2. Xau/Usd : 30 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">3. Xau/Usd : 80 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">4. Gbp/Jpy : -15 pips Ny Open ❌</div>
+  <div class="entry">5. Xau/Usd : 30 pips Ny Open ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 1 pe minus</div>
+  <div class="total positive">Total: 155 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Joi 25 Sept</div>
+  <div class="entry">1. Xau/Usd : 60 pips Asia Mihai ✔️</div>
+  <div class="entry">2. Xau/Usd : 35 pips Londra Live ✔️</div>
+  <div class="entry">3. Xau/Usd : 30 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">4. Xau/Usd : 140 pips - TUDOR THE KING!!!! ✔️</div>
+  <div class="entry">5. Xau/Usd : 190 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">6. Xau/Usd : 40 pips Londra Live Ny Open ✔️</div>
+  <div class="entry">7. Xau/Usd : 50 pips Londra Live Ny Open ✔️</div>
+  <div class="summary">➡️ 7 profitabile, 0 pe minus</div>
+  <div class="total positive">Total: 545 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Vineri 26 Sept</div>
+  <div class="entry">1. Xau/Usd : -50 pips Asia Mihai ❌</div>
+  <div class="entry">2. Xau/Usd : -50 pips Londra Live ❌</div>
+  <div class="entry">3. Xau/Usd : -35 pips Ny Pending ❌</div>
+  <div class="entry">4. Xau/Usd : 50 pips Ny Open ✔️</div>
+  <div class="entry">5. Xau/Usd : 220 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="summary">➡️ 2 profitabile, 3 pe minus</div>
+  <div class="total positive">Total: 135 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Luni 29 Sept</div>
+  <div class="entry">1. Xau/Usd : 0 pips Asia Mihai ➖</div>
+  <div class="entry">2. Xau/Usd : 100 pips Ny Todor ✔️</div>
+  <div class="entry">3. Xau/Usd : 100 pips Ny Open Mihai Tiepac ✔️</div>
+  <div class="entry">4. Xau/Usd : 149 pips STARUL NOSTRU ELI ✔️</div>
+  <div class="entry">5. Xau/Usd : 90 pips Ny Live ✔️</div>
+  <div class="summary">➡️ 4 profitabile, 0 pe minus, 1 neutru</div>
+  <div class="total positive">Total: 439 pips</div>
+</div>
+
+<div class="day">
+  <div class="date">Marti 30 Sept</div>
+  <div class="entry">1. Xau/Usd : -20 pips Asia Mihai ❌ </div>
+  <div class="entry">3. Xau/Usd : BE 0 pips Ny Open Mihai Tiepac ➖</div>
+  <div class="entry">4. Xau/Usd : -90 pips STARUL NOSTRU ELI ❌</div>
+  <div class="entry">5. Xau/Usd : -110 pips Ny Live și știri ❌</div>
+  <div class="summary">➡️ 0 profitabile, 3 pe minus, 1 neutru</div>
+  <div class="total negative">Total: -220 pips</div>
+</div>
+
+
+    <!-- Rezumatul actualizat -->
+    <div class="rezumat-box">
+      <div class="rezumat-item">
+        <span class="rezumat-icon">📊</span>
+        <span class="rezumat-label">Total trades</span>
+        <span class="rezumat-value">24</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">✅</span>
+        <span class="rezumat-label">Profitabile</span>
+        <span class="rezumat-value positive">16</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">❌</span>
+        <span class="rezumat-label">Pe minus</span>
+        <span class="rezumat-value negative">8</span>
+      </div>
+      <div class="rezumat-item">
+        <span class="rezumat-icon">🏆</span>
+        <span class="rezumat-label">Rata de Win</span>
+        <span class="rezumat-value percent">66.7%</span>
+      </div>
+    </div>
+
+    <div
+      style="
+        background: #27ae60;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 25px;
+        text-align: center;
+      "
+    >
+      Total lunar al pips-urilor din trades profitabile:
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+    <div
+      style="
+        background: #db3734;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 5px;
+        text-align: center;
+      "
+    >
+      Total lunar al pips-urilor din trades cu SL:
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+    <div
+      style="
+        background: #3498db;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 5px;
+        text-align: center;
+      "
+    >
+      Total profit net în pips (după pierderi):
+      <span style="font-size: 1.2em">0 pips</span>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Inițializare variabile
+        let totalTrades = 0;
+        let profitable = 0;
+        let negative = 0;
+        let totalPips = 0;
+        let totalLossPips = 0;
+        let totalProfitPips = 0;
+
+        // Parcurgem fiecare intrare
+        document.querySelectorAll(".entry").forEach((entry) => {
+          const text = entry.textContent;
+
+          if (text.includes("pips") && !text.includes("BE")) {
+            totalTrades++;
+
+            const match = text.match(/(-?\d+)\s*pips/);
+            if (match) {
+              const pips = parseInt(match[1]);
+              totalPips += pips;
+
+              if (pips > 0) {
+                profitable++;
+                totalProfitPips += pips;
+              } else if (pips < 0) {
+                negative++;
+                totalLossPips += Math.abs(pips);
+              }
+            }
+          }
+        });
+
+        const winRate =
+          totalTrades > 0 ? ((profitable / totalTrades) * 100).toFixed(1) : 0;
+
+        document.querySelector(
+          ".rezumat-value:not(.positive):not(.negative):not(.percent)"
+        ).textContent = totalTrades;
+        document.querySelector(".rezumat-value.positive").textContent =
+          profitable;
+        document.querySelector(".rezumat-value.negative").textContent =
+          negative;
+        document.querySelector(
+          ".rezumat-value.percent"
+        ).textContent = `${winRate}%`;
+
+        document.querySelector(
+          '[style*="background: #3498db"] span'
+        ).textContent = `${totalPips} pips`;
+
+        document.querySelector(
+          '[style*="background: #db3734"] span'
+        ).textContent = `${totalLossPips} pips`;
+
+        document.querySelector(
+          '[style*="background: #27ae60"] span'
+        ).textContent = `${totalProfitPips} pips`;
+      });
+    </script>
+  </body>
+</html>

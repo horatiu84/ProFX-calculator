@@ -374,16 +374,17 @@ const EventPhotoGallery = () => {
   const filteredMedia = getFilteredMedia();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-slate-900 py-12 px-4">
+    <div className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Galeria Noastră de Evenimente
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Descoperă momentele speciale din biroul nostru și de la
-            bootcamp-urile organizate în Herculane și Eforie Nord
-          </p>
+        {/* Header card - glassmorphism */}
+        <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 mb-12 hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden text-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold text-white mb-3">Galeria Noastră de Evenimente</h1>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Descoperă momentele speciale din biroul nostru și de la bootcamp-urile organizate în Herculane și Eforie Nord
+            </p>
+          </div>
         </div>
 
         {/* Media Type Filter */}
@@ -394,10 +395,10 @@ const EventPhotoGallery = () => {
               <button
                 key={type.id}
                 onClick={() => setMediaType(type.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-[1.02] focus:outline-none ${
                   mediaType === type.id
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25"
-                    : "bg-slate-800 text-gray-300 hover:bg-slate-700 shadow-md border border-slate-700"
+                    ? "bg-blue-600/30 text-white border border-blue-400/50 shadow-md"
+                    : "bg-gray-800/50 text-white border border-gray-600/50 hover:bg-gray-700/50 hover:border-blue-400/50 focus:ring-2 focus:ring-blue-400/40"
                 }`}
               >
                 <IconComponent size={20} />
@@ -423,10 +424,10 @@ const EventPhotoGallery = () => {
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-[1.02] focus:outline-none ${
                   activeCategory === category.id
-                    ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-black shadow-lg shadow-yellow-500/25"
-                    : "bg-slate-800 text-gray-300 hover:bg-slate-700 shadow-md border border-slate-700"
+                    ? "bg-amber-600/30 text-white border border-amber-400/50 shadow-md"
+                    : "bg-gray-800/50 text-white border border-gray-600/50 hover:bg-gray-700/50 hover:border-amber-400/50 focus:ring-2 focus:ring-amber-400/40"
                 }`}
               >
                 <IconComponent size={20} />
@@ -445,10 +446,13 @@ const EventPhotoGallery = () => {
             return (
               <div
                 key={item.id}
-                className="bg-slate-900 rounded-xl overflow-hidden shadow-lg shadow-black/50 hover:shadow-2xl hover:shadow-yellow-500/10 transform hover:scale-105 transition-all duration-300 border border-slate-800 cursor-pointer"
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] cursor-pointer"
                 onClick={() => setSelectedMedia(item)}
               >
-                <div className="aspect-[4/3] bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center relative overflow-hidden border-b border-slate-800">
+                {/* Background gradient effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="relative z-10 aspect-[4/3] bg-gray-800/40 flex items-center justify-center overflow-hidden border-b border-gray-700/50">
                   {isVideo ? (
                     <>
                       <video
@@ -462,8 +466,8 @@ const EventPhotoGallery = () => {
                             fallback.setAttribute("style", "display:flex");
                         }}
                       />
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <div className="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
                           <Video size={24} className="text-black ml-1" />
                         </div>
                       </div>
@@ -482,13 +486,13 @@ const EventPhotoGallery = () => {
                     />
                   )}
 
-                  <div className="absolute inset-0 hidden bg-gradient-to-br from-slate-800 to-slate-700 items-center justify-center text-gray-400 text-center p-4">
+                  <div className="absolute inset-0 hidden bg-gray-800/60 items-center justify-center text-gray-300 text-center p-4">
                     <div>
-                      <div className="w-16 h-16 mx-auto mb-3 bg-slate-700 rounded-full flex items-center justify-center border border-slate-600">
+                      <div className="w-16 h-16 mx-auto mb-3 bg-gray-700 rounded-full flex items-center justify-center border border-gray-600">
                         {isVideo ? (
-                          <Video size={24} className="text-yellow-500" />
+                          <Video size={24} className="text-amber-400" />
                         ) : (
-                          <Calendar size={24} className="text-yellow-500" />
+                          <Calendar size={24} className="text-amber-400" />
                         )}
                       </div>
                       <p className="font-medium text-gray-300">{item.src}</p>
@@ -498,8 +502,8 @@ const EventPhotoGallery = () => {
                     </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
-                    <div className="text-yellow-400 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                    <div className="text-amber-400 opacity-0 hover:opacity-100 transition-opacity duration-300">
                       <p className="text-lg font-semibold">
                         Click pentru a {isVideo ? 'reda' : 'vedea'}
                       </p>
@@ -507,10 +511,10 @@ const EventPhotoGallery = () => {
                   </div>
                 </div>
 
-                <div className="p-6">
+                <div className="relative z-10 p-6">
                   <div className="flex items-center gap-2 mb-2">
                     {isVideo ? (
-                      <Video size={16} className="text-yellow-400" />
+                      <Video size={16} className="text-amber-400" />
                     ) : (
                       <Image size={16} className="text-gray-400" />
                     )}
@@ -559,7 +563,7 @@ const EventPhotoGallery = () => {
           categories={categories}
         />
 
-        <div className="text-center mt-16 pt-8 border-t border-slate-800">
+        <div className="text-center mt-16 pt-8 border-t border-gray-700/50">
           <p className="text-gray-400">
             Galerie foto și video ProFX • {new Date().getFullYear()}
           </p>
