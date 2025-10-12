@@ -268,6 +268,16 @@ const WeeklySchedule = () => {
     setPendingSessionLink("");
   };
 
+  const isMobileDevice = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /android|iPhone|iPad|iPod/i.test(userAgent);
+  };
+
+  const isIOSDevice = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /iPhone|iPad|iPod/i.test(userAgent);
+  };
+
   const convertToZoomProtocol = (webUrl) => {
     // Extrage meeting ID și password din URL-ul web
     // Ex: https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1
@@ -288,23 +298,41 @@ const WeeklySchedule = () => {
   };
 
   const launchZoomApp = (link) => {
-    const zoomProtocolUrl = convertToZoomProtocol(link);
+    const isMobile = isMobileDevice();
+    const isIOS = isIOSDevice();
     
-    // Metoda 1: Încearcă să deschidă direct cu window.location
-    window.location.href = zoomProtocolUrl;
-    
-    // Metoda 2 (fallback): Creează un iframe invizibil care invocă protocolul
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = zoomProtocolUrl;
-    document.body.appendChild(iframe);
-    
-    // Curăță iframe-ul după 3 secunde
-    setTimeout(() => {
-      if (iframe && iframe.parentNode) {
-        iframe.parentNode.removeChild(iframe);
+    if (isMobile) {
+      // Pe mobile: folosește web URL direct (mai stabil)
+      // Pe iOS și Android, Zoom app se va deschide automat dacă e instalat
+      const newWindow = window.open(link, '_blank', 'noopener,noreferrer');
+      
+      // Pe iOS, încearcă și protocolul Zoom ca fallback
+      if (isIOS) {
+        setTimeout(() => {
+          const zoomProtocolUrl = convertToZoomProtocol(link);
+          window.location.href = zoomProtocolUrl;
+        }, 500);
       }
-    }, 3000);
+    } else {
+      // Pe desktop: folosește protocolul zoommtg:// (nu deschide tab browser)
+      const zoomProtocolUrl = convertToZoomProtocol(link);
+      
+      // Metoda 1: Încearcă să deschidă direct cu window.location
+      window.location.href = zoomProtocolUrl;
+      
+      // Metoda 2 (fallback): Creează un iframe invizibil care invocă protocolul
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = zoomProtocolUrl;
+      document.body.appendChild(iframe);
+      
+      // Curăță iframe-ul după 3 secunde
+      setTimeout(() => {
+        if (iframe && iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      }, 3000);
+    }
   };
 
   const handleManualRedirect = () => {
@@ -378,6 +406,7 @@ const WeeklySchedule = () => {
 
   const ZoomRedirectOverlay = () => {
     const [showFallback, setShowFallback] = useState(false);
+    const isMobile = isMobileDevice();
 
     useEffect(() => {
       const fallbackTimer = setTimeout(() => setShowFallback(true), 3000);
@@ -408,12 +437,12 @@ const WeeklySchedule = () => {
 
           {/* Title */}
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
-            Lansare aplicație Zoom...
+            Lansare {isMobile ? "Zoom" : "aplicație Zoom"}...
           </h2>
 
           {/* Subtitle */}
           <p className="text-gray-400 text-center mb-6">
-            Aplicația Zoom va porni automat în{" "}
+            {isMobile ? "Sesiunea se deschide" : "Aplicația Zoom va porni"} automat în{" "}
             <span className="text-amber-400 font-bold text-lg">
               {redirectCountdown}
             </span>{" "}
@@ -435,7 +464,9 @@ const WeeklySchedule = () => {
           {/* Info tooltip */}
           <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 mb-4">
             <p className="text-sm text-gray-300 text-center">
-              💡 Aplicația Zoom desktop/mobile se va lansa automat. Asigură-te că ai Zoom instalat pentru o experiență optimă.
+              💡 {isMobile 
+                ? "Dacă ai aplicația Zoom instalată, se va deschide automat. Altfel, vei fi redirecționat către browser." 
+                : "Aplicația Zoom desktop se va lansa automat. Asigură-te că ai Zoom instalat."}
             </p>
           </div>
 
@@ -446,7 +477,7 @@ const WeeklySchedule = () => {
                 onClick={handleManualRedirect}
                 className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
               >
-                Click aici pentru a relansa Zoom
+                Click aici pentru a {isMobile ? "deschide" : "relansa"} Zoom
               </button>
             </div>
           )}
