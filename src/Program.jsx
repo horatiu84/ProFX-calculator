@@ -47,13 +47,19 @@ const WeeklySchedule = () => {
       4: "https://us06web.zoom.us/j/85496511951?pwd=PePROIb8kDZ9CtbuunvP4TUSWe5KbK.1",
     },
     "Sesiune Londra cu Flavius": {
-      0: "",
-      1: "",
-      2: "",
-      3: "",
-      4: "https://us06web.zoom.us/j/85496511951?pwd=PePROIb8kDZ9CtbuunvP4TUSWe5KbK.1",
+      0: "https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1", // Luni
+      1: "https://us02web.zoom.us/j/84521169544?pwd=BIDOTaxlxUmcSMld7FQOCXGbljBRbG.1", // Marți
+      2: "https://us02web.zoom.us/j/81460784651?pwd=3o9p7mOgYhnXjQNzLgXUy0uDLFjMIU.1", // Miercuri
+      3: "https://us02web.zoom.us/j/82194753195?pwd=YH31GkbXbiyU36VfSteVsFlfcFd5PZ.1", // Joi
+      4: "https://us02web.zoom.us/j/84248988761?pwd=jZJxERPs9UOLfpQfpboMCn0L7pAEa9.1", // Vineri
     },
-    "Sesiune New York cu Flavius": { 0: "", 1: "", 2: "", 3: "", 4: "" },
+    "Sesiune New York cu Flavius": {
+      0: "https://us02web.zoom.us/j/89284532502?pwd=GIO8R9cUQfiApN7ZaiDITL7AVxh9ec.1", // Luni
+      1: "https://us02web.zoom.us/j/84428384626?pwd=EtamY9Lr4FllbMUDM8oSTTuy4G05mJ.1", // Marți
+      2: "https://us02web.zoom.us/j/89235648526?pwd=8AGuuwt8XrxAnpHmUJbjJojb3AFbq2.1", // Miercuri
+      3: "https://us02web.zoom.us/j/83839932271?pwd=bsCbaCC0Bks7Wrt6L4ptYvky9QEOLd.1", // Joi
+      4: "https://us02web.zoom.us/j/84507872229?pwd=F3QDiFNQ4lb9BDktht8CVLI5AB6RSp.1", // Vineri
+    },
     "Analiza macro saptamanala cu John": {
       1: "https://us06web.zoom.us/j/82243984757?pwd=QBCn16XU7fwGYYgyPa9jaWmuVfkKrZ.1",
     },
@@ -132,6 +138,10 @@ const WeeklySchedule = () => {
   }, [dropdownOpen]);
 
   const isSessionFree = (eventName, dayIndex) => {
+    // Toate sesiunile lui Flavius sunt gratuite momentan
+    if (eventName.toLowerCase().includes("flavius")) return true;
+
+    // În plus, păstrăm gratuitățile existente de luni
     const freeSessions = [
       "Sesiune Asia cu Mihai",
       "Webinar începători cu Sergiu și John",
