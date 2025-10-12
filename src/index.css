@@ -111,3 +111,19 @@
 .shiny-border:hover::after {
   opacity: 1;
 }
+
+/* Fade-in animation for Zoom redirect fallback button */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

@@ -18,6 +18,9 @@ const WeeklySchedule = () => {
   const [vipError, setVipError] = useState("");
   const [pendingSessionLink, setPendingSessionLink] = useState("");
   const [showVipInfoModal, setShowVipInfoModal] = useState(false);
+  const [showZoomRedirect, setShowZoomRedirect] = useState(false);
+  const [redirectLink, setRedirectLink] = useState("");
+  const [redirectCountdown, setRedirectCountdown] = useState(3);
 
   const VIP_PASSWORD = "2025";
 
@@ -137,6 +140,38 @@ const WeeklySchedule = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    if (!showZoomRedirect || !redirectLink) return;
+
+    // Auto-redirect după 1s folosind protocolul Zoom (nu mai deschide tab browser)
+    const redirectTimer = setTimeout(() => {
+      launchZoomApp(redirectLink);
+    }, 1000);
+
+    // Countdown interval (3, 2, 1, 0)
+    const countdownInterval = setInterval(() => {
+      setRedirectCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // Auto-close după 5s
+    const closeTimer = setTimeout(() => {
+      setShowZoomRedirect(false);
+      setRedirectCountdown(3);
+    }, 5000);
+
+    return () => {
+      clearTimeout(redirectTimer);
+      clearTimeout(closeTimer);
+      clearInterval(countdownInterval);
+    };
+  }, [showZoomRedirect, redirectLink]);
+
   const isSessionFree = (eventName, dayIndex) => {
     // Toate sesiunile lui Flavius sunt gratuite momentan
     if (eventName.toLowerCase().includes("flavius")) return true;
@@ -196,7 +231,8 @@ const WeeklySchedule = () => {
     if (!link) return;
 
     if (isSessionFree(eventName, dayIndex) || isVIP) {
-      window.open(link, "_blank");
+      setRedirectLink(link);
+      setShowZoomRedirect(true);
     } else {
       setPendingSessionLink(link);
       setShowVIPModal(true);
@@ -216,7 +252,8 @@ const WeeklySchedule = () => {
       setVipError("");
       setVipPassword("");
       if (pendingSessionLink) {
-        window.open(pendingSessionLink, "_blank");
+        setRedirectLink(pendingSessionLink);
+        setShowZoomRedirect(true);
         setPendingSessionLink("");
       }
     } else {
@@ -229,6 +266,56 @@ const WeeklySchedule = () => {
     setVipError("");
     setVipPassword("");
     setPendingSessionLink("");
+  };
+
+  const convertToZoomProtocol = (webUrl) => {
+    // Extrage meeting ID și password din URL-ul web
+    // Ex: https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1
+    try {
+      const url = new URL(webUrl);
+      const meetingId = url.pathname.split('/j/')[1];
+      const password = url.searchParams.get('pwd');
+      
+      // Construiește zoommtg:// protocol URL (nu expune link-ul în browser)
+      if (password) {
+        return `zoommtg://zoom.us/join?confno=${meetingId}&pwd=${password}`;
+      }
+      return `zoommtg://zoom.us/join?confno=${meetingId}`;
+    } catch (e) {
+      console.error('Failed to convert Zoom URL:', e);
+      return webUrl; // fallback la web URL
+    }
+  };
+
+  const launchZoomApp = (link) => {
+    const zoomProtocolUrl = convertToZoomProtocol(link);
+    
+    // Metoda 1: Încearcă să deschidă direct cu window.location
+    window.location.href = zoomProtocolUrl;
+    
+    // Metoda 2 (fallback): Creează un iframe invizibil care invocă protocolul
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = zoomProtocolUrl;
+    document.body.appendChild(iframe);
+    
+    // Curăță iframe-ul după 3 secunde
+    setTimeout(() => {
+      if (iframe && iframe.parentNode) {
+        iframe.parentNode.removeChild(iframe);
+      }
+    }, 3000);
+  };
+
+  const handleManualRedirect = () => {
+    launchZoomApp(redirectLink);
+    setShowZoomRedirect(false);
+    setRedirectCountdown(3);
+  };
+
+  const closeZoomRedirect = () => {
+    setShowZoomRedirect(false);
+    setRedirectCountdown(3);
   };
 
   const toggleVipInfoModal = () => setShowVipInfoModal((v) => !v);
@@ -286,6 +373,86 @@ const WeeklySchedule = () => {
           </div>
         )}
       </div>
+    );
+  };
+
+  const ZoomRedirectOverlay = () => {
+    const [showFallback, setShowFallback] = useState(false);
+
+    useEffect(() => {
+      const fallbackTimer = setTimeout(() => setShowFallback(true), 3000);
+      return () => clearTimeout(fallbackTimer);
+    }, []);
+
+    return createPortal(
+      <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div className="relative max-w-lg w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 border-amber-400/50 rounded-3xl p-8 shadow-2xl">
+          {/* Close button */}
+          <button
+            onClick={closeZoomRedirect}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-700/50 hover:bg-gray-600 text-gray-300 hover:text-white transition-all duration-300"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+
+          {/* Rocket spinner */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="w-24 h-24 border-8 border-gray-700 border-t-transparent rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-5xl animate-pulse">🚀</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
+            Lansare aplicație Zoom...
+          </h2>
+
+          {/* Subtitle */}
+          <p className="text-gray-400 text-center mb-6">
+            Aplicația Zoom va porni automat în{" "}
+            <span className="text-amber-400 font-bold text-lg">
+              {redirectCountdown}
+            </span>{" "}
+            secund{redirectCountdown !== 1 ? "e" : "ă"}
+          </p>
+
+          {/* Progress bar */}
+          <div className="mb-6">
+            <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-1000 ease-linear"
+                style={{
+                  width: `${((3 - redirectCountdown) / 3) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Info tooltip */}
+          <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 mb-4">
+            <p className="text-sm text-gray-300 text-center">
+              💡 Aplicația Zoom desktop/mobile se va lansa automat. Asigură-te că ai Zoom instalat pentru o experiență optimă.
+            </p>
+          </div>
+
+          {/* Manual fallback button */}
+          {showFallback && (
+            <div className="animate-fade-in">
+              <button
+                onClick={handleManualRedirect}
+                className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
+              >
+                Click aici pentru a relansa Zoom
+              </button>
+            </div>
+          )}
+        </div>
+      </div>,
+      document.body
     );
   };
 
@@ -472,6 +639,8 @@ const WeeklySchedule = () => {
 
   return (
     <div className="min-h-screen text-white">
+      {showZoomRedirect && <ZoomRedirectOverlay />}
+      
       {showVIPModal &&
         createPortal(
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
