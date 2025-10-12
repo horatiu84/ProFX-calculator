@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
+import VipInfoModal from "./VipInfoModal.jsx";
 import {
   collection,
   addDoc,
@@ -88,281 +90,152 @@ const FormularInscriere = () => {
   const toggleVipModal = () => setShowVipModal(!showVipModal);
 
   return (
-    <div className="bg-[#1e1e1e] p-4 rounded-lg mt-5 max-w-md mx-auto text-white">
-      <h2 className="text-center text-lg font-semibold mb-3">
-        Înscriere VIP ProFX
-      </h2>
+    <div className="relative group mt-5 max-w-lg mx-auto text-white">
+      {/* Gradient accent overlay */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-amber-400/10 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Buton pentru a vedea instrucțiunile VIP */}
-      <div className="mb-4 text-center">
-        <button
-          onClick={toggleVipModal}
-          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          Instrucțiuni Acces VIP
-        </button>
-      </div>
+      {/* Glass card container */}
+      <div className="relative rounded-2xl border border-gray-700/50 bg-gray-900/50 backdrop-blur-sm shadow-xl overflow-hidden transition-all duration-300 group-hover:border-amber-400/30 px-6 py-5">
+        <h2 className="text-center text-xl font-semibold mb-4">
+          Înscriere VIP ProFX
+        </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-        <label className="text-left text-sm text-gray-300" htmlFor="nume">
-          Nume:
-        </label>
-        <input
-          type="text"
-          id="nume"
-          value={nume}
-          onChange={(e) => setNume(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          placeholder="Introdu numele tău"
-          required
-        />
-
-        <label className="text-left text-sm text-gray-300" htmlFor="telefon">
-          Număr de telefon:
-        </label>
-        <PhoneInput
-          international
-          defaultCountry="RO"
-          value={telefon}
-          onChange={setTelefon}
-          className="PhoneInput dark-theme"
-          inputClassName="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 w-full"
-          countrySelectClassName="bg-[#2a2a2a] text-white border-gray-600"
-          placeholder="Introdu numărul tău"
-          required
-        />
-
-        <label className="text-left text-sm text-gray-300" htmlFor="email">
-          Email:
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          placeholder="Introdu email-ul tău"
-          required
-        />
-
-        <div className="flex items-center space-x-2 mt-2">
-          <input
-            type="checkbox"
-            id="consent"
-            checked={consent}
-            onChange={(e) => setConsent(e.target.checked)}
-            className="form-checkbox text-blue-600"
-          />
-          <label htmlFor="consent" className="text-sm text-gray-300">
-            Sunt de acord cu{" "}
-            <span
-              onClick={toggleModal}
-              className="text-blue-400 hover:underline cursor-pointer"
-            >
-              prelucrarea datelor cu caracter personal.
-            </span>{" "}
-          </label>
-        </div>
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="p-2 mt-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
-        >
-          {submitting ? "Se procesează..." : "Înscrie-te VIP"}
-        </button>
-      </form>
-
-      <p className="text-sm mt-2 text-gray-500">
-        Prin trimiterea acestui formular, sunteți de acord să primiți texte
-        informative și/sau de marketing de la ProFX, inclusiv texte trimise prin
-        apelare automată. Dezabonați-vă în orice moment, răspunzând STOP sau
-        făcând clic pe linkul de dezabonare (acolo unde este disponibil).
-      </p>
-
-      {error && (
-        <p className="text-red-400 text-sm mt-2 text-center">{error}</p>
-      )}
-      {success && (
-        <p className="text-green-400 text-sm mt-2 text-center">
-          Înscriere reușită!{" "}
-          <a
-            href="https://t.me/ProFX_Community"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
+        {/* Buton pentru a vedea instrucțiunile VIP */}
+        <div className="mb-4 text-center">
+          <button
+            onClick={toggleVipModal}
+            className="inline-flex items-center justify-center px-5 py-2 rounded-xl border border-gray-600/50 bg-gray-800/50 hover:bg-gray-700/50 hover:border-amber-400/50 text-amber-200/90 font-semibold shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400/30"
           >
-            Intră pe canalul nostru de Telegram
-          </a>{" "}
-          și așteaptă confirmarea verificării contului.{" "}
-        </p>
-      )}
-
-      {/* Modal pentru Instrucțiunile VIP */}
-      {showVipModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1e1e1e] p-6 rounded-lg max-w-lg w-full text-white relative max-h-[85vh] flex flex-col">
-            <button
-              onClick={toggleVipModal}
-              className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
-            >
-              &times;
-            </button>
-            <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#1e1e1e] pb-2 text-yellow-400 border-b border-yellow-400">
-              Instrucțiuni Acces VIP ProFX
-            </h2>
-            <div className="overflow-y-auto pr-2 flex-1 mb-4">
-              <div className="bg-gradient-to-r from-yellow-600/20 to-yellow-700/20 p-4 rounded-lg mb-6 border border-yellow-600/30">
-                <p className="text-sm font-medium text-yellow-100">
-                  Urmați acești pași pentru a obține acces la grupurile de Telegram VIP, 
-                  unde se tranzacționează LIVE, precum și la sesiunile practice și de backtesting.
-                </p>
-              </div>
-              
-              <div className="space-y-6">
-                <div className="bg-[#2a2a2a] p-5 rounded-lg border-l-4 border-blue-500">
-                  <div className="flex items-center mb-3">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                      1
-                    </div>
-                    <h3 className="text-lg font-semibold text-blue-400">
-                      Creați cont FPM Trading
-                    </h3>
-                  </div>
-                  <p className="text-sm mb-3 ml-11">
-                    Creați un cont FPM Trading folosind link-ul oficial:
-                  </p>
-                  <a 
-                    href="https://smartlnks.com/PROFX-Romania" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 transition-colors block mb-3 ml-11 font-medium"
-                  >
-                    https://smartlnks.com/PROFX-Romania
-                  </a>
-                  <div className="ml-11">
-                    <p className="text-sm mb-2 text-gray-300">Tutorial de înregistrare:</p>
-                    <a 
-                      href="https://youtu.be/SnxXpX1Iei8" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
-                    >
-                      https://youtu.be/SnxXpX1Iei8
-                    </a>
-                  </div>
-                </div>
-
-                <div className="bg-[#2a2a2a] p-5 rounded-lg border-l-4 border-green-500">
-                  <div className="flex items-center mb-3">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                      2
-                    </div>
-                    <h3 className="text-lg font-semibold text-green-400">
-                      Contactați pentru verificare
-                    </h3>
-                  </div>
-                  <p className="text-sm mb-2 ml-11">
-                    Trimiteți un mesaj către{" "}
-                    <a
-                      href="https://t.me/sergiucirstea"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-                    >
-                      Sergiu Cirstea
-                    </a>{" "}
-                    și atașați o captură cu contul vostru activ FPM Trading (demo sau real).
-                  </p>
-                  <p className="text-sm ml-11 text-gray-300">
-                    După verificare, veți fi adăugați în grupul nostru exclusiv.
-                  </p>
-                </div>
-
-                <div className="bg-[#2a2a2a] p-5 rounded-lg border-l-4 border-purple-500">
-                  <div className="flex items-center mb-3">
-                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                      3
-                    </div>
-                    <h3 className="text-lg font-semibold text-purple-400">
-                      Parcurgeți lecțiile gratuite
-                    </h3>
-                  </div>
-                  <p className="text-sm mb-3 ml-11">
-                    Studiul lecțiilor ProFX este esențial pentru cei care doresc să învețe de la zero:
-                  </p>
-                  <a 
-                    href="https://profx.ro/#lectii" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 transition-colors ml-11 font-medium"
-                  >
-                    https://profx.ro/#lectii
-                  </a>
-                </div>
-
-                <div className="bg-gradient-to-r from-yellow-600/10 to-yellow-700/10 p-5 rounded-lg border border-yellow-500/30">
-                  <h3 className="text-lg font-semibold mb-3 text-yellow-400">
-                    Beneficii Exclusive VIP
-                  </h3>
-                  <div className="bg-[#2a2a2a]/50 p-4 rounded-md">
-                    <p className="text-sm mb-3 text-gray-200">
-                      Prin deschiderea unui cont la FPM Trading folosind link-ul nostru oficial, 
-                      veți debloca următoarele beneficii:
-                    </p>
-                    <ul className="text-sm space-y-2">
-                      <li className="flex items-start">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        <span>Acces la grupurile de Telegram VIP cu tranzacționare LIVE</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        <span>Participare la sesiuni practice și de backtesting</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        <span>Suport personalizat și mentorat</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="text-center bg-gradient-to-r from-blue-600/20 to-blue-700/20 p-5 rounded-lg border border-blue-500/30">
-                  <p className="text-lg font-semibold text-blue-300 mb-2">
-                    Vă așteptăm cu entuziasm în comunitatea noastră!
-                  </p>
-                  <p className="text-yellow-400 font-medium">
-                    Echipa ProFX
-                  </p>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={toggleVipModal}
-              className="mt-0 p-3 bg-blue-600 text-white rounded w-full hover:bg-blue-700 transition-colors font-medium flex-shrink-0"
-            >
-              Închide
-            </button>
-          </div>
+            Instrucțiuni Acces VIP
+          </button>
         </div>
-      )}
 
-      {/* Modal pentru Politica de Confidențialitate */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 overflow-hidden">
-          <div className="bg-[#1e1e1e] p-6 rounded-lg max-w-lg w-full m-4 text-white relative max-h-[90vh] flex flex-col">
-            <button
-              onClick={toggleModal}
-              className="absolute top-2 right-2 text-gray-400 hover:text-white text-xl"
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+          <label className="text-left text-sm text-gray-300" htmlFor="nume">
+            Nume:
+          </label>
+          <input
+            type="text"
+            id="nume"
+            value={nume}
+            onChange={(e) => setNume(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-gray-100 placeholder-gray-400 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/30 transition"
+            placeholder="Introdu numele tău"
+            required
+          />
+
+          <label className="text-left text-sm text-gray-300" htmlFor="telefon">
+            Număr de telefon:
+          </label>
+          <PhoneInput
+            international
+            defaultCountry="RO"
+            value={telefon}
+            onChange={setTelefon}
+            className="PhoneInput"
+            inputClassName="px-4 py-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-gray-100 placeholder-gray-400 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/30 w-full transition"
+            countrySelectClassName="rounded-xl bg-gray-800/50 text-white border-gray-600/50"
+            placeholder="Introdu numărul tău"
+            required
+          />
+
+          <label className="text-left text-sm text-gray-300" htmlFor="email">
+            Email:
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-gray-100 placeholder-gray-400 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/30 transition"
+            placeholder="Introdu email-ul tău"
+            required
+          />
+
+          <div className="flex items-center space-x-2 mt-2">
+            <input
+              type="checkbox"
+              id="consent"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="form-checkbox text-amber-400 focus:ring-amber-400/40 focus:ring-offset-0"
+            />
+            <label htmlFor="consent" className="text-sm text-gray-300">
+              Sunt de acord cu{" "}
+              <span
+                onClick={toggleModal}
+                className="text-amber-300 hover:text-amber-200 hover:underline cursor-pointer"
+              >
+                prelucrarea datelor cu caracter personal.
+              </span>{" "}
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="px-4 py-2 mt-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white font-medium hover:bg-gray-700/50 hover:border-amber-400/50 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400/30 disabled:bg-gray-700/50 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            {submitting ? "Se procesează..." : "Înscrie-te VIP"}
+          </button>
+        </form>
+
+        <p className="text-sm mt-3 text-gray-400">
+          Prin trimiterea acestui formular, sunteți de acord să primiți texte
+          informative și/sau de marketing de la ProFX, inclusiv texte trimise prin
+          apelare automată. Dezabonați-vă în orice moment, răspunzând STOP sau
+          făcând clic pe linkul de dezabonare (acolo unde este disponibil).
+        </p>
+
+        {error && (
+          <p className="text-red-400 text-sm mt-2 text-center">{error}</p>
+        )}
+        {success && (
+          <p className="text-green-400 text-sm mt-2 text-center">
+            Înscriere reușită!{" "}
+            <a
+              href="https://t.me/ProFX_Community"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-300 hover:underline"
             >
-              &times;
-            </button>
-            <h2 className="text-xl font-bold mb-4 sticky top-0 bg-[#1e1e1e] pb-2">
+              Intră pe canalul nostru de Telegram
+            </a>{" "}
+            și așteaptă confirmarea verificării contului.{" "}
+          </p>
+        )}
+
+        {/* Modal pentru Instrucțiunile VIP */}
+        <VipInfoModal open={showVipModal} onClose={toggleVipModal} />
+
+        {/* Modal pentru Politica de Confidențialitate */}
+        {showModal && createPortal(
+          <div className="fixed inset-0 z-50">
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/70" onClick={toggleModal} />
+            {/* Modal card */}
+            <div className="relative z-10 min-h-full flex items-center justify-center p-4">
+              <div className="relative w-full max-w-3xl rounded-2xl border border-gray-700/50 bg-gray-900/60 backdrop-blur-md shadow-2xl overflow-hidden">
+                {/* Accent overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-400/10 via-transparent to-transparent" />
+
+                {/* Close button */}
+                <button
+                  onClick={toggleModal}
+                  className="absolute top-3 right-3 h-9 w-9 inline-flex items-center justify-center rounded-xl bg-gray-800/60 border border-gray-700/60 text-gray-300 hover:text-white hover:bg-gray-700/60 hover:border-amber-400/40 transition z-10"
+                  aria-label="Închide"
+                >
+                  ×
+                </button>
+
+                {/* Content */}
+                <div className="relative flex flex-col max-h-[85vh]">
+                  <h2 className="text-lg md:text-xl  text-gray-200/90 font-bold px-6 pt-6 pb-3 bg-gray-900/70 backdrop-blur-sm border-b border-gray-700/50 shrink-0">
               Politica Datelor Personale GDPR
             </h2>
-            <div className="overflow-y-auto pr-2">
+            <div className="px-6 pt-4 pb-0 overflow-y-auto flex-1 text-gray-200/90">
               <p className="text-sm mb-2">
-                S.C. Pro Fx Media S. R. L. cu sediul in SLATINA, Str. POPA
+                S.C. ProFx Media S.R.L. cu sediul in SLATINA, Str. POPA
                 ȘAPCĂ, Nr. 8C, județ OLT, CUI 50830817, înregistrata la ORC J28,
                 sub nr 38440, are grijă de intimitatea dumneavoastră și dorește
                 să vă simțiți apărați pe platforma noastră. Documentul de mai
@@ -665,22 +538,29 @@ const FormularInscriere = () => {
               <h3 className="text-lg font-semibold mt-4 mb-2">
                 Întrebari, Sugestii și Reclamații?
               </h3>
-              <p className="text-sm mb-2">
+              <p className="text-sm mb-6">
                 Aveți întrebări referitoare la protecția datelor, politica de
                 utilizare cookie-uri sau la pagina noastră de internet? Nicio
                 problemă, vă ajutăm cu placere daca trimiteti un mesaj la adresa
                 de email office@profx.ro
               </p>
+
+              {/* Sfârșitul politicii GDPR - zonă lipicioasă pentru butonul de închidere */}
+              <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-4 bg-gray-900/80 backdrop-blur-sm border-t border-gray-700/50">
+                <button
+                  onClick={toggleModal}
+                  className="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl border border-gray-600/50 bg-gray-800/60 hover:bg-gray-700/60 hover:border-amber-400/50 text-white font-medium transition focus:outline-none focus:ring-2 focus:ring-amber-400/30 shadow-sm"
+                >
+                  Închide
+                </button>
+              </div>
             </div>
-            <button
-              onClick={toggleModal}
-              className="mt-4 p-2 bg-blue-600 text-white rounded w-full hover:bg-blue-700"
-            >
-              Închide
-            </button>
           </div>
         </div>
-      )}
+      </div>
+    </div>
+  , document.body)}
+      </div>
     </div>
   );
 };
