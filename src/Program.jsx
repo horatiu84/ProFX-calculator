@@ -97,6 +97,7 @@ const WeeklySchedule = () => {
   };
 
   // Helper: calculează timestamp-ul unei sesiuni pentru ziua specificată
+  // Orele sunt în fusul orar românesc (Europe/Bucharest) și convertite automat în ora locală
   const getSessionTimestamp = (dayIndex, timeString) => {
     const now = new Date();
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -105,11 +106,39 @@ const WeeklySchedule = () => {
     const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1;
     const dayDiff = dayIndex - currentDay;
     
+    // Creează data în fusul orar românesc
     const sessionDate = new Date(now);
     sessionDate.setDate(now.getDate() + dayDiff);
-    sessionDate.setHours(hours, minutes, 0, 0);
     
-    return sessionDate;
+    // Construim un string de dată în format ISO pentru timezone România
+    const year = sessionDate.getFullYear();
+    const month = String(sessionDate.getMonth() + 1).padStart(2, '0');
+    const day = String(sessionDate.getDate()).padStart(2, '0');
+    const hoursStr = String(hours).padStart(2, '0');
+    const minutesStr = String(minutes).padStart(2, '0');
+    
+    // Creăm data în timezone România (Europe/Bucharest)
+    const dateTimeString = `${year}-${month}-${day}T${hoursStr}:${minutesStr}:00`;
+    
+    // Parsăm data ca și cum ar fi în timezone România
+    // și o convertim automat în timezone-ul local al browserului
+    const romaniaDate = new Date(dateTimeString + '+02:00'); // EET (UTC+2) vara
+    
+    // Ajustăm pentru DST (Daylight Saving Time)
+    // România: +2h iarna (EET), +3h vara (EEST)
+    const isDST = (date) => {
+      const jan = new Date(date.getFullYear(), 0, 1);
+      const jul = new Date(date.getFullYear(), 6, 1);
+      return date.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+    };
+    
+    // Determinăm offset-ul corect pentru România
+    const romaniaOffset = isDST(sessionDate) ? 3 : 2; // +3h vara, +2h iarna
+    
+    // Creăm data corectă în timezone România
+    const utcDate = new Date(Date.UTC(year, sessionDate.getMonth(), sessionDate.getDate(), hours - romaniaOffset, minutes, 0));
+    
+    return utcDate;
   };
 
   // Helper: găsește următoarea sesiune programată (cea mai apropiată în viitor)
@@ -165,6 +194,31 @@ const WeeklySchedule = () => {
     } else {
       return `${seconds}s`;
     }
+  };
+
+  // Helper: convertește ora din timezone România în timezone local
+  const convertRomaniaTimeToLocal = (timeString, dayIndex) => {
+    const sessionTimestamp = getSessionTimestamp(dayIndex, timeString);
+    const hours = sessionTimestamp.getHours();
+    const minutes = sessionTimestamp.getMinutes();
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  };
+
+  // Helper: formatează intervalul de timp cu ora de sfârșit
+  const formatTimeRange = (event, dayIndex) => {
+    const sessionTimestamp = getSessionTimestamp(dayIndex, event.time);
+    const startHours = sessionTimestamp.getHours();
+    const startMinutes = sessionTimestamp.getMinutes();
+    
+    const endTimestamp = new Date(sessionTimestamp);
+    endTimestamp.setHours(endTimestamp.getHours() + (event.duration || 1));
+    const endHours = endTimestamp.getHours();
+    const endMinutes = endTimestamp.getMinutes();
+    
+    const startTime = `${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}`;
+    const endTime = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+    
+    return `${startTime} - ${endTime}`;
   };
 
   // Helper: verifică dacă accesul Zoom este disponibil (10 minute înainte până la final)
@@ -603,9 +657,7 @@ const WeeklySchedule = () => {
 
   const EventCard = ({ event, dayIndex, isWebinar = false }) => {
     const status = getEventStatus(event, dayIndex);
-    const [hours, minutes] = event.time.split(":");
     const duration = event.duration || 1;
-    const endHour = String(parseInt(hours) + duration).padStart(2, "0");
     const mentors = extractAllMentors(event.name);
     const hasLink = hasSessionLink(event.name, dayIndex);
     const isFree = isSessionFree(event.name, dayIndex);
@@ -698,7 +750,7 @@ const WeeklySchedule = () => {
                       : "bg-yellow-400 text-black"
                   }`}
                 >
-                  {event.time} - {endHour}:{minutes}
+                  {formatTimeRange(event, dayIndex)}
                 </div>
                 {isWebinar && status !== "passed" && (
                   <div className="px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded uppercase w-fit">
@@ -909,6 +961,9 @@ const WeeklySchedule = () => {
                 minute: "2-digit",
               })}
             </p>
+            <p className="text-xs text-blue-400 mt-2 flex items-center justify-center gap-1">
+              <span>🌍</span> Orele afișate sunt convertite automat în fusul tău orar local
+            </p>
             {isVIP && (
               <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-400/30 rounded-full">
                 <span className="text-lg">⭐</span>
@@ -939,7 +994,7 @@ const WeeklySchedule = () => {
                     {nextSession.name}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
-                    {daysOfWeek[nextSession.dayIndex]} • {nextSession.time}
+                    {daysOfWeek[nextSession.dayIndex]} • {convertRomaniaTimeToLocal(nextSession.time, nextSession.dayIndex)}
                   </p>
                 </div>
               </div>

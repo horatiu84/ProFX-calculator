@@ -20,6 +20,12 @@ const TradingJournal = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showReportsModal, setShowReportsModal] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState(null);
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [isEditingType, setIsEditingType] = useState(false);
+  const [isEditingResult, setIsEditingResult] = useState(false);
+  const [editedNotes, setEditedNotes] = useState("");
+  const [editedType, setEditedType] = useState("");
+  const [editedResult, setEditedResult] = useState("");
 
   // Pagination, sorting, and filtering state
   const [currentPage, setCurrentPage] = useState(1);
@@ -236,7 +242,73 @@ const TradingJournal = () => {
   // View details of a selected trade
   const handleViewTrade = (trade) => {
     setSelectedTrade(trade);
+    setEditedNotes(trade.notes || "");
+    setEditedType(trade.type);
+    setEditedResult(trade.result);
+    setIsEditingNotes(false);
+    setIsEditingType(false);
+    setIsEditingResult(false);
     setShowViewModal(true);
+  };
+
+  // Save edited notes
+  const handleSaveNotes = () => {
+    if (selectedTrade) {
+      const updatedTrades = trades.map(t => 
+        t.id === selectedTrade.id 
+          ? { ...t, notes: editedNotes }
+          : t
+      );
+      setTrades(updatedTrades);
+      localStorage.setItem("trades", JSON.stringify(updatedTrades)); // Salvare explicită
+      setSelectedTrade({ ...selectedTrade, notes: editedNotes });
+      setIsEditingNotes(false);
+    }
+  };
+
+  // Save edited trade type (buy/sell)
+  const handleSaveType = () => {
+    if (selectedTrade && editedType !== selectedTrade.type) {
+      const updatedTrades = trades.map(t => 
+        t.id === selectedTrade.id 
+          ? { ...t, type: editedType }
+          : t
+      );
+      setTrades(updatedTrades);
+      localStorage.setItem("trades", JSON.stringify(updatedTrades)); // Salvare explicită
+      setSelectedTrade({ ...selectedTrade, type: editedType });
+      setIsEditingType(false);
+    }
+  };
+
+  // Save edited result (tp/sl)
+  const handleSaveResult = () => {
+    if (selectedTrade && editedResult !== selectedTrade.result) {
+      // Recalculate profit/loss with new result
+      const newProfitLoss = calculateProfitLoss(
+        selectedTrade.pair,
+        selectedTrade.lotSize,
+        selectedTrade.pips,
+        editedResult
+      );
+      
+      // Update account balance
+      const balanceDifference = newProfitLoss - selectedTrade.profitLoss;
+      const newBalance = accountBalance + balanceDifference;
+      setAccountBalance(newBalance);
+      localStorage.setItem("accountBalance", newBalance.toString()); // Salvare explicită
+      
+      // Update trades
+      const updatedTrades = trades.map(t => 
+        t.id === selectedTrade.id 
+          ? { ...t, result: editedResult, profitLoss: newProfitLoss }
+          : t
+      );
+      setTrades(updatedTrades);
+      localStorage.setItem("trades", JSON.stringify(updatedTrades)); // Salvare explicită
+      setSelectedTrade({ ...selectedTrade, result: editedResult, profitLoss: newProfitLoss });
+      setIsEditingResult(false);
+    }
   };
 
   // Format numbers to a specific decimal precision
@@ -969,25 +1041,112 @@ const TradingJournal = () => {
                 {/* Trade Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="text-xs text-gray-400 mb-2">Tip Tranzacție</div>
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                      selectedTrade.type === "buy" 
-                        ? "bg-green-500/20 text-green-400 border border-green-500/30" 
-                        : "bg-red-500/20 text-red-400 border border-red-500/30"
-                    }`}>
-                      {selectedTrade.type.toUpperCase()}
-                    </span>
+                    <div className="text-xs text-gray-400 mb-2 flex items-center justify-between">
+                      <span>Tip Tranzacție</span>
+                      {!isEditingType && (
+                        <button
+                          onClick={() => setIsEditingType(true)}
+                          className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+                          title="Editează tipul tranzacției"
+                        >
+                          ✏️
+                        </button>
+                      )}
+                    </div>
+                    {isEditingType ? (
+                      <div className="space-y-2">
+                        <select
+                          value={editedType}
+                          onChange={(e) => setEditedType(e.target.value)}
+                          className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                        >
+                          <option value="buy">BUY</option>
+                          <option value="sell">SELL</option>
+                        </select>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={handleSaveType}
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
+                          >
+                            ✓ Salvează
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditedType(selectedTrade.type);
+                              setIsEditingType(false);
+                            }}
+                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
+                          >
+                            ✕ Anulează
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                        selectedTrade.type === "buy" 
+                          ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                          : "bg-red-500/20 text-red-400 border border-red-500/30"
+                      }`}>
+                        {selectedTrade.type.toUpperCase()}
+                      </span>
+                    )}
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="text-xs text-gray-400 mb-2">Rezultat</div>
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                      selectedTrade.result === "tp" 
-                        ? "bg-green-500/20 text-green-400 border border-green-500/30" 
-                        : "bg-red-500/20 text-red-400 border border-red-500/30"
-                    }`}>
-                      {selectedTrade.result === "tp" ? "TAKE PROFIT" : "STOP LOSS"}
-                    </span>
+                    <div className="text-xs text-gray-400 mb-2 flex items-center justify-between">
+                      <span>Rezultat</span>
+                      {!isEditingResult && (
+                        <button
+                          onClick={() => setIsEditingResult(true)}
+                          className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+                          title="Editează rezultatul"
+                        >
+                          ✏️
+                        </button>
+                      )}
+                    </div>
+                    {isEditingResult ? (
+                      <div className="space-y-2">
+                        <select
+                          value={editedResult}
+                          onChange={(e) => setEditedResult(e.target.value)}
+                          className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                        >
+                          <option value="tp">TAKE PROFIT (TP)</option>
+                          <option value="sl">STOP LOSS (SL)</option>
+                        </select>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={handleSaveResult}
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
+                          >
+                            ✓ Salvează
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditedResult(selectedTrade.result);
+                              setIsEditingResult(false);
+                            }}
+                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
+                          >
+                            ✕ Anulează
+                          </button>
+                        </div>
+                        {editedResult !== selectedTrade.result && (
+                          <div className="text-xs text-yellow-400 mt-2 bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-2">
+                            ⚠️ Nota: Modificarea rezultatului va recalcula automat P/L și soldul contului
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                        selectedTrade.result === "tp" 
+                          ? "bg-green-500/20 text-green-400 border border-green-500/30" 
+                          : "bg-red-500/20 text-red-400 border border-red-500/30"
+                      }`}>
+                        {selectedTrade.result === "tp" ? "TAKE PROFIT" : "STOP LOSS"}
+                      </span>
+                    )}
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
@@ -1031,17 +1190,60 @@ const TradingJournal = () => {
                   </div>
                 )}
 
-                {/* Notes Section */}
-                {selectedTrade.notes && (
-                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="text-xs text-gray-400 mb-3 flex items-center">
+                {/* Notes Section - Always show, with edit capability */}
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="text-xs text-gray-400 mb-3 flex items-center justify-between">
+                    <span className="flex items-center">
                       <span className="mr-2">📝</span> Observații
-                    </div>
-                    <div className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                      {selectedTrade.notes}
-                    </div>
+                    </span>
+                    {!isEditingNotes && (
+                      <button
+                        onClick={() => setIsEditingNotes(true)}
+                        className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+                        title="Editează observațiile"
+                      >
+                        ✏️ Editează
+                      </button>
+                    )}
                   </div>
-                )}
+                  
+                  {isEditingNotes ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editedNotes}
+                        onChange={(e) => setEditedNotes(e.target.value)}
+                        placeholder="Adaugă observații despre acest trade..."
+                        rows="5"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 resize-none text-sm"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveNotes}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                        >
+                          ✓ Salvează Observațiile
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditedNotes(selectedTrade.notes || "");
+                            setIsEditingNotes(false);
+                          }}
+                          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                        >
+                          ✕ Anulează
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-900/50 rounded-lg p-4 border border-gray-700 min-h-[80px]">
+                      {selectedTrade.notes || (
+                        <span className="text-gray-500 italic">
+                          Nicio observație adăugată. Click pe "Editează" pentru a adăuga.
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Calculation Breakdown */}
                 <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-4 border border-yellow-500/20">
