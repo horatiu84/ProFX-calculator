@@ -4,6 +4,7 @@ import Educatie from "./educatie";
 import Simulare from "./Simulare";
 import Raport from "./Raport.jsx";
 import Training from "./Training.jsx";
+import Stiri from "./Stiri.jsx";
 import logo from "../src/logo.png";
 import brainIcon from "../src/brainIcon.png";
 import Evenimente from "./Evenimente.jsx";
@@ -405,7 +406,8 @@ export default function LotCalculator() {
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
     { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
     { key: "galerie", label: "Galerie ProFX", icon: "📷", component: <EventPhotoGallery /> },
-    { key: "Clase", label: "Clasa 1:20", icon: "📋", component: <ProFXChecklist /> }
+    { key: "stiri", label: "Știri & Noutăți", icon: "📰", component: <Stiri /> }
+    // { key: "Clase", label: "Clasa 1:20", icon: "📋", component: <ProFXChecklist /> } // Temporar dezactivat
   ];
 
   // URL parameters logic
