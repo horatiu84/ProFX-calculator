@@ -475,23 +475,23 @@ export default function LotCalculator() {
           onClick={() => handleTabChange(item.key)}
           className={`
             relative w-full flex items-center px-3 py-3 rounded-xl font-medium transition-all duration-300 
-            ease-in-out hover:scale-105 active:scale-95 shadow-sm hover:shadow-md
+            ease-in-out hover:scale-105 active:scale-95 overflow-hidden
             ${isActive 
-              ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 shadow-amber-300/20 hover:shadow-amber-300/30' 
+              ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-lg shadow-amber-400/30 hover:shadow-amber-400/50 border border-amber-300/50' 
               : item.isAfiliere
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-500 hover:to-teal-500 shadow-emerald-500/20 hover:shadow-emerald-500/30'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30'
                 : item.isSpecial
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/20 hover:shadow-indigo-500/30'
-                  : 'bg-gray-800/80 backdrop-blur-sm text-gray-200 hover:bg-gray-700/80 shadow-gray-700/20 hover:shadow-gray-700/30'
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 border border-indigo-400/30'
+                  : 'bg-gray-800/50 backdrop-blur-sm text-gray-200 hover:bg-gray-700/50 hover:border-amber-400/50 shadow-md border border-gray-700/50'
             }
           `}
         >
-          <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center">
+          <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center z-10">
             {item.icon}
           </span>
           
           <span className={`
-            ml-3 whitespace-nowrap transition-all duration-300 overflow-hidden
+            ml-3 whitespace-nowrap transition-all duration-300 overflow-hidden z-10
             ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
           `}>
             {item.label}
@@ -545,14 +545,14 @@ export default function LotCalculator() {
       <div 
         className={`
           flex items-center transition-all duration-300 cursor-pointer
-          hover:bg-gray-800/50 rounded-xl p-2 -m-2
+          hover:bg-gray-800/50 hover:border-amber-400/30 rounded-xl p-2 -m-2 border border-transparent
           ${isExpanded ? 'justify-start' : 'justify-center'}
         `}
         onClick={onClick}
       >
-        <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center flex-shrink-0 hover:bg-gray-900 transition-colors">
+        <div className="w-12 h-12 bg-gradient-to-br from-gray-900 to-black border border-gray-700/50 rounded-xl flex items-center justify-center flex-shrink-0 hover:border-amber-400/50 transition-all duration-300 shadow-md">
           <span className="text-white font-bold text-sm">
-            Pro<span className="text-yellow-400">FX</span>
+            Pro<span className="text-amber-400">FX</span>
           </span>
         </div>
         <div className={`
@@ -571,29 +571,29 @@ export default function LotCalculator() {
     const isActive = activeTab === item.key;
     
     let buttonClasses = `
-      relative w-full px-4 py-3.5 rounded-lg font-medium transition-all duration-300
-      ease-in-out border border-transparent text-left shadow-sm
+      relative w-full px-4 py-3.5 rounded-xl font-medium transition-all duration-300
+      ease-in-out text-left shadow-md overflow-hidden
     `;
     
     if (isActive) {
       buttonClasses += ` 
-        bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 
-        shadow-amber-300/20
+        bg-gradient-to-r from-amber-400 to-amber-600 text-black 
+        shadow-amber-400/30 border border-amber-300/50
       `;
     } else if (item.isAfiliere) {
       buttonClasses += ` 
-        bg-gradient-to-r from-emerald-600 to-teal-600 text-white 
-        shadow-emerald-500/20
+        bg-gradient-to-r from-emerald-500 to-teal-600 text-white 
+        shadow-emerald-500/30 border border-emerald-400/30
       `;
     } else if (item.isSpecial) {
       buttonClasses += ` 
-        bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
-        shadow-indigo-500/20
+        bg-gradient-to-r from-indigo-500 to-purple-600 text-white 
+        shadow-indigo-500/30 border border-indigo-400/30
       `;
     } else {
       buttonClasses += ` 
-        bg-gray-800/80 backdrop-blur-sm text-gray-200 
-        shadow-gray-700/20
+        bg-gray-800/50 backdrop-blur-sm text-gray-200 
+        hover:bg-gray-700/50 hover:border-amber-400/50 border border-gray-700/50
       `;
     }
 
@@ -607,13 +607,13 @@ export default function LotCalculator() {
         }}
       >
         <span className="flex items-center justify-between">
-          <span>{item.icon} {item.label}</span>
+          <span className="flex items-center gap-2">{item.icon} {item.label}</span>
           {item.isSpecial && (
             <span className={`
-              px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm
+              px-2 py-0.5 text-xs font-bold rounded-full shadow-sm
               ${item.isAfiliere 
-                ? 'text-emerald-100 bg-emerald-500/80'
-                : 'text-indigo-100 bg-indigo-500/80'
+                ? 'text-white bg-emerald-600/90 border border-emerald-400/50'
+                : 'text-white bg-indigo-600/90 border border-indigo-400/50'
               }
             `}>
               VIP
@@ -640,8 +640,9 @@ export default function LotCalculator() {
   {/* Sidebar */}
   <div 
     className={`
-      fixed left-0 top-0 h-full bg-gray-900/90 backdrop-blur-md border-r border-gray-700/50
-      transition-all duration-300 ease-in-out z-40 shadow-2xl flex flex-col
+      fixed left-0 top-0 h-full bg-gray-900/50 backdrop-blur-sm border-r border-gray-700/50
+      transition-all duration-500 ease-in-out z-40 shadow-2xl flex flex-col
+      hover:bg-gray-900/60 hover:border-amber-400/30
       ${isSidebarExpanded ? 'w-64' : 'w-20'}
     `}
     onMouseEnter={() => setIsSidebarExpanded(true)}
@@ -663,12 +664,12 @@ export default function LotCalculator() {
     </nav>
 
     {/* Footer - Always visible at bottom */}
-    <div className="p-4 border-t border-gray-700/50 flex-shrink-0">
+    <div className="p-4 border-t border-gray-700/50 flex-shrink-0 bg-gray-800/30 backdrop-blur-sm">
       <div className={`
         text-center transition-all duration-300
         ${isSidebarExpanded ? 'opacity-100' : 'opacity-0'}
       `}>
-        <p className="text-xs text-gray-500">Învață trading gratuit</p>
+        <p className="text-xs text-gray-400">Învață trading gratuit</p>
       </div>
     </div>
   </div>
@@ -729,9 +730,9 @@ export default function LotCalculator() {
           <div className="relative">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-full bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-3.5 
-                       flex items-center justify-between transition-all duration-300 hover:bg-gray-700/80 
-                       shadow-sm hover:shadow-md active:scale-95"
+              className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-3.5 
+                       flex items-center justify-between transition-all duration-300 hover:bg-gray-700/50 
+                       hover:border-amber-400/50 shadow-md hover:shadow-lg active:scale-95"
             >
               <span className="font-medium text-gray-200">
                 {activeTab === "home" ? "🏠 Home" : 
@@ -751,7 +752,7 @@ export default function LotCalculator() {
 
             {isMobileMenuOpen && (
               <div className="absolute top-full left-0 right-0 mt-2 z-50 animate-fadeIn">
-                <div className="bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+                <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
                   <div className="max-h-[70vh] overflow-y-auto p-2 space-y-1.5">
                     {menuItems.map(renderMobileButton)}
                   </div>

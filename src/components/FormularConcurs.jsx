@@ -49,7 +49,7 @@ const FormularInscriereConcurs = () => {
       const querySnapshot = await getDocs(telefonQuery);
       if (querySnapshot.size > 0) {
         setError(
-          "Acest număr de telefon a fost deja înscris. Urmărește pașii de pe Telegram pentru acces total."
+          "Acest număr de telefon a fost deja înscris."
         );
         return;
       }
@@ -70,67 +70,91 @@ const FormularInscriereConcurs = () => {
   };
 
   return (
-    <div className="bg-[#1e1e1e] p-4 rounded-lg mt-10 mb-14 max-w-md mx-auto text-white">
-      <h2 className="text-center text-lg font-semibold mb-3">
-        Înscriere la Concurs
-      </h2>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-        <label className="text-left text-sm text-gray-300" htmlFor="nume">
-          Nume și prenume:
-        </label>
-        <input
-          type="text"
-          id="nume"
-          value={nume}
-          onChange={(e) => setNume(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          placeholder="Introdu numelele și prenumele tău"
-          required
-        />
+    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mt-16 mb-16 max-w-md mx-auto text-white hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+      {/* Background gradient effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        <label className="text-left text-sm text-gray-300" htmlFor="telefon">
-          Număr de telefon:
-        </label>
-        <PhoneInput
-          international
-          defaultCountry="RO"
-          value={telefon}
-          onChange={setTelefon}
-          className="PhoneInput dark-theme"
-          inputClassName="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 w-full"
-          countrySelectClassName="bg-[#2a2a2a] text-white border-gray-600"
-          placeholder="Introdu numărul tău"
-          required
-        />
+      <div className="relative z-10">
+        <h2 className="text-center text-lg font-semibold mb-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">
+          Înscriere la Concurs
+        </h2>
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <label className="text-sm text-gray-300" htmlFor="nume">
+            Nume și prenume:
+          </label>
+          <input
+            type="text"
+            id="nume"
+            value={nume}
+            onChange={(e) => setNume(e.target.value)}
+            className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
+            placeholder="Introdu numele și prenumele tău"
+            required
+          />
 
-        <label className="text-left text-sm text-gray-300" htmlFor="linkMyFxBook">
-          Link MyFxBook:
-        </label>
-        <input
-          type="url"
-          id="linkMyFxBook"
-          value={linkMyFxBook}
-          onChange={(e) => setLinkMyFxBook(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          placeholder="Introdu link-ul tău MyFxBook"
-          required
-        />
+          <label className="text-sm text-gray-300" htmlFor="telefon">
+            Număr de telefon:
+          </label>
+          <PhoneInput
+            international
+            defaultCountry="RO"
+            value={telefon}
+            onChange={setTelefon}
+            className="PhoneInput dark-theme"
+            inputClassName="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
+            countrySelectClassName="bg-gray-800/50 text-white border-gray-600/50 rounded-xl"
+            placeholder="Introdu numărul tău"
+            required
+          />
 
-        <button
-          type="submit"
-          className="p-2 mt-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors"
-        >
-          Înscrie-te
-        </button>
-      </form>
-      {error && (
-        <p className="text-red-400 text-sm mt-2 text-center">{error}</p>
-      )}
-      {success && (
-        <p className="text-green-400 text-sm mt-2 text-center">
-          Înscriere reușită!{" "}
-        </p>
-      )}
+          <label className="text-sm text-gray-300" htmlFor="linkMyFxBook">
+            Link MyFxBook:
+          </label>
+          <input
+            type="url"
+            id="linkMyFxBook"
+            value={linkMyFxBook}
+            onChange={(e) => setLinkMyFxBook(e.target.value)}
+            className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
+            placeholder="Introdu link-ul tău MyFxBook"
+            required
+          />
+
+          <button
+            type="submit"
+            className="px-5 py-2 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl shadow-md transition duration-300 hover:bg-gray-700/50 hover:border-amber-400/50 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+          >
+            Înscrie-te la Concurs
+          </button>
+
+          <p className="text-xs text-gray-400 text-center">
+            Asigură-te că informațiile sunt corecte înainte de înscriere.
+          </p>
+
+          {error && (
+            <p className="text-red-400 text-center mt-2 font-semibold">{error}</p>
+          )}
+          {success && (
+            <p className="text-green-400 text-center mt-2 font-semibold flex items-center justify-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 inline-block"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              Înscriere reușită!
+            </p>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
