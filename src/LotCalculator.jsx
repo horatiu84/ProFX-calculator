@@ -475,7 +475,7 @@ export default function LotCalculator() {
           onClick={() => handleTabChange(item.key)}
           className={`
             relative w-full flex items-center px-3 py-3 rounded-xl font-medium transition-all duration-300 
-            ease-in-out hover:scale-105 active:scale-95 overflow-hidden
+            ease-in-out hover:scale-105 active:scale-95 overflow-visible
             ${isActive 
               ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-lg shadow-amber-400/30 hover:shadow-amber-400/50 border border-amber-300/50' 
               : item.isAfiliere
@@ -497,13 +497,14 @@ export default function LotCalculator() {
             {item.label}
           </span>
           
+          {/* VIP Badge  */}
           {item.isSpecial && (
             <span className={`
-              absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm transition-all duration-300
-              ${isSidebarExpanded ? 'translate-x-0' : 'translate-x-2'}
+              absolute -top-1.5 -right-3 px-1.5  text-xs font-bold rounded-full shadow-lg transition-all duration-300
+              ${isSidebarExpanded ? 'translate-x-0' : 'translate-x-0'}
               ${item.isAfiliere 
-                ? 'text-emerald-100 bg-emerald-500/80'
-                : 'text-indigo-100 bg-indigo-500/80'
+                ? 'text-emerald-100 bg-emerald-500/90 border border-emerald-400/50'
+                : 'text-indigo-100 bg-indigo-500/90 border border-indigo-400/50'
               }
             `}>
               VIP
@@ -524,8 +525,8 @@ export default function LotCalculator() {
               <span className={`
                 ml-2 px-1.5 py-0.5 text-xs font-bold rounded-full
                 ${item.isAfiliere 
-                  ? 'text-emerald-100 bg-emerald-500/80'
-                  : 'text-indigo-100 bg-indigo-500/80'
+                  ? 'text-emerald-100 bg-emerald-500/90 border border-emerald-400/50'
+                  : 'text-indigo-100 bg-indigo-500/90 border border-indigo-400/50'
                 }
               `}>
                 VIP
