@@ -21,6 +21,8 @@ const WeeklySchedule = () => {
   const [showZoomRedirect, setShowZoomRedirect] = useState(false);
   const [redirectLink, setRedirectLink] = useState("");
   const [redirectCountdown, setRedirectCountdown] = useState(3);
+  const [nextSession, setNextSession] = useState(null);
+  const [timeUntilNextSession, setTimeUntilNextSession] = useState(null);
 
   const VIP_PASSWORD = "2025";
 
@@ -94,6 +96,91 @@ const WeeklySchedule = () => {
     ],
   };
 
+  // Helper: calculează timestamp-ul unei sesiuni pentru ziua specificată
+  const getSessionTimestamp = (dayIndex, timeString) => {
+    const now = new Date();
+    const [hours, minutes] = timeString.split(":").map(Number);
+    
+    // Calculează ziua săptămânii (0 = Luni, 6 = Duminică)
+    const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1;
+    const dayDiff = dayIndex - currentDay;
+    
+    const sessionDate = new Date(now);
+    sessionDate.setDate(now.getDate() + dayDiff);
+    sessionDate.setHours(hours, minutes, 0, 0);
+    
+    return sessionDate;
+  };
+
+  // Helper: găsește următoarea sesiune programată (cea mai apropiată în viitor)
+  const findNextSession = () => {
+    const now = new Date();
+    let closestSession = null;
+    let minTimeDiff = Infinity;
+
+    // Verifică toate zilele săptămânii (0-6)
+    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+      // Skip weekend
+      if (dayIndex === 5 || dayIndex === 6) continue;
+
+      // Combină evenimentele regulate și speciale pentru ziua respectivă
+      const dayEvents = [
+        ...weekdayEvents.map((e) => ({ ...e, isWebinar: false })),
+        ...(specialEvents[dayIndex] || []).map((e) => ({ ...e, isWebinar: true })),
+      ];
+
+      dayEvents.forEach((event) => {
+        const sessionTime = getSessionTimestamp(dayIndex, event.time);
+        const timeDiff = sessionTime - now;
+
+        // Doar sesiuni viitoare (timeDiff > 0)
+        if (timeDiff > 0 && timeDiff < minTimeDiff) {
+          minTimeDiff = timeDiff;
+          closestSession = {
+            ...event,
+            dayIndex,
+            timestamp: sessionTime,
+            timeDiff,
+          };
+        }
+      });
+    }
+
+    return closestSession;
+  };
+
+  // Helper: formatează timpul rămas (ex: "15m 23s", "2h 30m", "în curs")
+  const formatTimeRemaining = (milliseconds) => {
+    if (milliseconds < 0) return "în curs";
+    
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  };
+
+  // Helper: verifică dacă accesul Zoom este disponibil (10 minute înainte până la final)
+  const isZoomAccessAvailable = (event, dayIndex) => {
+    const now = new Date();
+    const sessionTime = getSessionTimestamp(dayIndex, event.time);
+    const sessionEndTime = new Date(sessionTime);
+    sessionEndTime.setHours(sessionTime.getHours() + (event.duration || 1));
+
+    const timeDiff = sessionTime - now;
+    const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
+
+    // Accesul e disponibil cu 10 min înainte sau în timpul sesiunii
+    return timeDiff <= ACCESS_WINDOW && now <= sessionEndTime;
+  };
+
   useEffect(() => {
     const vipStatus = sessionStorage.getItem("vipAccess");
     if (vipStatus === "true") setIsVIP(true);
@@ -139,6 +226,29 @@ const WeeklySchedule = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [dropdownOpen]);
+
+  // useEffect pentru calculul următoarei sesiuni și update live al countdown-ului
+  useEffect(() => {
+    const updateNextSession = () => {
+      const next = findNextSession();
+      setNextSession(next);
+      
+      if (next) {
+        const timeRemaining = next.timestamp - new Date();
+        setTimeUntilNextSession(timeRemaining);
+      } else {
+        setTimeUntilNextSession(null);
+      }
+    };
+
+    // Calculează inițial
+    updateNextSession();
+
+    // Update la fiecare secundă pentru countdown live
+    const interval = setInterval(updateNextSession, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!showZoomRedirect || !redirectLink) return;
@@ -226,9 +336,14 @@ const WeeklySchedule = () => {
     return "scheduled";
   };
 
-  const handleSessionClick = (eventName, dayIndex) => {
+  const handleSessionClick = (eventName, dayIndex, event) => {
     const link = getSessionLink(eventName, dayIndex);
     if (!link) return;
+
+    // Verifică dacă accesul Zoom este disponibil (10 minute înainte)
+    if (!isZoomAccessAvailable(event, dayIndex)) {
+      return; // Nu face nimic dacă e prea devreme
+    }
 
     if (isSessionFree(eventName, dayIndex) || isVIP) {
       setRedirectLink(link);
@@ -280,7 +395,6 @@ const WeeklySchedule = () => {
 
   const convertToZoomProtocol = (webUrl) => {
     // Extrage meeting ID și password din URL-ul web
-    // Ex: https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1
     try {
       const url = new URL(webUrl);
       const meetingId = url.pathname.split('/j/')[1];
@@ -495,8 +609,21 @@ const WeeklySchedule = () => {
     const mentors = extractAllMentors(event.name);
     const hasLink = hasSessionLink(event.name, dayIndex);
     const isFree = isSessionFree(event.name, dayIndex);
+    const zoomAccessAvailable = isZoomAccessAvailable(event, dayIndex);
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
-    const isClickable = hasLink && (isFree || isVIP) && status !== "passed";
+    const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
+    
+    // Verifică dacă această sesiune este următoarea programată
+    const isNextSession = nextSession && 
+      nextSession.name === event.name && 
+      nextSession.dayIndex === dayIndex;
+
+    // Calculează timpul până când accesul Zoom devine disponibil (cu 10 min înainte de sesiune)
+    const sessionTime = getSessionTimestamp(dayIndex, event.time);
+    const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
+    const zoomAccessTime = new Date(sessionTime.getTime() - ACCESS_WINDOW); // 10 min înainte
+    const timeUntilZoomAccess = zoomAccessTime - new Date();
+    const minutesUntilAccess = Math.floor(timeUntilZoomAccess / (60 * 1000));
 
     return (
       <div
@@ -506,12 +633,12 @@ const WeeklySchedule = () => {
             : isWebinar
             ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
             : ""
-        } ${isClickable || needsVIP ? "cursor-pointer" : ""}`}
+        } ${isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
         onClick={
           isClickable
-            ? () => handleSessionClick(event.name, dayIndex)
+            ? () => handleSessionClick(event.name, dayIndex, event)
             : needsVIP
-            ? () => handleSessionClick(event.name, dayIndex)
+            ? () => handleSessionClick(event.name, dayIndex, event)
             : undefined
         }
       >
@@ -526,7 +653,7 @@ const WeeklySchedule = () => {
               <div className="flex items-start gap-3 mb-2">
                 <MultipleAvatars mentors={mentors} status={status} />
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3
                       className={`font-semibold text-sm md:text-base ${
                         status === "passed" ? "text-gray-400" : "text-white"
@@ -542,6 +669,12 @@ const WeeklySchedule = () => {
                     {!isFree && hasLink && isVIP && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
+                      </span>
+                    )}
+                    {/* Countdown badge pentru următoarea sesiune */}
+                    {isNextSession && timeUntilNextSession > 0 && status !== "passed" && (
+                      <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1 animate-pulse">
+                        ⏰ Începe în {formatTimeRemaining(timeUntilNextSession)}
                       </span>
                     )}
                   </div>
@@ -583,10 +716,27 @@ const WeeklySchedule = () => {
                 </p>
                 {hasLink && status !== "passed" && (
                   <div className="flex items-center space-x-1 text-xs">
-                    {isFree || isVIP ? (
+                    {!zoomAccessAvailable ? (
+                      // Afișează countdown DOAR pentru următoarea sesiune, altfel text static
+                      isNextSession ? (
+                        <>
+                          <span>🔒</span>
+                          <span className="text-orange-400">
+                            Disponibil în {minutesUntilAccess > 0 ? minutesUntilAccess : 0}m
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🔒</span>
+                          <span className="text-gray-400">
+                            Acces cu 10 min înainte
+                          </span>
+                        </>
+                      )
+                    ) : (isFree || isVIP) ? (
                       <>
                         <span>🔗</span>
-                        <span className="text-blue-400">Click pentru Zoom</span>
+                        <span className="text-green-400 font-bold">Disponibil acum!</span>
                       </>
                     ) : (
                       <>
@@ -770,6 +920,56 @@ const WeeklySchedule = () => {
           </div>
         </div>
       </div>
+
+      {/* Banner pentru următoarea sesiune cu countdown */}
+      {nextSession && timeUntilNextSession > 0 && (
+        <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6">
+          <div className="relative bg-gradient-to-r from-cyan-900/40 via-blue-900/40 to-cyan-900/40 border-2 border-cyan-400/50 rounded-2xl p-4 md:p-5 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/10 to-cyan-500/5 animate-pulse" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                  <span className="text-2xl md:text-3xl">⏰</span>
+                </div>
+                <div className="text-center md:text-left">
+                  <h3 className="text-lg md:text-xl font-bold text-white mb-1">
+                    Următoarea Sesiune
+                  </h3>
+                  <p className="text-sm md:text-base text-cyan-300 font-semibold">
+                    {nextSession.name}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {daysOfWeek[nextSession.dayIndex]} • {nextSession.time}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="text-center">
+                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                    Începe în
+                  </p>
+                  <div className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                    {formatTimeRemaining(timeUntilNextSession)}
+                  </div>
+                </div>
+                {isZoomAccessAvailable(nextSession, nextSession.dayIndex) ? (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-400/40 rounded-full">
+                    <span className="text-xs md:text-sm font-bold text-green-300">
+                      🟢 Acces Zoom Disponibil
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-orange-500/20 border border-orange-400/40 rounded-full">
+                    <span className="text-xs md:text-sm font-bold text-orange-300">
+                      🔒 Acces în {Math.max(0, Math.floor((nextSession.timestamp - new Date() - 10 * 60 * 1000) / 60000))}m
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="mb-6 md:mb-8">
