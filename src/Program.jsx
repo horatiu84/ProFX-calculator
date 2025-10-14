@@ -106,7 +106,7 @@ const WeeklySchedule = () => {
     const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1;
     const dayDiff = dayIndex - currentDay;
     
-    // Creează data în fusul orar românesc
+    // Creează data în fusul orar local
     const sessionDate = new Date(now);
     sessionDate.setDate(now.getDate() + dayDiff);
     
@@ -114,29 +114,36 @@ const WeeklySchedule = () => {
     const year = sessionDate.getFullYear();
     const month = String(sessionDate.getMonth() + 1).padStart(2, '0');
     const day = String(sessionDate.getDate()).padStart(2, '0');
-    const hoursStr = String(hours).padStart(2, '0');
-    const minutesStr = String(minutes).padStart(2, '0');
     
-    // Creăm data în timezone România (Europe/Bucharest)
-    const dateTimeString = `${year}-${month}-${day}T${hoursStr}:${minutesStr}:00`;
-    
-    // Parsăm data ca și cum ar fi în timezone România
-    // și o convertim automat în timezone-ul local al browserului
-    const romaniaDate = new Date(dateTimeString + '+02:00'); // EET (UTC+2) vara
-    
-    // Ajustăm pentru DST (Daylight Saving Time)
+    // Determinăm dacă România este în DST (Daylight Saving Time)
     // România: +2h iarna (EET), +3h vara (EEST)
-    const isDST = (date) => {
-      const jan = new Date(date.getFullYear(), 0, 1);
-      const jul = new Date(date.getFullYear(), 6, 1);
-      return date.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+    // DST: ultima duminică din martie până ultima duminică din octombrie
+    const isRomaniaDST = (date) => {
+      const year = date.getFullYear();
+      
+      // Ultima duminică din martie (start DST)
+      const march = new Date(year, 2, 31); // 31 martie
+      const marchLastSunday = new Date(march.setDate(31 - march.getDay()));
+      
+      // Ultima duminică din octombrie (end DST)
+      const october = new Date(year, 9, 31); // 31 octombrie
+      const octoberLastSunday = new Date(october.setDate(31 - october.getDay()));
+      
+      return date >= marchLastSunday && date < octoberLastSunday;
     };
     
-    // Determinăm offset-ul corect pentru România
-    const romaniaOffset = isDST(sessionDate) ? 3 : 2; // +3h vara, +2h iarna
+    // Offset România: +3h vara (DST), +2h iarna
+    const romaniaOffset = isRomaniaDST(sessionDate) ? 3 : 2;
     
-    // Creăm data corectă în timezone România
-    const utcDate = new Date(Date.UTC(year, sessionDate.getMonth(), sessionDate.getDate(), hours - romaniaOffset, minutes, 0));
+    // Creăm data în UTC, apoi browserul o va converti automat în timezone-ul local
+    const utcDate = new Date(Date.UTC(
+      year, 
+      sessionDate.getMonth(), 
+      sessionDate.getDate(), 
+      hours - romaniaOffset, // Scădem offset-ul României pentru a obține UTC
+      minutes, 
+      0
+    ));
     
     return utcDate;
   };
@@ -377,11 +384,10 @@ const WeeklySchedule = () => {
     if (dayIndex > mondayBasedCurrentDay) return "scheduled";
 
     if (dayIndex === mondayBasedCurrentDay) {
-      const [hours, minutes] = event.time.split(":").map(Number);
-      const eventStartTime = new Date();
-      eventStartTime.setHours(hours, minutes, 0, 0);
+      // Folosim getSessionTimestamp pentru conversie corectă timezone
+      const eventStartTime = getSessionTimestamp(dayIndex, event.time);
       const eventEndTime = new Date(eventStartTime);
-      eventEndTime.setHours(hours + (event.duration || 1), minutes, 0, 0);
+      eventEndTime.setHours(eventStartTime.getHours() + (event.duration || 1));
 
       if (now >= eventStartTime && now <= eventEndTime) return "live";
       if (now > eventEndTime) return "passed";
