@@ -74,7 +74,7 @@ const WeeklySchedule = () => {
   };
 
   const weekdayEvents = [
-    { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 3 },
+    { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 5 },
     { name: "Sesiune Londra cu Flavius", time: "08:45", duration: 1 },
     { name: "Sesiune New York cu Flavius", time: "14:45", duration: 1 },
   ];
