@@ -6,6 +6,62 @@ const Stiri = () => {
   // Array cu știrile - poate fi extins în viitor
   const newsArticles = [
     {
+      id: 2,
+      title: "Aurul explodează către 4.200$ - Bank of America prevede 5.000$!",
+      date: "15 Octombrie 2025",
+      category: "Metale Prețioase",
+      image: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&q=80",
+      excerpt: "Aurul a atins un nou maxim istoric de 4.190$ pe uncie, apropiindu-se de pragul psihologic de 4.200$. Instituții majore estimează 5.000$ pentru 2026...",
+      content: `**Aurul a atins un nou maxim istoric!**
+
+În dimineața zilei de 15 octombrie 2025, XAUUSD a depășit pragul de **4.190 USD pe uncie**, apropiindu-se rapid de **4.200 USD** — un nivel fără precedent în istoria pieței metalelor prețioase.
+
+**De ce explodează aurul acum?**
+
+Trei factori principali alimentează această rally impresionant:
+
+**1. Anticiparea reducerii ratelor dobânzilor de către Fed**
+• Scade atractivitatea obligațiunilor
+• Investitorii caută alternative mai profitabile
+• Aurul devine mai atractiv ca activ de refugiu
+
+**2. Tensiuni comerciale SUA-China în creștere**
+• Războiul comercial se intensifică
+• Incertitudine pe piețele globale
+• Investitorii fug spre siguranță
+
+**3. Fluxuri record către active de refugiu**
+• Context geopolitic instabil
+• Incertitudini economice globale
+• Cerere instituțională masivă pentru aur
+
+**Ce spun experții?**
+
+**Bank of America** a revizuit estimările pentru prețul aurului:
+📊 **Target 2026: 5.000 USD/uncie**
+
+Această prognoză reflectă optimismul pe termen mediu al analiștilor, care văd în aur unul dintre cele mai solide investiții în contextul economic actual.
+
+**Celelalte metale prețioase urcă și ele:**
+
+• **Argintul** înregistrează creșteri puternice, susținute de cererea industrială crescută
+• **Platina și paladiul** beneficiază de interesul investitorilor pentru întregul sector al metalelor prețioase
+
+**Ce urmează?**
+
+✅ **Scenariul bull:** O consolidare peste 4.200$ ar putea deschide calea către noi maxime istorice
+
+⚠️ **Riscuri:** Corecții temporare sunt posibile, piața fiind sensibilă la:
+• Deciziile Rezervei Federale
+• Datele despre inflație
+• Evoluția tensiunilor comerciale globale
+
+**Concluzie:** Aurul confirmă din nou rolul său de "activ de refugiu suprem" în perioade de incertitudine. Pentru traderi, este esențial să monitorizeze atent nivelul de 4.200$ - un breakout confirmat ar putea semnala un nou val de creștere!`,
+      tags: ["Aur", "XAUUSD", "Fed", "Bank of America", "Metale"],
+      author: "Echipa ProFX",
+      importance: "high"
+    },
+    {
       id: 1,
       title: "Aurul depășește 4.100$ pe uncie - un nou record istoric!",
       date: "13 Octombrie 2025",
