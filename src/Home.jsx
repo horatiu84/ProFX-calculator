@@ -108,11 +108,13 @@ const getItemDescription = (key) => {
     training: "Aici găsești tot ce ai nevoie pentru a-ți construi disciplina și strategia - de la bazele MT5 până la execuții avansate cu Price Action",
     //simulare: "Secțiunea de afiliere este dedicată partenerilor ProFX",
     agenda: "Agenda săptămânală ProFX - ca să știi mereu când e timpul să înveți și să crești alături de noi",
-    raport: "Jurnal detaliat lunar al tranzacțiilor ProFX",
+    raport: "Rapoarte lunare detaliate ale tranzacțiilor ProFX - transparență totală pentru comunitatea noastră",
+    jurnal: "Jurnalul tău personal de trading - documentează fiecare tranzacție și învață din experiențele tale",
     evenimente: "Evenimente speciale, concursuri și bootcamp ProFX",
-    test: "Testează-ți cunoștințele cu quiz-uri interactive și primește feedback instant",
+    test: "Testează-ți cunoștințele cu quiz-uri interactive",
     contact: "Ai o idee, o sugestie sau un gând? Spune-ne părerea ta! Feedback-ul tău anonim ne ajută să facem ProFX tot mai bun",
-    galerie:"Imagini care spun povestea comunității ProFX: muncă, distracție și evoluție împreună"
+    galerie: "Imagini care spun povestea comunității ProFX: muncă, distracție și evoluție împreună",
+    stiri: "Ultimele noutăți din lumea financiară și a comunității ProFX - rămâi informat cu știrile care contează"
   };
   
   return descriptions[key] || "Explorează această secțiune pentru mai multe informații.";

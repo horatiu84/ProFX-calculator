@@ -30,12 +30,12 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
   const menuItems = [
     { key: "evolutie", label: "Evoluție", icon: "📈", angle: 0 },
     { key: "lot", label: "Calculator Lot", icon: "📉", angle: 32.7 },
-    { key: "pierdere", label: "Pierdere manuală", icon: "⚙️", angle: 65.4 },
+    { key: "pierdere", label: "How to", icon: "⚙️", angle: 65.4 },
     { key: "educatie", label: "Educație", icon: "ℹ️", angle: 98.1 },
     { key: "training", label: "Training", icon: "🧑‍🏫", angle: 130.8 },
-    { key: "agenda", label: "Agenda ProFX", icon: "🗓️", angle: 163.5 },
+    { key: "agenda", label: "Program ProFX", icon: "🗓️", angle: 163.5 },
     { key: "galerie", label: "Galerie ProFX", icon: "📷", angle: 196.2 },
-    { key: "raport", label: "Jurnal", icon: "📝", angle: 228.9 },
+    { key: "raport", label: "Raport", icon: "📝", angle: 228.9 },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", angle: 261.6 },
     { key: "test", label: "Test", icon: "📋", angle: 294.3 },
     { key: "contact", label: "Feedback", icon: "💬", angle: 327 },
@@ -50,7 +50,7 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
       menuItems.forEach((_, index) => {
         setTimeout(() => {
           setVisibleItems(prev => [...prev, index]);
-        }, index * 300); // 11 elemente × 300ms ≈ 3.3 secunde
+        }, index * 300); // 12 elemente × 300ms = 3.6 secunde
       });
     }, 500);
 
@@ -401,7 +401,7 @@ export default function LotCalculator() {
     //   isAfiliere: true
     // },
     { key: "raport", label: "Raport", icon: "📝", component: <Raport /> },
-    { key: "jurnal", label: "Jurnal", icon: "📝", component: <TradingJournal /> },
+    { key: "jurnal", label: "Jurnal", icon: "📓", component: <TradingJournal /> },
     { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: "Test", icon: "📋", component: <Test /> },
     { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
