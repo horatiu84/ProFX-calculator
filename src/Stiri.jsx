@@ -307,8 +307,11 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             <div className="relative z-10">
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mb-3">
-                📰 Știri & Noutăți
+              <h1 className="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3">
+                <span className="text-4xl md:text-5xl">📰</span>
+                <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+                  Știri & Noutăți
+                </span>
               </h1>
               <p className="text-gray-300 max-w-2xl mx-auto">
                 Rămâi la curent cu cele mai importante evenimente din lumea financiară și piețele globale
