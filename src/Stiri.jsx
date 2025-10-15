@@ -6,6 +6,69 @@ const Stiri = () => {
   // Array cu știrile - poate fi extins în viitor
   const newsArticles = [
     {
+      id: 3,
+      title: "Aurul trece de 4.200$: scenariul bullish se confirmă!",
+      date: "15 Octombrie 2025",
+      category: "Metale Prețioase",
+      image: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&q=80",
+      excerpt: "Cu doar câteva ore în urmă scriam că aurul se apropie de 4.200$, iar acum acest prag a fost depășit! XAU/USD a atins 4.218$ în sesiunea europeană...",
+      content: `**De la anticipare la confirmare**
+
+Cu doar câteva ore în urmă scriam că aurul se apropie periculos de nivelul istoric de 4.200 de dolari pe uncie — iar acum, acest prag a fost depășit. 
+
+În sesiunea europeană din **15 octombrie 2025**, cotarea **XAU/USD** a urcat rapid până la **4.218 dolari**, un nou maxim absolut în istoria pieței metalelor prețioase.
+
+**De ce continuă aurul să explodeze?**
+
+Mișcarea ascendentă a venit exact după ce analiștii avertizau că „drumul cel mai ușor pentru aur rămâne în sus" — și realitatea le dă dreptate.
+
+**Trei factori cheie:**
+
+• **Așteptările tot mai mari privind reducerile de dobândă ale Rezervei Federale**, care scad randamentele obligațiunilor și fac aurul mai atractiv
+
+• **Escaladarea tensiunilor comerciale SUA–China** și incertitudinile legate de posibila prelungire a blocajului guvernamental american
+
+• **Cererea record din partea băncilor centrale**, în special Asia și Orientul Mijlociu, care continuă să își mărească rezervele
+
+**Reacția Bank of America**
+
+Într-un moment simbolic, **Bank of America** și-a reafirmat proiecția îndrăzneață:
+
+📊 **Target 2026: 5.000 USD/uncie**
+📈 **Medie anuală: ~4.400 USD**
+
+Potrivit analizei, dezechilibrele fiscale, datoria publică uriașă și politicile monetare relaxate vor menține aurul pe o traiectorie ascendentă în următorii ani.
+
+**Impactul în România**
+
+Și în România, efectele se văd clar:
+
+🇷🇴 **Gramul de aur: 589 lei** - nou record istoric conform BNR
+
+📊 Magazinele specializate și platformele de investiții raportează un **volum de tranzacții dublu** față de media lunii septembrie.
+
+**Ce urmează?**
+
+**Analiza tehnică indică un scenariu optimist:**
+
+✅ **Rezistențe următoare:** 4.280–4.300 USD
+✅ **Support principal:** 4.100 USD
+✅ **Trend:** Super-bullish confirmat
+
+O menținere peste 4.200 USD ar putea deschide calea spre noi maxime istorice, în timp ce o eventuală corecție spre 4.100 USD ar putea fi tratată de investitori ca o nouă oportunitate de acumulare.
+
+**Concluzie**
+
+Aurul a confirmat astăzi ceea ce piața anticipa zilnic de aproape o săptămână: **intrarea într-o nouă etapă „super-bullish"**. 
+
+Cu factorii macroeconomici, geopolitici și monetari perfect aliniați, metalul prețios își consolidează titlul de **refugiu suprem** într-o lume financiară plină de incertitudini.
+
+💡 **Pentru traderi:** Acest breakout peste 4.200$ este un semnal tehnic major. Monitorizați volumele și respectați întotdeauna managementul riscului!`,
+      tags: ["Aur", "XAUUSD", "Fed", "Bank of America", "Metale"],
+      author: "Echipa ProFX",
+      importance: "high"
+    },
+    {
       id: 2,
       title: "Aurul explodează către 4.200$ - Bank of America prevede 5.000$!",
       date: "15 Octombrie 2025",
@@ -38,6 +101,7 @@ Trei factori principali alimentează această rally impresionant:
 **Ce spun experții?**
 
 **Bank of America** a revizuit estimările pentru prețul aurului:
+
 📊 **Target 2026: 5.000 USD/uncie**
 
 Această prognoză reflectă optimismul pe termen mediu al analiștilor, care văd în aur unul dintre cele mai solide investiții în contextul economic actual.
