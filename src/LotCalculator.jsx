@@ -374,6 +374,7 @@ export default function LotCalculator() {
   const [isLoading, setIsLoading] = useState(true);
 
   const menuItems = [
+    { key: "agenda", label: "Program ProFX", icon: "🗓️", component: <ProFXSchedule /> },
     { key: "evolutie", label: "Evoluție", icon: "📈", component: <Evolutie /> },
     { key: "lot", label: "Calculator Lot", icon: "📉", component: <Calculator /> },
     { key: "pierdere", label: "How to", icon: "⚙️", component: <HowTo /> },
@@ -391,7 +392,6 @@ export default function LotCalculator() {
       component: <Training />,
       isSpecial: true
     },
-    { key: "agenda", label: "Program ProFX", icon: "🗓️", component: <ProFXSchedule /> },
     // { 
     //   key: "simulare", 
     //   label: "Afiliere", 

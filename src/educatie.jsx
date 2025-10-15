@@ -285,33 +285,29 @@ const Educatie = () => {
 
   if (!accessGranted) {
     return (
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-md mx-auto mt-10">
-        <h2 className="text-xl font-bold text-blue-400 mb-4 text-center">
-          Acces Materiale Educaționale ProFX
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
-            placeholder="Introdu parola"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition"
-          >
-            Accesează
-          </button>
-        </form>
-        <button
-          onClick={toggleSignup}
-          className="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition"
-        >
-          {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
-        </button>
-        {showSignup && <FormularInscriere />}
+      <div className="min-h-screen w-full px-6 py-12 flex items-start justify-center">
+        <div className="group relative max-w-md w-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-blue-400/30 transition-all duration-500 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative z-10">
+            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">Acces Materiale Educaționale ProFX</h2>
+            <form onSubmit={handleSubmit} className="space-y-4 mb-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Parolă</label>
+                <input type="password" placeholder="Introdu parola" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
+              </div>
+              {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">Accesează</button>
+            </form>
+            <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500/80 text-white font-semibold transition-colors mb-4">
+              {showSignup ? "Ascunde Înscriere" : "Înscrie-te"}
+            </button>
+            {showSignup && (
+              <div className="mt-4 bg-gray-800/40 border border-gray-700/40 rounded-xl p-4">
+                <FormularInscriere />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

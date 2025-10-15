@@ -74,7 +74,7 @@ const WeeklySchedule = () => {
   };
 
   const weekdayEvents = [
-    { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 5 },
+    { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 3 },
     { name: "Sesiune Londra cu Flavius", time: "08:45", duration: 1 },
     { name: "Sesiune New York cu Flavius", time: "14:45", duration: 1 },
   ];
@@ -314,9 +314,9 @@ const WeeklySchedule = () => {
   useEffect(() => {
     if (!showZoomRedirect || !redirectLink) return;
 
-    // Auto-redirect după 1s folosind protocolul Zoom (nu mai deschide tab browser)
+    // Redirect simplu după 1s
     const redirectTimer = setTimeout(() => {
-      launchZoomApp(redirectLink);
+      window.open(redirectLink, '_blank', 'noopener,noreferrer');
     }, 1000);
 
     // Countdown interval (3, 2, 1, 0)
@@ -443,74 +443,8 @@ const WeeklySchedule = () => {
     setPendingSessionLink("");
   };
 
-  const isMobileDevice = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /android|iPhone|iPad|iPod/i.test(userAgent);
-  };
-
-  const isIOSDevice = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /iPhone|iPad|iPod/i.test(userAgent);
-  };
-
-  const convertToZoomProtocol = (webUrl) => {
-    // Extrage meeting ID și password din URL-ul web
-    try {
-      const url = new URL(webUrl);
-      const meetingId = url.pathname.split('/j/')[1];
-      const password = url.searchParams.get('pwd');
-      
-      // Construiește zoommtg:// protocol URL (nu expune link-ul în browser)
-      if (password) {
-        return `zoommtg://zoom.us/join?confno=${meetingId}&pwd=${password}`;
-      }
-      return `zoommtg://zoom.us/join?confno=${meetingId}`;
-    } catch (e) {
-      console.error('Failed to convert Zoom URL:', e);
-      return webUrl; // fallback la web URL
-    }
-  };
-
-  const launchZoomApp = (link) => {
-    const isMobile = isMobileDevice();
-    const isIOS = isIOSDevice();
-    
-    if (isMobile) {
-      // Pe mobile: folosește web URL direct (mai stabil)
-      // Pe iOS și Android, Zoom app se va deschide automat dacă e instalat
-      const newWindow = window.open(link, '_blank', 'noopener,noreferrer');
-      
-      // Pe iOS, încearcă și protocolul Zoom ca fallback
-      if (isIOS) {
-        setTimeout(() => {
-          const zoomProtocolUrl = convertToZoomProtocol(link);
-          window.location.href = zoomProtocolUrl;
-        }, 500);
-      }
-    } else {
-      // Pe desktop: folosește protocolul zoommtg:// (nu deschide tab browser)
-      const zoomProtocolUrl = convertToZoomProtocol(link);
-      
-      // Metoda 1: Încearcă să deschidă direct cu window.location
-      window.location.href = zoomProtocolUrl;
-      
-      // Metoda 2 (fallback): Creează un iframe invizibil care invocă protocolul
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = zoomProtocolUrl;
-      document.body.appendChild(iframe);
-      
-      // Curăță iframe-ul după 3 secunde
-      setTimeout(() => {
-        if (iframe && iframe.parentNode) {
-          iframe.parentNode.removeChild(iframe);
-        }
-      }, 3000);
-    }
-  };
-
   const handleManualRedirect = () => {
-    launchZoomApp(redirectLink);
+    window.open(redirectLink, '_blank', 'noopener,noreferrer');
     setShowZoomRedirect(false);
     setRedirectCountdown(3);
   };
@@ -580,7 +514,6 @@ const WeeklySchedule = () => {
 
   const ZoomRedirectOverlay = () => {
     const [showFallback, setShowFallback] = useState(false);
-    const isMobile = isMobileDevice();
 
     useEffect(() => {
       const fallbackTimer = setTimeout(() => setShowFallback(true), 3000);
@@ -611,12 +544,12 @@ const WeeklySchedule = () => {
 
           {/* Title */}
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
-            Lansare {isMobile ? "Zoom" : "aplicație Zoom"}...
+            Lansare Zoom...
           </h2>
 
           {/* Subtitle */}
           <p className="text-gray-400 text-center mb-6">
-            {isMobile ? "Sesiunea se deschide" : "Aplicația Zoom va porni"} automat în{" "}
+            Sesiunea se deschide automat în{" "}
             <span className="text-amber-400 font-bold text-lg">
               {redirectCountdown}
             </span>{" "}
@@ -638,9 +571,7 @@ const WeeklySchedule = () => {
           {/* Info tooltip */}
           <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 mb-4">
             <p className="text-sm text-gray-300 text-center">
-              💡 {isMobile 
-                ? "Dacă ai aplicația Zoom instalată, se va deschide automat. Altfel, vei fi redirecționat către browser." 
-                : "Aplicația Zoom desktop se va lansa automat. Asigură-te că ai Zoom instalat."}
+              💡 Dacă ai aplicația Zoom instalată, se va deschide automat. Altfel, se va deschide în browser.
             </p>
           </div>
 
@@ -651,7 +582,7 @@ const WeeklySchedule = () => {
                 onClick={handleManualRedirect}
                 className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
               >
-                Click aici pentru a {isMobile ? "deschide" : "relansa"} Zoom
+                Click aici pentru a deschide Zoom
               </button>
             </div>
           )}
@@ -731,7 +662,7 @@ const WeeklySchedule = () => {
                     )}
                     {/* Countdown badge pentru următoarea sesiune */}
                     {isNextSession && timeUntilNextSession > 0 && status !== "passed" && (
-                      <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1 animate-pulse">
+                      <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⏰ Începe în {formatTimeRemaining(timeUntilNextSession)}
                       </span>
                     )}
@@ -986,10 +917,10 @@ const WeeklySchedule = () => {
       {nextSession && timeUntilNextSession > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6">
           <div className="relative bg-gradient-to-r from-cyan-900/40 via-blue-900/40 to-cyan-900/40 border-2 border-cyan-400/50 rounded-2xl p-4 md:p-5 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/10 to-cyan-500/5 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/10 to-cyan-500/5" />
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl md:text-3xl">⏰</span>
                 </div>
                 <div className="text-center md:text-left">
