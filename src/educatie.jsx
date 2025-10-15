@@ -6,7 +6,6 @@ import { db } from "./db/FireBase";
 import { doc, getDoc } from "firebase/firestore";
 import {
   BookOpen,
-  Calculator,
   Download,
   Video,
   LogOut,
@@ -14,8 +13,6 @@ import {
   Eye,
   EyeOff,
   GraduationCap,
-  TrendingUp,
-  BarChart3,
 } from "lucide-react";
 import FormularInscriere from "./components/FormularInscriere";
 
@@ -225,7 +222,6 @@ const Educatie = () => {
   const [password, setPassword] = useState("");
   const [accessGranted, setAccessGranted] = useState(false);
   const [error, setError] = useState("");
-  const [pipLotInput, setPipLotInput] = useState(0.01);
   const [showSignup, setShowSignup] = useState(false);
   const [correctPassword, setCorrectPassword] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
@@ -326,134 +322,6 @@ const Educatie = () => {
           Descoperă cunoștințele fundamentale pentru trading și dezvoltă-ți abilitățile cu materialele noastre educative complete.
         </p>
       </div>
-
-      {/* Pip Information Card */}
-      <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-8 mb-12 shadow-xl hover:border-amber-400/50 hover:bg-gray-800/70 transition-all duration-300">
-        <div className="flex items-center mb-6">
-          <div className="w-12 h-12 bg-gray-700/50 rounded-xl flex items-center justify-center mr-4 hover:bg-amber-400/20 transition-all duration-300">
-            <BarChart3 className="w-6 h-6 text-amber-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white">
-            Ce sunt pipsii pe XAUUSD?
-          </h2>
-        </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-            <p className="text-gray-300 leading-relaxed">
-              Pipul este o unitate mică folosită pentru a măsura mișcarea
-              prețului.
-            </p>
-            <p className="text-gray-300 leading-relaxed">
-              Pe XAUUSD (aur), un pip reprezintă o schimbare de{" "}
-              <span className="text-amber-400 font-semibold">0.1</span> în
-              prețul aurului.
-            </p>
-            <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
-              <p className="text-amber-300">
-                <strong>Exemplu:</strong> Dacă prețul aurului crește de la
-                1980.00 la 1980.10, atunci s-a mișcat 1 pip.
-              </p>
-            </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center mb-4">
-                <TrendingUp className="w-6 h-6 text-green-400 mr-2" />
-                <h3 className="text-xl font-bold text-white">
-                  Valoarea unui pip
-                </h3>
-              </div>
-              <p className="text-slate-300">
-                Valoarea pipului variază în funcție de dimensiunea lotului
-                tranzacționat.
-              </p>
-              <p className="text-slate-300">
-                Un lot standard (1 lot) = 100 uncii de aur, iar valoarea unui
-                pip pentru 1 lot este de{" "}
-                <span className="text-green-400 font-semibold">10 USD</span>.
-              </p>
-            </div>
-          </div>
-        </div>
-
-      {/* Pip Calculator */}
-      <div className="bg-gray-800/50 rounded-2xl border border-gray-700/50 p-8 mb-12 shadow-xl hover:border-amber-400/50 hover:bg-gray-800/70 transition-all duration-300">
-        <div className="flex items-center mb-6">
-          <div className="w-12 h-12 bg-gray-700/50 rounded-xl flex items-center justify-center mr-4 hover:bg-amber-400/20 transition-all duration-300">
-            <Calculator className="w-6 h-6 text-amber-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white">Calculator Pip</h2>
-        </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            <div>
-            <label className="block text-gray-300 font-medium mb-3">
-              Introdu valoarea lotului:
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              className="w-full p-4 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50"
-              value={pipLotInput}
-              onChange={(e) =>
-                setPipLotInput(parseFloat(e.target.value) || 0.01)
-              }
-            />
-            <div className="mt-4 p-4 bg-gray-700/30 rounded-xl border border-gray-600">
-              <p className="text-amber-300 text-lg">
-                Valoare pip:{" "}
-                <span className="text-2xl font-bold text-white">
-                  {(pipLotInput * 10).toFixed(2)} USD
-                </span>
-              </p>
-            </div>
-            </div>
-
-            {/* Lot Size Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-600">
-              <table className="w-full text-sm text-white">
-                <thead className="bg-slate-700">
-                  <tr>
-                    <th className="p-3 text-left font-semibold text-yellow-400">
-                      Loturi
-                    </th>
-                    <th className="p-3 text-left font-semibold text-yellow-400">
-                      Valoare pip
-                    </th>
-                    <th className="p-3 text-left font-semibold text-yellow-400">
-                      10 pipsi
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-slate-800/50">
-                  {[
-                    ["0.01", "0.1 USD", "1 USD"],
-                    ["0.05", "0.5 USD", "5 USD"],
-                    ["0.10", "1 USD", "10 USD"],
-                    ["0.20", "2 USD", "20 USD"],
-                    ["0.50", "5 USD", "50 USD"],
-                    ["1.00", "10 USD", "100 USD"],
-                    ["1.25", "12.5 USD", "125 USD"],
-                    ["1.50", "15 USD", "150 USD"],
-                    ["1.75", "17.5 USD", "175 USD"],
-                    ["2.00", "20 USD", "200 USD"],
-                  ].map(([lot, value, example], idx) => (
-                    <tr
-                      key={idx}
-                      className="border-t border-slate-700 hover:bg-slate-700/50 transition-colors"
-                    >
-                      <td className="p-3 font-medium">{lot}</td>
-                      <td className="p-3 text-green-400">{value}</td>
-                      <td className="p-3 text-yellow-400">{example}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
 
       {/* Videos Section */}
       <div className="grid lg:grid-cols-2 gap-8 mb-12">

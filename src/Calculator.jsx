@@ -8,6 +8,7 @@ const Calculator = () => {
   const [selectedPair, setSelectedPair] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [pipLotInput, setPipLotInput] = useState(0.01);
   const [results, setResults] = useState({
     lotSize: 0,
     stopLossValue: 0,
@@ -180,15 +181,15 @@ const Calculator = () => {
   // Funcție pentru formatarea numerelor cu separatori de mii
   const formatNumber = (number, decimals = 2) => {
     if (isNaN(number) || number === 0) return "0,00";
-    
+
     const formattedNumber = number.toFixed(decimals);
-    const parts = formattedNumber.split('.');
-    
+    const parts = formattedNumber.split(".");
+
     // Adaugă puncte ca separatori de mii
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
     // Înlocuiește punctul zecimal cu virgula
-    return parts.join(',');
+    return parts.join(",");
   };
 
   return (
@@ -210,140 +211,151 @@ const Calculator = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Input Section */}
-          <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8 shadow-2xl">
-            <div className="flex items-center mb-6">
-              <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
-              <h2 className="text-2xl font-bold text-white">
-                Parametri de intrare
-              </h2>
-            </div>
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden shadow-2xl">
+            {/* Background gradient effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-            <div className="space-y-6">
-              {/* Pair Selection */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-3">
-                  Perechea valutară / Instrumentul
-                </label>
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-4 text-left shadow-lg hover:bg-gray-650 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-200 flex items-center justify-between text-white"
-                  >
-                    <span
-                      className={selectedPair ? "text-white" : "text-gray-400"}
+            <div className="relative z-10">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
+                <h2 className="text-2xl font-bold text-white">
+                  Parametri de intrare
+                </h2>
+              </div>
+
+              <div className="space-y-6">
+                {/* Pair Selection */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-3">
+                    Perechea valutară / Instrumentul
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-4 text-left shadow-lg hover:bg-gray-650 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-200 flex items-center justify-between text-white"
                     >
-                      {selectedPair || "Selectează instrumentul..."}
-                    </span>
-                    <ChevronDownIcon />
-                  </button>
+                      <span
+                        className={
+                          selectedPair ? "text-white" : "text-gray-400"
+                        }
+                      >
+                        {selectedPair || "Selectează instrumentul..."}
+                      </span>
+                      <ChevronDownIcon />
+                    </button>
 
-                  {isDropdownOpen && (
-                    <div className="absolute z-20 mt-2 w-full bg-gray-700 shadow-2xl max-h-80 rounded-xl py-2 text-base overflow-auto border border-gray-600">
-                      <div className="sticky top-0 bg-gray-700 p-3 border-b border-gray-600">
-                        <div className="relative">
-                          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                            <SearchIcon />
+                    {isDropdownOpen && (
+                      <div className="absolute z-20 mt-2 w-full bg-gray-700 shadow-2xl max-h-80 rounded-xl py-2 text-base overflow-auto border border-gray-600">
+                        <div className="sticky top-0 bg-gray-700 p-3 border-b border-gray-600">
+                          <div className="relative">
+                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                              <SearchIcon />
+                            </div>
+                            <input
+                              type="text"
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              placeholder="Caută instrumentul..."
+                              className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-800"
+                            />
                           </div>
-                          <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Caută instrumentul..."
-                            className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-800"
-                          />
                         </div>
+
+                        {Object.entries(tradingPairs).map(
+                          ([category, pairs]) => (
+                            <div key={category}>
+                              <div className="px-4 py-2 text-xs font-bold text-yellow-400 bg-gray-800 sticky top-16 border-b border-gray-600">
+                                {category}
+                              </div>
+                              {Object.keys(pairs)
+                                .filter((pair) =>
+                                  pair
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase())
+                                )
+                                .map((pair) => (
+                                  <button
+                                    key={pair}
+                                    onClick={() => handlePairSelect(pair)}
+                                    className="w-full text-left px-4 py-3 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none text-white transition-colors duration-200"
+                                  >
+                                    {pair}
+                                  </button>
+                                ))}
+                            </div>
+                          )
+                        )}
                       </div>
-
-                      {Object.entries(tradingPairs).map(([category, pairs]) => (
-                        <div key={category}>
-                          <div className="px-4 py-2 text-xs font-bold text-yellow-400 bg-gray-800 sticky top-16 border-b border-gray-600">
-                            {category}
-                          </div>
-                          {Object.keys(pairs)
-                            .filter((pair) =>
-                              pair
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
-                            )
-                            .map((pair) => (
-                              <button
-                                key={pair}
-                                onClick={() => handlePairSelect(pair)}
-                                className="w-full text-left px-4 py-3 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none text-white transition-colors duration-200"
-                              >
-                                {pair}
-                              </button>
-                            ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Account Size */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-3">
-                  Mărimea contului ($)
-                </label>
-                <input
-                  type="number"
-                  value={accountSize}
-                  onChange={(e) => setAccountSize(e.target.value)}
-                  placeholder="10000"
-                  className="w-full px-4 py-4 border border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-700 shadow-lg transition-all duration-200"
-                />
-              </div>
+                {/* Account Size */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-3">
+                    Mărimea contului ($)
+                  </label>
+                  <input
+                    type="number"
+                    value={accountSize}
+                    onChange={(e) => setAccountSize(e.target.value)}
+                    placeholder="10000"
+                    className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
+                  />
+                </div>
 
-              {/* Risk Per Trade */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-3">
-                  Risc per trade (%)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={riskPerTrade}
-                  onChange={(e) => setRiskPerTrade(e.target.value)}
-                  placeholder="2"
-                  className="w-full px-4 py-4 border border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-700 shadow-lg transition-all duration-200"
-                />
-              </div>
+                {/* Risk Per Trade */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-3">
+                    Risc per trade (%)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={riskPerTrade}
+                    onChange={(e) => setRiskPerTrade(e.target.value)}
+                    placeholder="2"
+                    className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
+                  />
+                </div>
 
-              {/* Stop Loss */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-3">
-                  Stop Loss (pips)
-                </label>
-                <input
-                  type="number"
-                  value={stopLoss}
-                  onChange={(e) => setStopLoss(e.target.value)}
-                  placeholder="50"
-                  className="w-full px-4 py-4 border border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-700 shadow-lg transition-all duration-200"
-                />
-              </div>
+                {/* Stop Loss */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-3">
+                    Stop Loss (pips)
+                  </label>
+                  <input
+                    type="number"
+                    value={stopLoss}
+                    onChange={(e) => setStopLoss(e.target.value)}
+                    placeholder="50"
+                    className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
+                  />
+                </div>
 
-              {/* Take Profit */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-3">
-                  Take Profit (pips) - opțional
-                </label>
-                <input
-                  type="number"
-                  value={takeProfit}
-                  onChange={(e) => setTakeProfit(e.target.value)}
-                  placeholder="100"
-                  className="w-full px-4 py-4 border border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-700 shadow-lg transition-all duration-200"
-                />
+                {/* Take Profit */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-3">
+                    Take Profit (pips) - opțional
+                  </label>
+                  <input
+                    type="number"
+                    value={takeProfit}
+                    onChange={(e) => setTakeProfit(e.target.value)}
+                    placeholder="100"
+                    className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
+                  />
+                </div>
               </div>
             </div>
           </div>
-
           {/* Results Section */}
-          <div className="space-y-8">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 p-8 shadow-2xl">
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-green-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden shadow-2xl">
+            {/* Background gradient effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Rezultate</h2>
@@ -393,7 +405,9 @@ const Calculator = () => {
                       </span>
                       <span className="text-2xl font-bold text-yellow-400">
                         1:
-                        {formatNumber(results.takeProfitValue / results.stopLossValue)}
+                        {formatNumber(
+                          results.takeProfitValue / results.stopLossValue
+                        )}
                       </span>
                     </div>
                   </div>
@@ -427,17 +441,7 @@ const Calculator = () => {
                 </div>
               )}
             </div>
-
-            {/* Formula explanation */}
-            <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-200 mb-4 flex items-center">
-                <div className="w-3 h-3 bg-purple-400 rounded-full mr-3"></div>
-                Formula utilizată:
-              </h3>
-              <div className="text-sm font-mono bg-gray-900 text-green-400 p-4 rounded-lg border border-gray-600">
-                Lot Size = Risc ($) ÷ (SL pips x Valoare pip per lot)
-              </div>
-            </div>
+        
           </div>
         </div>
 
@@ -581,6 +585,212 @@ const Calculator = () => {
                   <span>
                     Respectă disciplina și nu modifica lotul pe baza emoțiilor
                   </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Note - Scroll to Pip Calculator */}
+        <div className="mt-12 mb-8">
+          <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-900/40 via-cyan-900/40 to-blue-900/40 border-2 border-cyan-400/50 rounded-2xl p-6 shadow-xl">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-white mb-1">
+                  💡 Știai că...?
+                </h3>
+                <p className="text-cyan-200 text-sm leading-relaxed">
+                  Mai jos găsești{" "}
+                  <span className="font-bold text-white">
+                    Calculatorul de Pip
+                  </span>{" "}
+                  cu explicații detaliate despre ce sunt pipsii și cum se
+                  calculează valoarea lor pe XAUUSD. Scroll în jos pentru a afla
+                  mai multe! 👇
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <svg
+                  className="w-8 h-8 text-cyan-400 animate-bounce"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Pip Information and Calculator Section */}
+        <div className="mt-12 space-y-8">
+          {/* Pip Information Card */}
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden shadow-2xl">
+            {/* Background gradient effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
+                <h2 className="text-2xl font-bold text-white">
+                  Ce sunt pipsii pe XAUUSD?
+                </h2>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <p className="text-gray-300 leading-relaxed">
+                    Pipul este o unitate mică folosită pentru a măsura mișcarea
+                    prețului.
+                  </p>
+                  <p className="text-gray-300 leading-relaxed">
+                    Pe XAUUSD (aur), un pip reprezintă o schimbare de{" "}
+                    <span className="text-amber-400 font-semibold">0.1</span> în
+                    prețul aurului.
+                  </p>
+                  <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+                    <p className="text-amber-300">
+                      <strong>Exemplu:</strong> Dacă prețul aurului crește de la
+                      3980.00 la 3980.10, atunci s-a mișcat 1 pip.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center mb-4">
+                    <svg
+                      className="w-6 h-6 text-green-400 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      />
+                    </svg>
+                    <h3 className="text-xl font-bold text-white">
+                      Valoarea unui pip
+                    </h3>
+                  </div>
+                  <p className="text-gray-300">
+                    Valoarea pipului variază în funcție de dimensiunea lotului
+                    tranzacționat.
+                  </p>
+                  <p className="text-gray-300">
+                    Un lot standard (1 lot) = 100 uncii de aur, iar valoarea
+                    unui pip pentru 1 lot este de{" "}
+                    <span className="text-green-400 font-semibold">10 USD</span>
+                    .
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Pip Calculator */}
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden shadow-2xl">
+            {/* Background gradient effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
+                <h2 className="text-2xl font-bold text-white">
+                  Calculator Pip
+                </h2>
+              </div>
+
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div>
+                  <label className="block text-gray-300 font-medium mb-3">
+                    Introdu valoarea lotului:
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    className="w-full p-4 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 transition-all duration-300"
+                    value={pipLotInput}
+                    onChange={(e) =>
+                      setPipLotInput(parseFloat(e.target.value) || 0.01)
+                    }
+                  />
+                  <div className="mt-4 p-4 bg-gray-700/50 rounded-xl border border-gray-600">
+                    <p className="text-amber-300 text-lg">
+                      Valoare pip:{" "}
+                      <span className="text-2xl font-bold text-white">
+                        {(pipLotInput * 10).toFixed(2)} USD
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Lot Size Table */}
+                <div className="overflow-hidden rounded-xl border border-gray-600">
+                  <table className="w-full text-sm text-white">
+                    <thead className="bg-gray-700">
+                      <tr>
+                        <th className="p-3 text-left font-semibold text-yellow-400">
+                          Loturi
+                        </th>
+                        <th className="p-3 text-left font-semibold text-yellow-400">
+                          Valoare pip
+                        </th>
+                        <th className="p-3 text-left font-semibold text-yellow-400">
+                          10 pipsi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-gray-800/50">
+                      {[
+                        ["0.01", "0.1 USD", "1 USD"],
+                        ["0.05", "0.5 USD", "5 USD"],
+                        ["0.10", "1 USD", "10 USD"],
+                        ["0.20", "2 USD", "20 USD"],
+                        ["0.50", "5 USD", "50 USD"],
+                        ["1.00", "10 USD", "100 USD"],
+                        ["1.25", "12.5 USD", "125 USD"],
+                        ["1.50", "15 USD", "150 USD"],
+                        ["1.75", "17.5 USD", "175 USD"],
+                        ["2.00", "20 USD", "200 USD"],
+                      ].map(([lot, value, example], idx) => (
+                        <tr
+                          key={idx}
+                          className="border-t border-gray-700 hover:bg-gray-700/50 transition-colors"
+                        >
+                          <td className="p-3 font-medium">{lot}</td>
+                          <td className="p-3 text-green-400">{value}</td>
+                          <td className="p-3 text-yellow-400">{example}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
