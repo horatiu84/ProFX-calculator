@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import FormularComentarii from "./components/FormularComentarii";
+import ListaComentarii from "./components/ListaComentarii";
+import { useCommentsCount } from "./components/useCommentsCount";
 
 const Stiri = () => {
   const [selectedNews, setSelectedNews] = useState(null);
@@ -180,7 +183,10 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
     return null;
   };
 
-  const NewsCard = ({ news }) => (
+  const NewsCard = ({ news }) => {
+    const commentsCount = useCommentsCount(news.id);
+    
+    return (
     <div
       onClick={() => setSelectedNews(news)}
       className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden hover:border-amber-400/50 transition-all duration-500 hover:scale-[1.02] cursor-pointer"
@@ -244,10 +250,30 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
           <span className="text-amber-400 text-sm font-semibold group-hover:translate-x-2 transition-transform duration-300">
             Citește mai mult →
           </span>
+          {commentsCount > 0 && (
+            <span className="flex items-center gap-1 text-gray-400 text-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                />
+              </svg>
+              {commentsCount}
+            </span>
+          )}
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const NewsModal = ({ news, onClose }) => (
     <div
@@ -345,6 +371,17 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
               <p className="text-sm text-gray-300 text-center">
                 💡 <span className="font-semibold">Tip ProFX:</span> Urmărește constant știrile economice pentru a înțelege mai bine mișcările pieței!
               </p>
+            </div>
+
+            {/* Secțiune comentarii */}
+            <div className="mt-8 space-y-6">
+              <hr className="border-gray-700/50" />
+              
+              {/* Afișare comentarii existente */}
+              <ListaComentarii newsId={news.id} />
+              
+              {/* Formular pentru adăugare comentariu */}
+              <FormularComentarii newsId={news.id} />
             </div>
 
             {/* Close button at bottom */}
