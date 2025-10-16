@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import FormularComentarii from "./components/FormularComentarii";
 import ListaComentarii from "./components/ListaComentarii";
-import { useCommentsCount } from "./components/useCommentsCount";
 
 const Stiri = () => {
   const [selectedNews, setSelectedNews] = useState(null);
@@ -184,8 +183,6 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
   };
 
   const NewsCard = ({ news }) => {
-    const commentsCount = useCommentsCount(news.id);
-    
     return (
     <div
       onClick={() => setSelectedNews(news)}
@@ -250,38 +247,54 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
           <span className="text-amber-400 text-sm font-semibold group-hover:translate-x-2 transition-transform duration-300">
             Citește mai mult →
           </span>
-          {commentsCount > 0 && (
-            <span className="flex items-center gap-1 text-gray-400 text-sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                />
-              </svg>
-              {commentsCount}
-            </span>
-          )}
         </div>
       </div>
     </div>
     );
   };
 
-  const NewsModal = ({ news, onClose }) => (
+  const NewsModal = ({ news, onClose }) => {
+    const [showComments, setShowComments] = useState(false);
+    const commentsRef = useRef(null);
+    const modalRef = useRef(null);
+
+    const handleToggleComments = (e) => {
+      e.preventDefault();
+      
+      if (!showComments) {
+        // Salvăm poziția curentă de scroll ÎNAINTE de a schimba state-ul
+        const currentScroll = modalRef.current?.scrollTop || 0;
+        
+        setShowComments(true);
+        
+        // Folosim requestAnimationFrame pentru a rula după ce React face update
+        requestAnimationFrame(() => {
+          // Restaurăm imediat poziția de scroll
+          if (modalRef.current) {
+            modalRef.current.scrollTop = currentScroll;
+          }
+          
+          // Apoi facem scroll smooth către comentarii
+          setTimeout(() => {
+            commentsRef.current?.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'nearest'
+            });
+          }, 100);
+        });
+      } else {
+        setShowComments(false);
+      }
+    };
+
+    return (
     <div
       className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4"
       onClick={onClose}
     >
       <div className="flex items-start justify-center min-h-screen py-8">
         <div
+          ref={modalRef}
           className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl max-w-4xl w-full shadow-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
@@ -377,11 +390,56 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
             <div className="mt-8 space-y-6">
               <hr className="border-gray-700/50" />
               
-              {/* Afișare comentarii existente */}
-              <ListaComentarii newsId={news.id} />
-              
-              {/* Formular pentru adăugare comentariu */}
-              <FormularComentarii newsId={news.id} />
+              {/* Buton pentru afișare/ascundere comentarii */}
+              <div className="flex justify-center">
+                <button
+                  onClick={handleToggleComments}
+                  className="group relative px-6 py-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl shadow-md transition-all duration-300 hover:bg-gray-700/50 hover:border-amber-400/50 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400/50 flex items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-5 w-5 transition-transform duration-300 ${showComments ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                    />
+                  </svg>
+                  <span className="font-semibold">
+                    {showComments ? 'Ascunde comentariile' : 'Vezi comentariile'}
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-4 w-4 transition-transform duration-300 ${showComments ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Afișare comentarii și formular doar dacă showComments este true */}
+              {showComments && (
+                <div ref={commentsRef} className="space-y-6 animate-fadeIn">
+                  {/* Afișare comentarii existente */}
+                  <ListaComentarii newsId={news.id} />
+                  
+                  {/* Formular pentru adăugare comentariu */}
+                  <FormularComentarii newsId={news.id} />
+                </div>
+              )}
             </div>
 
             {/* Close button at bottom */}
@@ -397,7 +455,8 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen text-white p-3 sm:p-6">
@@ -462,7 +521,10 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
 
       {/* Modal for full article */}
       {selectedNews && (
-        <NewsModal news={selectedNews} onClose={() => setSelectedNews(null)} />
+        <NewsModal 
+          news={selectedNews} 
+          onClose={() => setSelectedNews(null)} 
+        />
       )}
     </div>
   );

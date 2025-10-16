@@ -165,3 +165,8 @@
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
+
+/* Fade-in animation for comments section */
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}

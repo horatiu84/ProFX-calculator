@@ -2,7 +2,7 @@
 
 ## 📋 Descriere
 
-Am implementat un sistem complet de comentarii pentru pagina de **Știri**, care permite utilizatorilor să lase feedback și să interacționeze cu conținutul.
+Am implementat un sistem complet de comentarii pentru pagina de **Știri**, care permite utilizatorilor să lase feedback și să interacționeze cu conținutul. **Sistemul este optimizat pentru a reduce request-urile către Firebase** - comentariile se încarcă doar când utilizatorul dorește să le vadă.
 
 ## 🔧 Componente Create
 
@@ -23,11 +23,11 @@ Afișează toate comentariile pentru o știre specifică:
 - Avatar generat automat din prima literă a numelui
 - Design responsive și elegant
 
-### 3. **useCommentsCount.js**
-Hook personalizat React pentru:
-- Numărarea comentariilor în timp real
-- Update automat când se adaugă comentarii noi
-- Afișare pe cardurile de știri
+### 3. **Sistem on-demand (optimizat!)**
+- ✅ **Buton "Vezi comentariile"** în loc de încărcare automată
+- ✅ Reduce request-urile către Firebase
+- ✅ Componentele se încarcă doar când utilizatorul le solicită
+- ✅ Animație smooth la deschidere/închidere
 
 ## 🗄️ Structura Firebase
 
@@ -45,17 +45,16 @@ Fiecare document conține:
 
 ## 🎨 Funcționalități
 
-### Pe Cardurile de Știri:
-- ✅ Indicator vizual cu numărul de comentarii
-- ✅ Iconiță pentru comentarii
-- ✅ Update în timp real
-
 ### În Modalul Știrii:
-- ✅ Secțiune dedicată pentru comentarii
+- ✅ **Buton "Vezi comentariile"** cu iconiță și animație
+- ✅ Butonul se transformă în "Ascunde comentariile" când sunt vizibile
+- ✅ Animație smooth la deschidere (fadeIn)
+- ✅ Secțiune dedicată pentru comentarii (încărcare on-demand)
 - ✅ Listare comentarii existente
 - ✅ Formular pentru adăugare comentariu nou
 - ✅ Validări complete
 - ✅ Design consistent cu restul aplicației
+- ✅ **Optimizat** - nu face request-uri până când utilizatorul nu dă click
 
 ## 📱 Responsive Design
 
@@ -86,29 +85,35 @@ Toate componentele sunt complet responsive și funcționează perfect pe:
 ```jsx
 import FormularComentarii from "./components/FormularComentarii";
 import ListaComentarii from "./components/ListaComentarii";
-import { useCommentsCount } from "./components/useCommentsCount";
 ```
 
 2. **Folosire în componentă:**
 ```jsx
-// Pentru a afișa numărul de comentarii
-const commentsCount = useCommentsCount(newsId);
+const [showComments, setShowComments] = useState(false);
 
-// Pentru a afișa lista de comentarii
-<ListaComentarii newsId={newsId} />
+// Buton pentru toggle
+<button onClick={() => setShowComments(!showComments)}>
+  {showComments ? 'Ascunde comentariile' : 'Vezi comentariile'}
+</button>
 
-// Pentru formular de adăugare
-<FormularComentarii newsId={newsId} />
+// Afișare condițională
+{showComments && (
+  <>
+    <ListaComentarii newsId={newsId} />
+    <FormularComentarii newsId={newsId} />
+  </>
+)}
 ```
 
 ### Pentru Utilizatori:
 
 1. Click pe o știre pentru a o deschide
-2. Scroll jos pentru secțiunea de comentarii
-3. Citește comentariile existente
-4. Completează numele și comentariul tău
-5. Click pe "Publică comentariul"
-6. Mesaj de confirmare + comentariu apare instant
+2. Citește articolul
+3. **Click pe butonul "Vezi comentariile"** jos în pagină
+4. Citește comentariile existente
+5. Completează numele și comentariul tău
+6. Click pe "Publică comentariul"
+7. Mesaj de confirmare + comentariu apare instant
 
 ## 🎯 Avantaje
 
@@ -118,6 +123,8 @@ const commentsCount = useCommentsCount(newsId);
 - ✅ **Elegant**: Design consistent
 - ✅ **Scalabil**: Poate gestiona orice număr de comentarii
 - ✅ **Fără Index**: Nu necesită configurare Firebase index (sortare în JS)
+- ✅ **Optimizat**: Comentariile se încarcă doar când utilizatorul dorește (on-demand)
+- ✅ **Eficient**: Reduce request-urile inutile către Firebase
 
 ## 🔄 Real-time Updates
 
@@ -138,11 +145,12 @@ Toate componentele respectă stilul ProFX Academy:
 
 ## 📊 Statistici
 
-Fiecare știre afișează:
-- Număr total de comentarii pe card
-- Lista completă în modal
+Fiecare știre oferă:
+- **Buton interactiv** pentru afișare/ascundere comentarii
+- Lista completă de comentarii în modal (on-demand)
 - Timp relativ ("Acum 5 minute")
 - Avatar personalizat pentru fiecare utilizator
+- Animații smooth la deschidere/închidere
 
 ## 🛠️ Îmbunătățiri Viitoare Posibile
 
