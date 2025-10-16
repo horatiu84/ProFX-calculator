@@ -257,6 +257,18 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
     const [showComments, setShowComments] = useState(false);
     const commentsRef = useRef(null);
     const modalRef = useRef(null);
+    const modalContainerRef = useRef(null);
+
+    // Scroll la modal când se deschide
+    React.useEffect(() => {
+      if (modalContainerRef.current) {
+        // Scroll smooth la containerul modalului când se montează
+        modalContainerRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }, []);
 
     const handleToggleComments = (e) => {
       e.preventDefault();
@@ -289,10 +301,10 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
 
     return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4 overflow-y-auto"
       onClick={onClose}
     >
-      <div className="flex items-start justify-center min-h-screen py-8">
+      <div ref={modalContainerRef} className="flex items-center justify-center min-h-screen py-8">
         <div
           ref={modalRef}
           className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl max-w-4xl w-full shadow-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
