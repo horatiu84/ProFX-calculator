@@ -1,12 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FormularComentarii from "./components/FormularComentarii";
 import ListaComentarii from "./components/ListaComentarii";
 
-const Stiri = () => {
-  const [selectedNews, setSelectedNews] = useState(null);
-
-  // Array cu știrile - poate fi extins în viitor
-  const newsArticles = [
+// Array cu știrile - definit în afara componentei pentru stabilitate
+const newsArticles = [
     {
       id: 3,
       title: "Aurul trece de 4.200$: scenariul bullish se confirmă!",
@@ -159,6 +156,61 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
     },
     // ... mai multe știri aici în viitor
   ];
+
+const Stiri = () => {
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  // Detectează dacă există un link de știre în URL la încărcare și la schimbări
+  useEffect(() => {
+    const checkUrlParams = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const newsId = urlParams.get('stire');
+      
+      console.log('Checking URL params:', newsId); // Debug
+      
+      if (newsId) {
+        const news = newsArticles.find(article => article.id === parseInt(newsId));
+        console.log('Found news:', news); // Debug
+        if (news) {
+          setSelectedNews(news);
+        }
+      }
+    };
+
+    // Check imediat la montare
+    checkUrlParams();
+
+    // Listener pentru schimbări în URL (back/forward browser)
+    const handlePopState = () => {
+      checkUrlParams();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // Funcție pentru copierea linkului
+  const handleCopyLink = (newsId) => {
+    const url = `${window.location.origin}${window.location.pathname}?stire=${newsId}`;
+    
+    navigator.clipboard.writeText(url).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }).catch(err => {
+      console.error('Eroare la copierea linkului:', err);
+    });
+  };
+
+  // Funcție pentru închiderea modalului și curățarea URL-ului
+  const handleCloseModal = () => {
+    setSelectedNews(null);
+    // Curăță URL-ul de parametrii
+    window.history.pushState({}, '', window.location.pathname);
+  };
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -349,7 +401,7 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
             </h1>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-4">
               {news.tags.map((tag, index) => (
                 <span
                   key={index}
@@ -358,6 +410,32 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
                   #{tag}
                 </span>
               ))}
+            </div>
+
+            {/* Buton Copiază Link */}
+            <div className="mb-6">
+              <button
+                onClick={() => handleCopyLink(news.id)}
+                className="group relative px-4 py-2 bg-blue-500/10 border border-blue-400/30 text-blue-400 rounded-xl shadow-md transition-all duration-300 hover:bg-blue-500/20 hover:border-blue-400/50 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400/50 flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
+                </svg>
+                <span className="font-semibold text-sm">
+                  {copySuccess ? '✓ Link copiat!' : 'Copiază link'}
+                </span>
+              </button>
             </div>
 
             {/* Article content */}
@@ -535,7 +613,7 @@ Aurul nu e doar un metal strălucitor, ci și un barometru al încrederii econom
       {selectedNews && (
         <NewsModal 
           news={selectedNews} 
-          onClose={() => setSelectedNews(null)} 
+          onClose={handleCloseModal} 
         />
       )}
     </div>

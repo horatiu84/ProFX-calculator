@@ -416,6 +416,14 @@ export default function LotCalculator() {
     if (!isLoading) {
       const urlParams = new URLSearchParams(window.location.search);
       const tab = urlParams.get('tab');
+      const stireId = urlParams.get('stire'); // Check pentru știre
+      
+      // Dacă există parametru ?stire=, deschide tab-ul Știri
+      if (stireId) {
+        console.log('Detected stire parameter:', stireId);
+        setActiveTab("stiri");
+        return;
+      }
       
       const validTabs = menuItems.map(item => item.key);
       if (tab && validTabs.includes(tab)) {

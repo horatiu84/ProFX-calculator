@@ -170,3 +170,24 @@
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* Language transition animation for ProFXbook */
+@keyframes languageTransition {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    filter: blur(2px);
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-language-change {
+  animation: languageTransition 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
