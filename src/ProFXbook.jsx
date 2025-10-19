@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLanguage } from "./contexts/LanguageContext";
 import {
   LineChart,
   Line,
@@ -72,8 +73,9 @@ const MonthlyTooltip = ({ active, payload }) => {
 };
 
 export default function ProFXbook() {
-  // State pentru limba selectată (română - default)
-  const [language, setLanguage] = useState("ro");
+  // Use language context - get profxbook translations directly
+  const { language, translations } = useLanguage();
+  const t = translations.profxbook; // Direct access to profxbook translations
 
   // State pentru perioada selectată
   const [timePeriod, setTimePeriod] = useState("all");
@@ -88,108 +90,6 @@ export default function ProFXbook() {
   const broker = "FPM Trading";
   const leverage = "1:500";
   const platform = "MetaTrader 5";
-
-  // Traduceri
-  const translations = {
-    ro: {
-      title: "Urmărire Performanță & Analiză",
-      realAccount: "Cont REAL",
-      demoAccount: "Cont DEMO",
-      account: "Cont",
-      broker: "Broker",
-      leverage: "Levier",
-      platform: "Platformă",
-      timePeriod: "Perioadă analiză",
-      today: "Astăzi",
-      week: "Săptămână",
-      month: "Lună",
-      total: "Total",
-      custom: "Custom",
-      customStart: "Data început",
-      customEnd: "Data sfârșit",
-      apply: "Aplică",
-      periodToday: "Afișare statistici pentru ziua de astăzi",
-      periodWeek: "Afișare statistici pentru ultimele 7 zile",
-      periodMonth: "Afișare statistici pentru ultima lună",
-      periodAll: "Afișare statistici pentru întreaga perioadă",
-      periodCustom: "Perioada custom",
-      performance: "Performanță",
-      gain: "Câștig",
-      daily: "Zilnic",
-      monthly: "Lunar",
-      drawdown: "Drawdown",
-      accountBalance: "Balanță Cont",
-      balance: "Balanță",
-      equity: "Echitate",
-      highest: "Maxim",
-      profit: "Profit",
-      transactions: "Tranzacții",
-      deposits: "Depuneri",
-      withdrawals: "Retrageri",
-      interest: "Dobândă",
-      quickStats: "Statistici Rapide",
-      totalTrades: "Total Trade-uri",
-      winRate: "Rată Câștig",
-      totalGain: "Câștig Total",
-      netProfit: "Profit Net",
-      maxDrawdown: "Drawdown Maxim",
-      currentBalance: "Balanță Curentă",
-      accountGrowth: "Creștere Cont (%)",
-      monthlyPerformance: "Performanță Lunară",
-      footer1: "ProFXbook - Analiza Performanței Trading",
-      footer2: "Date actualizate în timp real",
-    },
-    en: {
-      title: "Performance Tracking & Analytics",
-      realAccount: "REAL Account",
-      demoAccount: "DEMO Account",
-      account: "Account",
-      broker: "Broker",
-      leverage: "Leverage",
-      platform: "Platform",
-      timePeriod: "Analysis Period",
-      today: "Today",
-      week: "Week",
-      month: "Month",
-      total: "Total",
-      custom: "Custom",
-      customStart: "Start Date",
-      customEnd: "End Date",
-      apply: "Apply",
-      periodToday: "Showing statistics for today",
-      periodWeek: "Showing statistics for the last 7 days",
-      periodMonth: "Showing statistics for the last month",
-      periodAll: "Showing statistics for the entire period",
-      periodCustom: "Custom period",
-      performance: "Performance",
-      gain: "Gain",
-      daily: "Daily",
-      monthly: "Monthly",
-      drawdown: "Drawdown",
-      accountBalance: "Account Balance",
-      balance: "Balance",
-      equity: "Equity",
-      highest: "Highest",
-      profit: "Profit",
-      transactions: "Transactions",
-      deposits: "Deposits",
-      withdrawals: "Withdrawals",
-      interest: "Interest",
-      quickStats: "Quick Stats",
-      totalTrades: "Total Trades",
-      winRate: "Win Rate",
-      totalGain: "Total Gain",
-      netProfit: "Net Profit",
-      maxDrawdown: "Max Drawdown",
-      currentBalance: "Current Balance",
-      accountGrowth: "Account Growth (%)",
-      monthlyPerformance: "Monthly Performance",
-      footer1: "ProFXbook - Trading Performance Analytics",
-      footer2: "Data updated in real-time",
-    },
-  };
-
-  const t = translations[language];
 
   // Statistici pentru diferite perioade (în realitate vor veni din API)
   const statsData = {
@@ -324,47 +224,8 @@ export default function ProFXbook() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header with Language Selector */}
+        {/* Header */}
         <div className="mb-8">
-          {/* Language Selector - Compact & Discrete (Same for mobile & desktop) */}
-          <div className="flex justify-end mb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-gray-500 hidden sm:inline">
-                {language === "ro" ? "Limba" : "Lang"}
-              </span>
-              <div className="flex gap-1.5 bg-gray-800/40 rounded-lg p-1 border border-gray-700/30">
-                <button
-                  onClick={() => setLanguage("ro")}
-                  className={`
-                    px-2.5 py-1 rounded text-xs font-semibold transition-all duration-300 
-                    flex items-center justify-center
-                    ${language === "ro"
-                      ? "bg-amber-500 text-gray-900 shadow-md"
-                      : "text-gray-400 hover:text-gray-200 hover:bg-gray-700/50"
-                    }
-                  `}
-                  title="Română"
-                >
-                  RO
-                </button>
-                <button
-                  onClick={() => setLanguage("en")}
-                  className={`
-                    px-2.5 py-1 rounded text-xs font-semibold transition-all duration-300
-                    flex items-center justify-center
-                    ${language === "en"
-                      ? "bg-amber-500 text-gray-900 shadow-md"
-                      : "text-gray-400 hover:text-gray-200 hover:bg-gray-700/50"
-                    }
-                  `}
-                  title="English"
-                >
-                  EN
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* Title - Centered */}
           <div className="text-center" key={language}>
             <h1 className="text-3xl md:text-5xl font-bold mb-2 animate-language-change">

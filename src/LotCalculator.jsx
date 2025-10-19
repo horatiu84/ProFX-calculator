@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "./contexts/LanguageContext";
 import ProFXSchedule from "./ProFXSchedule";
 import Educatie from "./educatie";
 import Simulare from "./Simulare";
@@ -23,22 +24,25 @@ import "./LotCalculator.css";
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
+  const { translations } = useLanguage();
+  const t = translations.menu;
+  
   const [progress, setProgress] = useState(0);
   const [showItems, setShowItems] = useState(false);
   const [visibleItems, setVisibleItems] = useState([]);
 
   const menuItems = [
-    { key: "evolutie", label: "Evoluție", icon: "📈", angle: 0 },
-    { key: "lot", label: "Calculator Lot", icon: "📉", angle: 32.7 },
-    { key: "pierdere", label: "How to", icon: "⚙️", angle: 65.4 },
-    { key: "educatie", label: "Educație", icon: "ℹ️", angle: 98.1 },
-    { key: "training", label: "Training", icon: "🧑‍🏫", angle: 130.8 },
-    { key: "agenda", label: "Program ProFX", icon: "🗓️", angle: 163.5 },
-    { key: "galerie", label: "Galerie ProFX", icon: "📷", angle: 196.2 },
-    { key: "raport", label: "Raport", icon: "📝", angle: 228.9 },
-    { key: "evenimente", label: "Evenimente", icon: "🏝️", angle: 261.6 },
-    { key: "test", label: "Test", icon: "📋", angle: 294.3 },
-    { key: "contact", label: "Feedback", icon: "💬", angle: 327 },
+    { key: "evolutie", label: t.evolutie, icon: "📈", angle: 0 },
+    { key: "lot", label: t.lot, icon: "📉", angle: 32.7 },
+    { key: "pierdere", label: t.pierdere, icon: "⚙️", angle: 65.4 },
+    { key: "educatie", label: t.educatie, icon: "ℹ️", angle: 98.1 },
+    { key: "training", label: t.training, icon: "🧑‍🏫", angle: 130.8 },
+    { key: "agenda", label: t.agenda, icon: "🗓️", angle: 163.5 },
+    { key: "galerie", label: t.galerie, icon: "📷", angle: 196.2 },
+    { key: "raport", label: t.raport, icon: "📝", angle: 228.9 },
+    { key: "evenimente", label: t.evenimente, icon: "🏝️", angle: 261.6 },
+    { key: "test", label: t.test, icon: "📋", angle: 294.3 },
+    { key: "contact", label: t.contact, icon: "💬", angle: 327 },
   ];
 
   useEffect(() => {
@@ -367,6 +371,9 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
 
 
 export default function LotCalculator() {
+  const { translations } = useLanguage();
+  const t = translations.menu;
+
   const [activeTab, setActiveTab] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -374,20 +381,20 @@ export default function LotCalculator() {
   const [isLoading, setIsLoading] = useState(true);
 
   const menuItems = [
-    { key: "agenda", label: "Program ProFX", icon: "🗓️", component: <ProFXSchedule /> },
-    { key: "evolutie", label: "Evoluție", icon: "📈", component: <Evolutie /> },
-    { key: "lot", label: "Calculator Lot", icon: "📉", component: <Calculator /> },
-    { key: "pierdere", label: "How to", icon: "⚙️", component: <HowTo /> },
+    { key: "agenda", label: t.agenda, icon: "🗓️", component: <ProFXSchedule /> },
+    { key: "evolutie", label: t.evolutie, icon: "📈", component: <Evolutie /> },
+    { key: "lot", label: t.lot, icon: "📉", component: <Calculator /> },
+    { key: "pierdere", label: t.pierdere, icon: "⚙️", component: <HowTo /> },
     {
       key: "educatie",
-      label: "Educație",
+      label: t.educatie,
       icon: "ℹ️",
       component: <Educatie />,
       isSpecial: true
     },
     {
       key: "training",
-      label: "Training",
+      label: t.training,
       icon: "🧑‍🏫",
       component: <Training />,
       isSpecial: true
@@ -400,13 +407,13 @@ export default function LotCalculator() {
     //   isSpecial: true,
     //   isAfiliere: true
     // },
-    { key: "raport", label: "Raport", icon: "📝", component: <Raport /> },
-    { key: "jurnal", label: "Jurnal", icon: "📓", component: <TradingJournal /> },
-    { key: "evenimente", label: "Evenimente", icon: "🏝️", component: <Evenimente /> },
-    { key: "test", label: "Test", icon: "📋", component: <Test /> },
-    { key: "contact", label: "Feedback", icon: "💬", component: <Contact /> },
-    { key: "galerie", label: "Galerie ProFX", icon: "📷", component: <EventPhotoGallery /> },
-    { key: "stiri", label: "Știri & Noutăți", icon: "📰", component: <Stiri /> }
+    { key: "raport", label: t.raport, icon: "📝", component: <Raport /> },
+    { key: "jurnal", label: t.jurnal, icon: "📓", component: <TradingJournal /> },
+    { key: "evenimente", label: t.evenimente, icon: "🏝️", component: <Evenimente /> },
+    { key: "test", label: t.test, icon: "📋", component: <Test /> },
+    { key: "contact", label: t.contact, icon: "💬", component: <Contact /> },
+    { key: "galerie", label: t.galerie, icon: "📷", component: <EventPhotoGallery /> },
+    { key: "stiri", label: t.stiri, icon: "📰", component: <Stiri /> }
     // { key: "Clase", label: "Clasa 1:20", icon: "📋", component: <ProFXChecklist /> } // Temporar dezactivat
   ];
 
@@ -571,7 +578,7 @@ export default function LotCalculator() {
           ${isExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
         `}>
           <h2 className="font-bold text-white">ProFX Academy</h2>
-          <p className="text-xs text-gray-400">Click pentru home</p>
+          <p className="text-xs text-gray-400">{t.clickForHome}</p>
         </div>
       </div>
     </div>
@@ -680,7 +687,7 @@ export default function LotCalculator() {
         text-center transition-all duration-300
         ${isSidebarExpanded ? 'opacity-100' : 'opacity-0'}
       `}>
-        <p className="text-xs text-gray-400">Învață trading gratuit</p>
+        <p className="text-xs text-gray-400">{t.learnTradingShort}</p>
       </div>
     </div>
   </div>
@@ -697,7 +704,7 @@ export default function LotCalculator() {
           style={{ maxWidth: "350px" }}
         />
         <span className="text-lg text-gray-300 font-light tracking-wide">
-          Învață să tranzacționezi gratuit, de la zero
+          {t.learnTradingFree}
         </span>
       </div>
 
@@ -720,7 +727,7 @@ export default function LotCalculator() {
       {/* Mobile/Tablet Layout */}
       <div className="lg:hidden min-h-screen p-3 md:p-3">
         {/* Header - clickable */}
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-8 mt-8 md:mt-6">
           <img 
             src={logo} 
             alt="Logo ProFX" 
@@ -729,10 +736,10 @@ export default function LotCalculator() {
             onClick={goToHome}
           />
           <span className="text-lg md:text-xl text-gray-300 font-light tracking-wide">
-            Învață să tranzacționezi gratuit, de la zero
+            {t.learnTradingFree}
           </span>
           {activeTab === "home" && (
-            <p className="text-sm text-gray-400 mt-2">Apasă pe logo oricând pentru a reveni aici</p>
+            <p className="text-sm text-gray-400 mt-2">{t.clickLogoToReturn}</p>
           )}
         </div>
 

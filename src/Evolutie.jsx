@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
+import { useLanguage } from "./contexts/LanguageContext";
 
 export default function Evolutie() {
+  const { language, translations } = useLanguage();
+  const t = translations.evolutie;
+
   // State pentru tracking zilnic
   const [startOfDay, setStartOfDay] = useState(() => {
     const saved = localStorage.getItem("startOfDay");
@@ -81,7 +85,7 @@ export default function Evolutie() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div key={language} className="max-w-3xl mx-auto animate-language-change">
       {/* Tracking zilnic și săptămânal */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {/* Card zilnic */}
@@ -90,9 +94,9 @@ export default function Evolutie() {
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           <div className="relative z-10">
-          <h3 className="text-lg font-semibold mb-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300">📈 Evoluție Zilnică</h3>
+          <h3 className="text-lg font-semibold mb-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300">{t.dailyEvolution}</h3>
           
-          <label className="block mb-2 text-gray-300">Suma început zi:</label>
+          <label className="block mb-2 text-gray-300">{t.startOfDay}</label>
           <input
             type="number"
             className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -103,7 +107,7 @@ export default function Evolutie() {
             }}
           />
           
-          <label className="block mb-2 text-gray-300">Suma final zi:</label>
+          <label className="block mb-2 text-gray-300">{t.endOfDay}</label>
           <input
             type="number"
             className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -115,7 +119,7 @@ export default function Evolutie() {
           />
           
           <div className="text-center">
-            <h2 className="text-lg text-gray-300 mb-2">Procentaj zi</h2>
+            <h2 className="text-lg text-gray-300 mb-2">{t.dailyPercentage}</h2>
             <p className={`text-2xl font-bold ${parseFloat(dayChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {dayChange}%
             </p>
@@ -129,9 +133,9 @@ export default function Evolutie() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           <div className="relative z-10">
-          <h3 className="text-lg font-semibold mb-4 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">📊 Evoluție Săptămânală</h3>
+          <h3 className="text-lg font-semibold mb-4 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">{t.weeklyEvolution}</h3>
           
-          <label className="block mb-2 text-gray-300">Suma început săptămână:</label>
+          <label className="block mb-2 text-gray-300">{t.startOfWeek}</label>
           <input
             type="number"
             className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -142,7 +146,7 @@ export default function Evolutie() {
             }}
           />
           
-          <label className="block mb-2 text-gray-300">Suma final săptămână:</label>
+          <label className="block mb-2 text-gray-300">{t.endOfWeek}</label>
           <input
             type="number"
             className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -154,7 +158,7 @@ export default function Evolutie() {
           />
           
           <div className="text-center">
-            <h2 className="text-lg text-gray-300 mb-2">Procentaj săptămână</h2>
+            <h2 className="text-lg text-gray-300 mb-2">{t.weeklyPercentage}</h2>
             <p className={`text-2xl font-bold ${parseFloat(weekChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {weekChange}%
             </p>
@@ -169,9 +173,9 @@ export default function Evolutie() {
         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative z-10">
-        <h2 className="text-xl font-semibold mb-4 text-center text-amber-400 group-hover:text-amber-300 transition-colors duration-300">💰 Profit per trade</h2>
+        <h2 className="text-xl font-semibold mb-4 text-center text-amber-400 group-hover:text-amber-300 transition-colors duration-300">{t.profitPerTrade}</h2>
         
-        <label className="block mb-2 text-gray-300">Suma început trade:</label>
+        <label className="block mb-2 text-gray-300">{t.startOfTrade}</label>
         <input
           type="number"
           className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -182,7 +186,7 @@ export default function Evolutie() {
           }}
         />
         
-        <label className="block mb-2 text-gray-300">Suma după trade:</label>
+        <label className="block mb-2 text-gray-300">{t.endOfTrade}</label>
         <input
           type="number"
           className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 hover:bg-gray-700/50 transition-all duration-300"
@@ -194,7 +198,7 @@ export default function Evolutie() {
         />
         
         <div className="text-center">
-          <h2 className="text-lg text-gray-300 mb-2">Procentaj trade</h2>
+          <h2 className="text-lg text-gray-300 mb-2">{t.tradePercentage}</h2>
           <p className={`text-2xl font-bold ${parseFloat(tradeChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {tradeChange}%
           </p>
@@ -209,7 +213,7 @@ export default function Evolutie() {
           onClick={resetLocalData}
         >
           <span className="group-hover:text-red-400 transition-colors duration-300">🗑️</span>
-          <span className="group-hover:text-red-400 transition-colors duration-300">Reset toate datele</span>
+          <span className="group-hover:text-red-400 transition-colors duration-300">{t.resetAllData}</span>
         </button>
       </div>
 

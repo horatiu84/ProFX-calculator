@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from "./contexts/LanguageContext";
 import VipInfoModal from "./components/VipInfoModal.jsx";
 import MihaiVlada from "./pics/Mihai.jpg";
 import SergiuC from "./pics/Sergiu.jpg";
@@ -8,6 +9,9 @@ import John from "./pics/John.jpg";
 import FlaviusR from "./pics/Flavius.jpg";
 
 const WeeklySchedule = () => {
+  const { language, translations } = useLanguage();
+  const t = translations.program;
+
   const [activeTab, setActiveTab] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -26,15 +30,17 @@ const WeeklySchedule = () => {
 
   const VIP_PASSWORD = "2025";
 
-  const daysOfWeek = [
-    "LUNI",
-    "MARȚI",
-    "MIERCURI",
-    "JOI",
-    "VINERI",
-    "SÂMBĂTĂ",
-    "DUMINICĂ",
-  ];
+  const daysOfWeek = t.daysOfWeek;
+
+  // Session names with translations
+  const sessionNames = {
+    asiaWithMihai: t.sessionAsiaWithMihai,
+    londonWithFlavius: t.sessionLondonWithFlavius,
+    newYorkWithFlavius: t.sessionNewYorkWithFlavius,
+    macroAnalysisWithJohn: t.macroAnalysisWithJohn,
+    beginnersWebinar: t.beginnersWebinarWithSergiuAndJohn,
+    class1to20: t.class1to20,
+  };
 
   const mentorAvatars = {
     "Mihai Vlada": MihaiVlada,
@@ -44,55 +50,55 @@ const WeeklySchedule = () => {
   };
 
   const sessionLinksByDay = {
-    "Sesiune Asia cu Mihai": {
+    [sessionNames.asiaWithMihai]: {
       0: "https://us06web.zoom.us/j/81939789882?pwd=nYMZIPf35UOX9iXfy9gXSncpFplb7t.1",
       1: "https://us06web.zoom.us/j/86842038204?pwd=95PrxbdVZ3W4GO5Io96RRzAPeoovXC.1",
       2: "https://us06web.zoom.us/j/85726576733?pwd=UBFrodfm7MaWm5qYIu3YS3VmZ8ZfCP.1",
       3: "https://us06web.zoom.us/j/86894910414?pwd=zRbudSqJ0w24ZBe4ZdpdVvCzuNoLCG.1",
       4: "https://us06web.zoom.us/j/85496511951?pwd=PePROIb8kDZ9CtbuunvP4TUSWe5KbK.1",
     },
-    "Sesiune Londra cu Flavius": {
+    [sessionNames.londonWithFlavius]: {
       0: "https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1", // Luni
       1: "https://us02web.zoom.us/j/84521169544?pwd=BIDOTaxlxUmcSMld7FQOCXGbljBRbG.1", // Marți
       2: "https://us02web.zoom.us/j/81460784651?pwd=3o9p7mOgYhnXjQNzLgXUy0uDLFjMIU.1", // Miercuri
       3: "https://us02web.zoom.us/j/82194753195?pwd=YH31GkbXbiyU36VfSteVsFlfcFd5PZ.1", // Joi
       4: "https://us02web.zoom.us/j/84248988761?pwd=jZJxERPs9UOLfpQfpboMCn0L7pAEa9.1", // Vineri
     },
-    "Sesiune New York cu Flavius": {
+    [sessionNames.newYorkWithFlavius]: {
       0: "https://us02web.zoom.us/j/89284532502?pwd=GIO8R9cUQfiApN7ZaiDITL7AVxh9ec.1", // Luni
       1: "https://us02web.zoom.us/j/84428384626?pwd=EtamY9Lr4FllbMUDM8oSTTuy4G05mJ.1", // Marți
       2: "https://us02web.zoom.us/j/89235648526?pwd=8AGuuwt8XrxAnpHmUJbjJojb3AFbq2.1", // Miercuri
       3: "https://us02web.zoom.us/j/83839932271?pwd=bsCbaCC0Bks7Wrt6L4ptYvky9QEOLd.1", // Joi
       4: "https://us02web.zoom.us/j/84507872229?pwd=F3QDiFNQ4lb9BDktht8CVLI5AB6RSp.1", // Vineri
     },
-    "Analiza macro saptamanala cu John": {
+    [sessionNames.macroAnalysisWithJohn]: {
       1: "https://us06web.zoom.us/j/82243984757?pwd=QBCn16XU7fwGYYgyPa9jaWmuVfkKrZ.1",
     },
-    "Webinar începători cu Sergiu și John": {
+    [sessionNames.beginnersWebinar]: {
       0: "https://us06web.zoom.us/j/84144689182?pwd=uRoZpakhgy7feSR29XDxDf1Q1wRm3J.1",
     },
   };
 
   const weekdayEvents = [
-    { name: "Sesiune Asia cu Mihai", time: "03:45", duration: 3 },
-    { name: "Sesiune Londra cu Flavius", time: "08:45", duration: 1 },
-    { name: "Sesiune New York cu Flavius", time: "14:45", duration: 1 },
+    { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
+    { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
+    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
   ];
 
   const specialEvents = {
     0: [
       {
-        name: "Webinar începători cu Sergiu și John",
+        name: sessionNames.beginnersWebinar,
         time: "20:00",
         duration: 1,
       },
     ],
     1: [
-      { name: "Analiza macro saptamanala cu John", time: "12:00", duration: 1 },
-      { name: "Clasa 1 la 20", time: "20:00", duration: 1 },
+      { name: sessionNames.macroAnalysisWithJohn, time: "12:00", duration: 1 },
+      { name: sessionNames.class1to20, time: "20:00", duration: 1 },
     ],
     4: [
-      { name: "Analiza macro saptamanala cu John", time: "16:00", duration: 1 },
+      { name: sessionNames.macroAnalysisWithJohn, time: "16:00", duration: 1 },
     ],
   };
 
@@ -349,8 +355,8 @@ const WeeklySchedule = () => {
 
     // În plus, păstrăm gratuitățile existente de luni
     const freeSessions = [
-      "Sesiune Asia cu Mihai",
-      "Webinar începători cu Sergiu și John",
+      sessionNames.asiaWithMihai,
+      sessionNames.beginnersWebinar,
     ];
     return dayIndex === 0 && freeSessions.includes(eventName);
   };
@@ -522,7 +528,7 @@ const WeeklySchedule = () => {
 
     return createPortal(
       <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <div className="relative max-w-lg w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 border-amber-400/50 rounded-3xl p-8 shadow-2xl">
+        <div className="relative max-w-lg w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 border-amber-400/50 rounded-3xl p-8 shadow-2xl" key={`zoom-redirect-${language}`}>
           {/* Close button */}
           <button
             onClick={closeZoomRedirect}
@@ -543,17 +549,17 @@ const WeeklySchedule = () => {
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
-            Lansare Zoom...
+          <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2 animate-language-change">
+            {t.zoomLaunch}
           </h2>
 
           {/* Subtitle */}
-          <p className="text-gray-400 text-center mb-6">
-            Sesiunea se deschide automat în{" "}
+          <p className="text-gray-400 text-center mb-6 animate-language-change">
+            {t.sessionOpens}{" "}
             <span className="text-amber-400 font-bold text-lg">
               {redirectCountdown}
             </span>{" "}
-            secund{redirectCountdown !== 1 ? "e" : "ă"}
+            {redirectCountdown !== 1 ? t.seconds : t.second}
           </p>
 
           {/* Progress bar */}
@@ -570,8 +576,8 @@ const WeeklySchedule = () => {
 
           {/* Info tooltip */}
           <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 mb-4">
-            <p className="text-sm text-gray-300 text-center">
-              💡 Dacă ai aplicația Zoom instalată, se va deschide automat. Altfel, se va deschide în browser.
+            <p className="text-sm text-gray-300 text-center animate-language-change">
+              💡 {t.zoomInfo}
             </p>
           </div>
 
@@ -580,9 +586,9 @@ const WeeklySchedule = () => {
             <div className="animate-fade-in">
               <button
                 onClick={handleManualRedirect}
-                className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
+                className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105 animate-language-change"
               >
-                Click aici pentru a deschide Zoom
+                {t.clickToOpen}
               </button>
             </div>
           )}
@@ -663,7 +669,7 @@ const WeeklySchedule = () => {
                     {/* Countdown badge pentru următoarea sesiune */}
                     {isNextSession && timeUntilNextSession > 0 && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
-                        ⏰ Începe în {formatTimeRemaining(timeUntilNextSession)}
+                        ⏰ {t.startsIn} {formatTimeRemaining(timeUntilNextSession)}
                       </span>
                     )}
                   </div>
@@ -673,7 +679,7 @@ const WeeklySchedule = () => {
                         status === "passed" ? "text-gray-500" : "text-gray-300"
                       }`}
                     >
-                      Mentor{mentors.length > 1 ? "i" : ""}:{" "}
+                      {mentors.length > 1 ? t.mentors : t.mentor}:{" "}
                       {mentors.join(", ")}
                     </p>
                   )}
@@ -691,7 +697,7 @@ const WeeklySchedule = () => {
                 </div>
                 {isWebinar && status !== "passed" && (
                   <div className="px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded uppercase w-fit">
-                    Webinar
+                    {t.webinar}
                   </div>
                 )}
               </div>
@@ -701,7 +707,7 @@ const WeeklySchedule = () => {
                     status === "passed" ? "text-gray-500" : "text-gray-400"
                   }`}
                 >
-                  Durată: {duration} {duration === 1 ? "oră" : "ore"}
+                  {t.duration}: {duration} {duration === 1 ? t.hour : t.hours}
                 </p>
                 {hasLink && status !== "passed" && (
                   <div className="flex items-center space-x-1 text-xs">
@@ -711,26 +717,26 @@ const WeeklySchedule = () => {
                         <>
                           <span>🔒</span>
                           <span className="text-orange-400">
-                            Disponibil în {minutesUntilAccess > 0 ? minutesUntilAccess : 0}m
+                            {t.availableIn} {minutesUntilAccess > 0 ? minutesUntilAccess : 0}m
                           </span>
                         </>
                       ) : (
                         <>
                           <span>🔒</span>
                           <span className="text-gray-400">
-                            Acces cu 10 min înainte
+                            {t.accessBefore}
                           </span>
                         </>
                       )
                     ) : (isFree || isVIP) ? (
                       <>
                         <span>🔗</span>
-                        <span className="text-green-400 font-bold">Disponibil acum!</span>
+                        <span className="text-green-400 font-bold">{t.availableNow}</span>
                       </>
                     ) : (
                       <>
                         <span>🔒</span>
-                        <span className="text-amber-400">Necesită VIP</span>
+                        <span className="text-amber-400">{t.requiresVip}</span>
                       </>
                     )}
                   </div>
@@ -747,10 +753,10 @@ const WeeklySchedule = () => {
               }`}
             >
               {status === "live"
-                ? "🔴 LIVE"
+                ? `🔴 ${t.live}`
                 : status === "passed"
-                ? "TRECUT"
-                : "PROGRAMAT"}
+                ? t.past
+                : t.scheduled}
             </div>
           </div>
         </div>
@@ -761,13 +767,13 @@ const WeeklySchedule = () => {
   const renderDayContent = (dayIndex) => {
     if (dayIndex === 5 || dayIndex === 6) {
       return (
-        <div className="flex flex-col items-center justify-center h-48 md:h-64 text-center">
+        <div className="flex flex-col items-center justify-center h-48 md:h-64 text-center" key={`weekend-${language}`}>
           <div className="text-4xl md:text-6xl mb-2 md:mb-4">🌴</div>
-          <h2 className="text-xl md:text-2xl font-bold text-yellow-400 mb-1 md:mb-2">
-            RELAXARE
+          <h2 className="text-xl md:text-2xl font-bold text-yellow-400 mb-1 md:mb-2 animate-language-change">
+            {t.relaxation}
           </h2>
-          <p className="text-gray-400 text-sm md:text-base">
-            Weekend de odihnă și reîncărcare
+          <p className="text-gray-400 text-sm md:text-base animate-language-change">
+            {t.weekendRest}
           </p>
         </div>
       );
@@ -787,12 +793,12 @@ const WeeklySchedule = () => {
 
     return (
       <div className="space-y-3 md:space-y-4">
-        <div className="text-center mb-4 md:mb-6">
-          <h2 className="text-xl md:text-2xl font-bold text-yellow-400 mb-1 md:mb-2">
+        <div className="text-center mb-4 md:mb-6" key={`day-header-${language}`}>
+          <h2 className="text-xl md:text-2xl font-bold text-yellow-400 mb-1 md:mb-2 animate-language-change">
             {daysOfWeek[dayIndex]}
           </h2>
-          <p className="text-gray-400 text-sm">
-            {allEvents.length} evenimente programate
+          <p className="text-gray-400 text-sm animate-language-change">
+            {allEvents.length} {t.eventsScheduled}
           </p>
         </div>
         {allEvents.map((event, index) => (
@@ -814,22 +820,22 @@ const WeeklySchedule = () => {
       {showVIPModal &&
         createPortal(
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 border-2 border-amber-400/50 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl">
-              <div className="text-center mb-6">
+            <div className="bg-gray-900 border-2 border-amber-400/50 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl" key={`vip-modal-${language}`}>
+              <div className="text-center mb-6 animate-language-change">
                 <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">⭐</span>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">
-                  Acces VIP Necesar
+                  {t.vipAccessRequired}
                 </h2>
                 <p className="text-gray-400 text-sm">
-                  Această sesiune este disponibilă doar pentru membrii VIP
+                  {t.vipSessionOnly}
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 animate-language-change">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Introdu parola VIP
+                    {t.enterVipPassword}
                   </label>
                   <input
                     type="password"
@@ -842,13 +848,13 @@ const WeeklySchedule = () => {
                       if (e.key === "Enter") handleVIPSubmit();
                     }}
                     className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
-                    placeholder="Introdu parola..."
+                    placeholder={t.enterPassword}
                     autoFocus
                   />
                   {vipError && (
                     <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
                       <span>⚠️</span>
-                      {vipError}
+                      {t.incorrectPassword}
                     </p>
                   )}
                 </div>
@@ -857,13 +863,13 @@ const WeeklySchedule = () => {
                     onClick={closeVIPModal}
                     className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-medium transition-all duration-300"
                   >
-                    Anulează
+                    {t.cancel}
                   </button>
                   <button
                     onClick={handleVIPSubmit}
                     className="flex-1 px-4 py-3 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
                   >
-                    Verifică
+                    {t.verify}
                   </button>
                 </div>
               </div>
@@ -873,18 +879,18 @@ const WeeklySchedule = () => {
           document.body
         )}
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6" key={`header-${language}`}>
         <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 md:p-8 text-center hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative z-10">
+          <div className="relative z-10 animate-language-change">
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors duration-300">
-              Program{" "}
+              {t.weeklySchedule.split(" ")[0]}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">
-                Săptămânal
+                {t.weeklySchedule.split(" ")[1]}
               </span>
             </h1>
             <p className="text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Astăzi este{" "}
+              {t.today}{" "}
               <span className="text-amber-400 font-medium">
                 {
                   daysOfWeek[
@@ -892,20 +898,20 @@ const WeeklySchedule = () => {
                   ]
                 }
               </span>
-              , {currentDateTime.toLocaleDateString("ro-RO")} -{" "}
-              {currentDateTime.toLocaleTimeString("ro-RO", {
+              , {currentDateTime.toLocaleDateString(language === "ro" ? "ro-RO" : "en-US")} -{" "}
+              {currentDateTime.toLocaleTimeString(language === "ro" ? "ro-RO" : "en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </p>
             <p className="text-xs text-blue-400 mt-2 flex items-center justify-center gap-1">
-              <span>🌍</span> Orele afișate sunt convertite automat în fusul tău orar local
+              <span>🌍</span> {t.timezone}
             </p>
             {isVIP && (
               <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-400/30 rounded-full">
                 <span className="text-lg">⭐</span>
                 <span className="text-sm font-medium text-purple-300">
-                  Statut VIP Activ
+                  {t.vipActive}
                 </span>
               </div>
             )}
@@ -915,17 +921,17 @@ const WeeklySchedule = () => {
 
       {/* Banner pentru următoarea sesiune cu countdown */}
       {nextSession && timeUntilNextSession > 0 && (
-        <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 mb-6" key={`next-session-${language}`}>
           <div className="relative bg-gradient-to-r from-cyan-900/40 via-blue-900/40 to-cyan-900/40 border-2 border-cyan-400/50 rounded-2xl p-4 md:p-5 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/10 to-cyan-500/5" />
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 animate-language-change">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl md:text-3xl">⏰</span>
                 </div>
                 <div className="text-center md:text-left">
                   <h3 className="text-lg md:text-xl font-bold text-white mb-1">
-                    Următoarea Sesiune
+                    {t.nextSession}
                   </h3>
                   <p className="text-sm md:text-base text-cyan-300 font-semibold">
                     {nextSession.name}
@@ -938,7 +944,7 @@ const WeeklySchedule = () => {
               <div className="flex flex-col items-center gap-2">
                 <div className="text-center">
                   <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-                    Începe în
+                    {t.startsIn}
                   </p>
                   <div className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
                     {formatTimeRemaining(timeUntilNextSession)}
@@ -947,13 +953,13 @@ const WeeklySchedule = () => {
                 {isZoomAccessAvailable(nextSession, nextSession.dayIndex) ? (
                   <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-400/40 rounded-full">
                     <span className="text-xs md:text-sm font-bold text-green-300">
-                      🟢 Acces Zoom Disponibil
+                      🟢 {t.zoomAvailable}
                     </span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 px-4 py-2 bg-orange-500/20 border border-orange-400/40 rounded-full">
                     <span className="text-xs md:text-sm font-bold text-orange-300">
-                      🔒 Acces în {Math.max(0, Math.floor((nextSession.timestamp - new Date() - 10 * 60 * 1000) / 60000))}m
+                      🔒 {t.accessIn} {Math.max(0, Math.floor((nextSession.timestamp - new Date() - 10 * 60 * 1000) / 60000))}m
                     </span>
                   </div>
                 )}
@@ -1063,37 +1069,37 @@ const WeeklySchedule = () => {
         </div>
 
         <div className="mt-6 md:mt-8 text-center space-y-4">
-          <div className="inline-flex flex-wrap items-center justify-center gap-3 md:gap-4 text-xs text-gray-500">
-            <div className="flex items-center">
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 md:gap-4 text-xs text-gray-500" key={`legend-${language}`}>
+            <div className="flex items-center animate-language-change">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-              Ziua curentă
+              {t.currentDay}
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center animate-language-change">
               <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
-              Evenimente programate
+              {t.scheduledEvents}
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center animate-language-change">
               <div className="w-2 h-2 bg-gray-600 rounded-full mr-2"></div>
-              Evenimente trecute
+              {t.pastEvents}
             </div>
           </div>
           {!isVIP && (
-            <div className="max-w-2xl mx-auto bg-gradient-to-r from-purple-900/30 to-amber-900/30 border border-purple-500/30 rounded-xl p-4">
-              <div className="flex items-center justify-center gap-3 flex-wrap">
+            <div className="max-w-2xl mx-auto bg-gradient-to-r from-purple-900/30 to-amber-900/30 border border-purple-500/30 rounded-xl p-4" key={`vip-banner-${language}`}>
+              <div className="flex items-center justify-center gap-3 flex-wrap animate-language-change">
                 <span className="text-2xl">⭐</span>
                 <div className="text-left flex-1 min-w-[200px]">
                   <p className="text-sm font-semibold text-white mb-1">
-                    Vrei acces la toate sesiunile?
+                    {t.wantAccess}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Devino membru VIP și accesează toate sesiunile săptămânale
+                    {t.becomeVip}
                   </p>
                 </div>
                 <button
                   onClick={toggleVipInfoModal}
                   className="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black rounded-lg font-bold text-sm transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
                 >
-                  Află mai mult
+                  {t.learnMore}
                 </button>
               </div>
             </div>
