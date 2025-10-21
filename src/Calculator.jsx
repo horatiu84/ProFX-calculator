@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "./contexts/LanguageContext";
 
 const Calculator = () => {
+  const { t } = useLanguage();
   const [accountSize, setAccountSize] = useState("");
   const [riskPerTrade, setRiskPerTrade] = useState("");
   const [stopLoss, setStopLoss] = useState("");
@@ -200,12 +202,11 @@ const Calculator = () => {
           <div className="flex items-center justify-center mb-4">
             <CalculatorIcon />
             <h1 className="text-4xl font-bold text-white ml-3">
-              Calculator <span className="text-yellow-400">Lot</span>
+              {t('calculator.title')} <span className="text-yellow-400">{t('calculator.titleHighlight')}</span>
             </h1>
           </div>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Calculează dimensiunea optimă a lot-ului pentru fiecare tranzacție
-            bazată pe riscul dorit
+            {t('calculator.subtitle')}
           </p>
         </div>
 
@@ -219,7 +220,7 @@ const Calculator = () => {
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">
-                  Parametri de intrare
+                  {t('calculator.inputTitle')}
                 </h2>
               </div>
 
@@ -227,7 +228,7 @@ const Calculator = () => {
                 {/* Pair Selection */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-3">
-                    Perechea valutară / Instrumentul
+                    {t('calculator.pairLabel')}
                   </label>
                   <div className="relative">
                     <button
@@ -240,7 +241,7 @@ const Calculator = () => {
                           selectedPair ? "text-white" : "text-gray-400"
                         }
                       >
-                        {selectedPair || "Selectează instrumentul..."}
+                        {selectedPair || t('calculator.pairPlaceholder')}
                       </span>
                       <ChevronDownIcon />
                     </button>
@@ -256,7 +257,7 @@ const Calculator = () => {
                               type="text"
                               value={searchTerm}
                               onChange={(e) => setSearchTerm(e.target.value)}
-                              placeholder="Caută instrumentul..."
+                              placeholder={t('calculator.searchPlaceholder')}
                               className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 text-white placeholder-gray-400 bg-gray-800"
                             />
                           </div>
@@ -294,13 +295,13 @@ const Calculator = () => {
                 {/* Account Size */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-3">
-                    Mărimea contului ($)
+                    {t('calculator.accountSizeLabel')}
                   </label>
                   <input
                     type="number"
                     value={accountSize}
                     onChange={(e) => setAccountSize(e.target.value)}
-                    placeholder="10000"
+                    placeholder={t('calculator.accountSizePlaceholder')}
                     className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
                   />
                 </div>
@@ -308,14 +309,14 @@ const Calculator = () => {
                 {/* Risk Per Trade */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-3">
-                    Risc per trade (%)
+                    {t('calculator.riskPerTradeLabel')}
                   </label>
                   <input
                     type="number"
                     step="0.1"
                     value={riskPerTrade}
                     onChange={(e) => setRiskPerTrade(e.target.value)}
-                    placeholder="2"
+                    placeholder={t('calculator.riskPerTradePlaceholder')}
                     className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
                   />
                 </div>
@@ -323,13 +324,13 @@ const Calculator = () => {
                 {/* Stop Loss */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-3">
-                    Stop Loss (pips)
+                    {t('calculator.stopLossLabel')}
                   </label>
                   <input
                     type="number"
                     value={stopLoss}
                     onChange={(e) => setStopLoss(e.target.value)}
-                    placeholder="50"
+                    placeholder={t('calculator.stopLossPlaceholder')}
                     className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
                   />
                 </div>
@@ -337,13 +338,13 @@ const Calculator = () => {
                 {/* Take Profit */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-3">
-                    Take Profit (pips) - opțional
+                    {t('calculator.takeProfitLabel')}
                   </label>
                   <input
                     type="number"
                     value={takeProfit}
                     onChange={(e) => setTakeProfit(e.target.value)}
-                    placeholder="100"
+                    placeholder={t('calculator.takeProfitPlaceholder')}
                     className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 text-white placeholder-gray-400 transition-all duration-300"
                   />
                 </div>
@@ -358,17 +359,17 @@ const Calculator = () => {
             <div className="relative z-10">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
-                <h2 className="text-2xl font-bold text-white">Rezultate</h2>
+                <h2 className="text-2xl font-bold text-white">{t('calculator.resultsTitle')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 backdrop-blur-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-300 font-medium">
-                      Mărimea lotului:
+                      {t('calculator.lotSizeLabel')}
                     </span>
                     <span className="text-2xl font-bold text-blue-400">
-                      {formatNumber(results.lotSize)} loturi
+                      {formatNumber(results.lotSize)} {t('calculator.lotSizeUnit')}
                     </span>
                   </div>
                 </div>
@@ -376,7 +377,7 @@ const Calculator = () => {
                 <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 backdrop-blur-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-300 font-medium">
-                      Valoarea Stop Loss:
+                      {t('calculator.stopLossValueLabel')}
                     </span>
                     <span className="text-2xl font-bold text-red-400">
                       -${formatNumber(results.stopLossValue)}
@@ -388,7 +389,7 @@ const Calculator = () => {
                   <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300 font-medium">
-                        Valoarea Take Profit:
+                        {t('calculator.takeProfitValueLabel')}
                       </span>
                       <span className="text-2xl font-bold text-green-400">
                         +${formatNumber(results.takeProfitValue)}
@@ -401,7 +402,7 @@ const Calculator = () => {
                   <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-yellow-300 font-medium">
-                        Raportul Risk/Reward:
+                        {t('calculator.riskRewardLabel')}
                       </span>
                       <span className="text-2xl font-bold text-yellow-400">
                         1:
@@ -420,18 +421,18 @@ const Calculator = () => {
                     <div className="flex items-center mb-2">
                       <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
                       <span className="font-semibold text-white">
-                        Informații despre {selectedPair}
+                        {t('calculator.pairInfoTitle')} {selectedPair}
                       </span>
                     </div>
                     <div className="ml-4 space-y-1">
                       <p>
-                        Categoria:{" "}
+                        {t('calculator.categoryLabel')}{" "}
                         <span className="text-yellow-400">
                           {allPairs[selectedPair].category}
                         </span>
                       </p>
                       <p>
-                        Valoare pip per 1 lot:{" "}
+                        {t('calculator.pipValueLabel')}{" "}
                         <span className="text-green-400">
                           ${allPairs[selectedPair].pipValue}
                         </span>
@@ -451,13 +452,13 @@ const Calculator = () => {
           <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center justify-center">
               <div className="w-3 h-3"></div>
-              📖 Cum să folosești calculatorul
+              📖 {t('calculator.howToUseTitle')}
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-gray-300">
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-blue-300 mb-3">
-                  Pasul 1: Completează datele
+                  {t('calculator.step1Title')}
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-start">
@@ -466,11 +467,10 @@ const Calculator = () => {
                     </span>
                     <div>
                       <span className="font-semibold text-white">
-                        Selectează instrumentul:
+                        {t('calculator.step1Point1Title')}
                       </span>
                       <p className="text-sm text-gray-400">
-                        Alege perechea valutară sau instrumentul pe care vrei să
-                        îl tranzacționezi (EUR/USD, Gold, etc.)
+                        {t('calculator.step1Point1Desc')}
                       </p>
                     </div>
                   </div>
@@ -480,11 +480,10 @@ const Calculator = () => {
                     </span>
                     <div>
                       <span className="font-semibold text-white">
-                        Mărimea contului:
+                        {t('calculator.step1Point2Title')}
                       </span>
                       <p className="text-sm text-gray-400">
-                        Introdu valoarea totală a contului tău de trading în
-                        dolari americani
+                        {t('calculator.step1Point2Desc')}
                       </p>
                     </div>
                   </div>
@@ -494,11 +493,10 @@ const Calculator = () => {
                     </span>
                     <div>
                       <span className="font-semibold text-white">
-                        Riscul per trade:
+                        {t('calculator.step1Point3Title')}
                       </span>
                       <p className="text-sm text-gray-400">
-                        Setează procentul din cont pe care ești dispus să îl
-                        riști (recomandat: 1-1.5%)
+                        {t('calculator.step1Point3Desc')}
                       </p>
                     </div>
                   </div>
@@ -508,11 +506,10 @@ const Calculator = () => {
                     </span>
                     <div>
                       <span className="font-semibold text-white">
-                        Stop Loss:
+                        {t('calculator.step1Point4Title')}
                       </span>
                       <p className="text-sm text-gray-400">
-                        Distanța în pips până la nivelul unde vei închide
-                        poziția la pierdere
+                        {t('calculator.step1Point4Desc')}
                       </p>
                     </div>
                   </div>
@@ -521,33 +518,31 @@ const Calculator = () => {
 
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-green-300 mb-3">
-                  Pasul 2: Interpretează rezultatele
+                  {t('calculator.step2Title')}
                 </h3>
                 <div className="space-y-3">
                   <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
                     <span className="font-semibold text-red-400">
-                      Valoarea Stop Loss:
+                      {t('calculator.step2Point1Title')}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
-                      Suma exactă în dolari pe care o vei pierde dacă se atinge
-                      Stop Loss-ul
+                      {t('calculator.step2Point1Desc')}
                     </p>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
                     <span className="font-semibold text-blue-400">
-                      Mărimea lotului:
+                      {t('calculator.step2Point2Title')}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
-                      Dimensiunea poziției calculate pentru a respecta riscul
-                      stabilit
+                      {t('calculator.step2Point2Desc')}
                     </p>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
                     <span className="font-semibold text-yellow-400">
-                      Risk/Reward:
+                      {t('calculator.step2Point3Title')}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
-                      Raportul dintre profit potențial și pierderea maximă{" "}
+                      {t('calculator.step2Point3Desc')}
                     </p>
                   </div>
                 </div>
@@ -557,33 +552,31 @@ const Calculator = () => {
             <div className="mt-8 p-6 bg-gray-800/50 rounded-xl border border-gray-600">
               <h4 className="font-bold text-orange-300 mb-3 flex items-center">
                 <span className="text-xl mr-2">⚠️</span>
-                Important de reținut:
+                {t('calculator.importantTitle')}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
                 <div className="flex items-start">
                   <span className="text-orange-400 font-bold mr-2">•</span>
                   <span>
-                    Calculatorul folosește valorile pip corecte pentru fiecare
-                    instrument
+                    {t('calculator.importantPoint1')}
                   </span>
                 </div>
                 <div className="flex items-start">
                   <span className="text-orange-400 font-bold mr-2">•</span>
                   <span>
-                    Stop Loss-ul trebuie să fie bazat pe analiza tehnică, nu pe
-                    distanță arbitrară
+                    {t('calculator.importantPoint2')}
                   </span>
                 </div>
                 <div className="flex items-start">
                   <span className="text-orange-400 font-bold mr-2">•</span>
                   <span>
-                    Verifică întotdeauna calculele înainte de a deschide poziția
+                    {t('calculator.importantPoint3')}
                   </span>
                 </div>
                 <div className="flex items-start">
                   <span className="text-orange-400 font-bold mr-2">•</span>
                   <span>
-                    Respectă disciplina și nu modifica lotul pe baza emoțiilor
+                    {t('calculator.importantPoint4')}
                   </span>
                 </div>
               </div>
@@ -614,16 +607,14 @@ const Calculator = () => {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-white mb-1">
-                  💡 Știai că...?
+                  💡 {t('calculator.infoNoteTitle')}
                 </h3>
                 <p className="text-cyan-200 text-sm leading-relaxed">
-                  Mai jos găsești{" "}
+                  {t('calculator.infoNoteText')}{" "}
                   <span className="font-bold text-white">
-                    Calculatorul de Pip
+                    {t('calculator.infoNoteBold')}
                   </span>{" "}
-                  cu explicații detaliate despre ce sunt pipsii și cum se
-                  calculează valoarea lor pe XAUUSD. Scroll în jos pentru a afla
-                  mai multe! 👇
+                  {t('calculator.infoNoteText2')}
                 </p>
               </div>
               <div className="flex-shrink-0">
@@ -656,25 +647,23 @@ const Calculator = () => {
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">
-                  Ce sunt pipsii pe XAUUSD?
+                  {t('calculator.pipInfoTitle')}
                 </h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <p className="text-gray-300 leading-relaxed">
-                    Pipul este o unitate mică folosită pentru a măsura mișcarea
-                    prețului.
+                    {t('calculator.pipInfoText1')}
                   </p>
                   <p className="text-gray-300 leading-relaxed">
-                    Pe XAUUSD (aur), un pip reprezintă o schimbare de{" "}
-                    <span className="text-amber-400 font-semibold">0.1</span> în
-                    prețul aurului.
+                    {t('calculator.pipInfoText2')}{" "}
+                    <span className="text-amber-400 font-semibold">{t('calculator.pipInfoText2Highlight')}</span>{" "}
+                    {t('calculator.pipInfoText2End')}
                   </p>
                   <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
                     <p className="text-amber-300">
-                      <strong>Exemplu:</strong> Dacă prețul aurului crește de la
-                      3980.00 la 3980.10, atunci s-a mișcat 1 pip.
+                      <strong>{t('calculator.pipInfoExample')}</strong> {t('calculator.pipInfoExampleText')}
                     </p>
                   </div>
                 </div>
@@ -695,17 +684,15 @@ const Calculator = () => {
                       />
                     </svg>
                     <h3 className="text-xl font-bold text-white">
-                      Valoarea unui pip
+                      {t('calculator.pipValueTitle')}
                     </h3>
                   </div>
                   <p className="text-gray-300">
-                    Valoarea pipului variază în funcție de dimensiunea lotului
-                    tranzacționat.
+                    {t('calculator.pipValueText1')}
                   </p>
                   <p className="text-gray-300">
-                    Un lot standard (1 lot) = 100 uncii de aur, iar valoarea
-                    unui pip pentru 1 lot este de{" "}
-                    <span className="text-green-400 font-semibold">10 USD</span>
+                    {t('calculator.pipValueText2')}{" "}
+                    <span className="text-green-400 font-semibold">{t('calculator.pipValueHighlight')}</span>
                     .
                   </p>
                 </div>
@@ -722,14 +709,14 @@ const Calculator = () => {
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">
-                  Calculator Pip
+                  {t('calculator.pipCalculatorTitle')}
                 </h2>
               </div>
 
               <div className="grid lg:grid-cols-2 gap-8">
                 <div>
                   <label className="block text-gray-300 font-medium mb-3">
-                    Introdu valoarea lotului:
+                    {t('calculator.pipCalculatorLabel')}
                   </label>
                   <input
                     type="number"
@@ -743,7 +730,7 @@ const Calculator = () => {
                   />
                   <div className="mt-4 p-4 bg-gray-700/50 rounded-xl border border-gray-600">
                     <p className="text-amber-300 text-lg">
-                      Valoare pip:{" "}
+                      {t('calculator.pipCalculatorValue')}{" "}
                       <span className="text-2xl font-bold text-white">
                         {(pipLotInput * 10).toFixed(2)} USD
                       </span>
@@ -757,13 +744,13 @@ const Calculator = () => {
                     <thead className="bg-gray-700">
                       <tr>
                         <th className="p-3 text-left font-semibold text-yellow-400">
-                          Loturi
+                          {t('calculator.tableHeaderLots')}
                         </th>
                         <th className="p-3 text-left font-semibold text-yellow-400">
-                          Valoare pip
+                          {t('calculator.tableHeaderPipValue')}
                         </th>
                         <th className="p-3 text-left font-semibold text-yellow-400">
-                          10 pipsi
+                          {t('calculator.tableHeader10Pips')}
                         </th>
                       </tr>
                     </thead>

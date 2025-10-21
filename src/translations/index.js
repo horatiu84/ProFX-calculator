@@ -7,6 +7,7 @@ import { evolutieTranslations } from './evolutie';
 import { investmentCalculatorTranslations } from './investmentCalculator';
 import { profxbookTranslations } from './profxbook';
 import { programTranslations } from './program';
+import { calculatorTranslations } from './calculator';
 
 // Funcție helper pentru a combina traducerile
 const mergeTranslations = (...translations) => {
@@ -28,7 +29,8 @@ export const translations = mergeTranslations(
   evolutieTranslations,
   investmentCalculatorTranslations,
   profxbookTranslations,
-  programTranslations
+  programTranslations,
+  calculatorTranslations
 );
 
 // Export individual pentru debugging sau utilizare selectivă
@@ -40,4 +42,5 @@ export {
   investmentCalculatorTranslations,
   profxbookTranslations,
   programTranslations,
+  calculatorTranslations,
 };
