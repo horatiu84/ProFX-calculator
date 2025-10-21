@@ -5,11 +5,77 @@ import ListaComentarii from "./components/ListaComentarii";
 // Array cu știrile - definit în afara componentei pentru stabilitate
 const newsArticles = [
     {
+      id: 4,
+      title: "Prețul aurului a revenit spectaculos la maxime istorice",
+      date: "21 Octombrie 2025",
+      category: "Metale Prețioase",
+      image: "https://images.pexels.com/photos/33539242/pexels-photo-33539242.jpeg",
+      excerpt: "După o scurtă corecție săptămâna trecută, aurul și-a recâștigat echilibrul și a revenit la prețul de maxime istorice, depășind 4.380 dolari pe uncie...",
+      content: `**Aurul, din nou la un nou vârf istoric**
+
+După o scădere de aproape 2% vinerea trecută, aurul și-a recâștigat echilibrul și a revenit luni la prețul de maxime istorice, în jurul valorii de **4.380 dolari pe uncie** pe piețele internaționale. 
+
+La nivelul cotației BNR, prețul unui gram de aur a ajuns la **606,57 lei**  cel mai ridicat nivel din istorie, depășind recordul precedent stabilit pe 16 octombrie (593,66 lei). 
+
+De la începutul anului, metalul prețios a crescut cu aproape **60%**, iar de la debutul raliului, început în 2024, valoarea s-a aproape dublat.
+
+**Cauzele revenirii spectaculoase**
+
+Evoluția prețului este alimentată de o serie de factori globali:
+
+• **Incertitudinile geopolitice** persistente la nivel mondial
+
+• **Așteptările privind noi reduceri de dobândă** din partea Rezervei Federale americane
+
+• **Tensiunile comerciale dintre SUA și China**, care continuă să afecteze piețele
+
+• **Cererea în creștere** din partea băncilor centrale și a investitorilor instituționali care caută active sigure
+
+**Context politic și economic**
+
+La nivel politic, declarațiile recente ale președintelui Donald Trump despre o abordare „mai rezonabilă" față de China au adus o ușoară relaxare în piețe.
+
+Totuși, incertitudinea legată de:
+• Negocierile comerciale
+• Prelungita închidere a guvernului american
+
+...menține presiunea asupra dolarului, favorizând aurul.
+
+**Perspective pentru următoarele luni**
+
+Analiștii se așteaptă ca trendul ascendent să continue pe termen mediu, în contextul menținerii tensiunilor economice și geopolitice. 
+
+**Previziunile internaționale:**
+
+📊 **Peste 4.400 USD/uncie** până la finalul anului
+
+📊 **Chiar 5.000 USD în 2026**, potrivit estimărilor Bank of America și Société Générale
+
+**Impactul în România**
+
+În România, piața lingourilor și monedelor de aur de investiții a înregistrat o **creștere accelerată**, susținută de interesul investitorilor mici și medii pentru active de refugiu.
+
+**Gramul de aur BNR:**
+🇷🇴 **606,57 lei** - nou record absolut
+📈 **Creștere de ~60% de la începutul anului**
+
+**Concluzie**
+
+Aurul confirmă din nou rolul său de **activ de refugiu suprem** în perioade de incertitudine economică și geopolitică. 
+
+Pentru investitori, această perioadă oferă atât oportunități, cât și provocări, fiind esențială o monitorizare constantă a factorilor fundamentali care influențează piața.
+
+💡 **Pentru traderi:** Urmăriți cu atenție nivelurile cheie de rezistență și suport, respectați managementul riscului și fiți pregătiți pentru volatilitate crescută!`,
+      tags: ["Aur", "XAUUSD", "BNR", "Investiții", "Record"],
+      author: "Echipa ProFX",
+      importance: "high"
+    },
+    {
       id: 3,
       title: "Aurul trece de 4.200$: scenariul bullish se confirmă!",
       date: "15 Octombrie 2025",
       category: "Metale Prețioase",
-      image: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&q=80",
+      image: "https://images.pexels.com/photos/366551/pexels-photo-366551.jpeg",
       excerpt: "Cu doar câteva ore în urmă scriam că aurul se apropie de 4.200$, iar acum acest prag a fost depășit! XAU/USD a atins 4.218$ în sesiunea europeană...",
       content: `**De la anticipare la confirmare**
 
@@ -72,7 +138,7 @@ Cu factorii macroeconomici, geopolitici și monetari perfect aliniați, metalul 
       title: "Aurul explodează către 4.200$ - Bank of America prevede 5.000$!",
       date: "15 Octombrie 2025",
       category: "Metale Prețioase",
-      image: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&q=80",
+      image: "https://images.pexels.com/photos/47047/gold-ingots-golden-treasure-47047.jpeg",
       excerpt: "Aurul a atins un nou maxim istoric de 4.190$ pe uncie, apropiindu-se de pragul psihologic de 4.200$. Instituții majore estimează 5.000$ pentru 2026...",
       content: `**Aurul a atins un nou maxim istoric!**
 
@@ -441,7 +507,7 @@ const Stiri = () => {
             {/* Article content */}
             <div className="prose prose-invert max-w-none">
               {news.content.split('\n').map((paragraph, index) => {
-                // Handle bold text
+                // Handle bold text as headings (full line bold)
                 if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
                   return (
                     <h3 key={index} className="text-xl font-bold text-amber-400 mt-6 mb-3">
@@ -449,19 +515,43 @@ const Stiri = () => {
                     </h3>
                   );
                 }
+                
                 // Handle bullet points
                 if (paragraph.startsWith('•')) {
+                  // Process bold within bullet points
+                  const parts = paragraph.split(/(\*\*.*?\*\*)/g);
                   return (
                     <p key={index} className="text-gray-300 leading-relaxed mb-2 pl-4">
-                      {paragraph}
+                      {parts.map((part, i) => {
+                        if (part.startsWith('**') && part.endsWith('**')) {
+                          return (
+                            <strong key={i} className="font-bold text-white">
+                              {part.replace(/\*\*/g, '')}
+                            </strong>
+                          );
+                        }
+                        return part;
+                      })}
                     </p>
                   );
                 }
-                // Regular paragraphs
+                
+                // Regular paragraphs with inline bold support
                 if (paragraph.trim()) {
+                  // Split by bold markers **text**
+                  const parts = paragraph.split(/(\*\*.*?\*\*)/g);
                   return (
                     <p key={index} className="text-gray-300 leading-relaxed mb-4">
-                      {paragraph}
+                      {parts.map((part, i) => {
+                        if (part.startsWith('**') && part.endsWith('**')) {
+                          return (
+                            <strong key={i} className="font-bold text-white">
+                              {part.replace(/\*\*/g, '')}
+                            </strong>
+                          );
+                        }
+                        return part;
+                      })}
                     </p>
                   );
                 }
