@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 
 const Calculator = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [accountSize, setAccountSize] = useState("");
   const [riskPerTrade, setRiskPerTrade] = useState("");
   const [stopLoss, setStopLoss] = useState("");
@@ -196,7 +196,7 @@ const Calculator = () => {
 
   return (
     <div className="min-h-screen text-white p-6">
-      <div className="max-w-7xl mx-auto">
+      <div key={language} className="max-w-7xl mx-auto animate-language-change">
         {/* Header Section */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
