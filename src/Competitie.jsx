@@ -73,11 +73,11 @@ const CompetitionBanner = () => {
   const getTimerText = () => {
     switch (phase) {
       case "waiting":
-        return t.timerWaiting;
+        return t.competitionTimerWaiting;
       case "running":
-        return t.timerRunning;
+        return t.competitionTimerRunning;
       default:
-        return t.timerDefault;
+        return t.competitionTimerDefault;
     }
   };
 
@@ -104,7 +104,7 @@ const CompetitionBanner = () => {
             🚨
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 tracking-wider text-center">
-            {t.title}
+            {t.competitionTitle}
           </h2>
           <span className="text-3xl sm:text-4xl font-bold text-red-500 animate-pulse ml-3">
             🚨
@@ -115,10 +115,10 @@ const CompetitionBanner = () => {
         {phase === "waiting" && (
           <div className="text-center mb-6">
             <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
-              {t.registrationsOpen}
+              {t.competitionRegistrationsOpen}
             </div>
             <p className="text-base font-semibold text-green-400 max-w-2xl mx-auto">
-              {t.registrationMessage}
+              {t.competitionRegistrationMessage}
             </p>
           </div>
         )}
@@ -132,7 +132,7 @@ const CompetitionBanner = () => {
         )}
         
         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center mb-6 tracking-tight animate-fade-in">
-          {t.subtitle} <span className="text-blue-400">FPM</span>{" "}
+          {t.competitionSubtitle} <span className="text-blue-400">FPM</span>{" "}
           <span className="text-amber-400">Trading</span>
         </h3>
         
@@ -149,36 +149,36 @@ const CompetitionBanner = () => {
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.days}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.days}</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.competitionDays}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.hours}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.hours}</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.competitionHours}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.minutes}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.minutes}</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.competitionMinutes}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.seconds}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.seconds}</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.competitionSeconds}</span>
             </div>
           </div>
         </div>
 
         <p className="text-gray-300 text-center mb-6 max-w-2xl mx-auto leading-relaxed animate-fade-in-up">
-          {t.description} <b className="text-amber-400">{t.descriptionBold}</b> {t.descriptionContinue}{" "}
+          {t.competitionDescription} <b className="text-amber-400">{t.competitionDescriptionBold}</b> {t.competitionDescriptionContinue}{" "}
           <b>
             <span className="text-blue-400">FPM</span>{" "}
             <span className="text-amber-400">Trading</span>
           </b>
-          {t.descriptionEnd}
+          {t.competitionDescriptionEnd}
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
@@ -188,7 +188,7 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition-all duration-300 border border-blue-400/50"
           >
-            {t.createAccountBtn}
+            {t.competitionCreateAccountBtn}
           </a>
           <a
             href="https://youtu.be/SnxXpX1Iei8"
@@ -196,69 +196,69 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="bg-gradient-to-r from-amber-400 to-amber-600 text-black px-6 py-3 rounded-xl font-bold shadow-md hover:from-amber-500 hover:to-amber-700 hover:scale-105 transition-all duration-300 border border-amber-300/50"
           >
-            {t.tutorialBtn}
+            {t.competitionTutorialBtn}
           </a>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-gray-600/50 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-left">
             <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-              {t.detailsTitle}
+              {t.competitionDetailsTitle}
             </h4>
             <ol className="list-decimal list-inside text-gray-300 space-y-2 text-sm md:text-base">
               <li>
-                <b className="text-white">{t.accountAmount}</b> {t.accountAmountValue}{" "}
-                <span className="uppercase text-green-400 font-bold">{t.accountAmountReal}</span>{" "}
-                {t.accountAmountAt} <span className="text-blue-400">FPM</span>{" "}
+                <b className="text-white">{t.competitionAccountAmount}</b> {t.competitionAccountAmountValue}{" "}
+                <span className="uppercase text-green-400 font-bold">{t.competitionAccountAmountReal}</span>{" "}
+                {t.competitionAccountAmountAt} <span className="text-blue-400">FPM</span>{" "}
                 <span className="text-amber-400">Trading</span>)
               </li>
               <li>
-                <b className="text-white">{t.accountType}</b> {t.accountTypeValue}
+                <b className="text-white">{t.competitionAccountType}</b> {t.competitionAccountTypeValue}
               </li>
               <li>
-                <b className="text-white">{t.startDate}</b> {t.startDateValue}
+                <b className="text-white">{t.competitionStartDate}</b> {t.competitionStartDateValue}
               </li>
               <li>
                 <b className="text-white">{t.competitionPeriod}</b> {t.competitionPeriodValue}
               </li>
               <li>
-                <b className="text-white">{t.drawdown}</b> {t.drawdownValue}{" "}
+                <b className="text-white">{t.competitionDrawdown}</b> {t.competitionDrawdownValue}{" "}
                 <span className="text-gray-400 italic">
-                  {t.drawdownRecommendation}
+                  {t.competitionDrawdownRecommendation}
                 </span>
               </li>
               <li>
-                <b className="text-white">{t.minTransactions}</b> {t.minTransactionsValue}
+                <b className="text-white">{t.competitionMinTransactions}</b> {t.competitionMinTransactionsValue}
               </li>
             </ol>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-amber-400/30 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-right">
             <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-              {t.prizesTitle}
+              {t.competitionPrizesTitle}
             </h4>
             <ul className="grid grid-cols-1 gap-3 text-gray-300 text-sm md:text-base">
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">{t.firstPlace}</span>
+                <span className="font-bold text-green-400">{t.competitionFirstPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   1000 $ <span className="ml-2 text-yellow-400">🏆</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">{t.secondPlace}</span>
+                <span className="font-bold text-green-400">{t.competitionSecondPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   600 $ <span className="ml-2 text-gray-300">🥈</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">{t.thirdPlace}</span>
+                <span className="font-bold text-green-400">{t.competitionThirdPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   400 $ <span className="ml-2 text-amber-500">🥉</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-blue-400">{t.fourthFifthPlace}</span>
+                <span className="font-bold text-blue-400">{t.competitionFourthFifthPlace}</span>
                 <span className="flex items-center text-white">
-                  {t.backpackPrize}{" "}
+                  {t.competitionBackpackPrize}{" "}
                   <span className="ml-2 text-blue-400">🎒</span>
                 </span>
               </li>
@@ -268,24 +268,24 @@ const CompetitionBanner = () => {
         
         <div className="mb-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-gray-600/50 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-up">
           <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-            {t.winnerDeterminationTitle}
+            {t.competitionWinnerDeterminationTitle}
           </h4>
           <ol className="list-decimal list-inside text-gray-300 space-y-2 pl-2 text-sm md:text-base">
             <li>
-              {t.winnerStep1}
+              {t.competitionWinnerStep1}
             </li>
             <li>
-              {t.winnerStep2} <b className="text-white">{t.winnerStep2Bold}</b>{t.winnerStep2Continue}
+              {t.competitionWinnerStep2} <b className="text-white">{t.competitionWinnerStep2Bold}</b>{t.competitionWinnerStep2Continue}
             </li>
             <li>
-              {t.winnerStep3}
+              {t.competitionWinnerStep3}
             </li>
           </ol>
         </div>
         
         <div className="mb-6 text-center animate-fade-in">
           <span className="text-red-400 font-bold uppercase text-lg block mb-2 animate-bounce">
-            {t.myfxbookWarning}
+            {t.competitionMyfxbookWarning}
           </span>
           <a
             href="https://www.youtube.com/watch?v=zFLuM0rId-M&t=16s"
@@ -293,21 +293,21 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="text-blue-400 underline font-semibold hover:text-blue-300 transition-colors duration-200"
           >
-            {t.myfxbookVideo}
+            {t.competitionMyfxbookVideo}
           </a>
         </div>
         
         <div className="text-center text-gray-300 mb-6 max-w-2xl mx-auto animate-fade-in-up delay-200">
-          {t.challengeText}
+          {t.competitionChallengeText}
         </div>
         
         {phase === "waiting" && (
           <div className="text-center bg-gradient-to-r from-blue-900/30 to-green-900/30 rounded-2xl p-6 mb-6 border border-blue-400/30 animate-fade-in-up delay-100">
             <div className="text-lg font-bold text-blue-400 mb-2">
-              {t.registerNowTitle}
+              {t.competitionRegisterNowTitle}
             </div>
             <div className="text-green-400 font-semibold">
-              {t.registerNowMessage}
+              {t.competitionRegisterNowMessage}
             </div>
           </div>
         )}
@@ -315,23 +315,23 @@ const CompetitionBanner = () => {
         <div className="text-center text-sm text-gray-400 mb-6 animate-fade-in-up delay-300">
           {phase === "waiting" ? (
             <>
-              {t.registrationInfo}
+              {t.competitionRegistrationInfo}
               <br />
-              <span className="text-blue-400 font-bold">{t.dontMiss}</span>
+              <span className="text-blue-400 font-bold">{t.competitionDontMiss}</span>
             </>
           ) : (
             <>
-              {t.contactInfo}
+              {t.competitionContactInfo}
             </>
           )}
           <br />
-          {t.community} <b className="text-amber-400">PROFX</b>
+          {t.competitionCommunity} <b className="text-amber-400">PROFX</b>
         </div>
         
         <div className="text-center font-bold text-green-400 text-lg animate-fade-in-up delay-400">
-          {t.goodLuck}
+          {t.competitionGoodLuck}
           <br />
-          <span className="text-amber-400">{t.team}</span>
+          <span className="text-amber-400">{t.competitionTeam}</span>
         </div>
       </div>
     </div>

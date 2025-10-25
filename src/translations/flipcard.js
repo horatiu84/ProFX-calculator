@@ -1,5 +1,6 @@
 export const flipcardTranslations = {
   ro: {
+    flipcard: {
     // Front of card
     frontTitle: "📜 5 REGULI DE AUR ÎN TRADING",
     rule1Label: "Spune-ți:",
@@ -31,12 +32,14 @@ export const flipcardTranslations = {
     strategy4Label: "Restul:",
     strategy4Option1: "- la sfârșitul zilei",
     strategy4Option2: "- sau dacă profitul e foarte mare 👉 securizez integral",
+    }
   },
   en: {
-    // Front of card
-    frontTitle: "📜 5 GOLDEN RULES IN TRADING",
-    rule1Label: "Tell yourself:",
-    rule1Text: "No Over Trading!!!!",
+    flipcard: {
+      // Front of card
+      frontTitle: "📜 5 GOLDEN RULES IN TRADING",
+      rule1Label: "Tell yourself:",
+      rule1Text: "No Over Trading!!!!",
     rule2Label: "Tell yourself:",
     rule2Text: "No Over Risk!!!!",
     rule3Label: "Maximum risk per Trade:",
@@ -64,5 +67,6 @@ export const flipcardTranslations = {
     strategy4Label: "The rest:",
     strategy4Option1: "- at the end of the day",
     strategy4Option2: "- or if the profit is very large 👉 secure entirely",
+    }
   }
 };

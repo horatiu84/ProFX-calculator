@@ -72,7 +72,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
       document.body.removeChild(link);
     } catch (error) {
       console.error('Download error:', error);
-      alert(t.downloadError);
+      alert(t.educatie.downloadError);
     }
   };
 
@@ -82,7 +82,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
 
   const handleDocumentLoadError = (error) => {
     console.error('PDF load error:', error);
-    setPdfError(t.pdfLoadErrorMessage);
+    setPdfError(t.educatie.pdfLoadErrorMessage);
   };
 
   if (!isOpen) return null;
@@ -111,7 +111,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
             </div>
             <div>
               <h3 className="text-lg font-bold text-white truncate max-w-[40ch]">{pdfTitle}</h3>
-              <p className="text-sm text-gray-400">{t.pdfViewerTitle}</p>
+              <p className="text-sm text-gray-400">{t.educatie.pdfViewerTitle}</p>
             </div>
           </div>
 
@@ -120,7 +120,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
             <button
               onClick={toggleFullscreen}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-              title={isFullscreen ? t.fullscreenExit : t.fullscreen}
+              title={isFullscreen ? t.educatie.fullscreenExit : t.educatie.fullscreen}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isFullscreen ? (
@@ -139,14 +139,14 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span>{t.download}</span>
+              <span>{t.educatie.download}</span>
             </button>
 
             {/* Close */}
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-              title={t.close}
+              title={t.educatie.close}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -163,17 +163,17 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">⚠️</div>
-                  <h3 className="text-xl font-bold text-white mb-2">{t.pdfLoadError}</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{t.educatie.pdfLoadError}</h3>
                   <p className="text-gray-400 mb-4 max-w-md">{pdfError}</p>
                   <div className="text-sm text-gray-500 space-y-1">
-                    <p>{t.checkFileLocation}</p>
+                    <p>{t.educatie.checkFileLocation}</p>
                     <p className="font-mono bg-gray-800 p-2 rounded">{pdfFile}</p>
                   </div>
                   <button
                     onClick={() => window.location.reload()}
                     className="mt-4 bg-amber-500 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-amber-400 transition-colors"
                   >
-                    {t.retry}
+                    {t.educatie.retry}
                   </button>
                 </div>
               </div>
@@ -203,8 +203,8 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center p-8">
                           <div className="text-6xl mb-4">❌</div>
-                          <h3 className="text-xl font-bold text-white mb-2">{t.invalidPdf}</h3>
-                          <p className="text-gray-400">{t.invalidPdfMessage}</p>
+                          <h3 className="text-xl font-bold text-white mb-2">{t.educatie.invalidPdf}</h3>
+                          <p className="text-gray-400">{t.educatie.invalidPdfMessage}</p>
                         </div>
                       </div>
                     )}
@@ -242,11 +242,11 @@ const Educatie = () => {
             setAccessGranted(true);
           }
         } else {
-          setError(t.documentNotFound);
+          setError(t.educatie.documentNotFound);
         }
       } catch (error) {
         console.error("Eroare la accesarea parolei:", error);
-        setError(t.verificationError);
+        setError(t.educatie.verificationError);
       }
     };
 
@@ -260,7 +260,7 @@ const Educatie = () => {
       setAccessGranted(true);
       setError("");
     } else {
-      setError(t.wrongPassword);
+      setError(t.educatie.wrongPassword);
     }
   };
 
@@ -288,17 +288,17 @@ const Educatie = () => {
         <div className="group relative max-w-md w-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-blue-400/30 transition-all duration-500 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">{t.accessTitle}</h2>
+            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">{t.educatie.accessTitle}</h2>
             <form onSubmit={handleSubmit} className="space-y-4 mb-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">{t.passwordLabel}</label>
-                <input type="password" placeholder={t.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
+                <label className="block text-sm text-gray-400 mb-1">{t.educatie.passwordLabel}</label>
+                <input type="password" placeholder={t.educatie.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
               </div>
               {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.accessButton}</button>
+              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.educatie.accessButton}</button>
             </form>
             <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500/80 text-white font-semibold transition-colors mb-4">
-              {showSignup ? t.signupButtonHide : t.signupButtonShow}
+              {showSignup ? t.educatie.signupButtonHide : t.educatie.signupButtonShow}
             </button>
             {showSignup && (
               <div className="mt-4 bg-gray-800/40 border border-gray-700/40 rounded-xl p-4">
@@ -319,10 +319,10 @@ const Educatie = () => {
           <span className="text-4xl">🎓</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          {t.mainTitle} <span className="text-amber-400">{t.mainTitleHighlight}</span>
+          {t.educatie.mainTitle} <span className="text-amber-400">{t.educatie.mainTitleHighlight}</span>
         </h1>
         <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-          {t.mainSubtitle}
+          {t.educatie.mainSubtitle}
         </p>
       </div>
 
@@ -334,7 +334,7 @@ const Educatie = () => {
               <Video className="w-6 h-6 text-amber-400" />
             </div>
               <h2 className="text-xl font-bold text-white">
-                {t.mt5VideoTitle}
+                {t.educatie.mt5VideoTitle}
               </h2>
             </div>
             <div className="text-center">
@@ -345,7 +345,7 @@ const Educatie = () => {
                 className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 <Video className="w-5 h-5 mr-2" />
-                {t.openYoutube}
+                {t.educatie.openYoutube}
               </a>
             </div>
           </div>
@@ -356,12 +356,12 @@ const Educatie = () => {
               <Video className="w-6 h-6 text-amber-400" />
             </div>
               <h2 className="text-xl font-bold text-white">
-                {t.trailingStopTitle}
+                {t.educatie.trailingStopTitle}
               </h2>
             </div>
             <video controls className="w-full rounded-xl shadow-lg">
               <source src="/trailing stop.mp4" type="video/mp4" />
-              {t.browserNoSupport}
+              {t.educatie.browserNoSupport}
             </video>
           </div>
         </div>
@@ -373,14 +373,14 @@ const Educatie = () => {
             <div className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center mr-3 hover:bg-amber-400/20 transition-all duration-300">
               <Video className="w-5 h-5 text-amber-400" />
             </div>
-            {t.androidTitle}
+            {t.educatie.androidTitle}
           </h2>
             <video
               controls
               className="w-full max-w-xl mx-auto aspect-video rounded-xl shadow-lg"
             >
               <source src="/tudor android.mp4" type="video/mp4" />
-              {t.browserNoSupport}
+              {t.educatie.browserNoSupport}
             </video>
           </div>
 
@@ -389,14 +389,14 @@ const Educatie = () => {
             <div className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center mr-3 hover:bg-amber-400/20 transition-all duration-300">
               <Video className="w-5 h-5 text-amber-400" />
             </div>
-            {t.iphoneTitle}
+            {t.educatie.iphoneTitle}
           </h2>
             <video
               controls
               className="w-full max-w-xl mx-auto aspect-video rounded-xl shadow-lg"
             >
               <source src="/tudor iphone.mp4" type="video/mp4" />
-              {t.browserNoSupport}
+              {t.educatie.browserNoSupport}
             </video>
           </div>
         </div>
@@ -407,29 +407,29 @@ const Educatie = () => {
           <div className="w-12 h-12 bg-gray-700/50 rounded-xl flex items-center justify-center mr-4 hover:bg-amber-400/20 transition-all duration-300">
             <BookOpen className="w-6 h-6 text-amber-400" />
           </div>
-          <h2 className="text-2xl font-bold text-white">{t.lessonsTitle}</h2>
+          <h2 className="text-2xl font-bold text-white">{t.educatie.lessonsTitle}</h2>
         </div>
 
           <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
             {[
               {
-                title: t.lesson1,
+                title: t.educatie.lesson1,
                 file: "/Curs ProFX - Lectia 1.pdf",
               },
               {
-                title: t.lesson2,
+                title: t.educatie.lesson2,
                 file: "/Curs ProFX - Lectia 2.pdf",
               },
               {
-                title: t.lesson3,
+                title: t.educatie.lesson3,
                 file: "/Curs ProFX - Lectia 3.pdf",
               },
               {
-                title: t.lesson4,
+                title: t.educatie.lesson4,
                 file: "/Curs ProFX - Lectia 4.pdf",
               },
               {
-                title: t.lesson5,
+                title: t.educatie.lesson5,
                 file: "/Curs ProFX - Lectia 5.pdf",
               },
             ].map((lesson, idx) => (
@@ -450,7 +450,7 @@ const Educatie = () => {
                            bg-gray-600/80 text-gray-200 hover:bg-gray-500/80 border border-gray-500/50 hover:border-gray-400/50"
                 >
                   <Eye className="w-4 h-4" />
-                  <span>{t.viewButton}</span>
+                  <span>{t.educatie.viewButton}</span>
                 </button>
 
                 {/* Download Button */}
@@ -462,7 +462,7 @@ const Educatie = () => {
                            bg-amber-500 hover:bg-amber-400 text-gray-900 hover:scale-[1.02] active:scale-95"
                 >
                   <Download className="w-4 h-4" />
-                  <span>{t.downloadButton}</span>
+                  <span>{t.educatie.downloadButton}</span>
                 </a>
               </div>
             </div>
@@ -476,28 +476,28 @@ const Educatie = () => {
           <div className="w-12 h-12 bg-gray-700/50 rounded-xl flex items-center justify-center mr-4 hover:bg-amber-400/20 transition-all duration-300">
             <Download className="w-6 h-6 text-amber-400" />
           </div>
-          {t.resourcesTitle}
+          {t.educatie.resourcesTitle}
         </h2>
 
           <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
             {[
               {
-                title: t.dictionary,
+                title: t.educatie.dictionary,
                 file: "/Dictionar ProFX.pdf",
                 iconColor: "text-green-400",
               },
               {
-                title: t.mt5MobileGuide,
+                title: t.educatie.mt5MobileGuide,
                 file: "/Ghid folosire mt5.pdf",
                 iconColor: "text-purple-400",
               },
               {
-                title: t.mt5ConnectionGuide,
+                title: t.educatie.mt5ConnectionGuide,
                 file: "/Ghid conectare MT5.pdf",
                 iconColor: "text-orange-400",
               },
               {
-                title: t.candleFormations,
+                title: t.educatie.candleFormations,
                 file: "/ProFX - Introducere-in-Formatiile-de-Lumanari ( Mitica ).pdf",
                 iconColor: "text-cyan-400",
               },
@@ -524,7 +524,7 @@ const Educatie = () => {
                            bg-gray-600/80 text-gray-200 hover:bg-gray-500/80 border border-gray-500/50 hover:border-gray-400/50"
                 >
                   <Eye className="w-4 h-4" />
-                  <span>{t.viewButton}</span>
+                  <span>{t.educatie.viewButton}</span>
                 </button>
 
                 {/* Download Button */}
@@ -536,7 +536,7 @@ const Educatie = () => {
                            bg-amber-500 hover:bg-amber-400 text-gray-900 hover:scale-[1.02] active:scale-95"
                 >
                   <Download className="w-4 h-4" />
-                  <span>{t.downloadButton}</span>
+                  <span>{t.educatie.downloadButton}</span>
                 </a>
               </div>
             </div>
@@ -551,7 +551,7 @@ const Educatie = () => {
           className="inline-flex items-center px-6 py-3 bg-gray-800/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-gray-200 rounded-xl transition-all duration-200"
         >
           <LogOut className="w-5 h-5 mr-2" />
-          {t.logoutButton}
+          {t.educatie.logoutButton}
         </button>
       </div>
 

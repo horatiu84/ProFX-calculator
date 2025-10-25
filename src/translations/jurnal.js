@@ -1,8 +1,8 @@
 export const jurnalTranslations = {
   ro: {
     // Header
-    title: "📖 Jurnal Trade",
-    subtitle: "Monitorizează-ți performanța de trading",
+    jurnalTitle: "📖 Jurnal Trade",
+    jurnalSubtitle: "Monitorizează-ți performanța de trading",
     modifyBalance: "Modifică Sold",
     modifyBalanceShort: "Sold",
     reports: "Rapoarte",
@@ -145,8 +145,8 @@ export const jurnalTranslations = {
   },
   en: {
     // Header
-    title: "📖 Trading Journal",
-    subtitle: "Monitor your trading performance",
+    jurnalTitle: "📖 Trading Journal",
+    jurnalSubtitle: "Monitor your trading performance",
     modifyBalance: "Modify Balance",
     modifyBalanceShort: "Balance",
     reports: "Reports",

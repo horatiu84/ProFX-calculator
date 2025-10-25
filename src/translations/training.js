@@ -1,5 +1,6 @@
 export const trainingTranslations = {
   ro: {
+    training: {
     // Access Form
     accessTitle: "Acces Training ProFX",
     passwordLabel: "Parolă",
@@ -98,12 +99,14 @@ export const trainingTranslations = {
     finalMessage1: "Vizionare productivă!",
     finalMessage2: "Echipa ProFx!",
     logoutButton: "Ieși din sesiune",
+    }
   },
   en: {
-    // Access Form
-    accessTitle: "ProFX Training Access",
-    passwordLabel: "Password",
-    passwordPlaceholder: "Enter password",
+    training: {
+      // Access Form
+      accessTitle: "ProFX Training Access",
+      passwordLabel: "Password",
+      passwordPlaceholder: "Enter password",
     accessButton: "Access",
     signupButtonShow: "Sign Up",
     signupButtonHide: "Hide Sign Up",
@@ -198,5 +201,6 @@ export const trainingTranslations = {
     finalMessage1: "Enjoy and make the most of it!",
     finalMessage2: "The ProFx Team!",
     logoutButton: "Log out",
+    }
   }
 };

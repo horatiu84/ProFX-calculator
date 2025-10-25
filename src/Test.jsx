@@ -356,12 +356,12 @@ const Test = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight`}>
           <span className="inline-block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
-            {t.quizTitle} {currentChapter.title}
+            {t.test.quizTitle} {currentChapter.title}
           </span>
         </h2>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <div className="flex items-center gap-2 relative">
-            <span className={brand.subtle}>{t.chapter}</span>
+            <span className={brand.subtle}>{t.test.chapter}</span>
             {/* Custom Glassmorphism Dropdown */}
             <div className="relative">
               <button
@@ -422,7 +422,7 @@ const Test = () => {
               checked={withTimer}
               onChange={(e) => setWithTimer(e.target.checked)}
             />
-            <span className={brand.subtle}>{t.timer}</span>
+            <span className={brand.subtle}>{t.test.timer}</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
@@ -431,7 +431,7 @@ const Test = () => {
               checked={compact}
               onChange={(e) => setCompact(e.target.checked)}
             />
-            <span className={brand.subtle}>{t.compact}</span>
+            <span className={brand.subtle}>{t.test.compact}</span>
           </label>
           {withTimer && !finished && (
             <span
@@ -498,7 +498,7 @@ const Test = () => {
             {showFeedback && (
               <div className="mt-2 p-3 rounded-xl bg-gray-800/40 border border-gray-600/40">
                 <p className="text-sm">
-                  <span className="font-semibold">{t.explanation}</span>{" "}
+                  <span className="font-semibold">{t.test.explanation}</span>{" "}
                   {current.explanation}
                 </p>
               </div>
@@ -506,12 +506,12 @@ const Test = () => {
 
             <div className="flex items-center justify-between pt-2">
               <div className={`text-sm ${brand.subtle}`}>
-                {t.currentScore}{" "}
+                {t.test.currentScore}{" "}
                 <span className="font-semibold text-white">{correctCount}</span>{" "}
-                {t.of} {total}
+                {t.test.of} {total}
               </div>
               <div className="flex items-center gap-2">
-                <Ghost onClick={resetAll}>{t.restart}</Ghost>
+                <Ghost onClick={resetAll}>{t.test.restart}</Ghost>
                 <Button
                   onClick={handleNext}
                   disabled={!showFeedback}
@@ -529,20 +529,20 @@ const Test = () => {
                 {correctCount}
               </div>
               <div>
-                <h3 className="text-xl font-bold">{t.finalResult}</h3>
+                <h3 className="text-xl font-bold">{t.test.finalResult}</h3>
                 <p className={brand.subtle + " text-sm"}>
-                  {t.answeredCorrectly}{" "}
+                  {t.test.answeredCorrectly}{" "}
                   <span className="font-semibold text-white">
                     {correctCount}
                   </span>{" "}
-                  {t.outOf} <span className="font-semibold text-white">{total}</span>{" "}
-                  {t.questions} (
+                  {t.test.outOf} <span className="font-semibold text-white">{total}</span>{" "}
+                  {t.test.questions} (
                   <span className="font-semibold text-white">{scorePct}%</span>
                   ).
                   {withTimer && (
                     <>
                       {" "}
-                      {t.completedIn}{" "}
+                      {t.test.completedIn}{" "}
                       <span className="font-mono text-white">
                         {timeFmt(Math.max(0, timeSpent || 0))}
                       </span>
@@ -567,11 +567,11 @@ const Test = () => {
             })()}
 
             <div className="flex items-center gap-2">
-              <Ghost onClick={resetAll}>{t.retakeQuiz}</Ghost>
+              <Ghost onClick={resetAll}>{t.test.retakeQuiz}</Ghost>
             </div>
             <div className="pt-2">
               <h4 className="font-semibold mb-2">
-                {t.reviewAll}
+                {t.test.reviewAll}
               </h4>
               <ReviewList />
             </div>
@@ -581,13 +581,13 @@ const Test = () => {
 
       {/* Tips */}
       <Card className="p-4 sm:p-6" accent="blue">
-        <h4 className="font-semibold mb-2">{t.usageTips}</h4>
+        <h4 className="font-semibold mb-2">{t.test.usageTips}</h4>
         <ul className={`list-disc pl-5 space-y-1 text-sm ${brand.subtle}`}>
           <li>
-            {t.tip1} <span className="font-mono">1–4</span> {t.tip1Continue}
+            {t.test.tip1} <span className="font-mono">1–4</span> {t.test.tip1Continue}
           </li>
           <li>
-            <span className="font-mono">Enter</span> {t.tip2}
+            <span className="font-mono">Enter</span> {t.test.tip2}
           </li>
           <li>
             Activează <span className={brand.accentText}>Timer</span> pentru o

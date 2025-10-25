@@ -1,5 +1,6 @@
 export const testTranslations = {
   ro: {
+    test: {
     // Header
     quizTitle: "Quiz:",
     chapter: "Capitol:",
@@ -64,13 +65,15 @@ export const testTranslations = {
     chapterRiskManagement: "Risk Management",
     chapterInflation: "Inflație & Forex",
     chapterIndicators: "Indicatori Macroeconomici Esențiali",
+    }
   },
   en: {
-    // Header
-    quizTitle: "Quiz:",
-    chapter: "Chapter:",
-    timer: "Timer",
-    compact: "Compact",
+    test: {
+      // Header
+      quizTitle: "Quiz:",
+      chapter: "Chapter:",
+      timer: "Timer",
+      compact: "Compact",
     
     // Progress
     currentScore: "Current score:",
@@ -130,5 +133,6 @@ export const testTranslations = {
     chapterRiskManagement: "Risk Management",
     chapterInflation: "Inflation & Forex",
     chapterIndicators: "Essential Macroeconomic Indicators",
+    }
   }
 };

@@ -96,7 +96,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile, translations }) =>
             </div>
             <div>
               <h3 className="text-lg font-bold text-white truncate max-w-[40ch]">{pdfTitle}</h3>
-              <p className="text-sm text-gray-400">{t.pdfViewer}</p>
+              <p className="text-sm text-gray-400">{t.howTo.pdfViewer}</p>
             </div>
           </div>
 
@@ -124,14 +124,14 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile, translations }) =>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span>{t.download}</span>
+              <span>{t.howTo.download}</span>
             </button>
 
             {/* Close */}
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-              title={t.close}
+              title={t.howTo.close}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -148,17 +148,17 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile, translations }) =>
               <div className="flex items-center justify-center h-full">
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">⚠️</div>
-                  <h3 className="text-xl font-bold text-white mb-2">{t.errorLoading}</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{t.howTo.errorLoading}</h3>
                   <p className="text-gray-400 mb-4 max-w-md">{pdfError}</p>
                   <div className="text-sm text-gray-500 space-y-1">
-                    <p>{t.errorVerify}</p>
+                    <p>{t.howTo.errorVerify}</p>
                     <p className="font-mono bg-gray-800 p-2 rounded">{pdfFile}</p>
                   </div>
                   <button
                     onClick={() => window.location.reload()}
                     className="mt-4 bg-amber-500 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-amber-400 transition-colors"
                   >
-                    {t.retryButton}
+                    {t.howTo.retryButton}
                   </button>
                 </div>
               </div>
@@ -188,8 +188,8 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile, translations }) =>
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center p-8">
                           <div className="text-6xl mb-4">❌</div>
-                          <h3 className="text-xl font-bold text-white mb-2">{t.invalidPDF}</h3>
-                          <p className="text-gray-400">{t.invalidPDFMessage}</p>
+                          <h3 className="text-xl font-bold text-white mb-2">{t.howTo.invalidPDF}</h3>
+                          <p className="text-gray-400">{t.howTo.invalidPDFMessage}</p>
                         </div>
                       </div>
                     )}
@@ -237,7 +237,7 @@ const HowTo = () => {
         document.body.removeChild(link);
       } catch (error) {
         console.error('Download error:', error);
-        alert(t.downloadError);
+        alert(t.howTo.downloadError);
       }
       setDownloadingItem(null);
     }, 1500);
@@ -256,48 +256,48 @@ const HowTo = () => {
   const guides = [
     {
       id: 1,
-      title: t.guide1Title,
-      description: t.guide1Description,
+      title: t.howTo.guide1Title,
+      description: t.howTo.guide1Description,
       fileName: '/pdfs/Ghid conectare MT5.pdf',
       pdfFile: '/pdfs/Ghid conectare MT5.pdf',
       icon: '🔗',
       color: 'from-blue-600 to-cyan-600',
       hoverColor: 'from-blue-500 to-cyan-500',
-      features: [t.guide1Feature1, t.guide1Feature2, t.guide1Feature3],
-      difficulty: t.difficultyBeginner,
+      features: [t.howTo.guide1Feature1, t.howTo.guide1Feature2, t.howTo.guide1Feature3],
+      difficulty: t.howTo.difficultyBeginner,
     },
     {
       id: 2,
-      title: t.guide2Title,
-      description: t.guide2Description,
+      title: t.howTo.guide2Title,
+      description: t.howTo.guide2Description,
       fileName: '/pdfs/Ghid folosire mt5.pdf',
       pdfFile: '/pdfs/Ghid folosire mt5.pdf',
       icon: '📱',
       color: 'from-emerald-600 to-teal-600',
       hoverColor: 'from-emerald-500 to-teal-500',
-      features: [t.guide2Feature1, t.guide2Feature2, t.guide2Feature3],
-      difficulty: t.difficultyBeginner,
+      features: [t.howTo.guide2Feature1, t.howTo.guide2Feature2, t.howTo.guide2Feature3],
+      difficulty: t.howTo.difficultyBeginner,
     },
     {
       id: 3,
-      title: t.guide3Title,
-      description: t.guide3Description,
+      title: t.howTo.guide3Title,
+      description: t.howTo.guide3Description,
       fileName: '/pdfs/Dictionar ProFX.pdf',
       pdfFile: '/pdfs/Dictionar ProFX.pdf',
       icon: '📖',
       color: 'from-purple-600 to-indigo-600',
       hoverColor: 'from-purple-500 to-indigo-500',
-      features: [t.guide3Feature1, t.guide3Feature2, t.guide3Feature3],
-      difficulty: t.difficultyAll,
+      features: [t.howTo.guide3Feature1, t.howTo.guide3Feature2, t.howTo.guide3Feature3],
+      difficulty: t.howTo.difficultyAll,
     },
   ];
 
   const getDifficultyColor = (difficulty) => {
-    if (difficulty === t.difficultyBeginner) {
+    if (difficulty === t.howTo.difficultyBeginner) {
       return 'bg-green-500/20 text-green-300 border-green-500/30';
-    } else if (difficulty === t.difficultyIntermediate) {
+    } else if (difficulty === t.howTo.difficultyIntermediate) {
       return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-    } else if (difficulty === t.difficultyAdvanced) {
+    } else if (difficulty === t.howTo.difficultyAdvanced) {
       return 'bg-red-500/20 text-red-300 border-red-500/30';
     } else {
       return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
@@ -312,27 +312,27 @@ const HowTo = () => {
       
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-            {t.mainTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">{t.mainTitleHighlight}</span>
+            {t.howTo.mainTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">{t.howTo.mainTitleHighlight}</span>
           </h1>
 
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            {t.subtitle}
+            {t.howTo.subtitle}
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat1Value}</div>
-            <div className="text-gray-300">{t.stat1Label}</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.howTo.stat1Value}</div>
+            <div className="text-gray-300">{t.howTo.stat1Label}</div>
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat2Value}</div>
-            <div className="text-gray-300">{t.stat2Label}</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.howTo.stat2Value}</div>
+            <div className="text-gray-300">{t.howTo.stat2Label}</div>
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat3Value}</div>
-            <div className="text-gray-300">{t.stat3Label}</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.howTo.stat3Value}</div>
+            <div className="text-gray-300">{t.howTo.stat3Label}</div>
           </div>
         </div>
 
@@ -400,7 +400,7 @@ const HowTo = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    <span>{t.viewButton}</span>
+                    <span>{t.howTo.viewButton}</span>
                   </button>
 
                   {/* Download Button */}
@@ -419,14 +419,14 @@ const HowTo = () => {
                     {downloadingItem === guide.fileName ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent"></div>
-                        <span>{t.downloadingButton}</span>
+                        <span>{t.howTo.downloadingButton}</span>
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span>{t.downloadButton}</span>
+                        <span>{t.howTo.downloadButton}</span>
                       </>
                     )}
                   </button>
@@ -443,15 +443,15 @@ const HowTo = () => {
         {/* Tips Section */}
         <div className="mt-16 bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">{t.tipsTitle}</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">{t.howTo.tipsTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-8 h-8 bg-amber-400/20 rounded-lg flex items-center justify-center">
                   <span className="text-amber-400 font-bold text-sm">1</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">{t.tip1Title}</h4>
-                  <p className="text-gray-400 text-sm">{t.tip1Description}</p>
+                  <h4 className="text-white font-medium mb-1">{t.howTo.tip1Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.howTo.tip1Description}</p>
                 </div>
               </div>
 
@@ -460,8 +460,8 @@ const HowTo = () => {
                   <span className="text-amber-400 font-bold text-sm">2</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">{t.tip2Title}</h4>
-                  <p className="text-gray-400 text-sm">{t.tip2Description}</p>
+                  <h4 className="text-white font-medium mb-1">{t.howTo.tip2Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.howTo.tip2Description}</p>
                 </div>
               </div>
 
@@ -470,8 +470,8 @@ const HowTo = () => {
                   <span className="text-amber-400 font-bold text-sm">3</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">{t.tip3Title}</h4>
-                  <p className="text-gray-400 text-sm">{t.tip3Description}</p>
+                  <h4 className="text-white font-medium mb-1">{t.howTo.tip3Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.howTo.tip3Description}</p>
                 </div>
               </div>
             </div>

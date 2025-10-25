@@ -115,7 +115,28 @@ const TradingJournal = () => {
 
   // Synchronize trades and balances with localStorage
   useEffect(() => {
-    localStorage.setItem("trades", JSON.stringify(trades));
+    // PROTECȚIE: Nu suprascrie localStorage cu array gol dacă existau date
+    const currentSaved = localStorage.getItem("trades");
+    const currentData = currentSaved ? JSON.parse(currentSaved) : [];
+    
+    // Salvează doar dacă:
+    // 1. Nu există date salvate (prima folosire)
+    // 2. Sau noul array are date
+    // 3. Sau vechiul array era deja gol
+    if (!currentSaved || trades.length > 0 || currentData.length === 0) {
+      localStorage.setItem("trades", JSON.stringify(trades));
+      
+      // Backup automat la fiecare modificare (dacă există date)
+      if (trades.length > 0) {
+        const timestamp = new Date().toISOString();
+        localStorage.setItem("trades_backup_" + timestamp.substring(0, 10), JSON.stringify(trades));
+        
+        // Păstrează doar ultimele 7 backup-uri
+        const allKeys = Object.keys(localStorage);
+        const backupKeys = allKeys.filter(k => k.startsWith("trades_backup_")).sort().reverse();
+        backupKeys.slice(7).forEach(k => localStorage.removeItem(k));
+      }
+    }
   }, [trades]);
 
   useEffect(() => {
@@ -471,9 +492,9 @@ const TradingJournal = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                {t.title}
+                {t.jurnalTitle}
               </h1>
-              <p className="text-gray-400 mt-2 text-sm sm:text-base">{t.subtitle}</p>
+              <p className="text-gray-400 mt-2 text-sm sm:text-base">{t.jurnalSubtitle}</p>
             </div>
             <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <button
