@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../db/FireBase.js";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const FormularAnonim = () => {
+  const { language, translations } = useLanguage();
+  const t = translations.formularFeedback;
+  
   const [educatie, setEducatie] = useState("");
   const [liveTrade, setLiveTrade] = useState("");
   const [mesaj, setMesaj] = useState("");
@@ -15,15 +19,15 @@ const FormularAnonim = () => {
     setSuccess(false);
 
     if (!educatie) {
-      setError("Te rog să alegi o notă pentru Educație.");
+      setError(t.errorEducation);
       return;
     }
     if (!liveTrade) {
-      setError("Te rog să alegi o notă pentru Live/Trade.");
+      setError(t.errorLiveTrade);
       return;
     }
     if (!mesaj.trim()) {
-      setError("Te rog să scrii un mesaj.");
+      setError(t.errorMessage);
       return;
     }
 
@@ -39,22 +43,22 @@ const FormularAnonim = () => {
       setLiveTrade("");
       setMesaj("");
     } catch (err) {
-      setError("Eroare la trimiterea formularului: " + err.message);
+      setError(t.errorSubmit + err.message);
     }
   };
 
   return (
-    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mt-5 max-w-md mx-auto text-white hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+    <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mt-5 max-w-md mx-auto text-white hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden animate-language-change">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       <div className="relative z-10">
         <h2 className="text-center text-lg font-semibold mb-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">
-          Formular Anonim pentru Feedback
+          {t.title}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
           <label className="text-sm text-gray-300" htmlFor="educatie">
-            Educație (nota 1-10):
+            {t.educationLabel}
           </label>
           <select
             id="educatie"
@@ -63,7 +67,7 @@ const FormularAnonim = () => {
             className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
             required
           >
-            <option value="">-- Alege o nota --</option>
+            <option value="">{t.selectGrade}</option>
             {[...Array(10)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1}
@@ -72,7 +76,7 @@ const FormularAnonim = () => {
           </select>
 
           <label className="text-sm text-gray-300" htmlFor="liveTrade">
-            Sesiuni Live/Trade (nota 1-10):
+            {t.liveTradeLabel}
           </label>
           <select
             id="liveTrade"
@@ -81,7 +85,7 @@ const FormularAnonim = () => {
             className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
             required
           >
-            <option value="">-- Alege o nota --</option>
+            <option value="">{t.selectGrade}</option>
             {[...Array(10)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1}
@@ -90,7 +94,7 @@ const FormularAnonim = () => {
           </select>
 
           <label className="text-sm text-gray-300" htmlFor="mesaj">
-            Mesaj/Feedback către noi:
+            {t.messageLabel}
           </label>
           <textarea
             id="mesaj"
@@ -98,7 +102,7 @@ const FormularAnonim = () => {
             onChange={(e) => setMesaj(e.target.value)}
             rows={4}
             className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white resize-none hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
-            placeholder="Scrie un mesaj sau feedback complet"
+            placeholder={t.messagePlaceholder}
             required
           />
 
@@ -106,11 +110,11 @@ const FormularAnonim = () => {
             type="submit"
             className="px-5 py-2 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl shadow-md transition duration-300 hover:bg-gray-700/50 hover:border-amber-400/50 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
           >
-            Trimite Feedback
+            {t.submitButton}
           </button>
 
           <p className="text-xs text-gray-400 text-center">
-            Feedbackul tău este complet anonim și ne ajută să ne îmbunătățim.
+            {t.anonymousNote}
           </p>
 
           {error && (
@@ -132,7 +136,7 @@ const FormularAnonim = () => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              Mulțumim pentru feedback!
+              {t.thankYou}
             </p>
           )}
         </form>

@@ -9,6 +9,16 @@ import { profxbookTranslations } from './profxbook';
 import { programTranslations } from './program';
 import { calculatorTranslations } from './calculator';
 import { stiriTranslations } from './stiri';
+import { galerieTranslations } from './galerie';
+import { formularFeedbackTranslations } from './formularFeedback';
+import { formularConcursTranslations } from './formularConcurs';
+import { competitieTranslations } from './competitie';
+import { howToTranslations } from './howTo';
+import { testTranslations } from './test';
+import { jurnalTranslations } from './jurnal';
+import { educatieTranslations } from './educatie';
+import { trainingTranslations } from './training';
+import { flipcardTranslations } from './flipcard';
 
 // Funcție helper pentru a combina traducerile
 const mergeTranslations = (...translations) => {
@@ -32,7 +42,17 @@ export const translations = mergeTranslations(
   profxbookTranslations,
   programTranslations,
   calculatorTranslations,
-  stiriTranslations
+  stiriTranslations,
+  galerieTranslations,
+  formularFeedbackTranslations,
+  formularConcursTranslations,
+  competitieTranslations,
+  howToTranslations,
+  testTranslations,
+  jurnalTranslations,
+  educatieTranslations,
+  trainingTranslations,
+  flipcardTranslations
 );
 
 // Export individual pentru debugging sau utilizare selectivă
@@ -46,4 +66,14 @@ export {
   programTranslations,
   calculatorTranslations,
   stiriTranslations,
+  galerieTranslations,
+  formularFeedbackTranslations,
+  formularConcursTranslations,
+  competitieTranslations,
+  howToTranslations,
+  testTranslations,
+  jurnalTranslations,
+  educatieTranslations,
+  trainingTranslations,
+  flipcardTranslations,
 };

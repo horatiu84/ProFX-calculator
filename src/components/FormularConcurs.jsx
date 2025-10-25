@@ -11,8 +11,12 @@ import { db } from "../db/FireBase.js";
 import PhoneInput from "react-phone-number-input";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import "react-phone-number-input/style.css";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const FormularInscriereConcurs = () => {
+  const { language, translations } = useLanguage();
+  const t = translations.formularConcurs;
+  
   const [nume, setNume] = useState("");
   const [telefon, setTelefon] = useState("");
   const [linkMyFxBook, setLinkMyFxBook] = useState("");
@@ -25,18 +29,18 @@ const FormularInscriereConcurs = () => {
     setSuccess(false);
 
     if (!nume || !telefon || !linkMyFxBook) {
-      setError("Toate câmpurile sunt obligatorii!");
+      setError(t.errorAllFields);
       return;
     }
     if (!isValidPhoneNumber(telefon)) {
-      setError("Numărul de telefon este invalid pentru țara selectată!");
+      setError(t.errorInvalidPhone);
       return;
     }
     // Validare simplă pentru link (poate fi îmbunătățită)
     try {
       new URL(linkMyFxBook);
     } catch (_) {
-      setError("Link-ul MyFxBook este invalid! Trebuie să fie un URL valid.");
+      setError(t.errorInvalidUrl);
       return;
     }
 
@@ -48,9 +52,7 @@ const FormularInscriereConcurs = () => {
       );
       const querySnapshot = await getDocs(telefonQuery);
       if (querySnapshot.size > 0) {
-        setError(
-          "Acest număr de telefon a fost deja înscris."
-        );
+        setError(t.errorDuplicatePhone);
         return;
       }
 
@@ -65,22 +67,22 @@ const FormularInscriereConcurs = () => {
       setTelefon("");
       setLinkMyFxBook("");
     } catch (err) {
-      setError("Eroare la înscriere: " + err.message);
+      setError(t.errorSubmit + err.message);
     }
   };
 
   return (
-    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mt-16 mb-16 max-w-md mx-auto text-white hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+    <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mt-16 mb-16 max-w-md mx-auto text-white hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden animate-language-change">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       <div className="relative z-10">
         <h2 className="text-center text-lg font-semibold mb-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">
-          Înscriere la Concurs
+          {t.title}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
           <label className="text-sm text-gray-300" htmlFor="nume">
-            Nume și prenume:
+            {t.nameLabel}
           </label>
           <input
             type="text"
@@ -88,12 +90,12 @@ const FormularInscriereConcurs = () => {
             value={nume}
             onChange={(e) => setNume(e.target.value)}
             className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
-            placeholder="Introdu numele și prenumele tău"
+            placeholder={t.namePlaceholder}
             required
           />
 
           <label className="text-sm text-gray-300" htmlFor="telefon">
-            Număr de telefon:
+            {t.phoneLabel}
           </label>
           <PhoneInput
             international
@@ -103,12 +105,12 @@ const FormularInscriereConcurs = () => {
             className="PhoneInput dark-theme"
             inputClassName="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
             countrySelectClassName="bg-gray-800/50 text-white border-gray-600/50 rounded-xl"
-            placeholder="Introdu numărul tău"
+            placeholder={t.phonePlaceholder}
             required
           />
 
           <label className="text-sm text-gray-300" htmlFor="linkMyFxBook">
-            Link MyFxBook:
+            {t.myfxbookLabel}
           </label>
           <input
             type="url"
@@ -116,7 +118,7 @@ const FormularInscriereConcurs = () => {
             value={linkMyFxBook}
             onChange={(e) => setLinkMyFxBook(e.target.value)}
             className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
-            placeholder="Introdu link-ul tău MyFxBook"
+            placeholder={t.myfxbookPlaceholder}
             required
           />
 
@@ -124,11 +126,11 @@ const FormularInscriereConcurs = () => {
             type="submit"
             className="px-5 py-2 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl shadow-md transition duration-300 hover:bg-gray-700/50 hover:border-amber-400/50 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
           >
-            Înscrie-te la Concurs
+            {t.submitButton}
           </button>
 
           <p className="text-xs text-gray-400 text-center">
-            Asigură-te că informațiile sunt corecte înainte de înscriere.
+            {t.infoNote}
           </p>
 
           {error && (
@@ -150,7 +152,7 @@ const FormularInscriereConcurs = () => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              Înscriere reușită!
+              {t.successMessage}
             </p>
           )}
         </form>

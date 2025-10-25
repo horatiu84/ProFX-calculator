@@ -3,9 +3,13 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
+import { useLanguage } from '../contexts/LanguageContext';
 
 
 const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance }) => {
+  const { translations, language } = useLanguage();
+  const t = translations;
+  
   // State for report configuration
   const [reportPeriod, setReportPeriod] = useState('monthly');
   const [customStartDate, setCustomStartDate] = useState('');
@@ -136,8 +140,8 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
     // Prepare chart data
     const profitLossOverTime = calculateCumulativeProfitLoss(filtered);
     const winLossDistribution = [
-      { name: 'Trade-uri câștigate', value: winningTrades.length },
-      { name: 'Trade-uri pierdute', value: losingTrades.length }
+      { name: t.winningTrades, value: winningTrades.length },
+      { name: t.losingTrades, value: losingTrades.length }
     ];
     
     // Calculate trade type distribution with potential grouping
@@ -145,8 +149,8 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
     const sellTrades = filtered.filter(t => t.type === 'sell').length;
     
     const tradeTypeDistribution = [
-      { name: 'Buy', value: buyTrades },
-      { name: 'Sell', value: sellTrades }
+      { name: t.buyTrade, value: buyTrades },
+      { name: t.sellTrade, value: sellTrades }
     ];
     
     const currencyPairPerformance = calculateCurrencyPairPerformance(filtered);
@@ -247,7 +251,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
       
       if (othersTotal !== 0) { // Only add "Others" if there's significant data
         topPerformers.push({
-          pair: `Altele (${others.length})`,
+          pair: `${t.others} (${others.length})`,
           profitLoss: Math.round(othersTotal * 100) / 100,
           count: othersCount
         });
@@ -263,7 +267,8 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
 
   return (
     <div 
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4"
+      key={language}
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 p-4 animate-language-change"
       onClick={onClose}
     >
       <div className="flex items-start justify-center min-h-screen py-4">
@@ -274,7 +279,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
           {/* Header */}
           <div className="p-6 border-b border-white/10">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-yellow-400">📊 Rapoarte Performanță</h2>
+              <h2 className="text-2xl font-bold text-yellow-400">{t.reportsTitle}</h2>
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-white text-2xl transition-colors"
@@ -287,16 +292,16 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
             <div className="flex flex-wrap gap-4 items-end">
               <div>
                 <label className="block text-sm font-semibold text-gray-300 mb-2">
-                  Perioada Raport
+                  {t.reportPeriod}
                 </label>
                 <select
                   value={reportPeriod}
                   onChange={(e) => setReportPeriod(e.target.value)}
                   className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
-                  <option value="weekly">Săptămâna aceasta</option>
-                  <option value="monthly">Luna aceasta</option>
-                  <option value="custom">Interval personalizat</option>
+                  <option value="weekly">{t.weeklyPeriod}</option>
+                  <option value="monthly">{t.monthlyPeriod}</option>
+                  <option value="custom">{t.customPeriod}</option>
                 </select>
               </div>
               
@@ -304,7 +309,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                 <>
                   <div>
                     <label className="block text-sm font-semibold text-gray-300 mb-2">
-                      Data început
+                      {t.startDate}
                     </label>
                     <input
                       type="date"
@@ -315,7 +320,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-300 mb-2">
-                      Data sfârșit
+                      {t.endDate}
                     </label>
                     <input
                       type="date"
@@ -335,24 +340,24 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
           <div className="p-6">
             {!reportData ? (
               <div className="text-center text-gray-400 py-12">
-                <p className="text-lg">🔍 Nu au fost găsite trade-uri pentru perioada selectată.</p>
-                <p className="text-sm mt-2">Încearcă să selectezi o altă perioadă sau să adaugi trade-uri noi.</p>
+                <p className="text-lg">{t.noTradesFound}</p>
+                <p className="text-sm mt-2">{t.tryDifferentPeriod}</p>
               </div>
             ) : (
               <>
                 {/* Key Metrics Summary */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
-                    <h3 className="text-sm font-medium text-blue-400">Total Trade-uri</h3>
+                    <h3 className="text-sm font-medium text-blue-400">{t.totalTrades}</h3>
                     <p className="text-2xl font-bold text-white">{reportData.totalTrades}</p>
                   </div>
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
-                    <h3 className="text-sm font-medium text-green-400">Rata de câștig</h3>
+                    <h3 className="text-sm font-medium text-green-400">{t.winRate}</h3>
                     <p className="text-2xl font-bold text-white">{reportData.winRate.toFixed(1)}%</p>
                   </div>
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
                     <h3 className={`text-sm font-medium ${reportData.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      Profit Net Total
+                      {t.netProfit}
                     </h3>
                     <p className={`text-2xl font-bold ${reportData.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       ${reportData.totalProfitLoss.toFixed(2)}
@@ -360,18 +365,18 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                   </div>
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl group relative">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-purple-400">Performanță P/L</h3>
+                      <h3 className="text-sm font-medium text-purple-400">{t.performancePL}</h3>
                       <div className="relative">
                         <span className="text-purple-400 cursor-help text-xs">ⓘ</span>
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-80 bg-gray-900 border border-purple-400/30 rounded-xl p-4 text-xs text-gray-300 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                          <div className="text-purple-400 font-semibold mb-2">Formula: Câștig Total ÷ Pierderi Totale</div>
+                          <div className="text-purple-400 font-semibold mb-2">{t.formulaRR}</div>
                           <div className="space-y-1 mb-3">
-                            <div><span className="text-green-400">• &gt; 1.0:</span> Excelent! Câștigi total mai mult decât pierzi</div>
-                            <div><span className="text-yellow-400">• = 1.0:</span> Echilibrat - câștigi total cât pierzi total</div>
-                            <div><span className="text-red-400">• &lt; 1.0:</span> Risc mare - pierzi total mai mult decât câștigi</div>
+                            <div><span className="text-green-400">• &gt; 1.0:</span> {t.rrExcellent}</div>
+                            <div><span className="text-yellow-400">• = 1.0:</span> {t.rrBalanced}</div>
+                            <div><span className="text-red-400">• &lt; 1.0:</span> {t.rrRisky}</div>
                           </div>
                           <div className="text-xs text-gray-400 border-t border-gray-700 pt-2">
-                            <strong>Exemplu:</strong> Câștigi $1000 total, pierzi $400 total → 1000÷400 = 2.5 (excelent!)
+                            <strong>{language === 'ro' ? 'Exemplu' : 'Example'}:</strong> {t.rrExample}
                           </div>
                           {/* Tooltip arrow */}
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
@@ -386,10 +391,10 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                         reportData.riskRewardRatio > 0.8 ? 'bg-orange-500/20 text-orange-400' :
                         'bg-red-500/20 text-red-400'
                       }`}>
-                        {reportData.riskRewardRatio > 1.5 ? 'Excelent' :
-                         reportData.riskRewardRatio > 1.0 ? 'Bun' :
-                         reportData.riskRewardRatio > 0.8 ? 'Acceptabil' :
-                         'Risc Mare'}
+                        {reportData.riskRewardRatio > 1.5 ? t.excellent :
+                         reportData.riskRewardRatio > 1.0 ? t.good :
+                         reportData.riskRewardRatio > 0.8 ? t.acceptable :
+                         t.highRisk}
                       </span>
                     </div>
                   </div>
@@ -403,19 +408,19 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                       <div className="bg-white/5 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 shadow-2xl">
                         <div className="flex items-center mb-3">
                           <span className="text-2xl mr-2">🏆</span>
-                          <h3 className="text-lg font-semibold text-green-400">Cel mai bun trade</h3>
+                          <h3 className="text-lg font-semibold text-green-400">{t.bestTrade}</h3>
                         </div>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Pereche:</span>
+                            <span className="text-gray-300">{t.pair}:</span>
                             <span className="text-yellow-400 font-semibold">{reportData.bestTrade.pair}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Data:</span>
+                            <span className="text-gray-300">{t.date}:</span>
                             <span className="text-white">{reportData.bestTrade.displayDate || reportData.bestTrade.date}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Tip:</span>
+                            <span className="text-gray-300">{t.type}:</span>
                             <span className={`px-2 py-1 rounded text-xs font-semibold ${
                               reportData.bestTrade.type === 'buy' 
                                 ? 'bg-green-500/20 text-green-400' 
@@ -425,7 +430,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                             </span>
                           </div>
                           <div className="flex justify-between items-center mt-4 pt-3 border-t border-green-500/20">
-                            <span className="text-gray-300">Profit:</span>
+                            <span className="text-gray-300">{t.profit}:</span>
                             <span className="text-2xl font-bold text-green-400">
                               +${reportData.bestTrade.profitLoss.toFixed(2)}
                             </span>
@@ -439,19 +444,19 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                       <div className="bg-white/5 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 shadow-2xl">
                         <div className="flex items-center mb-3">
                           <span className="text-2xl mr-2">💔</span>
-                          <h3 className="text-lg font-semibold text-red-400">Cea mai mare pierdere</h3>
+                          <h3 className="text-lg font-semibold text-red-400">{t.worstLoss}</h3>
                         </div>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Pereche:</span>
+                            <span className="text-gray-300">{t.pair}:</span>
                             <span className="text-yellow-400 font-semibold">{reportData.worstTrade.pair}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Data:</span>
+                            <span className="text-gray-300">{t.date}:</span>
                             <span className="text-white">{reportData.worstTrade.displayDate || reportData.worstTrade.date}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-300">Tip:</span>
+                            <span className="text-gray-300">{t.type}:</span>
                             <span className={`px-2 py-1 rounded text-xs font-semibold ${
                               reportData.worstTrade.type === 'buy' 
                                 ? 'bg-green-500/20 text-green-400' 
@@ -461,7 +466,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                             </span>
                           </div>
                           <div className="flex justify-between items-center mt-4 pt-3 border-t border-red-500/20">
-                            <span className="text-gray-300">Pierdere:</span>
+                            <span className="text-gray-300">{t.loss}:</span>
                             <span className="text-2xl font-bold text-red-400">
                               -${Math.abs(reportData.worstTrade.profitLoss).toFixed(2)}
                             </span>
@@ -476,7 +481,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Profit/Loss Over Time */}
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                    <h3 className="text-lg font-semibold mb-4 text-white">📈 Evoluția Profit/Pierdere</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-white">{t.plEvolution}</h3>
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart data={reportData.profitLossOverTime}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -511,7 +516,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
                           dataKey="cumulative" 
                           stroke="#F59E0B" 
                           strokeWidth={3}
-                          name="P&L Cumulativ"
+                          name={t.plCumulative}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -519,7 +524,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
 
                   {/* Win/Loss Distribution */}
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                    <h3 className="text-lg font-semibold mb-4 text-white">🎯 Distribuția Câștig/Pierdere</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-white">{t.winLossDistribution}</h3>
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
                         <Pie
@@ -571,7 +576,7 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
 
                   {/* Trade Types */}
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                    <h3 className="text-lg font-semibold mb-4 text-white">🔄 Tipuri de Trade-uri</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-white">{t.tradeTypes}</h3>
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
                         <Pie
@@ -623,11 +628,11 @@ const ReportsModal = ({ trades, isOpen, onClose, accountBalance, initialBalance 
 
                   {/* Currency Pair Performance */}
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                    <h3 className="text-lg font-semibold mb-4 text-white">💱 Performanța pe Perechi Valutare</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-white">{t.currencyPairPerformance}</h3>
                     <div className="text-xs text-gray-400 mb-2">
                       {reportData.currencyPairPerformance.length > 10 ? 
-                        "Afișăm top 10 performeri + restul grupate" : 
-                        `${reportData.currencyPairPerformance.length} perechi valutare`}
+                        t.topPerformers : 
+                        `${reportData.currencyPairPerformance.length} ${t.currencyPairs}`}
                     </div>
                     <ResponsiveContainer 
                       width="100%" 

@@ -1,22 +1,26 @@
 import React from "react";
+import { useLanguage } from "./contexts/LanguageContext";
 
 const Raport = () => {
+  const { translations, language } = useLanguage();
+  const t = translations;
+
   const rapoarte = [
-    { label: "Luna Mai 2025", href: "/Rapoarte/RaportMai.html" },
-    { label: "Luna Iunie 2025", href: "/Rapoarte/RaportIunie.html" },
-    { label: "Luna Iulie 2025", href: "/Rapoarte/RaportIulie.html" },
-    { label: "Luna August 2025", href: "/Rapoarte/RaportAugust.html" },
-    { label: "Luna Septembrie 2025", href: "/Rapoarte/RaportSeptembrie.html" },
+    { label: t.raportMay, href: "/Rapoarte/RaportMai.html" },
+    { label: t.raportJune, href: "/Rapoarte/RaportIunie.html" },
+    { label: t.raportJuly, href: "/Rapoarte/RaportIulie.html" },
+    { label: t.raportAugust, href: "/Rapoarte/RaportAugust.html" },
+    { label: t.raportSeptember, href: "/Rapoarte/RaportSeptembrie.html" },
   ];
 
   return (
-    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-md mx-auto hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+    <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-md mx-auto hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden animate-language-change">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       <div className="relative z-10">
         <h2 className="text-xl font-semibold mb-6 text-center text-blue-400 group-hover:text-blue-300 transition-colors duration-300">
-          📝 Jurnal tranzacții lunare
+          {t.raportTitle}
         </h2>
 
         <div className="space-y-3">

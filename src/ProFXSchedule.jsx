@@ -327,11 +327,11 @@ const ProFXSchedule = () => {
     
       <WeeklySchedule />
       {/* Card-ul cu următorul webinar */}
-      <div className="mb-10"></div>
+      {/* <div className="mb-10"></div>
       <UpcomingWebinarCard
         event={currentWebinar}
         onExpire={handleNextWebinar}
-      />
+      /> */}
       
     </div>
   );

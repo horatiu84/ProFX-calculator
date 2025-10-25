@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 /**
  * BuyStopTrainer (responsive + procent pentru rezistență)
@@ -33,6 +34,8 @@ export default function BuyStopTrainer({
     heightPctMobile: 0.13,
   },
 }) {
+  const { translations } = useLanguage();
+  const t = translations;
   const wrapRef = useRef(null);
   const svgRef = useRef(null);
 
@@ -175,7 +178,7 @@ export default function BuyStopTrainer({
         }}
       >
         <h3 style={{ margin: 0, fontSize: "clamp(16px, 2.5vw, 20px)" }}>
-          Plasează un buy stop : 
+          {t.buyStopTitle} : 
         </h3>
         {isCorrect && (
           <div
@@ -190,7 +193,7 @@ export default function BuyStopTrainer({
               whiteSpace: "nowrap",
             }}
           >
-            ✅ Buy stop plasat corect!
+            {t.buyStopCorrect}
           </div>
         )}
       </div>
@@ -261,7 +264,7 @@ export default function BuyStopTrainer({
           fontSize={Math.max(10, Math.round(width * 0.016))}
           fill="#333"
         >
-          Trage linia
+          {t.buyStopDragHint}
         </text>
       </svg>
 
@@ -273,7 +276,7 @@ export default function BuyStopTrainer({
           paddingInline: 4,
         }}
       >
-        Un buy stop este un tip de ordin de cumpărare folosit în tranzacționare care se plasează deasupra prețului actual al pieței.
+        {t.buyStopDescription}
       </div>
     </div>
   );

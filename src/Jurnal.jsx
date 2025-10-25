@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ReportsModal from "./components/ReportsModal";
+import { useLanguage } from "./contexts/LanguageContext";
 
 const TradingJournal = () => {
+  const { translations, language } = useLanguage();
+  const t = translations;
+  
   // State variables for managing account balance, trades, and modals
   const [accountBalance, setAccountBalance] = useState(() => {
     const saved = localStorage.getItem("accountBalance");
@@ -174,7 +178,7 @@ const TradingJournal = () => {
   const handleSetInitialBalance = (balance) => {
     const bal = parseFloat(balance);
     if (isNaN(bal) || bal <= 0) {
-      alert("Te rog introdu o valoare validă!");
+      alert(t.enterValidValue);
       return;
     }
     
@@ -192,7 +196,7 @@ const TradingJournal = () => {
   // Add a new trade to the journal
   const handleAddTrade = () => {
     if (!newTrade.pair || !newTrade.lotSize || !newTrade.pips) {
-      alert("Te rog completează toate câmpurile obligatorii!");
+      alert(t.fillRequired);
       return;
     }
 
@@ -233,7 +237,7 @@ const TradingJournal = () => {
   // Delete a trade from the journal by its ID
   const handleDeleteTrade = (id) => {
     const trade = trades.find((t) => t.id === id);
-    if (trade && window.confirm("Ești sigur că vrei să ștergi acest trade?")) {
+    if (trade && window.confirm(t.confirmDelete)) {
       setAccountBalance(accountBalance - trade.profitLoss);
       setTrades(trades.filter((t) => t.id !== id));
     }
@@ -460,35 +464,35 @@ const TradingJournal = () => {
   const winRate = trades.length > 0 ? (trades.filter(t => t.profitLoss > 0).length / trades.length * 100) : 0;
 
   return (
-    <div className="min-h-screen text-white p-3 sm:p-6">
+    <div key={language} className="min-h-screen text-white p-3 sm:p-6 animate-language-change">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                📖 Jurnal Trade
+                {t.title}
               </h1>
-              <p className="text-gray-400 mt-2 text-sm sm:text-base">Monitorizează-ți performanța de trading</p>
+              <p className="text-gray-400 mt-2 text-sm sm:text-base">{t.subtitle}</p>
             </div>
             <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={() => setShowBalanceModal(true)}
                 className="flex-1 sm:flex-none bg-gray-700 hover:bg-gray-600 text-white font-bold px-4 sm:px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-600 text-sm sm:text-base whitespace-nowrap"
               >
-                ⚙️ <span className="hidden sm:inline">Modifică Sold</span><span className="sm:hidden">Sold</span>
+                ⚙️ <span className="hidden sm:inline">{t.modifyBalance}</span><span className="sm:hidden">{t.modifyBalanceShort}</span>
               </button>
               <button
                 onClick={() => setShowReportsModal(true)}
                 className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 sm:px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base whitespace-nowrap"
               >
-                📊 <span className="hidden sm:inline">Rapoarte</span><span className="sm:hidden">Rap</span>
+                📊 <span className="hidden sm:inline">{t.reports}</span><span className="sm:hidden">{t.reportsShort}</span>
               </button>
               <button
                 onClick={() => setShowAddModal(true)}
                 className="flex-1 sm:flex-none bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold px-4 sm:px-6 py-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base whitespace-nowrap"
               >
-                + <span className="hidden sm:inline">Adaugă Trade</span><span className="sm:hidden">Trade</span>
+                + <span className="hidden sm:inline">{t.addTrade}</span><span className="sm:hidden">{t.addTradeShort}</span>
               </button>
             </div>
           </div>
@@ -496,7 +500,7 @@ const TradingJournal = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
-              <div className="text-gray-400 text-xs sm:text-sm mb-2">Sold Cont</div>
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">{t.accountBalance}</div>
               <div className="text-2xl sm:text-3xl font-bold text-white">
                 ${formatNumber(accountBalance)}
               </div>
@@ -506,32 +510,32 @@ const TradingJournal = () => {
             </div>
 
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
-              <div className="text-gray-400 text-xs sm:text-sm mb-2">Total Profit</div>
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">{t.totalProfit}</div>
               <div className="text-2xl sm:text-3xl font-bold text-green-400">
                 ${formatNumber(totalProfit)}
               </div>
               <div className="text-xs sm:text-sm text-gray-400 mt-2">
-                {trades.filter(t => t.profitLoss > 0).length} trades câștigătoare
+                {trades.filter(t => t.profitLoss > 0).length} {t.winningTrades}
               </div>
             </div>
 
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
-              <div className="text-gray-400 text-xs sm:text-sm mb-2">Total Loss</div>
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">{t.totalLoss}</div>
               <div className="text-2xl sm:text-3xl font-bold text-red-400">
                 ${formatNumber(totalLoss)}
               </div>
               <div className="text-xs sm:text-sm text-gray-400 mt-2">
-                {trades.filter(t => t.profitLoss < 0).length} trades pierzătoare
+                {trades.filter(t => t.profitLoss < 0).length} {t.losingTrades}
               </div>
             </div>
 
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl">
-              <div className="text-gray-400 text-xs sm:text-sm mb-2">Win Rate</div>
+              <div className="text-gray-400 text-xs sm:text-sm mb-2">{t.winRate}</div>
               <div className="text-2xl sm:text-3xl font-bold text-yellow-400">
                 {winRate.toFixed(1)}%
               </div>
               <div className="text-xs sm:text-sm text-gray-400 mt-2">
-                {trades.length} total trades
+                {trades.length} {t.totalTrades}
               </div>
             </div>
           </div>
@@ -543,35 +547,35 @@ const TradingJournal = () => {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">Perioada:</label>
+                <label className="text-sm text-gray-400 mb-1 block">{t.period}</label>
                 <select 
                   value={filterPeriod} 
                   onChange={(e) => handleFilterChange(e.target.value)}
                   className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
-                  <option value="all">Toate trade-urile</option>
-                  <option value="week">Ultimele 7 zile</option>
-                  <option value="month">Luna aceasta</option>
-                  <option value="custom">Perioada personalizată</option>
+                  <option value="all">{t.allTrades}</option>
+                  <option value="week">{t.last7Days}</option>
+                  <option value="month">{t.thisMonth}</option>
+                  <option value="custom">{t.customPeriod}</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-sm text-gray-400 mb-1 block">Sortare:</label>
+                <label className="text-sm text-gray-400 mb-1 block">{t.sorting}</label>
                 <select 
                   value={sortOrder} 
                   onChange={(e) => handleSortChange(e.target.value)}
                   className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                 >
-                  <option value="newest">Cel mai recent → Cel mai vechi</option>
-                  <option value="oldest">Cel mai vechi → Cel mai recent</option>
+                  <option value="newest">{t.newestToOldest}</option>
+                  <option value="oldest">{t.oldestToNewest}</option>
                 </select>
               </div>
 
               {filterPeriod === 'custom' && (
                 <div className="flex gap-2">
                   <div>
-                    <label className="text-sm text-gray-400 mb-1 block">De la:</label>
+                    <label className="text-sm text-gray-400 mb-1 block">{t.from}</label>
                     <input
                       type="date"
                       value={customStartDate}
@@ -580,7 +584,7 @@ const TradingJournal = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400 mb-1 block">Până la:</label>
+                    <label className="text-sm text-gray-400 mb-1 block">{t.to}</label>
                     <input
                       type="date"
                       value={customEndDate}
@@ -597,8 +601,8 @@ const TradingJournal = () => {
               {(() => {
                 const { totalTrades, startTrade, endTrade } = getPaginationInfo();
                 return totalTrades > 0 
-                  ? `Afișând ${startTrade}-${endTrade} din ${totalTrades} trade-uri`
-                  : 'Niciun trade găsit';
+                  ? `${t.showing} ${startTrade}-${endTrade} ${t.of} ${totalTrades} ${t.tradesText}`
+                  : t.noTradesFound;
               })()}
             </div>
           </div>
@@ -614,13 +618,13 @@ const TradingJournal = () => {
                   <div className="text-6xl mb-4">📊</div>
                   {trades.length === 0 ? (
                     <>
-                      <p className="text-lg">Nu ai niciun trade înregistrat încă</p>
-                      <p className="text-sm mt-2">Începe prin a adăuga primul tău trade!</p>
+                      <p className="text-lg">{t.noTradesYet}</p>
+                      <p className="text-sm mt-2">{t.addFirstTrade}</p>
                     </>
                   ) : (
                     <>
-                      <p className="text-lg">Nu sunt trade-uri în perioada selectată</p>
-                      <p className="text-sm mt-2">Încearcă să schimbi filtrele de mai sus</p>
+                      <p className="text-lg">{t.noTradesInPeriod}</p>
+                      <p className="text-sm mt-2">{t.tryChangeFilters}</p>
                     </>
                   )}
                 </div>
@@ -644,7 +648,7 @@ const TradingJournal = () => {
                     
                     <div className="grid grid-cols-2 gap-3 mb-3 cursor-pointer" onClick={() => handleViewTrade(trade)}>
                       <div>
-                        <div className="text-xs text-gray-400 mb-1">Tip</div>
+                        <div className="text-xs text-gray-400 mb-1">{t.type}</div>
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
                           trade.type === "buy" 
                             ? "bg-green-500/20 text-green-400 border border-green-500/30" 
@@ -654,7 +658,7 @@ const TradingJournal = () => {
                         </span>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-400 mb-1">Rezultat</div>
+                        <div className="text-xs text-gray-400 mb-1">{t.result}</div>
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
                           trade.result === "tp" 
                             ? "bg-green-500/20 text-green-400 border border-green-500/30" 
@@ -664,11 +668,11 @@ const TradingJournal = () => {
                         </span>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-400 mb-1">Lot</div>
+                        <div className="text-xs text-gray-400 mb-1">{t.lot}</div>
                         <div className="text-sm font-medium">{formatNumber(trade.lotSize)}</div>
                       </div>
                       <div>
-                        <div className="text-xs text-gray-400 mb-1">Pips</div>
+                        <div className="text-xs text-gray-400 mb-1">{t.pips}</div>
                         <div className="text-sm font-medium">{trade.pips}</div>
                       </div>
                     </div>
@@ -681,22 +685,22 @@ const TradingJournal = () => {
                     </div>
 
                     <div className="mb-3 cursor-pointer" onClick={() => handleViewTrade(trade)}>
-                      <div className="text-xs text-gray-400 mb-1">Sursă</div>
+                      <div className="text-xs text-gray-400 mb-1">{t.tradeSource}</div>
                       {trade.source === "semnale" ? (
                         <div>
-                          <div className="text-purple-400 text-sm">Semnale</div>
+                          <div className="text-purple-400 text-sm">{t.signals}</div>
                           <div className="text-xs text-gray-400">{trade.mentor}</div>
                         </div>
                       ) : (
-                        <div className="text-blue-400 text-sm">Proprii</div>
+                        <div className="text-blue-400 text-sm">{t.ownTrades}</div>
                       )}
                     </div>
 
                     {trade.notes && (
                       <div className="cursor-pointer" onClick={() => handleViewTrade(trade)}>
-                        <div className="text-xs text-gray-400 mb-1">Note</div>
+                        <div className="text-xs text-gray-400 mb-1">{t.notes}</div>
                         <div className="text-sm text-gray-300 line-clamp-2">{trade.notes}</div>
-                        <div className="text-xs text-blue-400 mt-1">Click pentru detalii complete →</div>
+                        <div className="text-xs text-blue-400 mt-1">{t.clickForDetails}</div>
                       </div>
                     )}
                   </div>
@@ -712,7 +716,7 @@ const TradingJournal = () => {
               return filteredTradesLength > tradesPerPage && (
                 <div className="px-4 py-3 bg-white/5 border-t border-white/10 flex flex-col items-center gap-3">
                   <div className="text-sm text-gray-400">
-                    Pagina {currentPage} din {totalPages}
+                    {t.page} {currentPage} {t.of} {totalPages}
                   </div>
                   
                   <div className="flex items-center gap-2">
@@ -725,7 +729,7 @@ const TradingJournal = () => {
                           : 'text-white bg-gray-700 hover:bg-gray-600'
                       }`}
                     >
-                      ‹ Anterior
+                      ‹ {t.previous}
                     </button>
                     
                     <span className="px-3 py-2 bg-yellow-400 text-gray-900 rounded-lg text-sm font-medium">
@@ -741,7 +745,7 @@ const TradingJournal = () => {
                           : 'text-white bg-gray-700 hover:bg-gray-600'
                       }`}
                     >
-                      Următorul ›
+                      {t.next} ›
                     </button>
                   </div>
                 </div>
@@ -754,16 +758,16 @@ const TradingJournal = () => {
             <table className="w-full">
               <thead className="bg-white/10 border-b border-white/10">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Data</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Pereche</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tip</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Lot</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Pips</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Rezultat</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">P/L</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Sursă</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Note</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Acțiuni</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.date}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.pair}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.type}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.lot}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.pips}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.result}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.profitLoss}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.source}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.notes}</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">{t.actions}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -824,11 +828,11 @@ const TradingJournal = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {trade.source === "semnale" ? (
                           <div>
-                            <div className="text-purple-400">Semnale</div>
+                            <div className="text-purple-400">{t.signals}</div>
                             <div className="text-xs text-gray-400">{trade.mentor}</div>
                           </div>
                         ) : (
-                          <div className="text-blue-400">Proprii</div>
+                          <div className="text-blue-400">{t.ownTrades}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm max-w-xs">
@@ -836,7 +840,7 @@ const TradingJournal = () => {
                           {trade.notes || "-"}
                         </div>
                         {trade.notes && (
-                          <div className="text-xs text-blue-400 mt-1">Click pentru detalii →</div>
+                          <div className="text-xs text-blue-400 mt-1">{t.clickForDetailsShort}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -957,16 +961,16 @@ const TradingJournal = () => {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl">
             <h2 className="text-2xl font-bold mb-4 text-yellow-400">
-              {initialBalance > 0 ? "Modifică mărimea contului" : "Setează mărimea contului"}
+              {initialBalance > 0 ? t.modifyAccountSize : t.setAccountSize}
             </h2>
             <p className="text-gray-300 mb-2">
               {initialBalance > 0 
-                ? "Introdu noul sold inițial al contului:" 
-                : "Introdu soldul inițial al contului tău de trading:"}
+                ? t.enterNewBalance 
+                : t.enterInitialBalance}
             </p>
             {initialBalance > 0 && (
               <p className="text-sm text-yellow-400 mb-4">
-                ⚠️ Soldul actual va fi recalculat automat bazat pe toate trade-urile existente
+                {t.balanceRecalculateWarning}
               </p>
             )}
             <input
@@ -986,7 +990,7 @@ const TradingJournal = () => {
                   onClick={() => setShowBalanceModal(false)}
                   className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
                 >
-                  Anulează
+                  {t.cancel}
                 </button>
               )}
               <button
@@ -996,7 +1000,7 @@ const TradingJournal = () => {
                 }}
                 className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold py-3 rounded-xl transition-all duration-200"
               >
-                Confirmă
+                {t.confirm}
               </button>
             </div>
           </div>
@@ -1015,7 +1019,7 @@ const TradingJournal = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-start mb-6">
-                <h2 className="text-2xl font-bold text-yellow-400">Detalii Trade</h2>
+                <h2 className="text-2xl font-bold text-yellow-400">{t.tradeDetails}</h2>
                 <button
                   onClick={() => setShowViewModal(false)}
                   className="text-gray-400 hover:text-white text-2xl leading-none"
@@ -1042,12 +1046,12 @@ const TradingJournal = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                     <div className="text-xs text-gray-400 mb-2 flex items-center justify-between">
-                      <span>Tip Tranzacție</span>
+                      <span>{t.tradeType}</span>
                       {!isEditingType && (
                         <button
                           onClick={() => setIsEditingType(true)}
                           className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
-                          title="Editează tipul tranzacției"
+                          title={t.edit}
                         >
                           ✏️
                         </button>
@@ -1060,15 +1064,15 @@ const TradingJournal = () => {
                           onChange={(e) => setEditedType(e.target.value)}
                           className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                         >
-                          <option value="buy">BUY</option>
-                          <option value="sell">SELL</option>
+                          <option value="buy">{t.buy}</option>
+                          <option value="sell">{t.sell}</option>
                         </select>
                         <div className="flex gap-2">
                           <button
                             onClick={handleSaveType}
                             className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
                           >
-                            ✓ Salvează
+                            ✓ {t.save}
                           </button>
                           <button
                             onClick={() => {
@@ -1077,7 +1081,7 @@ const TradingJournal = () => {
                             }}
                             className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
                           >
-                            ✕ Anulează
+                            ✕ {t.cancel}
                           </button>
                         </div>
                       </div>
@@ -1094,12 +1098,12 @@ const TradingJournal = () => {
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                     <div className="text-xs text-gray-400 mb-2 flex items-center justify-between">
-                      <span>Rezultat</span>
+                      <span>{t.result}</span>
                       {!isEditingResult && (
                         <button
                           onClick={() => setIsEditingResult(true)}
                           className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
-                          title="Editează rezultatul"
+                          title={t.edit}
                         >
                           ✏️
                         </button>
@@ -1112,15 +1116,15 @@ const TradingJournal = () => {
                           onChange={(e) => setEditedResult(e.target.value)}
                           className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                         >
-                          <option value="tp">TAKE PROFIT (TP)</option>
-                          <option value="sl">STOP LOSS (SL)</option>
+                          <option value="tp">{t.takeProfitFull}</option>
+                          <option value="sl">{t.stopLossFull}</option>
                         </select>
                         <div className="flex gap-2">
                           <button
                             onClick={handleSaveResult}
                             className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
                           >
-                            ✓ Salvează
+                            ✓ {t.save}
                           </button>
                           <button
                             onClick={() => {
@@ -1129,12 +1133,12 @@ const TradingJournal = () => {
                             }}
                             className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-semibold py-1 px-2 rounded-lg transition-all"
                           >
-                            ✕ Anulează
+                            ✕ {t.cancel}
                           </button>
                         </div>
                         {editedResult !== selectedTrade.result && (
                           <div className="text-xs text-yellow-400 mt-2 bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-2">
-                            ⚠️ Nota: Modificarea rezultatului va recalcula automat P/L și soldul contului
+                            {t.resultChangeWarning}
                           </div>
                         )}
                       </div>
@@ -1144,46 +1148,46 @@ const TradingJournal = () => {
                           ? "bg-green-500/20 text-green-400 border border-green-500/30" 
                           : "bg-red-500/20 text-red-400 border border-red-500/30"
                       }`}>
-                        {selectedTrade.result === "tp" ? "TAKE PROFIT" : "STOP LOSS"}
+                        {selectedTrade.result === "tp" ? t.takeProfit : t.stopLoss}
                       </span>
                     )}
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="text-xs text-gray-400 mb-2">Mărime Lot</div>
+                    <div className="text-xs text-gray-400 mb-2">{t.lotSize}</div>
                     <div className="text-xl font-bold text-white">{formatNumber(selectedTrade.lotSize)}</div>
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="text-xs text-gray-400 mb-2">Pips</div>
+                    <div className="text-xs text-gray-400 mb-2">{t.pips}</div>
                     <div className="text-xl font-bold text-white">{selectedTrade.pips}</div>
                   </div>
                 </div>
 
                 {/* Source Info */}
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <div className="text-xs text-gray-400 mb-2">Sursă Trade</div>
+                  <div className="text-xs text-gray-400 mb-2">{t.tradeSource}</div>
                   {selectedTrade.source === "semnale" ? (
                     <div>
-                      <div className="text-lg font-semibold text-purple-400">📡 Semnale Mentor</div>
-                      <div className="text-sm text-gray-300 mt-1">Mentor: <span className="text-yellow-400 font-semibold">{selectedTrade.mentor}</span></div>
+                      <div className="text-lg font-semibold text-purple-400">📡 {t.signalsMentor}</div>
+                      <div className="text-sm text-gray-300 mt-1">{t.mentor}: <span className="text-yellow-400 font-semibold">{selectedTrade.mentor}</span></div>
                     </div>
                   ) : (
-                    <div className="text-lg font-semibold text-blue-400">💡 Trade-uri Proprii</div>
+                    <div className="text-lg font-semibold text-blue-400">💡 {t.ownTradesLong}</div>
                   )}
                 </div>
 
                 {/* Pip Value Info */}
                 {allPairs[selectedTrade.pair] && (
                   <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
-                    <div className="text-xs text-blue-300 mb-2">ℹ️ Informații Tehnice</div>
+                    <div className="text-xs text-blue-300 mb-2">ℹ️ {t.technicalInfo}</div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="text-gray-400">Categorie: </span>
+                        <span className="text-gray-400">{t.category}: </span>
                         <span className="text-white font-semibold">{allPairs[selectedTrade.pair].category}</span>
                       </div>
                       <div>
-                        <span className="text-gray-400">Valoare pip/lot: </span>
+                        <span className="text-gray-400">{t.pipValuePerLot}: </span>
                         <span className="text-green-400 font-semibold">${allPairs[selectedTrade.pair].pipValue}</span>
                       </div>
                     </div>
@@ -1194,15 +1198,15 @@ const TradingJournal = () => {
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                   <div className="text-xs text-gray-400 mb-3 flex items-center justify-between">
                     <span className="flex items-center">
-                      <span className="mr-2">📝</span> Observații
+                      <span className="mr-2">📝</span> {t.observations}
                     </span>
                     {!isEditingNotes && (
                       <button
                         onClick={() => setIsEditingNotes(true)}
                         className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
-                        title="Editează observațiile"
+                        title={t.edit}
                       >
-                        ✏️ Editează
+                        ✏️ {t.edit}
                       </button>
                     )}
                   </div>
@@ -1212,7 +1216,7 @@ const TradingJournal = () => {
                       <textarea
                         value={editedNotes}
                         onChange={(e) => setEditedNotes(e.target.value)}
-                        placeholder="Adaugă observații despre acest trade..."
+                        placeholder={t.addNotesPlaceholder}
                         rows="5"
                         className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 resize-none text-sm"
                       />
@@ -1221,7 +1225,7 @@ const TradingJournal = () => {
                           onClick={handleSaveNotes}
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all"
                         >
-                          ✓ Salvează Observațiile
+                          ✓ {t.saveObservations}
                         </button>
                         <button
                           onClick={() => {
@@ -1230,7 +1234,7 @@ const TradingJournal = () => {
                           }}
                           className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-all"
                         >
-                          ✕ Anulează
+                          ✕ {t.cancel}
                         </button>
                       </div>
                     </div>
@@ -1238,7 +1242,7 @@ const TradingJournal = () => {
                     <div className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed bg-gray-900/50 rounded-lg p-4 border border-gray-700 min-h-[80px]">
                       {selectedTrade.notes || (
                         <span className="text-gray-500 italic">
-                          Nicio observație adăugată. Click pe "Editează" pentru a adăuga.
+                          {t.noObservations}
                         </span>
                       )}
                     </div>
@@ -1247,13 +1251,13 @@ const TradingJournal = () => {
 
                 {/* Calculation Breakdown */}
                 <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-4 border border-yellow-500/20">
-                  <div className="text-xs text-yellow-300 mb-3">🧮 Calculul P/L</div>
+                  <div className="text-xs text-yellow-300 mb-3">🧮 {t.plCalculation}</div>
                   <div className="text-sm text-gray-300 space-y-1 font-mono">
-                    <div>Lot Size: {formatNumber(selectedTrade.lotSize)}</div>
-                    <div>Pips: {selectedTrade.pips}</div>
-                    <div>Pip Value: ${allPairs[selectedTrade.pair]?.pipValue || 0}</div>
+                    <div>{t.lot}: {formatNumber(selectedTrade.lotSize)}</div>
+                    <div>{t.pips}: {selectedTrade.pips}</div>
+                    <div>{t.pipValuePerLot}: ${allPairs[selectedTrade.pair]?.pipValue || 0}</div>
                     <div className="border-t border-yellow-500/30 pt-2 mt-2">
-                      <span className="text-gray-400">Formula: </span>
+                      <span className="text-gray-400">{t.formula}: </span>
                       {formatNumber(selectedTrade.lotSize)} × {selectedTrade.pips} × ${allPairs[selectedTrade.pair]?.pipValue || 0}
                     </div>
                     <div className={`text-lg font-bold ${selectedTrade.profitLoss >= 0 ? "text-green-400" : "text-red-400"}`}>
@@ -1269,7 +1273,7 @@ const TradingJournal = () => {
                   onClick={() => setShowViewModal(false)}
                   className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
                 >
-                  Închide
+                  {t.close}
                 </button>
               </div>
             </div>
@@ -1288,19 +1292,19 @@ const TradingJournal = () => {
               className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 rounded-2xl p-8 max-w-2xl w-full shadow-2xl max-h-[calc(100vh-2rem)] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-bold mb-6 text-yellow-400">Adaugă Trade Nou</h2>
+              <h2 className="text-2xl font-bold mb-6 text-yellow-400">{t.addNewTrade}</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Pereche valutară *</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.currencyPairRequired}</label>
                   <select
                     value={newTrade.pair}
                     onChange={(e) => setNewTrade({ ...newTrade, pair: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                   >
-                    <option value="">Selectează...</option>
+                    <option value="">{t.selectOption}</option>
                     {Object.entries(tradingPairs).map(([category, pairs]) => (
-                      <optgroup key={category} label={category}>
+                      <optgroup key={category} label={t.pairCategories?.[category] || category}>
                         {Object.keys(pairs).map((pair) => (
                           <option key={pair} value={pair}>{pair}</option>
                         ))}
@@ -1310,7 +1314,7 @@ const TradingJournal = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Mărime lot *</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.lotSizeRequired}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1322,19 +1326,19 @@ const TradingJournal = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Tip tranzacție</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.tradeType}</label>
                   <select
                     value={newTrade.type}
                     onChange={(e) => setNewTrade({ ...newTrade, type: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                   >
-                    <option value="buy">BUY</option>
-                    <option value="sell">SELL</option>
+                    <option value="buy">{t.buy}</option>
+                    <option value="sell">{t.sell}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Pips *</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.pipsRequired}</label>
                   <input
                     type="number"
                     value={newTrade.pips}
@@ -1345,32 +1349,32 @@ const TradingJournal = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Rezultat</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.result}</label>
                   <select
                     value={newTrade.result}
                     onChange={(e) => setNewTrade({ ...newTrade, result: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                   >
-                    <option value="tp">Take Profit (TP)</option>
-                    <option value="sl">Stop Loss (SL)</option>
+                    <option value="tp">{t.takeProfitFull}</option>
+                    <option value="sl">{t.stopLossFull}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Sursă</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.tradeSource}</label>
                   <select
                     value={newTrade.source}
                     onChange={(e) => setNewTrade({ ...newTrade, source: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
                   >
-                    <option value="semnale">Semnale mentor</option>
-                    <option value="proprii">Trade-uri proprii</option>
+                    <option value="semnale">{t.signalsMentor}</option>
+                    <option value="proprii">{t.ownTradesLong}</option>
                   </select>
                 </div>
 
                 {newTrade.source === "semnale" && (
                   <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Mentor</label>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">{t.mentor}</label>
                     <select
                       value={newTrade.mentor}
                       onChange={(e) => setNewTrade({ ...newTrade, mentor: e.target.value })}
@@ -1384,11 +1388,11 @@ const TradingJournal = () => {
                 )}
 
                 <div className={newTrade.source === "semnale" ? "md:col-span-1" : "md:col-span-2"}>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Observații</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">{t.observations}</label>
                   <textarea
                     value={newTrade.notes}
                     onChange={(e) => setNewTrade({ ...newTrade, notes: e.target.value })}
-                    placeholder="Adaugă note despre acest trade..."
+                    placeholder={t.addNotesPlaceholder}
                     rows="3"
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 resize-none"
                   />
@@ -1397,7 +1401,7 @@ const TradingJournal = () => {
 
               {newTrade.pair && newTrade.lotSize && newTrade.pips && (
                 <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
-                  <div className="text-sm text-gray-300 mb-2">Preview profit/pierdere:</div>
+                  <div className="text-sm text-gray-300 mb-2">{t.previewProfitLoss}</div>
                   <div className={`text-2xl font-bold ${
                     newTrade.result === "tp" ? "text-green-400" : "text-red-400"
                   }`}>
@@ -1417,13 +1421,13 @@ const TradingJournal = () => {
                   onClick={() => setShowAddModal(false)}
                   className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition-all duration-200 border border-gray-600"
                 >
-                  Anulează
+                  {t.cancel}
                 </button>
                 <button
                   onClick={handleAddTrade}
                   className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold py-3 rounded-xl transition-all duration-200"
                 >
-                  Salvează Trade
+                  {t.saveTrade}
                 </button>
               </div>
             </div>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "./contexts/LanguageContext";
 
 const CompetitionBanner = () => {
+  const { language, translations } = useLanguage();
+  const t = translations;
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -12,17 +15,15 @@ const CompetitionBanner = () => {
   useEffect(() => {
     const updateTimer = () => {
       const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth();
       
-      // Data de început a concursului curent (1 a lunii curente)
-      const startDate = new Date(currentYear, currentMonth, 1, 0, 0, 0);
+      // Data de început a concursului din noiembrie (3 noiembrie 2025, 00:00:00)
+      const startDate = new Date(2025, 10, 3, 0, 0, 0); // Month is 0-indexed: 10 = November
       
-      // Data de sfârșit a concursului curent (24 a lunii curente, 23:59:59)
-      const endDate = new Date(currentYear, currentMonth, 24, 23, 59, 59);
+      // Data de sfârșit a concursului din noiembrie (21 noiembrie 2025, 23:59:59)
+      const endDate = new Date(2025, 10, 21, 23, 59, 59);
       
-      // Data de început a concursului următor (1 a lunii următoare)
-      const nextStartDate = new Date(currentYear, currentMonth + 1, 1, 0, 0, 0);
+      // Data de început a concursului următor (1 decembrie 2025)
+      const nextStartDate = new Date(2025, 11, 1, 0, 0, 0); // 11 = December
 
       let targetDate;
       let currentPhase;
@@ -72,11 +73,11 @@ const CompetitionBanner = () => {
   const getTimerText = () => {
     switch (phase) {
       case "waiting":
-        return "Timp rămas până începe concursul:";
+        return t.timerWaiting;
       case "running":
-        return "Timp rămas până la finalul concursului:";
+        return t.timerRunning;
       default:
-        return "Timp rămas:";
+        return t.timerDefault;
     }
   };
 
@@ -93,7 +94,7 @@ const CompetitionBanner = () => {
   };
 
   return (
-    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl max-w-3xl md:max-w-5xl mx-auto my-10 overflow-hidden hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.01]">
+    <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl max-w-3xl md:max-w-5xl mx-auto my-10 overflow-hidden hover:border-amber-400/30 transition-all duration-500 hover:scale-[1.01] animate-language-change">
       {/* Gradient background effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -103,7 +104,7 @@ const CompetitionBanner = () => {
             🚨
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 tracking-wider text-center">
-            START 1 A FIECĂREI LUNI!
+            {t.title}
           </h2>
           <span className="text-3xl sm:text-4xl font-bold text-red-500 animate-pulse ml-3">
             🚨
@@ -114,10 +115,10 @@ const CompetitionBanner = () => {
         {phase === "waiting" && (
           <div className="text-center mb-6">
             <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
-              ✅ ÎNSCRIERILE SUNT DESCHISE! ✅
+              {t.registrationsOpen}
             </div>
             <p className="text-base font-semibold text-green-400 max-w-2xl mx-auto">
-              🎯 Completează formularul de mai jos pentru a te înscrie la următorul concurs și să-ți asiguri locul în competiție!
+              {t.registrationMessage}
             </p>
           </div>
         )}
@@ -125,13 +126,13 @@ const CompetitionBanner = () => {
         {phase === "running" && (
           <div className="text-center mb-6">
             <span className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
-              🔥 CONCURSUL ESTE ÎN DESFĂȘURARE! 🔥
+              {t.competitionRunning}
             </span>
           </div>
         )}
         
         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center mb-6 tracking-tight animate-fade-in">
-          Trading Competition ProFX & <span className="text-blue-400">FPM</span>{" "}
+          {t.subtitle} <span className="text-blue-400">FPM</span>{" "}
           <span className="text-amber-400">Trading</span>
         </h3>
         
@@ -148,38 +149,36 @@ const CompetitionBanner = () => {
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.days}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">Zile</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.days}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.hours}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">Ore</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.hours}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.minutes}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">Minute</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.minutes}</span>
             </div>
             <div className="flex flex-col items-center bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl p-3 shadow-md">
               <span className="text-2xl sm:text-3xl font-bold text-black">
                 {timeLeft.seconds}
               </span>
-              <span className="text-xs sm:text-sm text-black/70 font-semibold">Secunde</span>
+              <span className="text-xs sm:text-sm text-black/70 font-semibold">{t.seconds}</span>
             </div>
           </div>
         </div>
 
         <p className="text-gray-300 text-center mb-6 max-w-2xl mx-auto leading-relaxed animate-fade-in-up">
-          ProFX vă invită să participați la <b className="text-amber-400">TRADING COMPETITION</b> în
-          parteneriat cu{" "}
+          {t.description} <b className="text-amber-400">{t.descriptionBold}</b> {t.descriptionContinue}{" "}
           <b>
             <span className="text-blue-400">FPM</span>{" "}
             <span className="text-amber-400">Trading</span>
           </b>
-          , unde vă puteți testa strategiile și abilitățile într-un mediu real,
-          cu șanse de a câștiga premii atractive!
+          {t.descriptionEnd}
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
@@ -189,7 +188,7 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-md hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition-all duration-300 border border-blue-400/50"
           >
-            👉 Creează cont FPM Trading
+            {t.createAccountBtn}
           </a>
           <a
             href="https://youtu.be/SnxXpX1Iei8"
@@ -197,69 +196,69 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="bg-gradient-to-r from-amber-400 to-amber-600 text-black px-6 py-3 rounded-xl font-bold shadow-md hover:from-amber-500 hover:to-amber-700 hover:scale-105 transition-all duration-300 border border-amber-300/50"
           >
-            ▶ Tutorial înregistrare
+            {t.tutorialBtn}
           </a>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-gray-600/50 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-left">
             <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-              Detalii & Condiții de participare:
+              {t.detailsTitle}
             </h4>
             <ol className="list-decimal list-inside text-gray-300 space-y-2 text-sm md:text-base">
               <li>
-                <b className="text-white">Suma contului:</b> minim 100 USD (cont{" "}
-                <span className="uppercase text-green-400 font-bold">REAL</span>{" "}
-                la <span className="text-blue-400">FPM</span>{" "}
+                <b className="text-white">{t.accountAmount}</b> {t.accountAmountValue}{" "}
+                <span className="uppercase text-green-400 font-bold">{t.accountAmountReal}</span>{" "}
+                {t.accountAmountAt} <span className="text-blue-400">FPM</span>{" "}
                 <span className="text-amber-400">Trading</span>)
               </li>
               <li>
-                <b className="text-white">Tipul contului:</b> Standard sau Raw
+                <b className="text-white">{t.accountType}</b> {t.accountTypeValue}
               </li>
               <li>
-                <b className="text-white">Data de start:</b> Începe în prima zi a fiecărei luni
+                <b className="text-white">{t.startDate}</b> {t.startDateValue}
               </li>
               <li>
-                <b className="text-white">Perioada concursului:</b> 3 săptămâni (până pe 24 a lunii)
+                <b className="text-white">{t.competitionPeriod}</b> {t.competitionPeriodValue}
               </li>
               <li>
-                <b className="text-white">Drawdown:</b> LIBER{" "}
+                <b className="text-white">{t.drawdown}</b> {t.drawdownValue}{" "}
                 <span className="text-gray-400 italic">
-                  (recomandăm cât mai mic)
+                  {t.drawdownRecommendation}
                 </span>
               </li>
               <li>
-                <b className="text-white">Număr minim tranzacții:</b> 20/lună luate în minim 14 zile
+                <b className="text-white">{t.minTransactions}</b> {t.minTransactionsValue}
               </li>
             </ol>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-amber-400/30 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-right">
             <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-              Premii:
+              {t.prizesTitle}
             </h4>
             <ul className="grid grid-cols-1 gap-3 text-gray-300 text-sm md:text-base">
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">Locul 1:</span>
+                <span className="font-bold text-green-400">{t.firstPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   1000 $ <span className="ml-2 text-yellow-400">🏆</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">Locul 2:</span>
+                <span className="font-bold text-green-400">{t.secondPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   600 $ <span className="ml-2 text-gray-300">🥈</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-green-400">Locul 3:</span>
+                <span className="font-bold text-green-400">{t.thirdPlace}</span>
                 <span className="flex items-center text-white font-bold">
                   400 $ <span className="ml-2 text-amber-500">🥉</span>
                 </span>
               </li>
               <li className="flex items-center justify-between bg-gray-700/50 rounded-xl p-3 transition-all duration-200 hover:bg-gray-700 hover:shadow-md border border-gray-600/50">
-                <span className="font-bold text-blue-400">Locul 4 & 5:</span>
+                <span className="font-bold text-blue-400">{t.fourthFifthPlace}</span>
                 <span className="flex items-center text-white">
-                  Travel Backpack FPM Trading{" "}
+                  {t.backpackPrize}{" "}
                   <span className="ml-2 text-blue-400">🎒</span>
                 </span>
               </li>
@@ -269,27 +268,24 @@ const CompetitionBanner = () => {
         
         <div className="mb-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 shadow-md border border-gray-600/50 transition-all duration-300 hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 animate-fade-in-up">
           <h4 className="font-bold text-amber-400 mb-4 text-center text-lg">
-            Cum se stabilește câștigătorul:
+            {t.winnerDeterminationTitle}
           </h4>
           <ol className="list-decimal list-inside text-gray-300 space-y-2 pl-2 text-sm md:text-base">
             <li>
-              Se verifică dacă potențialii câștigători au respectat condițiile
-              de participare.
+              {t.winnerStep1}
             </li>
             <li>
-              Se verifică <b className="text-white">raportul PROFIT/DRAWDOWN</b>. Cine are raportul cel
-              mai mare câștigă.
+              {t.winnerStep2} <b className="text-white">{t.winnerStep2Bold}</b>{t.winnerStep2Continue}
             </li>
             <li>
-              Dacă mai mulți concurenți au același raport, departajarea se face
-              pe baza drawdown-ului (mai mic = avantaj).
+              {t.winnerStep3}
             </li>
           </ol>
         </div>
         
         <div className="mb-6 text-center animate-fade-in">
           <span className="text-red-400 font-bold uppercase text-lg block mb-2 animate-bounce">
-            🚨 Toată lumea trebuie să își lege contul la MyFXbook! 🚨
+            {t.myfxbookWarning}
           </span>
           <a
             href="https://www.youtube.com/watch?v=zFLuM0rId-M&t=16s"
@@ -297,22 +293,21 @@ const CompetitionBanner = () => {
             rel="noopener noreferrer"
             className="text-blue-400 underline font-semibold hover:text-blue-300 transition-colors duration-200"
           >
-            MyFXbook Video
+            {t.myfxbookVideo}
           </a>
         </div>
         
         <div className="text-center text-gray-300 mb-6 max-w-2xl mx-auto animate-fade-in-up delay-200">
-          Vă așteptăm să vă alăturați acestei provocări și să demonstrați că
-          știți să gestionați riscul și să vă maximizați profitul!
+          {t.challengeText}
         </div>
         
         {phase === "waiting" && (
           <div className="text-center bg-gradient-to-r from-blue-900/30 to-green-900/30 rounded-2xl p-6 mb-6 border border-blue-400/30 animate-fade-in-up delay-100">
             <div className="text-lg font-bold text-blue-400 mb-2">
-              📝 Înscrie-te ACUM pentru următorul concurs!
+              {t.registerNowTitle}
             </div>
             <div className="text-green-400 font-semibold">
-              Completează formularul de mai jos și asigură-ți locul în competiție! 🎯
+              {t.registerNowMessage}
             </div>
           </div>
         )}
@@ -320,23 +315,23 @@ const CompetitionBanner = () => {
         <div className="text-center text-sm text-gray-400 mb-6 animate-fade-in-up delay-300">
           {phase === "waiting" ? (
             <>
-              Pentru înscriere completează formularul de mai jos!
+              {t.registrationInfo}
               <br />
-              <span className="text-blue-400 font-bold">Nu rata șansa de a participa!</span>
+              <span className="text-blue-400 font-bold">{t.dontMiss}</span>
             </>
           ) : (
             <>
-              Pentru informații suplimentare, contactează echipa ProFX!
+              {t.contactInfo}
             </>
           )}
           <br />
-          Comunitatea <b className="text-amber-400">PROFX</b>
+          {t.community} <b className="text-amber-400">PROFX</b>
         </div>
         
         <div className="text-center font-bold text-green-400 text-lg animate-fade-in-up delay-400">
-          Mult succes și tranzacții profitabile!
+          {t.goodLuck}
           <br />
-          <span className="text-amber-400">Echipa ProFX</span>
+          <span className="text-amber-400">{t.team}</span>
         </div>
       </div>
     </div>

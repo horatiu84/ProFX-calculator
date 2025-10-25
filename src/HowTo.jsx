@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { useLanguage } from './contexts/LanguageContext';
 
 // Import CSS-urile necesare
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -10,9 +11,10 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 // -----------------------------
 // PDFViewerModal (folosește createPortal)
 // -----------------------------
-const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
+const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile, translations }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pdfError, setPdfError] = useState(null);
+  const t = translations;
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     sidebarTabs: (defaultTabs) => [
@@ -55,7 +57,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
       document.body.removeChild(link);
     } catch (error) {
       console.error('Download error:', error);
-      alert('Eroare la descărcare. Verifică dacă fișierul există.');
+      alert(t.downloadError);
     }
   };
 
@@ -65,7 +67,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
 
   const handleDocumentLoadError = (error) => {
     console.error('PDF load error:', error);
-    setPdfError('Nu s-a putut încărca PDF-ul. Verifică dacă fișierul există în folderul public/');
+    setPdfError(t.errorMessage);
   };
 
   if (!isOpen) return null;
@@ -94,7 +96,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
             </div>
             <div>
               <h3 className="text-lg font-bold text-white truncate max-w-[40ch]">{pdfTitle}</h3>
-              <p className="text-sm text-gray-400">PDF Viewer</p>
+              <p className="text-sm text-gray-400">{t.pdfViewer}</p>
             </div>
           </div>
 
@@ -103,7 +105,7 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
             <button
               onClick={toggleFullscreen}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-              title={isFullscreen ? 'Ieșire fullscreen' : 'Fullscreen'}
+              title={isFullscreen ? t.fullscreenExit : t.fullscreen}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isFullscreen ? (
@@ -122,14 +124,14 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span>Descarcă</span>
+              <span>{t.download}</span>
             </button>
 
             {/* Close */}
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-              title="Închide"
+              title={t.close}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -146,17 +148,17 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">⚠️</div>
-                  <h3 className="text-xl font-bold text-white mb-2">Eroare la încărcarea PDF-ului</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{t.errorLoading}</h3>
                   <p className="text-gray-400 mb-4 max-w-md">{pdfError}</p>
                   <div className="text-sm text-gray-500 space-y-1">
-                    <p>Verifică dacă fișierul există în:</p>
+                    <p>{t.errorVerify}</p>
                     <p className="font-mono bg-gray-800 p-2 rounded">{pdfFile}</p>
                   </div>
                   <button
                     onClick={() => window.location.reload()}
                     className="mt-4 bg-amber-500 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-amber-400 transition-colors"
                   >
-                    Reîncearcă
+                    {t.retryButton}
                   </button>
                 </div>
               </div>
@@ -186,8 +188,8 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center p-8">
                           <div className="text-6xl mb-4">❌</div>
-                          <h3 className="text-xl font-bold text-white mb-2">Fișier PDF invalid</h3>
-                          <p className="text-gray-400">Nu s-a putut procesa fișierul PDF.</p>
+                          <h3 className="text-xl font-bold text-white mb-2">{t.invalidPDF}</h3>
+                          <p className="text-gray-400">{t.invalidPDFMessage}</p>
                         </div>
                       </div>
                     )}
@@ -209,6 +211,8 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
 // HowTo component (pagina cu ghiduri)
 // -----------------------------
 const HowTo = () => {
+  const { language, translations } = useLanguage();
+  const t = translations;
   const [downloadingItem, setDownloadingItem] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
 
@@ -233,7 +237,7 @@ const HowTo = () => {
         document.body.removeChild(link);
       } catch (error) {
         console.error('Download error:', error);
-        alert('Eroare la descărcare. Verifică dacă fișierul există.');
+        alert(t.downloadError);
       }
       setDownloadingItem(null);
     }, 1500);
@@ -252,87 +256,83 @@ const HowTo = () => {
   const guides = [
     {
       id: 1,
-      title: 'Ghid de conectare MT5',
-      description: 'Învață pas cu pas cum să te conectezi la platforma MetaTrader 5 și să configurezi contul tău de trading pe telefon.',
+      title: t.guide1Title,
+      description: t.guide1Description,
       fileName: '/pdfs/Ghid conectare MT5.pdf',
       pdfFile: '/pdfs/Ghid conectare MT5.pdf',
       icon: '🔗',
       color: 'from-blue-600 to-cyan-600',
       hoverColor: 'from-blue-500 to-cyan-500',
-      features: ['Pas cu pas', 'Screenshots', 'Troubleshooting'],
-      difficulty: 'Începător',
+      features: [t.guide1Feature1, t.guide1Feature2, t.guide1Feature3],
+      difficulty: t.difficultyBeginner,
     },
     {
       id: 2,
-      title: 'Ghid utilizare MT5 pe telefon',
-      description: 'Ghidul complet pentru utilizarea MetaTrader 5 pe dispozitivele mobile. Trading oriunde, oricând.',
+      title: t.guide2Title,
+      description: t.guide2Description,
       fileName: '/pdfs/Ghid folosire mt5.pdf',
       pdfFile: '/pdfs/Ghid folosire mt5.pdf',
       icon: '📱',
       color: 'from-emerald-600 to-teal-600',
       hoverColor: 'from-emerald-500 to-teal-500',
-      features: ['Interface mobil', 'Funcții avansate', 'Tips & tricks'],
-      difficulty: 'Începător',
+      features: [t.guide2Feature1, t.guide2Feature2, t.guide2Feature3],
+      difficulty: t.difficultyBeginner,
     },
     {
       id: 3,
-      title: 'Dicționar termeni Forex',
-      description: 'Glossar complet cu toți termenii esențiali din trading. De la A la Z, toate conceptele explicate simplu.',
+      title: t.guide3Title,
+      description: t.guide3Description,
       fileName: '/pdfs/Dictionar ProFX.pdf',
       pdfFile: '/pdfs/Dictionar ProFX.pdf',
       icon: '📖',
       color: 'from-purple-600 to-indigo-600',
       hoverColor: 'from-purple-500 to-indigo-500',
-      features: ['termeni uzuali', 'Explicații clare', 'Exemple practice'],
-      difficulty: 'Toate nivelurile',
+      features: [t.guide3Feature1, t.guide3Feature2, t.guide3Feature3],
+      difficulty: t.difficultyAll,
     },
   ];
 
   const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'Începător':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'Intermediar':
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'Avansat':
-        return 'bg-red-500/20 text-red-300 border-red-500/30';
-      default:
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+    if (difficulty === t.difficultyBeginner) {
+      return 'bg-green-500/20 text-green-300 border-green-500/30';
+    } else if (difficulty === t.difficultyIntermediate) {
+      return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+    } else if (difficulty === t.difficultyAdvanced) {
+      return 'bg-red-500/20 text-red-300 border-red-500/30';
+    } else {
+      return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
     }
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div key={language} className="min-h-screen p-6 animate-language-change">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-amber-400 to-amber-500 rounded-2xl mb-6 shadow-lg shadow-amber-500/25">
-            <span className="text-3xl">🎯</span>
-          </div>
+      
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-            How To <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">Ghiduri</span>
+            {t.mainTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">{t.mainTitleHighlight}</span>
           </h1>
 
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Descoperă ghidurile noastre complete pentru a începe călătoria în trading. 
-            Materiale introductive care te vor ajuta să înțelegi bazele platformei MetaTrader 5.
+            {t.subtitle}
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">3</div>
-            <div className="text-gray-300">Ghiduri disponibile</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat1Value}</div>
+            <div className="text-gray-300">{t.stat1Label}</div>
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">PDF</div>
-            <div className="text-gray-300">Format descărcare</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat2Value}</div>
+            <div className="text-gray-300">{t.stat2Label}</div>
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">Gratuit</div>
-            <div className="text-gray-300">100% fără costuri</div>
+            <div className="text-3xl font-bold text-amber-400 mb-2">{t.stat3Value}</div>
+            <div className="text-gray-300">{t.stat3Label}</div>
           </div>
         </div>
 
@@ -400,7 +400,7 @@ const HowTo = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    <span>Vizualizează</span>
+                    <span>{t.viewButton}</span>
                   </button>
 
                   {/* Download Button */}
@@ -419,14 +419,14 @@ const HowTo = () => {
                     {downloadingItem === guide.fileName ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent"></div>
-                        <span>Se descarcă...</span>
+                        <span>{t.downloadingButton}</span>
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span>Descarcă</span>
+                        <span>{t.downloadButton}</span>
                       </>
                     )}
                   </button>
@@ -443,15 +443,15 @@ const HowTo = () => {
         {/* Tips Section */}
         <div className="mt-16 bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">💡 Tips pentru începători</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">{t.tipsTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-8 h-8 bg-amber-400/20 rounded-lg flex items-center justify-center">
                   <span className="text-amber-400 font-bold text-sm">1</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">Începe cu conectarea</h4>
-                  <p className="text-gray-400 text-sm">Urmează ghidul de conectare MT5 pentru a-ți configura contul.</p>
+                  <h4 className="text-white font-medium mb-1">{t.tip1Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.tip1Description}</p>
                 </div>
               </div>
 
@@ -460,8 +460,8 @@ const HowTo = () => {
                   <span className="text-amber-400 font-bold text-sm">2</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">Învață termenii</h4>
-                  <p className="text-gray-400 text-sm">Consultă dicționarul pentru a înțelege limbajul trading-ului.</p>
+                  <h4 className="text-white font-medium mb-1">{t.tip2Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.tip2Description}</p>
                 </div>
               </div>
 
@@ -470,8 +470,8 @@ const HowTo = () => {
                   <span className="text-amber-400 font-bold text-sm">3</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-medium mb-1">Practică pe mobil</h4>
-                  <p className="text-gray-400 text-sm">Folosește ghidul mobil pentru a tranzacționa oriunde.</p>
+                  <h4 className="text-white font-medium mb-1">{t.tip3Title}</h4>
+                  <p className="text-gray-400 text-sm">{t.tip3Description}</p>
                 </div>
               </div>
             </div>
@@ -486,6 +486,7 @@ const HowTo = () => {
           onClose={handleCloseModal}
           pdfTitle={activeModal.title}
           pdfFile={activeModal.pdfFile}
+          translations={t}
         />
       )}
     </div>

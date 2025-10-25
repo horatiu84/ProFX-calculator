@@ -1,0 +1,35 @@
+Perioada:|{t.period}
+Toate trade-urile|{t.allTrades}
+Ultimele 7 zile|{t.last7Days}
+Luna aceasta|{t.thisMonth}
+Perioada personalizată|{t.customPeriod}
+Sortare:|{t.sorting}
+Cel mai recent → Cel mai vechi|{t.newestToOldest}
+Cel mai vechi → Cel mai recent|{t.oldestToNewest}
+De la:|{t.from}
+Până la:|{t.to}
+Afișând|{t.showing}
+din|{t.of}
+trade-uri|{t.tradesText}
+Niciun trade găsit|{t.noTradesFound}
+Data|{t.date}
+Pereche|{t.pair}
+Tip|{t.type}
+Lot|{t.lot}
+Pips|{t.pips}
+Rezultat|{t.result}
+P/L|{t.profitLoss}
+Sursă|{t.source}
+Note|{t.notes}
+Acțiuni|{t.actions}
+Semnale|{t.signals}
+Proprii|{t.ownTrades}
+Nu ai niciun trade înregistrat încă|{t.noTradesYet}
+Începe prin a adăuga primul tău trade!|{t.addFirstTrade}
+Nu sunt trade-uri în perioada selectată|{t.noTradesInPeriod}
+Încearcă să schimbi filtrele de mai sus|{t.tryChangeFilters}
+Click pentru detalii complete →|{t.clickForDetails}
+Click pentru detalii →|{t.clickForDetailsShort}
+Pagina|{t.page}
+Anterior|{t.previous}
+Următorul|{t.next}

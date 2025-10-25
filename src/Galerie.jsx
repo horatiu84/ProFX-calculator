@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Filter, Calendar, MapPin, Video, Image } from "lucide-react";
+import { useLanguage } from "./contexts/LanguageContext";
 
 function ModalOverlay({ selectedMedia, onClose, categories }) {
+  const { translations } = useLanguage();
+  const t = translations.galerie;
+  
   if (!selectedMedia) return null;
 
   const isVideo = selectedMedia.type === 'video';
@@ -36,7 +40,7 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-white hover:text-yellow-400 transition-colors duration-200 z-50"
-          aria-label="Închide"
+          aria-label={t.close}
         >
           <svg
             className="w-8 h-8"
@@ -74,7 +78,7 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
                 <Video size={48} className="text-yellow-500 mx-auto mb-4" />
                 <p className="text-xl font-medium">{selectedMedia.src}</p>
                 <p className="text-gray-500 mt-2">
-                  Video-ul nu s-a putut încărca
+                  {t.videoLoadError}
                 </p>
               </div>
             </div>
@@ -123,7 +127,7 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
                 <Calendar size={48} className="text-yellow-500 mx-auto mb-4" />
                 <p className="text-xl font-medium">{selectedMedia.src}</p>
                 <p className="text-gray-500 mt-2">
-                  Imaginea nu s-a putut încărca
+                  {t.imageLoadError}
                 </p>
               </div>
             </div>
@@ -156,7 +160,7 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
 
         <div className="text-center mt-4">
           <p className="text-gray-400 text-sm">
-            Apasă ESC sau click în afara {isVideo ? 'video-ului' : 'imaginii'} pentru a închide
+            {t.closeHint} {isVideo ? t.video : t.image} {t.closeAction}
           </p>
         </div>
       </div>
@@ -167,6 +171,9 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
 }
 
 const EventPhotoGallery = () => {
+  const { language, translations } = useLanguage();
+  const t = translations.galerie;
+  
   const [activeCategory, setActiveCategory] = useState("toate");
   const [mediaType, setMediaType] = useState("toate"); // "toate", "photos", "videos"
   const [selectedMedia, setSelectedMedia] = useState(null);
@@ -199,41 +206,41 @@ const EventPhotoGallery = () => {
     {
       id: 1,
       src: "/Galerie/Birou1.jpg",
-      alt: "Birou ProFX - Echipa la lucru",
+      alt: { ro: "Birou ProFX - Echipa la lucru", en: "ProFX Office - Team at work" },
       category: "birou",
-      title: "Fondatorii ProFX",
+      title: { ro: "Fondatorii ProFX", en: "ProFX Founders" },
       type: "photo"
     },
     {
       id: 2,
       src: "/Galerie/Birou2.jpg",
-      alt: "Birou ProFX - Spațiul de lucru",
+      alt: { ro: "Birou ProFX - Spațiul de lucru", en: "ProFX Office - Workspace" },
       category: "birou",
-      title: "Spațiul nostru de lucru",
+      title: { ro: "Spațiul nostru de lucru", en: "Our workspace" },
       type: "photo"
     },
     {
       id: 4,
       src: "/Galerie/BootcampHerculane1.jpg",
-      alt: "Bootcamp Herculane - Prima zi",
+      alt: { ro: "Bootcamp Herculane - Prima zi", en: "Herculane Bootcamp - First day" },
       category: "herculane",
-      title: "Prima zi la Herculane",
+      title: { ro: "Prima zi la Herculane", en: "First day at Herculane" },
       type: "photo"
     },
     {
       id: 5,
       src: "/Galerie/BootcampHerculane2.jpg",
-      alt: "Bootcamp Herculane - In natura",
+      alt: { ro: "Bootcamp Herculane - In natura", en: "Herculane Bootcamp - In nature" },
       category: "herculane",
-      title: "Workshop intensiv",
+      title: { ro: "Workshop intensiv", en: "Intensive workshop" },
       type: "photo"
     },
     {
       id: 7,
       src: "/Galerie/BootcampEforie1.jpg",
-      alt: "Bootcamp Eforie - La cina",
+      alt: { ro: "Bootcamp Eforie - La cina", en: "Eforie Bootcamp - At dinner" },
       category: "eforie",
-      title: "Evolutie",
+      title: { ro: "Evolutie", en: "Evolution" },
       type: "photo"
     },
     {
@@ -241,7 +248,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie2.jpg",
       alt: "",
       category: "eforie",
-      title: "Pe terasa",
+      title: { ro: "Pe terasa", en: "On the terrace" },
       type: "photo"
     },
     {
@@ -249,7 +256,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie3.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -257,7 +264,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie4.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -265,7 +272,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie5.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -273,7 +280,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie6.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -281,7 +288,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie7.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -289,7 +296,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie8.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
     {
@@ -297,7 +304,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/BootcampEforie9.jpg",
       alt: "",
       category: "eforie",
-      title: "Eforie Nord 2025",
+      title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
   ];
@@ -308,7 +315,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/bootcamp-eforie-1.mp4",
       alt: "",
       category: "eforie",
-      title: "Ziua 1",
+      title: { ro: "Ziua 1", en: "Day 1" },
       type: "video"
     },
     {
@@ -316,7 +323,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/bootcamp-eforie-2.mp4",
       alt: "",
       category: "eforie",
-      title: "Ziua 2",
+      title: { ro: "Ziua 2", en: "Day 2" },
       type: "video"
     },
     {
@@ -324,7 +331,7 @@ const EventPhotoGallery = () => {
       src: "/Galerie/Bootcamp-eforie-3.mp4",
       alt: "",
       category: "eforie",
-      title: "Ziua 3",
+      title: { ro: "Ziua 3", en: "Day 3" },
       type: "video"
     },
     {
@@ -332,24 +339,32 @@ const EventPhotoGallery = () => {
       src: "/Galerie/Bootcamp-eforie-4.mp4",
       alt: "",
       category: "eforie",
-      title: "Ziua 4",
+      title: { ro: "Ziua 4", en: "Day 4" },
       type: "video"
     },
   ];
 
   const allMedia = [...photos, ...videos];
 
+  // Helper function pentru a obține textul în limba corectă
+  const getLocalizedField = (field) => {
+    if (typeof field === 'object' && field !== null && (field.ro || field.en)) {
+      return field[language] || field.ro;
+    }
+    return field;
+  };
+
   const categories = [
-    { id: "toate", name: "Toate albumele", icon: Filter },
-    { id: "birou", name: "Birou ProFX", icon: MapPin },
-    { id: "herculane", name: "Bootcamp Herculane", icon: Calendar },
-    { id: "eforie", name: "Bootcamp Eforie Nord", icon: Calendar },
+    { id: "toate", name: t.allAlbums, icon: Filter },
+    { id: "birou", name: t.office, icon: MapPin },
+    { id: "herculane", name: t.herculane, icon: Calendar },
+    { id: "eforie", name: t.eforieNord, icon: Calendar },
   ];
 
   const mediaTypes = [
-    { id: "toate", name: "Toate categoriile", icon: Filter },
-    { id: "photos", name: "Poze", icon: Image },
-    { id: "videos", name: "Videos", icon: Video },
+    { id: "toate", name: t.allCategories, icon: Filter },
+    { id: "photos", name: t.photos, icon: Image },
+    { id: "videos", name: t.videos, icon: Video },
   ];
 
   // Filtrare complexă
@@ -374,15 +389,15 @@ const EventPhotoGallery = () => {
   const filteredMedia = getFilteredMedia();
 
   return (
-    <div className="py-12 px-4">
+    <div key={language} className="py-12 px-4 animate-language-change">
       <div className="max-w-7xl mx-auto">
         {/* Header card - glassmorphism */}
         <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 mb-12 hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden text-center">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative z-10">
-            <h1 className="text-4xl font-bold text-white mb-3">Galeria Noastră de Evenimente</h1>
+            <h1 className="text-4xl font-bold text-white mb-3">{t.pageTitle}</h1>
             <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-              Descoperă momentele speciale din biroul nostru și de la bootcamp-urile organizate în Herculane și Eforie Nord
+              {t.pageSubtitle}
             </p>
           </div>
         </div>
@@ -475,7 +490,7 @@ const EventPhotoGallery = () => {
                   ) : (
                     <img
                       src={item.src}
-                      alt={item.alt}
+                      alt={getLocalizedField(item.alt)}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
@@ -497,7 +512,7 @@ const EventPhotoGallery = () => {
                       </div>
                       <p className="font-medium text-gray-300">{item.src}</p>
                       <p className="text-sm mt-1 text-gray-400">
-                        {isVideo ? "Video-ul nu s-a putut încărca" : "Imaginea nu s-a putut încărca"}
+                        {isVideo ? t.videoLoadError : t.imageLoadError}
                       </p>
                     </div>
                   </div>
@@ -505,7 +520,7 @@ const EventPhotoGallery = () => {
                   <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                     <div className="text-amber-400 opacity-0 hover:opacity-100 transition-opacity duration-300">
                       <p className="text-lg font-semibold">
-                        Click pentru a {isVideo ? 'reda' : 'vedea'}
+                        {isVideo ? t.clickToPlay : t.clickToView}
                       </p>
                     </div>
                   </div>
@@ -519,10 +534,10 @@ const EventPhotoGallery = () => {
                       <Image size={16} className="text-gray-400" />
                     )}
                     <h3 className="text-xl font-semibold text-white">
-                      {item.title}
+                      {getLocalizedField(item.title)}
                     </h3>
                   </div>
-                  <p className="text-gray-400">{item.alt}</p>
+                  <p className="text-gray-400">{getLocalizedField(item.alt)}</p>
                   <div className="mt-4">
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
@@ -548,10 +563,10 @@ const EventPhotoGallery = () => {
               <Filter size={32} className="text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Nu există conținut în această categorie
+              {t.noContent}
             </h3>
             <p className="text-gray-400">
-              Încearcă să selectezi alte filtre.
+              {t.tryOtherFilters}
             </p>
           </div>
         )}
@@ -565,7 +580,7 @@ const EventPhotoGallery = () => {
 
         <div className="text-center mt-16 pt-8 border-t border-gray-700/50">
           <p className="text-gray-400">
-            Galerie foto și video ProFX • {new Date().getFullYear()}
+            {t.galleryFooter} • {new Date().getFullYear()}
           </p>
         </div>
       </div>

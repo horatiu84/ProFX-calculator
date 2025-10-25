@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 /**
  * BuyTPSLTrainer (responsive + procent pentru zona de BUY + axă de preț și delte față de baza zonei)
@@ -25,6 +26,8 @@ export default function BuyTPSLTrainer({
   basePrice = 3340,
   priceRange = 30,
 }) {
+  const { translations } = useLanguage();
+  const t = translations;
   const wrapRef = useRef(null);
   const svgRef = useRef(null);
 
@@ -250,10 +253,10 @@ export default function BuyTPSLTrainer({
 
   // tutorial steps dynamic based on mode
   const tutorialSteps = [
-    `Pas 1: Pentru un ${mode}, plasează TP ${isBuy ? 'deasupra' : 'sub'} zonei de intrare (preț ${isBuy ? 'mai mare' : 'mai mic'}).`,
-    `Pas 2: Plasează SL ${isBuy ? 'sub' : 'deasupra'} zona de intrare (preț ${isBuy ? 'mai mic' : 'mai mare'}).`,
-    "Pas 3: Observă calculul de profit și risc în timp real.",
-    `Felicitări! Ai plasat corect. Încearcă modul ${isBuy ? 'SELL' : 'BUY'}.`,
+    mode === "BUY" ? t.tpslStep1Buy : t.tpslStep1Sell,
+    mode === "BUY" ? t.tpslStep2Buy : t.tpslStep2Sell,
+    t.tpslStep3,
+    mode === "BUY" ? t.tpslStep4Buy : t.tpslStep4Sell,
   ];
 
   return (
@@ -333,7 +336,7 @@ export default function BuyTPSLTrainer({
           }}
         >
           <h3 style={{ margin: 0, fontSize: "clamp(16px, 2.5vw, 20px)" }}>
-            Plasează corect TP & SL (poziție {mode})
+            {t.tpslTitleMode} {mode})
           </h3>
           {bothOk && (
             <div
@@ -348,7 +351,7 @@ export default function BuyTPSLTrainer({
                 whiteSpace: "nowrap",
               }}
             >
-              ✅ TP și SL plasate corect!
+              {t.tpslCorrect}
             </div>
           )}
         </div>
@@ -411,7 +414,7 @@ export default function BuyTPSLTrainer({
           fill="#2563eb"
           fontWeight={700}
         >
-          ZONA DE {mode} · ref {fmt(basePrice)}
+          {t.tpslZoneLabel} {mode} · {t.tpslRef} {fmt(basePrice)}
         </text>
 
         {/* lumânări */}
@@ -424,7 +427,7 @@ export default function BuyTPSLTrainer({
           <g>
             <line x1={zoneX + zoneW / 2} y1={tpY} x2={zoneX + zoneW / 2} y2={isBuy ? zone.top - 20 : zone.top + zone.h + 20} stroke="#16a34a" strokeDasharray="4" />
             <text x={zoneX + zoneW / 2} y={isBuy ? zone.top - 25 : zone.top + zone.h + 25} textAnchor="middle" fontSize={12} fill="#16a34a">
-              {isBuy ? "↑ TP sus" : "↓ TP jos"}
+              {isBuy ? t.tpslTpUp : t.tpslTpDown}
             </text>
           </g>
         )}
@@ -432,7 +435,7 @@ export default function BuyTPSLTrainer({
           <g>
             <line x1={zoneX + zoneW / 2} y1={slY} x2={zoneX + zoneW / 2} y2={isBuy ? zone.top + zone.h + 20 : zone.top - 20} stroke="#dc2626" strokeDasharray="4" />
             <text x={zoneX + zoneW / 2} y={isBuy ? zone.top + zone.h + 25 : zone.top - 25} textAnchor="middle" fontSize={12} fill="#dc2626">
-              {isBuy ? "↓ SL jos" : "↑ SL sus"}
+              {isBuy ? t.tpslSlDown : t.tpslSlUp}
             </text>
           </g>
         )}
@@ -514,9 +517,9 @@ export default function BuyTPSLTrainer({
           color: "#b1b3b5",
         }}
       >
-        <div>Profit potențial: {profitPips} pips</div>
-        <div>Risc: {riskPips} pips</div>
-        <div>Risk/Reward: {rrRatio}</div>
+        <div>{t.tpslProfitPotential} {profitPips} {t.tpslPips}</div>
+        <div>{t.tpslRisk} {riskPips} {t.tpslPips}</div>
+        <div>{t.tpslRiskReward} {rrRatio}</div>
       </div>
 
       <div
@@ -532,7 +535,7 @@ export default function BuyTPSLTrainer({
         }}
       >
         <div>
-          Pentru un <b>{mode}</b>: <b>TP</b> {isBuy ? "deasupra" : "sub"} zonei; <b>SL</b> {isBuy ? "sub" : "deasupra"} zonei.
+          {t.tpslForBuy} <b>{mode}</b>: <b>TP</b> {isBuy ? t.tpslTpAbove : t.tpslTpBelow} {t.tpslZone}; <b>SL</b> {isBuy ? t.tpslSlBelow : t.tpslSlAbove} {t.tpslZone}.
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <button
@@ -550,7 +553,7 @@ export default function BuyTPSLTrainer({
               cursor: "pointer",
             }}
           >
-            Reset
+            {t.tpslReset}
           </button>
         </div>
       </div>
@@ -583,11 +586,11 @@ export default function BuyTPSLTrainer({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h4 style={{ color: "#333" }}>Explicații TP & SL</h4>
-            <p style={{ color: "#333" }}><b>Take Profit (TP):</b> Nivelul la care închizi trade-ul în profit. Pentru BUY: mai sus; pentru SELL: mai jos.</p>
-            <p style={{ color: "#333" }}><b>Stop Loss (SL):</b> Nivelul la care închizi trade-ul în pierdere pentru a limita riscul. Pentru BUY: mai jos; pentru SELL: mai sus.</p>
-            <p style={{ color: "#333" }}>Risk/Reward: Raportul dintre profit potențial și risc. Ideal mai mare ca 1.</p>
-            <button onClick={() => setShowHelp(false)} style={{ marginTop: 10, background: "#eee", color: "#333", padding: "5px 10px", border: "1px solid #ccc", borderRadius: 6, cursor: "pointer" }}>Închide</button>
+            <h4 style={{ color: "#333" }}>{t.tpslHelpTitle}</h4>
+            <p style={{ color: "#333" }}><b>{t.tpslHelpTp}</b> {t.tpslHelpTpDesc}</p>
+            <p style={{ color: "#333" }}><b>{t.tpslHelpSl}</b> {t.tpslHelpSlDesc}</p>
+            <p style={{ color: "#333" }}>{t.tpslHelpRr}</p>
+            <button onClick={() => setShowHelp(false)} style={{ marginTop: 10, background: "#eee", color: "#333", padding: "5px 10px", border: "1px solid #ccc", borderRadius: 6, cursor: "pointer" }}>{t.tpslHelpClose}</button>
           </div>
         </div>
       )}

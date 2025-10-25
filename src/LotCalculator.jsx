@@ -693,7 +693,7 @@ export default function LotCalculator() {
   </div>
 
   {/* Main Content Area */}
-  <div className="flex-1 ml-20 transition-all duration-300">
+  <div className="flex-1 mt-5 ml-20 transition-all duration-300">
     <div className="">
       {/* Header - logo clickable doar pe mobile/tablet */}
       <div className="flex flex-col items-center mb-8">
