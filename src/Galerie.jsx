@@ -4,12 +4,20 @@ import { Filter, Calendar, MapPin, Video, Image } from "lucide-react";
 import { useLanguage } from "./contexts/LanguageContext";
 
 function ModalOverlay({ selectedMedia, onClose, categories }) {
-  const { translations } = useLanguage();
+  const { translations, language } = useLanguage();
   const t = translations.galerie;
   
   if (!selectedMedia) return null;
 
   const isVideo = selectedMedia.type === 'video';
+
+  // Helper function pentru a obține textul în limba corectă
+  const getLocalizedField = (field) => {
+    if (typeof field === 'object' && field !== null && (field.ro || field.en)) {
+      return field[language] || field.ro;
+    }
+    return field;
+  };
 
   const content = (
     <div
@@ -88,10 +96,10 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
               <div className="flex items-center gap-2 mb-2">
                 <Video size={20} className="text-yellow-400" />
                 <h3 className="text-2xl font-bold text-white">
-                  {selectedMedia.title}
+                  {getLocalizedField(selectedMedia.title)}
                 </h3>
               </div>
-              <p className="text-gray-300 mb-3">{selectedMedia.alt}</p>
+              <p className="text-gray-300 mb-3">{getLocalizedField(selectedMedia.alt)}</p>
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                   selectedMedia.category === "birou"
@@ -136,10 +144,10 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
               <div className="flex items-center gap-2 mb-2">
                 <Image size={20} className="text-yellow-400" />
                 <h3 className="text-2xl font-bold text-white">
-                  {selectedMedia.title}
+                  {getLocalizedField(selectedMedia.title)}
                 </h3>
               </div>
-              <p className="text-gray-300 mb-3">{selectedMedia.alt}</p>
+              <p className="text-gray-300 mb-3">{getLocalizedField(selectedMedia.alt)}</p>
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                   selectedMedia.category === "birou"
