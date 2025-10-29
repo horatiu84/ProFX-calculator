@@ -26,6 +26,11 @@ import septembrie2 from "../../utils/Septembrie2.jpg";
 import septembrie3 from "../../utils/Septembrie3.jpg";
 import septembrie4 from "../../utils/Septembrie4.jpg";
 import septembrie5 from "../../utils/Septembrie5.jpg";
+import octombrie1 from "../../utils/Octombrie 1.jpg";
+import octombrie2 from "../../utils/Octombrie 2.jpg";
+import octombrie3 from "../../utils/Octombrie 3.jpg";
+import octombrie4 from "../../utils/Octombrie 4.jpg";
+import octombrie5 from "../../utils/Octombrie 5.jpg";
 
 const hallOfFame = [
   { img: aprilie1, name: "Ciprian Penisoara", title: " Locul 1 Aprile 2025" },
@@ -53,6 +58,15 @@ const hallOfFame = [
   },
   { img: septembrie4, name: "Erik Cirstea", title: "Locul 4 Septembrie 2025" },
   { img: septembrie5, name: "Adela Mercea", title: "Locul 5 Septembrie 2025" },
+  { img: octombrie1, name: "Mihai Ilie", title: "Locul 1 Octombrie 2025" },
+  { img: octombrie2, name: "Adela Mercea", title: "Locul 2 Octombrie 2025" },
+  {
+    img: octombrie3,
+    name: "Adrian Crainic",
+    title: "Locul 3 Octombrie 2025",
+  },
+  { img: octombrie4, name: "Marius Sebastian Gheorghita", title: "Locul 4 Octombrie 2025" },
+  { img: octombrie5, name: "Marian Musoiu", title: "Locul 5 Octombrie 2025" },
 ];
 
 const HallOfFameCarousel = () => {
