@@ -638,7 +638,7 @@ export default function ProFXbook() {
                     FPM Trading
                   </h3>
                   <p className="text-gray-400 text-center text-sm">
-                    {language === "ro" ? "Platformă profesională de trading" : "Professional trading platform"}
+                     {language === "ro" ? "Broker global de încredere" : "Trusted global broker"}
                   </p>
                   <div className="mt-2 px-4 py-2 bg-cyan-500/20 rounded-lg border border-cyan-400/30 group-hover:bg-cyan-500/30 transition-all duration-300">
                     <span className="text-cyan-400 font-semibold text-sm">
