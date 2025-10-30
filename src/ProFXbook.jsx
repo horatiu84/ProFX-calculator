@@ -699,6 +699,7 @@ export default function ProFXbook() {
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
                   placeholder={language === "ro" ? "Introdu numărul contului" : "Enter your account number"}
+                  autoComplete="off"
                   className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 transition-all duration-300"
                 />
               </div>
@@ -713,6 +714,7 @@ export default function ProFXbook() {
                   value={accountPassword}
                   onChange={(e) => setAccountPassword(e.target.value)}
                   placeholder={language === "ro" ? "Introdu parola contului" : "Enter your account password"}
+                  autoComplete="new-password"
                   className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50 transition-all duration-300"
                 />
               </div>

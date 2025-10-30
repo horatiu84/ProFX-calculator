@@ -385,6 +385,7 @@ const Dashboard = () => {
           type="text"
           placeholder="Caută după nume (partial)"
           value={searchNume}
+          autoComplete="off"
           onChange={(e) => setSearchNume(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
@@ -392,6 +393,7 @@ const Dashboard = () => {
           type="text"
           placeholder="Caută după telefon (partial)"
           value={searchTelefon}
+          autoComplete="off"
           onChange={(e) => setSearchTelefon(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
@@ -399,6 +401,7 @@ const Dashboard = () => {
           type="text"
           placeholder="Caută după email (partial)"
           value={searchEmail}
+          autoComplete="off"
           onChange={(e) => setSearchEmail(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
