@@ -380,6 +380,7 @@ const Dashboard = () => {
       <form
         onSubmit={handleSearch}
         className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6"
+        autoComplete="off"
       >
         <input
           type="text"
