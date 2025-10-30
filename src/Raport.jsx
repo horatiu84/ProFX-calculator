@@ -11,6 +11,7 @@ const Raport = () => {
     { label: t.raportJuly, href: "/Rapoarte/RaportIulie.html" },
     { label: t.raportAugust, href: "/Rapoarte/RaportAugust.html" },
     { label: t.raportSeptember, href: "/Rapoarte/RaportSeptembrie.html" },
+    { label: t.raportOctober, href: "/Rapoarte/RaportOctombrie.html" },
   ];
 
   return (
