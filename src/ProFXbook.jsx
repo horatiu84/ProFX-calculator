@@ -565,6 +565,19 @@ export default function ProFXbook() {
 
           {/* Broker Selection */}
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 mb-6">
+            {/* Back Button */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => setAuthStep("select")}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600/50 hover:border-gray-500/50 text-gray-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-semibold"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                {language === "ro" ? "Înapoi" : "Back"}
+              </button>
+            </div>
+
             <h2 className="text-2xl font-bold text-center mb-2 text-white">
               {language === "ro" ? "Selectează Brokerul" : "Select Your Broker"}
             </h2>
