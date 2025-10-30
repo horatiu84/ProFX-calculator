@@ -384,25 +384,37 @@ const Dashboard = () => {
       >
         <input
           type="text"
+          name="search-name-field"
           placeholder="Caută după nume (partial)"
           value={searchNume}
           autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           onChange={(e) => setSearchNume(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
         <input
           type="text"
+          name="search-phone-field"
           placeholder="Caută după telefon (partial)"
           value={searchTelefon}
           autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           onChange={(e) => setSearchTelefon(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
         <input
           type="text"
+          name="search-email-field"
           placeholder="Caută după email (partial)"
           value={searchEmail}
           autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           onChange={(e) => setSearchEmail(e.target.value)}
           className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
         />
