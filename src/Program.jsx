@@ -82,7 +82,7 @@ const WeeklySchedule = () => {
   const weekdayEvents = [
     { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
-    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
+    { name: sessionNames.newYorkWithFlavius, time: "13:45", duration: 1 },
   ];
 
   const specialEvents = {
