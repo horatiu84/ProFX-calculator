@@ -3,6 +3,108 @@
 
 export const newsArticles = [
   {
+    id: 5,
+    title: {
+      ro: "Trading live la sediul ProFX ",
+      en: "Live trading at ProFX headquarters"
+    },
+    date: {
+      ro: "1 Noiembrie 2025",
+      en: "November 1, 2025"
+    },
+    category: "Comunitate ProFX",
+    image: "/Galerie/Birou3.jpg",
+    excerpt: {
+      ro: "Atmosfera din comunitatea ProFX devine tot mai intensă! Pe 28 și 31 octombrie, sediul ProFX a fost plin de energie, pasiune și… profituri...",
+      en: "The atmosphere in the ProFX community is becoming more and more intense! On October 28 and 31, ProFX headquarters was full of energy, passion and... profits..."
+    },
+    content: {
+      ro: `**Atmosfera din comunitatea ProFX devine tot mai intensă!** 🔥
+
+Pe **28 și 31 octombrie**, sediul ProFX a fost plin de energie, pasiune și… profituri. 💰
+
+Am organizat **două sesiuni live de trading** în care traderii din comunitate au avut ocazia să tranzacționeze alături de mentorii **John, Sergiu și Mihai**.
+
+**📅 28 octombrie – sesiunea Londra**
+
+**📅 31 octombrie – sesiunea Asia**
+
+**Care a fost scopul?**
+
+Să aplicăm strategii reale, pe conturi reale, în timp real.
+
+**Și rezultatele?**
+
+✅ **Toată lumea a ieșit pe profit!**
+
+A fost o ocazie excelentă de **învățare, analiză și schimb de idei**, într-o atmosferă relaxată și plină de voie bună.
+
+**Sesiunea Asia – dedicare maximă**
+
+Pe sesiunea de Asia, startul s-a dat la ora **3:45 AM**, dar cafeaua a fost din plin, iar energia din sală a rămas la cote maxime până la final. ☕💪
+
+**De ce participă tot mai mulți membri?**
+
+Ne bucurăm că tot mai mulți membri ai comunității ProFX aleg să participe la aceste întâlniri față în față, unde **tradingul devine o experiență de echipă**.
+
+„Tradingul e mai ușor când îl faci alături de oameni care gândesc ca tine." **– ProFX Team** 
+
+
+**Vrei să te alături și tu la următoarea sesiune live?**
+
+📍 **Locație:** Sediul ProFX, București
+
+📅 **Următoarea întâlnire** – în curând!
+
+💡 Fii atent la anunțurile din comunitate și nu rata ocazia de a tranzacționa alături de cei mai experimentați traderi ProFX!`,
+      en: `**The atmosphere in the ProFX community is becoming more and more intense!** 🔥
+
+On **October 28 and 31**, ProFX headquarters was full of energy, passion and... profits. 💰
+
+We organized **two live trading sessions** where traders from the community had the opportunity to trade alongside mentors **John, Sergiu and Mihai**.
+
+**📅 October 28 – London session**
+
+**📅 October 31 – Asia session**
+
+**What was the goal?**
+
+To apply real strategies, on real accounts, in real time.
+
+**And the results?**
+
+✅ **Everyone left with profits!**
+
+It was an excellent opportunity for **learning, analysis and exchange of ideas**, in a relaxed and cheerful atmosphere.
+
+**Asia session – maximum dedication**
+
+For the Asia session, we started at **3:45 AM**, but coffee was plentiful, and the energy in the room remained at maximum levels until the end. ☕💪
+
+**Why are more and more members participating?**
+
+We are happy that more and more members of the ProFX community choose to participate in these face-to-face meetings, where **trading becomes a team experience**.
+
+> *"Trading is easier when you do it alongside people who think like you."*
+> 
+> **– ProFX Team**
+
+**Want to join the next live session?**
+
+📍 **Location:** ProFX Headquarters, Bucharest
+
+📅 **Next meeting** – coming soon!
+
+💡 Pay attention to community announcements and don't miss the opportunity to trade alongside the most experienced ProFX traders!`
+    },
+    tags: ["ProFX", "Live Trading", "Comunitate", "București", "Sesiuni Live"],
+    author: {
+      ro: "Echipa ProFX",
+      en: "ProFX Team"
+    },
+    importance: "high"
+  },
+  {
     id: 4,
     title: {
       ro: "Prețul aurului a revenit spectaculos la maxime istorice",
