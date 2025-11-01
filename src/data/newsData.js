@@ -85,9 +85,7 @@ For the Asia session, we started at **3:45 AM**, but coffee was plentiful, and t
 
 We are happy that more and more members of the ProFX community choose to participate in these face-to-face meetings, where **trading becomes a team experience**.
 
-> *"Trading is easier when you do it alongside people who think like you."*
-> 
-> **– ProFX Team**
+ "Trading is easier when you do it alongside people who think like you." **– ProFX Team**
 
 **Want to join the next live session?**
 
