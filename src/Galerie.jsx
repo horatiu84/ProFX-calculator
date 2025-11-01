@@ -227,8 +227,24 @@ const EventPhotoGallery = () => {
       title: { ro: "Spațiul nostru de lucru", en: "Our workspace" },
       type: "photo"
     },
-    {
+      {
+      id: 3,
+      src: "/Galerie/Birou3.jpg",
+      alt: { ro: "Birou ProFX - Sesiune live", en: "ProFX Office - Live session" },
+      category: "birou",
+      title: { ro: "Sesiune live", en: "Live session" },
+      type: "photo"
+    },
+      {
       id: 4,
+      src: "/Galerie/Birou4.jpg",
+      alt: { ro: "Birou ProFX - Sesiune live", en: "ProFX Office - Live session" },
+      category: "birou",
+      title: { ro: "Sesiune live", en: "Live session" },
+      type: "photo"
+    },
+    {
+      id: 5,
       src: "/Galerie/BootcampHerculane1.jpg",
       alt: { ro: "Bootcamp Herculane - Prima zi", en: "Herculane Bootcamp - First day" },
       category: "herculane",
@@ -236,7 +252,7 @@ const EventPhotoGallery = () => {
       type: "photo"
     },
     {
-      id: 5,
+      id: 6,
       src: "/Galerie/BootcampHerculane2.jpg",
       alt: { ro: "Bootcamp Herculane - In natura", en: "Herculane Bootcamp - In nature" },
       category: "herculane",
