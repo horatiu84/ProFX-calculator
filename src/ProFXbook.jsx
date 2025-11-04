@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
+import ProFXbookCalendar from "./ProFXbookCalendar";
 import {
   LineChart,
   Line,
@@ -1141,6 +1142,14 @@ export default function ProFXbook() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Trading Calendar */}
+        <div key={`calendar-${language}`} className="animate-language-change">
+          <h3 className="text-xl font-semibold mb-4 text-amber-400">
+            📆 {language === "ro" ? "Calendar Trading" : "Trading Calendar"}
+          </h3>
+          <ProFXbookCalendar accountData={currentAccountData} />
         </div>
 
         {/* Footer */}
