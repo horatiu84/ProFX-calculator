@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 import ProFXbookCalendar from "./ProFXbookCalendar";
 import {
@@ -38,15 +38,19 @@ const CustomTooltip = ({ active, payload }) => {
 // Funcție pentru generarea de date random pentru un cont
 const generateRandomAccountData = (initialBalance = 2000) => {
   const balance = initialBalance;
-  const gain = (Math.random() * 150 + 10).toFixed(2); // între 10% și 160%
-  const daily = (Math.random() * 0.5 + 0.05).toFixed(2); // între 0.05% și 0.55%
+  
+  // Pentru TOTAL (all) - date cumulative pe 10 luni
+  const totalGain = (Math.random() * 200 + 80).toFixed(2); // între 80% și 280%
+  const totalTrades = Math.floor(Math.random() * 800 + 500); // între 500 și 1300 trades
+  const totalWinRate = (Math.random() * 25 + 60).toFixed(1); // între 60% și 85%
+  const totalCurrentBalance = (balance * (1 + parseFloat(totalGain) / 100)).toFixed(2);
+  const totalEquity = totalCurrentBalance;
+  const totalProfit = (totalCurrentBalance - balance).toFixed(2);
+  const totalDrawdown = (Math.random() * 30 + 5).toFixed(2); // între 5% și 35%
+  
+  // Pentru luna curentă
   const monthly = (Math.random() * 15 + 1).toFixed(2); // între 1% și 16%
-  const drawdown = (Math.random() * 30 + 5).toFixed(2); // între 5% și 35%
-  const currentBalance = (balance * (1 + parseFloat(gain) / 100)).toFixed(2);
-  const equity = currentBalance;
-  const profit = (currentBalance - balance).toFixed(2);
-  const totalTrades = Math.floor(Math.random() * 200 + 50); // între 50 și 250
-  const winRate = (Math.random() * 30 + 55).toFixed(1); // între 55% și 85%
+  const daily = (Math.random() * 0.5 + 0.05).toFixed(2); // între 0.05% și 0.55%
 
   // Generare date lunare
   const monthlyData = [];
@@ -82,37 +86,37 @@ const generateRandomAccountData = (initialBalance = 2000) => {
   return {
     stats: {
       all: {
-        gain: parseFloat(gain),
-        daily: parseFloat(daily),
-        monthly: parseFloat(monthly),
-        drawdown: parseFloat(drawdown),
-        balance: parseFloat(currentBalance),
-        equity: parseFloat(equity),
+        gain: parseFloat(totalGain),
+        daily: parseFloat((parseFloat(totalGain) / 300).toFixed(2)), // gain împărțit la ~300 zile trading
+        monthly: parseFloat((parseFloat(totalGain) / 10).toFixed(2)), // gain împărțit la 10 luni
+        drawdown: parseFloat(totalDrawdown),
+        balance: parseFloat(totalCurrentBalance), // Balanța finală
+        equity: parseFloat(totalEquity),
         equityPercent: 100.0,
-        highest: parseFloat((parseFloat(currentBalance) * 1.02).toFixed(2)),
+        highest: parseFloat((parseFloat(totalCurrentBalance) * 1.02).toFixed(2)),
         highestDate: months[Math.floor(Math.random() * months.length)],
-        profit: parseFloat(profit),
-        interest: parseFloat((Math.random() * -50).toFixed(2)),
+        profit: parseFloat(totalProfit), // Profitul TOTAL cumulat
+        interest: parseFloat((Math.random() * -150 - 50).toFixed(2)), // între -50 și -200
         deposits: balance,
         withdrawals: 0.0,
-        totalTrades: totalTrades,
-        winRate: parseFloat(winRate),
+        totalTrades: totalTrades, // Total trades pe toate perioadele
+        winRate: parseFloat(totalWinRate),
       },
       today: {
         gain: parseFloat((Math.random() * 2).toFixed(2)),
         daily: parseFloat((Math.random() * 0.5).toFixed(2)),
         monthly: parseFloat(monthly),
         drawdown: parseFloat((Math.random() * 2).toFixed(2)),
-        balance: parseFloat(currentBalance),
-        equity: parseFloat(equity),
+        balance: parseFloat(totalCurrentBalance), // ACEEAȘI balanță
+        equity: parseFloat(totalEquity), // ACEEAȘI equity
         equityPercent: 100.0,
-        highest: parseFloat((parseFloat(currentBalance) * 1.02).toFixed(2)),
+        highest: parseFloat(totalCurrentBalance), // Highest pentru azi = balanța curentă
         highestDate: "Today",
-        profit: parseFloat((Math.random() * 50 + 10).toFixed(2)),
+        profit: parseFloat((Math.random() * 50 + 10).toFixed(2)), // Profit doar pentru AZI
         interest: 0,
         deposits: 0,
         withdrawals: 0.0,
-        totalTrades: Math.floor(Math.random() * 5 + 1),
+        totalTrades: Math.floor(Math.random() * 5 + 1), // Trades doar pentru AZI
         winRate: parseFloat((Math.random() * 30 + 55).toFixed(1)),
       },
       week: {
@@ -120,16 +124,16 @@ const generateRandomAccountData = (initialBalance = 2000) => {
         daily: parseFloat((Math.random() * 0.5 + 0.1).toFixed(2)),
         monthly: parseFloat(monthly),
         drawdown: parseFloat((Math.random() * 5 + 1).toFixed(2)),
-        balance: parseFloat(currentBalance),
-        equity: parseFloat(equity),
+        balance: parseFloat(totalCurrentBalance), // ACEEAȘI balanță
+        equity: parseFloat(totalEquity), // ACEEAȘI equity
         equityPercent: 100.0,
-        highest: parseFloat((parseFloat(currentBalance) * 1.02).toFixed(2)),
+        highest: parseFloat(totalCurrentBalance),
         highestDate: "This Week",
-        profit: parseFloat((Math.random() * 200 + 50).toFixed(2)),
+        profit: parseFloat((Math.random() * 200 + 50).toFixed(2)), // Profit doar pentru WEEK
         interest: parseFloat((Math.random() * -10).toFixed(2)),
         deposits: 0,
         withdrawals: 0.0,
-        totalTrades: Math.floor(Math.random() * 20 + 5),
+        totalTrades: Math.floor(Math.random() * 20 + 5), // Trades doar pentru WEEK
         winRate: parseFloat((Math.random() * 30 + 55).toFixed(1)),
       },
       month: {
@@ -137,17 +141,17 @@ const generateRandomAccountData = (initialBalance = 2000) => {
         daily: parseFloat(daily),
         monthly: parseFloat(monthly),
         drawdown: parseFloat((Math.random() * 10 + 2).toFixed(2)),
-        balance: parseFloat(currentBalance),
-        equity: parseFloat(equity),
+        balance: parseFloat(totalCurrentBalance), // ACEEAȘI balanță
+        equity: parseFloat(totalEquity), // ACEEAȘI equity
         equityPercent: 100.0,
-        highest: parseFloat((parseFloat(currentBalance) * 1.02).toFixed(2)),
+        highest: parseFloat(totalCurrentBalance),
         highestDate: "This Month",
-        profit: parseFloat((Math.random() * 500 + 100).toFixed(2)),
+        profit: parseFloat((Math.random() * 500 + 100).toFixed(2)), // Profit doar pentru MONTH
         interest: parseFloat((Math.random() * -20).toFixed(2)),
         deposits: 0,
         withdrawals: 0.0,
-        totalTrades: Math.floor(Math.random() * 50 + 20),
-        winRate: parseFloat(winRate),
+        totalTrades: Math.floor(Math.random() * 50 + 20), // Trades doar pentru MONTH
+        winRate: parseFloat((Math.random() * 30 + 55).toFixed(1)),
       },
     },
     monthlyData,
@@ -200,8 +204,12 @@ export default function ProFXbook() {
   // State pentru datele contului curent
   const [currentAccountData, setCurrentAccountData] = useState(null);
 
+  // State pentru datele din calendar
+  const [calendarData, setCalendarData] = useState(null);
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
+
   // State pentru perioada selectată
-  const [timePeriod, setTimePeriod] = useState("all");
+  const [timePeriod, setTimePeriod] = useState("month");
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
@@ -221,6 +229,146 @@ export default function ProFXbook() {
     }
   }, [savedAccounts]);
 
+  // Callback pentru când calendarul generează date
+  const handleCalendarDataGenerated = (dailyData, month) => {
+    setCalendarData(dailyData);
+    setCalendarMonth(month);
+  };
+
+  // Calculează statisticile bazate pe perioada selectată și datele din calendar
+  const calculatedStats = useMemo(() => {
+    if (!calendarData) return null;
+
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    // Calculăm start of week (Luni)
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Ajustăm pentru Luni ca început de săptămână
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - diff);
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const startOfMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+
+    // Obținem balanța finală din currentAccountData (dacă există)
+    const finalBalance = currentAccountData?.stats?.all?.balance || 2000;
+
+    // Filtrează zilele bazate pe perioada selectată
+    const getDaysForPeriod = () => {
+      const allDays = Object.entries(calendarData);
+      
+      switch(timePeriod) {
+        case 'today':
+          return allDays.filter(([day]) => {
+            const dayDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), parseInt(day));
+            return dayDate.getDate() === today.getDate() && 
+                   dayDate.getMonth() === today.getMonth() &&
+                   dayDate.getFullYear() === today.getFullYear();
+          });
+        
+        case 'week':
+          return allDays.filter(([day]) => {
+            const dayDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), parseInt(day));
+            return dayDate >= startOfWeek && dayDate <= today;
+          });
+        
+        case 'month':
+          return allDays;
+        
+        case 'all':
+          return allDays;
+        
+        default:
+          return allDays;
+      }
+    };
+
+    const filteredDays = getDaysForPeriod();
+    
+    if (filteredDays.length === 0) {
+      return {
+        totalTrades: 0,
+        winners: 0,
+        losers: 0,
+        winRate: 0,
+        totalProfit: 0,
+        balance: 2000,
+        equity: 2000,
+        gain: 0,
+        daily: 0,
+        monthly: 0,
+        drawdown: 0,
+        tradingDays: 0
+      };
+    }
+
+    // Calculează statisticile
+    let totalTrades = 0;
+    let totalWinners = 0;
+    let totalLosers = 0;
+    let totalProfit = 0;
+    let tradingDays = filteredDays.length;
+
+    filteredDays.forEach(([day, data]) => {
+      totalTrades += data.trades;
+      totalWinners += data.winners;
+      totalLosers += data.losers;
+      totalProfit += data.profit;
+    });
+
+    const winRate = totalTrades > 0 ? (totalWinners / totalTrades * 100) : 0;
+    const initialBalance = 2000;
+    // Folosim balanța finală (aceeași pentru toate perioadele), nu calculăm una nouă
+    const currentBalance = finalBalance;
+    const gain = (totalProfit / initialBalance * 100);
+    const dailyGain = tradingDays > 0 ? (gain / tradingDays) : 0;
+    const monthlyGain = gain; // Pentru luna curentă
+    const drawdown = Math.min(...filteredDays.map(([_, data]) => data.profit < 0 ? (data.profit / currentBalance * 100) : 0), 0);
+    
+    // Pentru highest, folosim balanța curentă (pentru perioade scurte, highest = balanța actuală)
+    // Sau putem calcula pornind de la balanța înainte de perioadă
+    const balanceBeforePeriod = currentBalance - totalProfit;
+    let runningBalance = balanceBeforePeriod;
+    let highestBalance = balanceBeforePeriod;
+    let highestDate = null;
+    
+    filteredDays.forEach(([day, data]) => {
+      runningBalance += data.profit;
+      if (runningBalance > highestBalance) {
+        highestBalance = runningBalance;
+        highestDate = `${calendarMonth.toLocaleString('default', { month: 'short' })} ${day}`;
+      }
+    });
+    
+    // Dacă highest este mai mic decât balanța curentă, folosim balanța curentă
+    if (highestBalance < currentBalance) {
+      highestBalance = currentBalance;
+    }
+
+    return {
+      totalTrades,
+      winners: totalWinners,
+      losers: totalLosers,
+      winRate: parseFloat(winRate.toFixed(1)),
+      totalProfit: parseFloat(totalProfit.toFixed(2)),
+      profit: parseFloat(totalProfit.toFixed(2)),
+      balance: parseFloat(currentBalance.toFixed(2)), // Balanța finală (constantă)
+      equity: parseFloat(currentBalance.toFixed(2)), // Equity = balanța finală
+      equityPercent: 100.0,
+      highest: parseFloat(highestBalance.toFixed(2)),
+      highestDate: highestDate || 'N/A',
+      gain: parseFloat(gain.toFixed(2)),
+      daily: parseFloat(dailyGain.toFixed(2)),
+      monthly: parseFloat(monthlyGain.toFixed(2)),
+      drawdown: parseFloat(Math.abs(drawdown).toFixed(2)),
+      deposits: initialBalance,
+      withdrawals: 0,
+      interest: 0,
+      tradingDays
+    };
+  }, [calendarData, timePeriod, calendarMonth, currentAccountData]);
+
   // Date cont (vor fi setate după autentificare)
   const accountType = serverType === "Live" ? "real" : "demo";
   const traderName = "ProFX Trader";
@@ -229,7 +377,37 @@ export default function ProFXbook() {
   const platform = "MetaTrader 5";
 
   // Statistici și date pentru dashboard-ul curent
-  const stats = currentAccountData?.stats[timePeriod] || currentAccountData?.stats.all || {};
+  // Pentru "all" (Total) folosim datele random generate, pentru restul folosim calculatedStats din calendar
+  const stats = (timePeriod === 'all' && currentAccountData?.stats?.all) 
+    ? currentAccountData.stats.all 
+    : (calculatedStats || currentAccountData?.stats[timePeriod] || currentAccountData?.stats.all || {
+      totalTrades: 0,
+      winners: 0,
+      losers: 0,
+      winRate: 0,
+      totalProfit: 0,
+      profit: 0,
+      balance: 2000,
+      equity: 2000,
+      equityPercent: 100,
+      highest: 2000,
+      highestDate: 'N/A',
+      gain: 0,
+      daily: 0,
+      monthly: 0,
+      drawdown: 0,
+      deposits: 2000,
+      withdrawals: 0,
+      interest: 0,
+      tradingDays: 0
+    });
+  
+  // Helper function pentru formatare sigură
+  const formatCurrency = (value) => {
+    const num = value || 0;
+    return num.toLocaleString('en-US', { minimumFractionDigits: 2 });
+  };
+  
   const monthlyData = currentAccountData?.monthlyData || [];
   
   // Date pentru growth chart bazate pe perioadă
@@ -968,27 +1146,27 @@ export default function ProFXbook() {
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.balance}</div>
                 <div className="text-blue-400 text-xl font-bold">
-                  ${stats.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.balance)}
                 </div>
               </div>
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.equity}</div>
                 <div className="text-blue-400 text-xl font-bold">
-                  ${stats.equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.equity)}
                 </div>
                 <div className="text-gray-500 text-xs">({stats.equityPercent}%)</div>
               </div>
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.highest}</div>
                 <div className="text-amber-400 text-lg font-bold">
-                  ${stats.highest.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.highest)}
                 </div>
                 <div className="text-gray-500 text-xs">({stats.highestDate})</div>
               </div>
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.profit}</div>
                 <div className="text-emerald-400 text-xl font-bold">
-                  ${stats.profit.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.profit)}
                 </div>
               </div>
             </div>
@@ -1003,19 +1181,19 @@ export default function ProFXbook() {
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.deposits}</div>
                 <div className="text-blue-400 text-xl font-bold">
-                  ${stats.deposits.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.deposits)}
                 </div>
               </div>
               <div>
                 <div className="text-gray-400 text-xs mb-1">{t.withdrawals}</div>
                 <div className="text-gray-400 text-xl font-bold">
-                  ${stats.withdrawals.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.withdrawals)}
                 </div>
               </div>
               <div className="col-span-2">
                 <div className="text-gray-400 text-xs mb-1">{t.interest}</div>
                 <div className="text-red-400 text-xl font-bold">
-                  ${stats.interest.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.interest)}
                 </div>
               </div>
             </div>
@@ -1042,7 +1220,7 @@ export default function ProFXbook() {
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
                 <span className="text-gray-400 text-sm">{t.netProfit}</span>
                 <span className="text-emerald-400 font-bold text-lg">
-                  ${stats.profit.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.profit)}
                 </span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
@@ -1052,7 +1230,7 @@ export default function ProFXbook() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">{t.currentBalance}</span>
                 <span className="text-blue-400 font-bold text-lg">
-                  ${stats.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  ${formatCurrency(stats.balance)}
                 </span>
               </div>
             </div>
@@ -1149,7 +1327,10 @@ export default function ProFXbook() {
           <h3 className="text-xl font-semibold mb-4 text-amber-400">
             📆 {language === "ro" ? "Calendar Trading" : "Trading Calendar"}
           </h3>
-          <ProFXbookCalendar accountData={currentAccountData} />
+          <ProFXbookCalendar 
+            accountData={currentAccountData} 
+            onDataGenerated={handleCalendarDataGenerated}
+          />
         </div>
 
         {/* Footer */}

@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 
-const ProFXbookCalendar = ({ accountData }) => {
+const ProFXbookCalendar = ({ accountData, onDataGenerated }) => {
   const { language } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
@@ -21,14 +21,21 @@ const ProFXbookCalendar = ({ accountData }) => {
     const todayDay = today.getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
+      // Creăm obiectul Date pentru ziua curentă
+      const currentDayDate = new Date(year, month, day);
+      const dayOfWeek = currentDayDate.getDay(); // 0 = Duminică, 6 = Sâmbătă
+      
+      // Verificăm dacă este weekend (Sâmbătă sau Duminică)
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      
       // Verificăm dacă ziua este în trecut sau astăzi
       const isPastOrToday = 
         year < todayYear || 
         (year === todayYear && month < todayMonth) ||
         (year === todayYear && month === todayMonth && day <= todayDay);
 
-      // Simulăm doar 60% din zile cu tranzacții, DOAR pentru zilele trecute sau astăzi
-      if (isPastOrToday && Math.random() > 0.4) {
+      // NU generăm trades în weekend, și simulăm doar 60% din zilele de trading (Luni-Vineri)
+      if (!isWeekend && isPastOrToday && Math.random() > 0.4) {
         const trades = Math.floor(Math.random() * 25) + 1; // 1-25 trades
         const winRate = Math.random() * 0.5 + 0.4; // 40-90% win rate
         const winners = Math.floor(trades * winRate);
@@ -85,6 +92,13 @@ const ProFXbookCalendar = ({ accountData }) => {
 
     return data;
   }, [currentDate]); // Se regenerează doar când se schimbă luna
+
+  // Notifică componenta părinte când datele se schimbă
+  useEffect(() => {
+    if (onDataGenerated) {
+      onDataGenerated(dailyData, currentDate);
+    }
+  }, [dailyData, currentDate, onDataGenerated]);
 
   // Calculează statistici săptămânale
   const calculateWeeklyStats = () => {
@@ -290,42 +304,65 @@ const ProFXbookCalendar = ({ accountData }) => {
             </div>
 
             {/* Days of the week */}
-            {week.map((day, dayIdx) => (
-              <div
-                key={dayIdx}
-                onClick={() => day && openDayDetails(day)}
-                className={`h-24 rounded-lg border transition-all ${
-                  day && dailyData[day]
-                    ? dailyData[day].profit >= 0
-                      ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20'
-                      : 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20'
-                    : day
-                    ? 'bg-gray-800/30 border-gray-700/30'
-                    : 'border-transparent'
-                } ${day ? 'cursor-pointer' : ''}`}
-              >
-                {day && (
-                  <div className="p-2 h-full flex flex-col justify-between">
-                    <div className="text-xs text-gray-400 font-medium">{day}</div>
-                    {dailyData[day] && (
-                      <div className="space-y-1">
-                        <div className={`text-sm font-bold ${
-                          dailyData[day].profit >= 0 ? 'text-emerald-400' : 'text-red-400'
-                        }`}>
-                          {dailyData[day].profit >= 0 ? '$' : '-$'}{Math.abs(dailyData[day].profit)}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {dailyData[day].trades} {language === "ro" ? "trades" : "trades"}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {dailyData[day].winRate}%
-                        </div>
+            {week.map((day, dayIdx) => {
+              // Verificăm dacă ziua este weekend
+              const year = currentDate.getFullYear();
+              const month = currentDate.getMonth();
+              const currentDayDate = day ? new Date(year, month, day) : null;
+              const isWeekend = currentDayDate && (currentDayDate.getDay() === 0 || currentDayDate.getDay() === 6);
+              
+              return (
+                <div
+                  key={dayIdx}
+                  onClick={() => day && !isWeekend && dailyData[day] && openDayDetails(day)}
+                  className={`h-24 rounded-lg border transition-all ${
+                    isWeekend
+                      ? 'bg-gray-900/50 border-gray-800/50'
+                      : day && dailyData[day]
+                      ? dailyData[day].profit >= 0
+                        ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20'
+                        : 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20'
+                      : day
+                      ? 'bg-gray-800/30 border-gray-700/30'
+                      : 'border-transparent'
+                  } ${day && !isWeekend && dailyData[day] ? 'cursor-pointer' : ''}`}
+                >
+                  {day && (
+                    <div className="p-2 h-full flex flex-col justify-between">
+                      <div className={`text-xs font-medium ${isWeekend ? 'text-gray-600' : 'text-gray-400'}`}>
+                        {day}
+                        {isWeekend && (
+                          <span className="ml-1 text-[10px]">
+                            {currentDayDate.getDay() === 0 ? '🔒' : '🔒'}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+                      {isWeekend ? (
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600">
+                            {language === "ro" ? "Piață închisă" : "Market closed"}
+                          </div>
+                        </div>
+                      ) : dailyData[day] ? (
+                        <div className="space-y-1">
+                          <div className={`text-sm font-bold ${
+                            dailyData[day].profit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                          }`}>
+                            {dailyData[day].profit >= 0 ? '$' : '-$'}{Math.abs(dailyData[day].profit)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {dailyData[day].trades} {language === "ro" ? "trades" : "trades"}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {dailyData[day].winRate}%
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </React.Fragment>
         ))}
       </div>
@@ -343,6 +380,10 @@ const ProFXbookCalendar = ({ accountData }) => {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-gray-800/30 border border-gray-700/30"></div>
           <span>{language === "ro" ? "Fără tranzacții" : "No trades"}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-gray-900/50 border border-gray-800/50"></div>
+          <span>{language === "ro" ? "Weekend (piață închisă)" : "Weekend (market closed)"}</span>
         </div>
       </div>
 
