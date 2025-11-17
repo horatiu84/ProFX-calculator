@@ -381,7 +381,12 @@ export default function LotCalculator() {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedGroups, setExpandedGroups] = useState({
     dashboard: false,
-    education: false
+    education: false,
+    wall: false
+  });
+  const [expandedSubGroups, setExpandedSubGroups] = useState({
+    performance: false,
+    calculatoare: false
   });
 
   // Structura nouă de meniu cu grupuri și submeniuri
@@ -414,6 +419,7 @@ export default function LotCalculator() {
           icon: "📈", 
           color: "yellow",
           isSubGroup: true,
+          hasSubmenu: true,
           items: [
             { key: "performance-stats", label: "Trading Stats", icon: "📊", component: <Evolutie />, color: "red" },
             { key: "jurnal", label: "My Journal", icon: "📓", component: <TradingJournal />, color: "red" },
@@ -428,6 +434,7 @@ export default function LotCalculator() {
           icon: "🧮", 
           color: "yellow",
           isSubGroup: true,
+          hasSubmenu: true,
           items: [
             { key: "lot", label: "Calc LOT", icon: "📉", component: <Calculator />, color: "red" },
             { key: "evolutie", label: "Evolutie", icon: "📈", component: <Evolutie />, color: "red" },
@@ -558,6 +565,14 @@ export default function LotCalculator() {
     }));
   };
 
+  // Toggle sub-group expansion
+  const toggleSubGroup = (subGroupKey) => {
+    setExpandedSubGroups(prev => ({
+      ...prev,
+      [subGroupKey]: !prev[subGroupKey]
+    }));
+  };
+
   // Show loading screen
   if (isLoading) {
     return <BrainLoadingScreen onLoadingComplete={handleLoadingComplete} />;
@@ -575,11 +590,11 @@ export default function LotCalculator() {
       
       switch(item.color) {
         case 'green':
-          return 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 text-white hover:from-emerald-500 hover:to-teal-600 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30';
+          return 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 text-white hover:from-emerald-500 hover:to-teal-600 shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 border border-emerald-400/30';
         case 'yellow':
-          return 'bg-gradient-to-r from-yellow-500/80 to-amber-600/80 text-black hover:from-yellow-500 hover:to-amber-600 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 border border-yellow-400/30';
+          return 'bg-gradient-to-r from-yellow-600/80 to-amber-600/80 text-white hover:from-yellow-600 hover:to-amber-600 shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/20 border border-yellow-500/30';
         case 'red':
-          return 'bg-gradient-to-r from-red-500/80 to-rose-600/80 text-white hover:from-red-500 hover:to-rose-600 shadow-lg shadow-red-500/20 hover:shadow-red-500/40 border border-red-400/30';
+          return 'bg-gradient-to-r from-pink-600/70 to-rose-600/70 text-white hover:from-pink-600/80 hover:to-rose-600/80 shadow-sm border border-pink-500/30';
         default:
           if (item.isAfiliere) {
             return 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30';
@@ -596,17 +611,17 @@ export default function LotCalculator() {
         <button
           onClick={() => handleTabChange(item.key)}
           className={`
-            relative w-full flex items-center px-3 py-2.5 rounded-xl font-medium transition-all duration-300 
-            ease-in-out hover:scale-105 active:scale-95 overflow-visible
+            relative w-full flex items-center px-3 py-2 rounded-lg font-semibold transition-all duration-300 
+            ease-in-out hover:scale-[1.02] active:scale-95 overflow-visible text-sm
             ${getColorClasses()}
           `}
         >
-          <span className="text-lg flex-shrink-0 w-6 h-6 flex items-center justify-center z-10">
+          <span className="text-base flex-shrink-0 w-6 h-6 flex items-center justify-center z-10">
             {item.icon}
           </span>
           
           <span className={`
-            ml-3 text-sm whitespace-nowrap transition-all duration-300 overflow-hidden z-10
+            ml-2.5 whitespace-nowrap transition-all duration-300 overflow-hidden z-10
             ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
           `}>
             {item.label}
@@ -716,23 +731,49 @@ export default function LotCalculator() {
           overflow-hidden transition-all duration-300 ease-in-out
           ${isExpanded && isSidebarExpanded ? 'max-h-[1000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}
         `}>
-          <div className="ml-2 space-y-1 border-l-2 border-gray-600/30 pl-2">
+          <div className="ml-2 space-y-2 border-l-2 border-gray-600/30 pl-3">
             {group.items.map((item) => {
-              // Dacă e sub-subgroup (ex: Calculatoare)
-              if (item.isSubGroup && item.items) {
+              // Dacă e sub-grup cu dropdown (ex: My Performance, Calculatoare)
+              if (item.isSubGroup && item.hasSubmenu && item.items) {
+                const isSubGroupExpanded = expandedSubGroups[item.key];
                 return (
-                  <div key={item.key} className="mb-2">
-                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 ml-3">
-                      {item.label}
-                    </div>
-                    <div className="space-y-1">
-                      {item.items.map((subItem) => (
-                        <SidebarButton key={subItem.key} item={subItem} />
-                      ))}
+                  <div key={item.key} className="space-y-1">
+                    {/* Buton pentru sub-grup - clickable cu dropdown */}
+                    <button
+                      onClick={() => toggleSubGroup(item.key)}
+                      className={`
+                        w-full flex items-center justify-between px-3 py-2 rounded-lg font-semibold 
+                        transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-95 text-sm
+                        bg-gradient-to-r from-yellow-600/80 to-amber-600/80 text-white hover:from-yellow-600 hover:to-amber-600 
+                        shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/20 border border-yellow-500/30
+                      `}
+                    >
+                      <div className="flex items-center">
+                        <span className="text-base flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                          {item.icon}
+                        </span>
+                        <span className="ml-2.5">{item.label}</span>
+                      </div>
+                      <span className={`transform transition-transform duration-300 text-xs ${isSubGroupExpanded ? 'rotate-180' : ''}`}>
+                        ▼
+                      </span>
+                    </button>
+                    
+                    {/* Items din sub-grup */}
+                    <div className={`
+                      overflow-hidden transition-all duration-300 ease-in-out
+                      ${isSubGroupExpanded ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0'}
+                    `}>
+                      <div className="space-y-1 ml-3">
+                        {item.items.map((subItem) => (
+                          <SidebarButton key={subItem.key} item={subItem} />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
               }
+              // Item normal
               return <SidebarButton key={item.key} item={item} />;
             })}
           </div>
