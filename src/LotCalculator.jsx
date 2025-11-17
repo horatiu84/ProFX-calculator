@@ -401,16 +401,27 @@ export default function LotCalculator() {
     },
     {
       key: "dashboard",
-      label: "ONLY DASHBOARD",
+      label: "ARMY DASHBOARD",
       icon: "📊",
       color: "yellow",
       isGroup: true,
       hasSubmenu: true,
       items: [
         { key: "agenda", label: "Program ProFx", icon: "🗓️", component: <ProFXSchedule />, color: "yellow" },
-        { key: "evolutie", label: "My Performance", icon: "📈", component: <Evolutie />, color: "yellow" },
+        { 
+          key: "performance", 
+          label: "My Performance", 
+          icon: "📈", 
+          color: "yellow",
+          isSubGroup: true,
+          items: [
+            { key: "performance-stats", label: "Trading Stats", icon: "📊", component: <Evolutie />, color: "red" },
+            { key: "jurnal", label: "My Journal", icon: "📓", component: <TradingJournal />, color: "red" },
+            { key: "pierdere", label: "Trade Medic", icon: "⚙️", component: <HowTo />, color: "red" }
+          ]
+        },
         { key: "raport", label: "The Table", icon: "📊", component: <Raport />, color: "yellow" },
-        { key: "jurnal", label: "I Am Mentor", icon: "📓", component: <TradingJournal />, color: "yellow" },
+        { key: "mentor", label: "I Am Mentor", icon: "👨‍🏫", component: <TradingJournal />, color: "yellow" },
         { 
           key: "calculatoare", 
           label: "Calculatoare", 
@@ -418,12 +429,9 @@ export default function LotCalculator() {
           color: "yellow",
           isSubGroup: true,
           items: [
-            { key: "agenda-stats", label: "Trading Stats", icon: "📊", component: <ProFXSchedule />, color: "red" },
-            { key: "jurnal-2", label: "My Journal", icon: "📓", component: <TradingJournal />, color: "red" },
-            { key: "pierdere", label: "Trade Medic", icon: "⚙️", component: <HowTo />, color: "red" },
             { key: "lot", label: "Calc LOT", icon: "📉", component: <Calculator />, color: "red" },
-            { key: "evolutie-2", label: "Evolutie", icon: "📈", component: <Evolutie />, color: "red" },
-            { key: "raport-2", label: "Raports", icon: "📝", component: <Raport />, color: "red" }
+            { key: "evolutie", label: "Evolutie", icon: "📈", component: <Evolutie />, color: "red" },
+            { key: "raport-calc", label: "Raports", icon: "📝", component: <Raport />, color: "red" }
           ]
         }
       ]
