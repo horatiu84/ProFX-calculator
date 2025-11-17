@@ -379,43 +379,108 @@ export default function LotCalculator() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedGroups, setExpandedGroups] = useState({
+    dashboard: false,
+    education: false
+  });
 
-  const menuItems = [
-    { key: "agenda", label: t.agenda, icon: "🗓️", component: <ProFXSchedule /> },
-    { key: "evolutie", label: t.evolutie, icon: "📈", component: <Evolutie /> },
-    { key: "lot", label: t.lot, icon: "📉", component: <Calculator /> },
-    { key: "pierdere", label: t.pierdere, icon: "⚙️", component: <HowTo /> },
+  // Structura nouă de meniu cu grupuri și submeniuri
+  const menuGroups = [
     {
-      key: "educatie",
-      label: t.educatie,
-      icon: "ℹ️",
-      component: <Educatie />,
-      isSpecial: true
+      key: "wall",
+      label: "THE WALL",
+      icon: "📰",
+      color: "green",
+      isGroup: true,
+      hasSubmenu: true,
+      items: [
+        { key: "stiri", label: "News & Announcements", icon: "📰", component: <Stiri />, color: "green" },
+        { key: "galerie", label: "Photos", icon: "📷", component: <EventPhotoGallery />, color: "green" },
+        { key: "evenimente", label: "Events / Postanunci", icon: "🏝️", component: <Evenimente />, color: "green" }
+      ]
     },
     {
-      key: "training",
-      label: t.training,
-      icon: "🧑‍🏫",
-      component: <Training />,
-      isSpecial: true
+      key: "dashboard",
+      label: "ONLY DASHBOARD",
+      icon: "📊",
+      color: "yellow",
+      isGroup: true,
+      hasSubmenu: true,
+      items: [
+        { key: "agenda", label: "Program ProFx", icon: "🗓️", component: <ProFXSchedule />, color: "yellow" },
+        { key: "evolutie", label: "My Performance", icon: "📈", component: <Evolutie />, color: "yellow" },
+        { key: "raport", label: "The Table", icon: "📊", component: <Raport />, color: "yellow" },
+        { key: "jurnal", label: "I Am Mentor", icon: "📓", component: <TradingJournal />, color: "yellow" },
+        { 
+          key: "calculatoare", 
+          label: "Calculatoare", 
+          icon: "🧮", 
+          color: "yellow",
+          isSubGroup: true,
+          items: [
+            { key: "agenda-stats", label: "Trading Stats", icon: "📊", component: <ProFXSchedule />, color: "red" },
+            { key: "jurnal-2", label: "My Journal", icon: "📓", component: <TradingJournal />, color: "red" },
+            { key: "pierdere", label: "Trade Medic", icon: "⚙️", component: <HowTo />, color: "red" },
+            { key: "lot", label: "Calc LOT", icon: "📉", component: <Calculator />, color: "red" },
+            { key: "evolutie-2", label: "Evolutie", icon: "📈", component: <Evolutie />, color: "red" },
+            { key: "raport-2", label: "Raports", icon: "📝", component: <Raport />, color: "red" }
+          ]
+        }
+      ]
     },
-    // { 
-    //   key: "simulare", 
-    //   label: "Afiliere", 
-    //   icon: "💵", 
-    //   component: <Simulare />, 
-    //   isSpecial: true,
-    //   isAfiliere: true
-    // },
-    { key: "raport", label: t.raport, icon: "📝", component: <Raport /> },
-    { key: "jurnal", label: t.jurnal, icon: "📓", component: <TradingJournal /> },
-    { key: "evenimente", label: t.evenimente, icon: "🏝️", component: <Evenimente /> },
-    { key: "test", label: t.test, icon: "📋", component: <Test /> },
-    { key: "contact", label: t.contact, icon: "💬", component: <Contact /> },
-    { key: "galerie", label: t.galerie, icon: "📷", component: <EventPhotoGallery /> },
-    { key: "stiri", label: t.stiri, icon: "📰", component: <Stiri /> }
-    // { key: "Clase", label: "Clasa 1:20", icon: "📋", component: <ProFXChecklist /> } // Temporar dezactivat
+    {
+      key: "education",
+      label: "VIP EDUCATION",
+      icon: "🎓",
+      color: "yellow",
+      isGroup: true,
+      hasSubmenu: true,
+      items: [
+        { key: "educatie", label: "Curs BASIC", icon: "📚", component: <Educatie />, isSpecial: true, color: "yellow" },
+        { key: "training", label: "Curs Avansați", icon: "🧑‍🏫", component: <Training />, isSpecial: true, color: "yellow" },
+        { key: "test", label: "Curs Macro", icon: "📊", component: <Test />, color: "yellow" },
+        { key: "clase", label: "Curs 1:20", icon: "👥", component: <ProFXChecklist />, color: "yellow" },
+        { key: "clase-algo", label: "Curs AlgoTrading", icon: "🤖", component: <ProFXChecklist />, color: "yellow" },
+        { key: "dd-a", label: "DD-A", icon: "📋", component: <Test />, color: "yellow" },
+        { key: "how-to", label: "How To", icon: "❓", component: <HowTo />, color: "yellow" },
+        { key: "training-extra", label: "Training", icon: "💪", component: <Training />, color: "yellow" }
+      ]
+    },
+    {
+      key: "feedback",
+      label: "FREE FEEDBACK",
+      icon: "💬",
+      color: "free",
+      isGroup: false,
+      component: <Contact />
+    },
+    {
+      key: "concurs",
+      label: "FREE CONCURS",
+      icon: "🏆",
+      color: "free",
+      isGroup: false,
+      component: <Evenimente />,
+      subtitle: "Mgmt & Broker în concurs"
+    }
   ];
+
+  // Flatten all menu items pentru compatibilitate cu codul existent
+  const menuItems = menuGroups.reduce((acc, group) => {
+    if (group.isGroup && group.items) {
+      group.items.forEach(item => {
+        if (item.items) {
+          // Sub-subgroup items
+          item.items.forEach(subItem => acc.push(subItem));
+        } else {
+          acc.push(item);
+        }
+      });
+    } else if (group.component) {
+      acc.push(group);
+    }
+    return acc;
+  }, []);
 
   // URL parameters logic
   useEffect(() => {
@@ -477,6 +542,14 @@ export default function LotCalculator() {
     handleTabChange("home");
   };
 
+  // Toggle group expansion
+  const toggleGroup = (groupKey) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupKey]: !prev[groupKey]
+    }));
+  };
+
   // Show loading screen
   if (isLoading) {
     return <BrainLoadingScreen onLoadingComplete={handleLoadingComplete} />;
@@ -486,29 +559,46 @@ export default function LotCalculator() {
   const SidebarButton = ({ item }) => {
     const isActive = activeTab === item.key;
     
+    // Color scheme based on item color
+    const getColorClasses = () => {
+      if (isActive) {
+        return 'bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-lg shadow-amber-400/30 hover:shadow-amber-400/50 border border-amber-300/50';
+      }
+      
+      switch(item.color) {
+        case 'green':
+          return 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 text-white hover:from-emerald-500 hover:to-teal-600 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30';
+        case 'yellow':
+          return 'bg-gradient-to-r from-yellow-500/80 to-amber-600/80 text-black hover:from-yellow-500 hover:to-amber-600 shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 border border-yellow-400/30';
+        case 'red':
+          return 'bg-gradient-to-r from-red-500/80 to-rose-600/80 text-white hover:from-red-500 hover:to-rose-600 shadow-lg shadow-red-500/20 hover:shadow-red-500/40 border border-red-400/30';
+        default:
+          if (item.isAfiliere) {
+            return 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30';
+          }
+          if (item.isSpecial) {
+            return 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 border border-indigo-400/30';
+          }
+          return 'bg-gray-800/50 backdrop-blur-sm text-gray-200 hover:bg-gray-700/50 hover:border-amber-400/50 shadow-md border border-gray-700/50';
+      }
+    };
+    
     return (
       <div className="relative group">
         <button
           onClick={() => handleTabChange(item.key)}
           className={`
-            relative w-full flex items-center px-3 py-3 rounded-xl font-medium transition-all duration-300 
+            relative w-full flex items-center px-3 py-2.5 rounded-xl font-medium transition-all duration-300 
             ease-in-out hover:scale-105 active:scale-95 overflow-visible
-            ${isActive 
-              ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-lg shadow-amber-400/30 hover:shadow-amber-400/50 border border-amber-300/50' 
-              : item.isAfiliere
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30'
-                : item.isSpecial
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 border border-indigo-400/30'
-                  : 'bg-gray-800/50 backdrop-blur-sm text-gray-200 hover:bg-gray-700/50 hover:border-amber-400/50 shadow-md border border-gray-700/50'
-            }
+            ${getColorClasses()}
           `}
         >
-          <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center z-10">
+          <span className="text-lg flex-shrink-0 w-6 h-6 flex items-center justify-center z-10">
             {item.icon}
           </span>
           
           <span className={`
-            ml-3 whitespace-nowrap transition-all duration-300 overflow-hidden z-10
+            ml-3 text-sm whitespace-nowrap transition-all duration-300 overflow-hidden z-10
             ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
           `}>
             {item.label}
@@ -553,6 +643,92 @@ export default function LotCalculator() {
                           border-4 border-transparent border-r-gray-900"></div>
           </div>
         )}
+      </div>
+    );
+  };
+
+  // Menu Group Component - pentru grupuri cu submeniuri
+  const MenuGroup = ({ group }) => {
+    const isExpanded = expandedGroups[group.key];
+    const hasSubmenu = group.hasSubmenu && group.items;
+    
+    // Color scheme for group header
+    const getGroupColor = () => {
+      switch(group.color) {
+        case 'green':
+          return 'from-emerald-500 to-teal-600 border-emerald-400/50';
+        case 'yellow':
+          return 'from-yellow-500 to-amber-600 border-yellow-400/50';
+        case 'free':
+          return 'from-blue-500 to-cyan-600 border-blue-400/50';
+        default:
+          return 'from-gray-600 to-gray-700 border-gray-500/50';
+      }
+    };
+
+    // Dacă nu e grup sau nu are submeniu, afișează direct componenta
+    if (!group.isGroup || !hasSubmenu) {
+      if (group.component) {
+        return <SidebarButton item={group} />;
+      }
+      return null;
+    }
+
+    return (
+      <div className="mb-2">
+        {/* Group Header */}
+        <button
+          onClick={() => toggleGroup(group.key)}
+          className={`
+            w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold 
+            transition-all duration-300 ease-in-out hover:scale-105 active:scale-95
+            bg-gradient-to-r ${getGroupColor()} text-white shadow-lg
+          `}
+        >
+          <div className="flex items-center">
+            <span className="text-lg flex-shrink-0 w-6 h-6 flex items-center justify-center">
+              {group.icon}
+            </span>
+            <span className={`
+              ml-3 text-sm whitespace-nowrap transition-all duration-300 overflow-hidden uppercase tracking-wider
+              ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
+            `}>
+              {group.label}
+            </span>
+          </div>
+          {isSidebarExpanded && (
+            <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          )}
+        </button>
+
+        {/* Submenu Items */}
+        <div className={`
+          overflow-hidden transition-all duration-300 ease-in-out
+          ${isExpanded && isSidebarExpanded ? 'max-h-[1000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}
+        `}>
+          <div className="ml-2 space-y-1 border-l-2 border-gray-600/30 pl-2">
+            {group.items.map((item) => {
+              // Dacă e sub-subgroup (ex: Calculatoare)
+              if (item.isSubGroup && item.items) {
+                return (
+                  <div key={item.key} className="mb-2">
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 ml-3">
+                      {item.label}
+                    </div>
+                    <div className="space-y-1">
+                      {item.items.map((subItem) => (
+                        <SidebarButton key={subItem.key} item={subItem} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+              return <SidebarButton key={item.key} item={item} />;
+            })}
+          </div>
+        </div>
       </div>
     );
   };
@@ -675,8 +851,8 @@ export default function LotCalculator() {
       ${isSidebarExpanded ? 'overflow-y-auto scrollbar-none' : 'overflow-hidden'}
     `}>
       <div className="space-y-2">
-        {menuItems.map((item) => (
-          <SidebarButton key={item.key} item={item} />
+        {menuGroups.map((group) => (
+          <MenuGroup key={group.key} group={group} />
         ))}
       </div>
     </nav>
