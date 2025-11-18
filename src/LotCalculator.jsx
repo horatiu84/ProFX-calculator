@@ -393,7 +393,8 @@ export default function LotCalculator() {
   const menuGroups = [
     {
       key: "wall",
-      label: "THE WALL",
+      label: "WALL",
+      tag: "FREE",
       icon: "📰",
       color: "green",
       isGroup: true,
@@ -401,12 +402,13 @@ export default function LotCalculator() {
       items: [
         { key: "stiri", label: "News & Announcements", icon: "📰", component: <Stiri />, color: "green" },
         { key: "galerie", label: "Photos", icon: "📷", component: <EventPhotoGallery />, color: "green" },
-        { key: "evenimente", label: "Events / Postanunci", icon: "🏝️", component: <Evenimente />, color: "green" }
+        { key: "evenimente", label: "Events / Bootcamps", icon: "🏝️", component: <Evenimente />, color: "green" }
       ]
     },
     {
       key: "dashboard",
-      label: "ARMY DASHBOARD",
+      label: "DASHBOARD",
+      tag: "ARMY",
       icon: "📊",
       color: "yellow",
       isGroup: true,
@@ -445,25 +447,27 @@ export default function LotCalculator() {
     },
     {
       key: "education",
-      label: "VIP EDUCATION",
+      label: "EDUCATION",
+      tag: "VIP",
       icon: "🎓",
-      color: "yellow",
+      color: "purple",
       isGroup: true,
       hasSubmenu: true,
       items: [
-        { key: "educatie", label: "Curs BASIC", icon: "📚", component: <Educatie />, isSpecial: true, color: "yellow" },
-        { key: "training", label: "Curs Avansați", icon: "🧑‍🏫", component: <Training />, isSpecial: true, color: "yellow" },
-        { key: "test", label: "Curs Macro", icon: "📊", component: <Test />, color: "yellow" },
-        { key: "clase", label: "Curs 1:20", icon: "👥", component: <ProFXChecklist />, color: "yellow" },
-        { key: "clase-algo", label: "Curs AlgoTrading", icon: "🤖", component: <ProFXChecklist />, color: "yellow" },
-        { key: "dd-a", label: "DD-A", icon: "📋", component: <Test />, color: "yellow" },
-        { key: "how-to", label: "How To", icon: "❓", component: <HowTo />, color: "yellow" },
-        { key: "training-extra", label: "Training", icon: "💪", component: <Training />, color: "yellow" }
+        { key: "educatie", label: "Curs BASIC", icon: "📚", component: <Educatie />, color: "purple" },
+        { key: "training", label: "Curs Avansați", icon: "🧑‍🏫", component: <Training />, color: "purple" },
+        { key: "test", label: "Curs Macro", icon: "📊", component: <Test />, color: "purple" },
+        { key: "clase", label: "Curs Psihologie", icon: "👥", component: <ProFXChecklist />, color: "purple" },
+        { key: "clase-algo", label: "Curs Algo", icon: "🤖", component: <ProFXChecklist />, color: "purple" },
+        { key: "pdfs", label: "PDFs", icon: "📋", component: <Test />, color: "purple" },
+        { key: "how-to", label: "How To", icon: "❓", component: <HowTo />, color: "purple" },
+        { key: "training-extra", label: "Training", icon: "💪", component: <Training />, color: "purple" }
       ]
     },
     {
       key: "feedback",
-      label: "FREE FEEDBACK",
+      label: "FEEDBACK",
+      tag: "FREE",
       icon: "💬",
       color: "free",
       isGroup: false,
@@ -471,9 +475,10 @@ export default function LotCalculator() {
     },
     {
       key: "concurs",
-      label: "FREE CONCURS",
+      label: "CONCURS",
+      tag: "FREE",
       icon: "🏆",
-      color: "free",
+      color: "concurs",
       isGroup: false,
       component: <Evenimente />,
       subtitle: "Mgmt & Broker în concurs"
@@ -578,6 +583,20 @@ export default function LotCalculator() {
     return <BrainLoadingScreen onLoadingComplete={handleLoadingComplete} />;
   }
 
+  // Helper function pentru culorile tag-urilor
+  const getTagColor = (tag) => {
+    switch(tag) {
+      case 'FREE':
+        return 'bg-gradient-to-r from-green-600 to-emerald-600 text-white border-green-500';
+      case 'VIP':
+        return 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-500';
+      case 'ARMY':
+        return 'bg-gradient-to-r from-orange-600 to-amber-600 text-white border-orange-500';
+      default:
+        return 'bg-gradient-to-r from-gray-800 to-gray-900 text-white border-gray-600';
+    }
+  };
+
   // Sidebar button component
   const SidebarButton = ({ item }) => {
     const isActive = activeTab === item.key;
@@ -585,7 +604,7 @@ export default function LotCalculator() {
     // Color scheme based on item color
     const getColorClasses = () => {
       if (isActive) {
-        return 'bg-gradient-to-r from-amber-400 to-amber-600 text-black shadow-lg shadow-amber-400/30 hover:shadow-amber-400/50 border border-amber-300/50';
+        return 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 border border-cyan-300/50';
       }
       
       switch(item.color) {
@@ -593,6 +612,10 @@ export default function LotCalculator() {
           return 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 text-white hover:from-emerald-500 hover:to-teal-600 shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 border border-emerald-400/30';
         case 'yellow':
           return 'bg-gradient-to-r from-yellow-600/80 to-amber-600/80 text-white hover:from-yellow-600 hover:to-amber-600 shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/20 border border-yellow-500/30';
+        case 'purple':
+          return 'bg-gradient-to-r from-purple-600/80 to-violet-600/80 text-white hover:from-purple-600 hover:to-violet-600 shadow-md shadow-purple-500/10 hover:shadow-purple-500/20 border border-purple-500/30';
+        case 'concurs':
+          return 'bg-gradient-to-r from-red-600/80 to-rose-600/80 text-white hover:from-red-600 hover:to-rose-600 shadow-md shadow-red-500/10 hover:shadow-red-500/20 border border-red-500/30';
         case 'red':
           return 'bg-gradient-to-r from-pink-600/70 to-rose-600/70 text-white hover:from-pink-600/80 hover:to-rose-600/80 shadow-sm border border-pink-500/30';
         default:
@@ -611,11 +634,21 @@ export default function LotCalculator() {
         <button
           onClick={() => handleTabChange(item.key)}
           className={`
-            relative w-full flex items-center px-3 py-2 rounded-lg font-semibold transition-all duration-300 
+            relative w-full flex items-center rounded-lg font-semibold transition-all duration-300 
             ease-in-out hover:scale-[1.02] active:scale-95 overflow-visible text-sm
+            ${item.tag ? 'px-3 py-3 pt-3' : 'px-3 py-2'}
             ${getColorClasses()}
           `}
         >
+          {/* Tag în colțul stânga sus pentru itemii cu tag */}
+          {item.tag && isSidebarExpanded && (
+            <span className={`absolute -top-2 -left-2 px-2 py-0.5 text-[9px] font-bold tracking-wider
+                           rounded shadow-lg transform -rotate-12 z-20
+                           ${getTagColor(item.tag)}`}>
+              {item.tag}
+            </span>
+          )}
+          
           <span className="text-base flex-shrink-0 w-6 h-6 flex items-center justify-center z-10">
             {item.icon}
           </span>
@@ -682,6 +715,8 @@ export default function LotCalculator() {
           return 'from-emerald-500 to-teal-600 border-emerald-400/50';
         case 'yellow':
           return 'from-yellow-500 to-amber-600 border-yellow-400/50';
+        case 'purple':
+          return 'from-purple-500 to-violet-600 border-purple-400/50';
         case 'free':
           return 'from-blue-500 to-cyan-600 border-blue-400/50';
         default:
@@ -703,11 +738,20 @@ export default function LotCalculator() {
         <button
           onClick={() => toggleGroup(group.key)}
           className={`
-            w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold 
+            relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold 
             transition-all duration-300 ease-in-out hover:scale-105 active:scale-95
-            bg-gradient-to-r ${getGroupColor()} text-white shadow-lg
+            bg-gradient-to-r ${getGroupColor()} text-white shadow-lg overflow-visible
           `}
         >
+          {/* Tag în colțul stânga sus */}
+          {group.tag && isSidebarExpanded && (
+            <span className={`absolute -top-2 -left-2 px-2 py-0.5 text-[9px] font-bold tracking-wider
+                           rounded shadow-lg transform -rotate-12 z-10
+                           ${getTagColor(group.tag)}`}>
+              {group.tag}
+            </span>
+          )}
+          
           <div className="flex items-center">
             <span className="text-lg flex-shrink-0 w-6 h-6 flex items-center justify-center">
               {group.icon}
