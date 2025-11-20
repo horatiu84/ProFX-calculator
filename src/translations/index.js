@@ -6,6 +6,7 @@ import { homeTranslations } from './home';
 import { evolutieTranslations } from './evolutie';
 import { investmentCalculatorTranslations } from './investmentCalculator';
 import { profxbookTranslations } from './profxbook';
+import { profxDoctor } from './profxDoctor';
 import { programTranslations } from './program';
 import { calculatorTranslations } from './calculator';
 import { stiriTranslations } from './stiri';
@@ -40,6 +41,7 @@ export const translations = mergeTranslations(
   evolutieTranslations,
   investmentCalculatorTranslations,
   profxbookTranslations,
+  profxDoctor,
   programTranslations,
   calculatorTranslations,
   stiriTranslations,
@@ -63,6 +65,7 @@ export {
   evolutieTranslations,
   investmentCalculatorTranslations,
   profxbookTranslations,
+  profxDoctor,
   programTranslations,
   calculatorTranslations,
   stiriTranslations,
