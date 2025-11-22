@@ -16,14 +16,14 @@ const CompetitionBanner = () => {
     const updateTimer = () => {
       const now = new Date();
       
-      // Data de început a concursului din noiembrie (3 noiembrie 2025, 00:00:00)
-      const startDate = new Date(2025, 10, 3, 0, 0, 0); // Month is 0-indexed: 10 = November
+      // Data de început a concursului din decembrie (1 decembrie 2025, 00:00:00)
+      const startDate = new Date(2025, 11, 1, 0, 0, 0); // Month is 0-indexed: 11 = December
       
-      // Data de sfârșit a concursului din noiembrie (21 noiembrie 2025, 23:59:59)
-      const endDate = new Date(2025, 10, 21, 23, 59, 59);
+      // Data de sfârșit a concursului din decembrie (19 decembrie 2025, 23:59:59)
+      const endDate = new Date(2025, 11, 19, 23, 59, 59);
       
-      // Data de început a concursului următor (1 decembrie 2025)
-      const nextStartDate = new Date(2025, 11, 1, 0, 0, 0); // 11 = December
+      // Data de început a concursului următor (1 ianuarie 2026)
+      const nextStartDate = new Date(2026, 0, 1, 0, 0, 0); // 0 = January
 
       let targetDate;
       let currentPhase;
