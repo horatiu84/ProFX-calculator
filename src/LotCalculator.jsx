@@ -9,6 +9,7 @@ import Stiri from "./Stiri.jsx";
 import logo from "../src/logo.png";
 import brainIcon from "../src/brainIcon.png";
 import Evenimente from "./Evenimente.jsx";
+import Concurs from "./Concurs.jsx";
 import Contact from "./Contact.jsx";
 import Test from "./Test.jsx";
 import RoadmapComponent from "./RoadMap.jsx";
@@ -40,9 +41,10 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
     { key: "agenda", label: t.agenda, icon: "🗓️", angle: 163.5 },
     { key: "galerie", label: t.galerie, icon: "📷", angle: 196.2 },
     { key: "raport", label: t.raport, icon: "📝", angle: 228.9 },
-    { key: "evenimente", label: t.evenimente, icon: "🏝️", angle: 261.6 },
-    { key: "test", label: t.test, icon: "📋", angle: 294.3 },
-    { key: "contact", label: t.contact, icon: "💬", angle: 327 },
+    { key: "concurs", label: t.concurs, icon: "🏆", angle: 261.6 },
+    { key: "evenimente", label: t.evenimente, icon: "🏝️", angle: 294.3 },
+    { key: "test", label: t.test, icon: "📋", angle: 327 },
+    { key: "contact", label: t.contact, icon: "💬", angle: 359.7 },
   ];
 
   useEffect(() => {
@@ -445,6 +447,7 @@ export default function LotCalculator() {
         }
       ]
     },
+<<<<<<< HEAD
     {
       key: "education",
       label: "EDUCATION",
@@ -480,8 +483,18 @@ export default function LotCalculator() {
       icon: "🏆",
       color: "concurs",
       isGroup: false,
+      component: <Concurs />,
+      subtitle: "Competiție lunară"
+    },
+    {
+      key: "evenimente",
+      label: "EVENIMENTE",
+      tag: "FREE",
+      icon: "🏝️",
+      color: "evenimente",
+      isGroup: false,
       component: <Evenimente />,
-      subtitle: "Mgmt & Broker în concurs"
+      subtitle: "City Events & Masterminds"
     }
   ];
 

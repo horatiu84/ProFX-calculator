@@ -206,10 +206,10 @@ const ProFXbookCalendar = ({ accountData, onDataGenerated }) => {
   }
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6">
+    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-3 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-2 md:gap-4">
           <button
             onClick={goToPreviousMonth}
             className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
@@ -220,7 +220,7 @@ const ProFXbookCalendar = ({ accountData, onDataGenerated }) => {
             </svg>
           </button>
           
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-lg md:text-xl font-bold text-white">
             {monthName} {year}
           </h2>
           
@@ -244,27 +244,27 @@ const ProFXbookCalendar = ({ accountData, onDataGenerated }) => {
 
           <button
             onClick={goToCurrentMonth}
-            className="px-3 py-1 text-sm bg-gray-700/50 hover:bg-gray-600/50 rounded-lg transition-colors text-gray-300"
+            className="px-2 md:px-3 py-1 text-xs md:text-sm bg-gray-700/50 hover:bg-gray-600/50 rounded-lg transition-colors text-gray-300"
           >
             {language === "ro" ? "Luna curentă" : "This month"}
           </button>
         </div>
 
         {/* Monthly Stats */}
-        <div className="flex items-center gap-6">
-          <div className="text-right">
+        <div className="flex items-center gap-4 md:gap-6">
+          <div className="text-left md:text-right">
             <p className="text-xs text-gray-400">
               {language === "ro" ? "Statistici lunare:" : "Monthly stats:"}
             </p>
-            <p className={`text-lg font-bold ${monthlyTotal >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <p className={`text-base md:text-lg font-bold ${monthlyTotal >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {monthlyTotal >= 0 ? '$' : '-$'}{Math.abs(monthlyTotal).toFixed(1)}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-left md:text-right">
             <p className="text-xs text-gray-400">
               {language === "ro" ? "Zile active:" : "Active days:"}
             </p>
-            <p className="text-lg font-bold text-blue-400">
+            <p className="text-base md:text-lg font-bold text-blue-400">
               {totalTradingDays} {language === "ro" ? "zile" : "days"}
             </p>
           </div>
@@ -272,118 +272,122 @@ const ProFXbookCalendar = ({ accountData, onDataGenerated }) => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-8 gap-2">
-        {/* Empty corner cell */}
-        <div className="h-10"></div>
-        
-        {/* Day headers */}
-        {dayNames[language].map((day, idx) => (
-          <div key={idx} className="h-10 flex items-center justify-center">
-            <span className="text-xs font-semibold text-gray-400">{day}</span>
-          </div>
-        ))}
+      <div className="overflow-x-auto -mx-3 md:mx-0">
+        <div className="min-w-[600px] md:min-w-0">
+          <div className="grid grid-cols-8 gap-1 md:gap-2 px-3 md:px-0">
+            {/* Empty corner cell */}
+            <div className="h-8 md:h-10"></div>
+            
+            {/* Day headers */}
+            {dayNames[language].map((day, idx) => (
+              <div key={idx} className="h-8 md:h-10 flex items-center justify-center">
+                <span className="text-[10px] md:text-xs font-semibold text-gray-400">{day}</span>
+              </div>
+            ))}
 
-        {/* Calendar rows with weekly stats */}
-        {weeks.map((week, weekIdx) => (
-          <React.Fragment key={weekIdx}>
-            {/* Weekly stats column */}
-            <div className="flex flex-col items-end justify-center pr-2 border-r border-gray-700/50">
-              <span className="text-xs text-gray-500">
-                {language === "ro" ? "Săpt" : "Week"} {weekIdx + 1}
-              </span>
-              {weeklyStats[weekIdx] && (
-                <>
-                  <span className={`text-sm font-bold ${weeklyStats[weekIdx].profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {weeklyStats[weekIdx].profit >= 0 ? '$' : '-$'}{Math.abs(weeklyStats[weekIdx].profit).toFixed(1)}
+            {/* Calendar rows with weekly stats */}
+            {weeks.map((week, weekIdx) => (
+              <React.Fragment key={weekIdx}>
+                {/* Weekly stats column */}
+                <div className="flex flex-col items-end justify-center pr-1 md:pr-2 border-r border-gray-700/50">
+                  <span className="text-[10px] md:text-xs text-gray-500">
+                    {language === "ro" ? "S" : "W"}{weekIdx + 1}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {weeklyStats[weekIdx].days} {language === "ro" ? "zile" : "days"}
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* Days of the week */}
-            {week.map((day, dayIdx) => {
-              // Verificăm dacă ziua este weekend
-              const year = currentDate.getFullYear();
-              const month = currentDate.getMonth();
-              const currentDayDate = day ? new Date(year, month, day) : null;
-              const isWeekend = currentDayDate && (currentDayDate.getDay() === 0 || currentDayDate.getDay() === 6);
-              
-              return (
-                <div
-                  key={dayIdx}
-                  onClick={() => day && !isWeekend && dailyData[day] && openDayDetails(day)}
-                  className={`h-24 rounded-lg border transition-all ${
-                    isWeekend
-                      ? 'bg-gray-900/50 border-gray-800/50'
-                      : day && dailyData[day]
-                      ? dailyData[day].profit >= 0
-                        ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20'
-                        : 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20'
-                      : day
-                      ? 'bg-gray-800/30 border-gray-700/30'
-                      : 'border-transparent'
-                  } ${day && !isWeekend && dailyData[day] ? 'cursor-pointer' : ''}`}
-                >
-                  {day && (
-                    <div className="p-2 h-full flex flex-col justify-between">
-                      <div className={`text-xs font-medium ${isWeekend ? 'text-gray-600' : 'text-gray-400'}`}>
-                        {day}
-                        {isWeekend && (
-                          <span className="ml-1 text-[10px]">
-                            {currentDayDate.getDay() === 0 ? '🔒' : '🔒'}
-                          </span>
-                        )}
-                      </div>
-                      {isWeekend ? (
-                        <div className="text-center">
-                          <div className="text-xs text-gray-600">
-                            {language === "ro" ? "Piață închisă" : "Market closed"}
-                          </div>
-                        </div>
-                      ) : dailyData[day] ? (
-                        <div className="space-y-1">
-                          <div className={`text-sm font-bold ${
-                            dailyData[day].profit >= 0 ? 'text-emerald-400' : 'text-red-400'
-                          }`}>
-                            {dailyData[day].profit >= 0 ? '$' : '-$'}{Math.abs(dailyData[day].profit)}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {dailyData[day].trades} {language === "ro" ? "trades" : "trades"}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {dailyData[day].winRate}%
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
+                  {weeklyStats[weekIdx] && (
+                    <>
+                      <span className={`text-xs md:text-sm font-bold ${weeklyStats[weekIdx].profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {weeklyStats[weekIdx].profit >= 0 ? '$' : '-$'}{Math.abs(weeklyStats[weekIdx].profit).toFixed(1)}
+                      </span>
+                      <span className="text-[10px] md:text-xs text-gray-500">
+                        {weeklyStats[weekIdx].days}
+                      </span>
+                    </>
                   )}
                 </div>
-              );
-            })}
-          </React.Fragment>
-        ))}
+
+                {/* Days of the week */}
+                {week.map((day, dayIdx) => {
+                  // Verificăm dacă ziua este weekend
+                  const year = currentDate.getFullYear();
+                  const month = currentDate.getMonth();
+                  const currentDayDate = day ? new Date(year, month, day) : null;
+                  const isWeekend = currentDayDate && (currentDayDate.getDay() === 0 || currentDayDate.getDay() === 6);
+                  
+                  return (
+                    <div
+                      key={dayIdx}
+                      onClick={() => day && !isWeekend && dailyData[day] && openDayDetails(day)}
+                      className={`h-20 md:h-24 rounded border md:rounded-lg transition-all ${
+                        isWeekend
+                          ? 'bg-gray-900/50 border-gray-800/50'
+                          : day && dailyData[day]
+                          ? dailyData[day].profit >= 0
+                            ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20'
+                            : 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20'
+                          : day
+                          ? 'bg-gray-800/30 border-gray-700/30'
+                          : 'border-transparent'
+                      } ${day && !isWeekend && dailyData[day] ? 'cursor-pointer' : ''}`}
+                    >
+                      {day && (
+                        <div className="p-1 md:p-2 h-full flex flex-col justify-between">
+                          <div className={`text-[10px] md:text-xs font-medium ${isWeekend ? 'text-gray-600' : 'text-gray-400'}`}>
+                            {day}
+                            {isWeekend && (
+                              <span className="ml-1 text-[8px] md:text-[10px]">
+                                🔒
+                              </span>
+                            )}
+                          </div>
+                          {isWeekend ? (
+                            <div className="text-center">
+                              <div className="text-[10px] md:text-xs text-gray-600 hidden md:block">
+                                {language === "ro" ? "Piață închisă" : "Market closed"}
+                              </div>
+                            </div>
+                          ) : dailyData[day] ? (
+                            <div className="space-y-0.5">
+                              <div className={`text-xs md:text-sm font-bold ${
+                                dailyData[day].profit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                              }`}>
+                                {dailyData[day].profit >= 0 ? '$' : '-$'}{Math.abs(dailyData[day].profit)}
+                              </div>
+                              <div className="text-[10px] md:text-xs text-gray-500">
+                                {dailyData[day].trades}
+                              </div>
+                              <div className="text-[10px] md:text-xs text-gray-400">
+                                {dailyData[day].winRate}%
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
-      <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-400">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3 md:gap-6 text-xs text-gray-400">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/30"></div>
-          <span>{language === "ro" ? "Profit" : "Profit"}</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-emerald-500/20 border border-emerald-500/30"></div>
+          <span className="text-[10px] md:text-xs">{language === "ro" ? "Profit" : "Profit"}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-red-500/20 border border-red-500/30"></div>
-          <span>{language === "ro" ? "Pierdere" : "Loss"}</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-red-500/20 border border-red-500/30"></div>
+          <span className="text-[10px] md:text-xs">{language === "ro" ? "Pierdere" : "Loss"}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-gray-800/30 border border-gray-700/30"></div>
-          <span>{language === "ro" ? "Fără tranzacții" : "No trades"}</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-gray-800/30 border border-gray-700/30"></div>
+          <span className="text-[10px] md:text-xs">{language === "ro" ? "Fără tranzacții" : "No trades"}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-gray-900/50 border border-gray-800/50"></div>
-          <span>{language === "ro" ? "Weekend (piață închisă)" : "Weekend (market closed)"}</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 rounded bg-gray-900/50 border border-gray-800/50"></div>
+          <span className="text-[10px] md:text-xs">{language === "ro" ? "Weekend" : "Weekend"}</span>
         </div>
       </div>
 

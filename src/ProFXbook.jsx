@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 import ProFXbookCalendar from "./ProFXbookCalendar";
+import ProFXDoctor from "./ProFXDoctor";
 import {
   LineChart,
   Line,
@@ -207,6 +208,9 @@ export default function ProFXbook() {
   // State pentru datele din calendar
   const [calendarData, setCalendarData] = useState(null);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+
+  // State pentru ProFX Doctor
+  const [showDoctor, setShowDoctor] = useState(false);
 
   // State pentru perioada selectată
   const [timePeriod, setTimePeriod] = useState("month");
@@ -1110,62 +1114,62 @@ export default function ProFXbook() {
         </div>
 
         {/* Statistics - Grouped Design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" key={`stats-${language}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8" key={`stats-${language}`}>
           
           {/* Performance Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-emerald-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center gap-2">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-emerald-400/20 transition-all duration-300 animate-language-change">
+            <h3 className="text-base md:text-lg font-semibold text-emerald-400 mb-3 md:mb-4 flex items-center gap-2">
               📈 {t.performance}
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.gain}</div>
-                <div className="text-emerald-400 text-xl font-bold">+{stats.gain}%</div>
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.gain}</div>
+                <div className="text-emerald-400 text-lg md:text-xl font-bold">+{stats.gain}%</div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.daily}</div>
-                <div className="text-emerald-400 text-xl font-bold">{stats.daily}%</div>
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.daily}</div>
+                <div className="text-emerald-400 text-lg md:text-xl font-bold">{stats.daily}%</div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.monthly}</div>
-                <div className="text-emerald-400 text-xl font-bold">{stats.monthly}%</div>
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.monthly}</div>
+                <div className="text-emerald-400 text-lg md:text-xl font-bold">{stats.monthly}%</div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.drawdown}</div>
-                <div className="text-red-400 text-xl font-bold">{stats.drawdown}%</div>
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.drawdown}</div>
+                <div className="text-red-400 text-lg md:text-xl font-bold">{stats.drawdown}%</div>
               </div>
             </div>
           </div>
 
           {/* Account Balance Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-blue-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-blue-400/20 transition-all duration-300 animate-language-change">
+            <h3 className="text-base md:text-lg font-semibold text-blue-400 mb-3 md:mb-4 flex items-center gap-2">
               💰 {t.accountBalance}
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.balance}</div>
-                <div className="text-blue-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.balance}</div>
+                <div className="text-blue-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.balance)}
                 </div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.equity}</div>
-                <div className="text-blue-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.equity}</div>
+                <div className="text-blue-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.equity)}
                 </div>
-                <div className="text-gray-500 text-xs">({stats.equityPercent}%)</div>
+                <div className="text-gray-500 text-[9px] md:text-xs">({stats.equityPercent}%)</div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.highest}</div>
-                <div className="text-amber-400 text-lg font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.highest}</div>
+                <div className="text-amber-400 text-base md:text-lg font-bold">
                   ${formatCurrency(stats.highest)}
                 </div>
-                <div className="text-gray-500 text-xs">({stats.highestDate})</div>
+                <div className="text-gray-500 text-[9px] md:text-xs">({stats.highestDate})</div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.profit}</div>
-                <div className="text-emerald-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.profit}</div>
+                <div className="text-emerald-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.profit)}
                 </div>
               </div>
@@ -1173,26 +1177,26 @@ export default function ProFXbook() {
           </div>
 
           {/* Transactions Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-purple-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-lg font-semibold text-purple-400 mb-4 flex items-center gap-2">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-purple-400/20 transition-all duration-300 animate-language-change">
+            <h3 className="text-base md:text-lg font-semibold text-purple-400 mb-3 md:mb-4 flex items-center gap-2">
               💳 {t.transactions}
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.deposits}</div>
-                <div className="text-blue-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.deposits}</div>
+                <div className="text-blue-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.deposits)}
                 </div>
               </div>
               <div>
-                <div className="text-gray-400 text-xs mb-1">{t.withdrawals}</div>
-                <div className="text-gray-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.withdrawals}</div>
+                <div className="text-gray-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.withdrawals)}
                 </div>
               </div>
               <div className="col-span-2">
-                <div className="text-gray-400 text-xs mb-1">{t.interest}</div>
-                <div className="text-red-400 text-xl font-bold">
+                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.interest}</div>
+                <div className="text-red-400 text-lg md:text-xl font-bold">
                   ${formatCurrency(stats.interest)}
                 </div>
               </div>
@@ -1200,36 +1204,36 @@ export default function ProFXbook() {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-amber-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-amber-400/20 transition-all duration-300 animate-language-change">
+            <h3 className="text-base md:text-lg font-semibold text-amber-400 mb-3 md:mb-4 flex items-center gap-2">
               ⚡ {t.quickStats}
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-sm">{t.totalTrades}</span>
-                <span className="text-purple-400 font-bold text-lg">{stats.totalTrades}</span>
+                <span className="text-gray-400 text-xs md:text-sm">{t.totalTrades}</span>
+                <span className="text-purple-400 font-bold text-base md:text-lg">{stats.totalTrades}</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-sm">{t.winRate}</span>
-                <span className="text-emerald-400 font-bold text-lg">{stats.winRate}%</span>
+                <span className="text-gray-400 text-xs md:text-sm">{t.winRate}</span>
+                <span className="text-emerald-400 font-bold text-base md:text-lg">{stats.winRate}%</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-sm">{t.totalGain}</span>
-                <span className="text-emerald-400 font-bold text-lg">+{stats.gain}%</span>
+                <span className="text-gray-400 text-xs md:text-sm">{t.totalGain}</span>
+                <span className="text-emerald-400 font-bold text-base md:text-lg">+{stats.gain}%</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-sm">{t.netProfit}</span>
-                <span className="text-emerald-400 font-bold text-lg">
+                <span className="text-gray-400 text-xs md:text-sm">{t.netProfit}</span>
+                <span className="text-emerald-400 font-bold text-base md:text-lg">
                   ${formatCurrency(stats.profit)}
                 </span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-sm">{t.maxDrawdown}</span>
-                <span className="text-red-400 font-bold text-lg">{stats.drawdown}%</span>
+                <span className="text-gray-400 text-xs md:text-sm">{t.maxDrawdown}</span>
+                <span className="text-red-400 font-bold text-base md:text-lg">{stats.drawdown}%</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400 text-sm">{t.currentBalance}</span>
-                <span className="text-blue-400 font-bold text-lg">
+                <span className="text-gray-400 text-xs md:text-sm">{t.currentBalance}</span>
+                <span className="text-blue-400 font-bold text-base md:text-lg">
                   ${formatCurrency(stats.balance)}
                 </span>
               </div>
@@ -1239,21 +1243,21 @@ export default function ProFXbook() {
         </div>
 
         {/* Growth Chart */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-6" key={`growth-${language}`}>
-          <h3 className="text-xl font-semibold mb-4 text-emerald-400 animate-language-change">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6" key={`growth-${language}`}>
+          <h3 className="text-base md:text-xl font-semibold mb-3 md:mb-4 text-emerald-400 animate-language-change">
             📊 {t.accountGrowth}
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart data={growthData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis 
                 dataKey="date" 
                 stroke="#9CA3AF"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '10px' }}
               />
               <YAxis 
                 stroke="#9CA3AF"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '10px' }}
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -1261,30 +1265,30 @@ export default function ProFXbook() {
                 type="monotone"
                 dataKey="growth"
                 stroke="#10b981"
-                strokeWidth={3}
-                dot={{ fill: "#10b981", r: 4 }}
-                activeDot={{ r: 6 }}
+                strokeWidth={2}
+                dot={{ fill: "#10b981", r: 3 }}
+                activeDot={{ r: 5 }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Monthly Performance Chart */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6" key={`monthly-${language}`}>
-          <h3 className="text-xl font-semibold mb-4 text-amber-400 animate-language-change">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6" key={`monthly-${language}`}>
+          <h3 className="text-base md:text-xl font-semibold mb-3 md:mb-4 text-amber-400 animate-language-change">
             📅 {t.monthlyPerformance}
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis 
                 dataKey="month" 
                 stroke="#9CA3AF"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '10px' }}
               />
               <YAxis 
                 stroke="#9CA3AF"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '10px' }}
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip content={<MonthlyTooltip />} />
@@ -1332,6 +1336,40 @@ export default function ProFXbook() {
             onDataGenerated={handleCalendarDataGenerated}
           />
         </div>
+
+        {/* ProFX Doctor Button */}
+        <div className="mt-8 flex justify-center" key={`doctor-button-${language}`}>
+          <button
+            onClick={() => setShowDoctor(!showDoctor)}
+            className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 flex items-center gap-3"
+          >
+            <span className="text-3xl">🏥</span>
+            <span>
+              {showDoctor 
+                ? (language === "ro" ? "Ascunde ProFX Doctor" : "Hide ProFX Doctor")
+                : (language === "ro" ? "Accesează ProFX Doctor" : "Access ProFX Doctor")
+              }
+            </span>
+            <svg 
+              className={`w-6 h-6 transition-transform duration-300 ${showDoctor ? 'rotate-180' : ''}`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* ProFX Doctor Component */}
+        {showDoctor && (
+          <div key={`doctor-${language}`} className="animate-fadeIn">
+            <ProFXDoctor 
+              accountData={currentAccountData}
+              onClose={() => setShowDoctor(false)}
+            />
+          </div>
+        )}
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-500 text-sm" key={`footer-${language}`}>

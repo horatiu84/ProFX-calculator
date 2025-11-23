@@ -1,18 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import CompetitionBanner from "./Competitie";
-import HallOfFameCarousel from "./components/ui/Carusel";
-import FormularInscriereConcurs from "./components/FormularConcurs";
+import React from "react";
+import BrasovEvent from "./Brasov";
 
-
-const BootcampBanner = () => {
-  // Banner cu countdown activ
+const Evenimente = () => {
   return (
     <>
-      <CompetitionBanner />
-      <FormularInscriereConcurs />
-      <HallOfFameCarousel />
+      <BrasovEvent />
     </>
   );
 };
 
-export default BootcampBanner;
+export default Evenimente;
