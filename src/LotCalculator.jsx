@@ -447,7 +447,6 @@ export default function LotCalculator() {
         }
       ]
     },
-<<<<<<< HEAD
     {
       key: "education",
       label: "EDUCATION",
@@ -485,16 +484,6 @@ export default function LotCalculator() {
       isGroup: false,
       component: <Concurs />,
       subtitle: "Competiție lunară"
-    },
-    {
-      key: "evenimente",
-      label: "EVENIMENTE",
-      tag: "FREE",
-      icon: "🏝️",
-      color: "evenimente",
-      isGroup: false,
-      component: <Evenimente />,
-      subtitle: "City Events & Masterminds"
     }
   ];
 
