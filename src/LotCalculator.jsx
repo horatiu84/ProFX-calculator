@@ -438,7 +438,11 @@ export default function LotCalculator() {
       }
       
       const validTabs = menuItems.map(item => item.key);
-      if (tab && validTabs.includes(tab)) {
+      // Adaugă tab-uri ascunse care pot fi accesate prin URL
+      const hiddenTabs = ['biblia'];
+      const allValidTabs = [...validTabs, ...hiddenTabs];
+      
+      if (tab && allValidTabs.includes(tab)) {
         setActiveTab(tab);
       } else {
         setActiveTab("home");
@@ -650,6 +654,11 @@ export default function LotCalculator() {
   const getCurrentComponent = () => {
     if (activeTab === "home") {
       return <Home menuItems={menuItems} onTabSelect={handleTabChange} />;
+    }
+    
+    // Tab-uri ascunse accesibile prin URL
+    if (activeTab === "biblia") {
+      return <Biblia />;
     }
     
     const currentItem = menuItems.find(item => item.key === activeTab);
