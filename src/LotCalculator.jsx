@@ -21,6 +21,7 @@ import EventPhotoGallery from "./Galerie.jsx";
 import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
 import TradingJournal from "./Jurnal.jsx";
+import Biblia from "./Biblia.jsx";
 import "./LotCalculator.css";
 
 // Brain Loading Screen Component
@@ -414,6 +415,7 @@ export default function LotCalculator() {
     { key: "concurs", label: t.concurs, icon: "🏆", component: <Concurs /> },
     { key: "evenimente", label: t.evenimente, icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: t.test, icon: "📋", component: <Test /> },
+    { key: "biblia", label: t.biblia, icon: "📖", component: <Biblia /> },
     { key: "contact", label: t.contact, icon: "💬", component: <Contact /> },
     { key: "galerie", label: t.galerie, icon: "📷", component: <EventPhotoGallery /> },
     { key: "stiri", label: t.stiri, icon: "📰", component: <Stiri /> }
