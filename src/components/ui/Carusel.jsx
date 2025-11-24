@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Slider from "react-slick";
 import { createPortal } from "react-dom";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 import aprilie1 from "../../utils/Aprilie 1.jpg";
 import aprilie2 from "../../utils/Aprilie 2.jpg";
@@ -38,49 +36,92 @@ import noiembrie4 from "../../utils/Noiembrie 4.jpg";
 import noiembrie5 from "../../utils/Noiembrie 5.jpg";
 
 const hallOfFame = [
-  { img: aprilie1, name: "Ciprian Penisoara", title: " Locul 1 Aprile 2025" },
-  { img: aprilie2, name: "Florin Juravle", title: "Locul 2 Aprile 2025" },
-  { img: aprilie3, name: "Marian Tanase", title: "Locul 3 Aprile 2025" },
-  { img: mai1, name: "Florin Juravle", title: "Locul 1 Mai 2025" },
-  { img: mai2, name: "Erik Cirstea", title: "Locul 2 Mai 2025" },
-  { img: iunie1, name: "Paul Mendosa", title: "Locul 1 Iunie 2025" },
-  { img: iunie2, name: "Erik Cirstea", title: "Locul 2 Iunie 2025" },
-  { img: iunie3, name: "Mihai Vlada", title: "Locul 3 Iunie 2025" },
-  { img: iulie1, name: "Romeo Bradeanu", title: "Locul 1 Iulie 2025" },
-  { img: iulie2, name: "Mihai Vlada", title: "Locul 2 Iulie 2025" },
-  { img: iulie3, name: "Lucian Solomonean", title: "Locul 3 Iulie 2025" },
-  { img: august1, name: "Lavinia Sabau", title: "Locul 1 August 2025" },
-  { img: august2, name: "Marian Tanase", title: "Locul 2 August 2025" },
-  { img: august3, name: "Erik Cirstea", title: "Locul 3 August 2025" },
-  { img: august4, name: "Romeo Bradeanu", title: "Locul 4 August 2025" },
-  { img: august5, name: "Adela Mercea", title: "Locul 5 August 2025" },
-  { img: septembrie1, name: "Horatiu Evu", title: "Locul 1 Septembrie 2025" },
-  { img: septembrie2, name: "Gabriel Suciu", title: "Locul 2 Septembrie 2025" },
-  {
-    img: septembrie3,
-    name: "Gabriel Muresan",
-    title: "Locul 3 Septembrie 2025",
-  },
-  { img: septembrie4, name: "Erik Cirstea", title: "Locul 4 Septembrie 2025" },
-  { img: septembrie5, name: "Adela Mercea", title: "Locul 5 Septembrie 2025" },
-  { img: octombrie1, name: "Mihai Ilie", title: "Locul 1 Octombrie 2025" },
-  { img: octombrie2, name: "Adela Mercea", title: "Locul 2 Octombrie 2025" },
-  {
-    img: octombrie3,
-    name: "Adrian Crainic",
-    title: "Locul 3 Octombrie 2025",
-  },
-  { img: octombrie4, name: "Marius Sebastian Gheorghita", title: "Locul 4 Octombrie 2025" },
-  { img: octombrie5, name: "Marian Musoiu", title: "Locul 5 Octombrie 2025" },
-  { img: noiembrie1, name: "Dan Floroiu", title: "Locul 1 Noiembrie 2025" },
-  { img: noiembrie2, name: "Paul Madosa", title: "Locul 2 Noiembrie 2025" },
-  { img: noiembrie3, name: "Erik Cirstea", title: "Locul 3 Noiembrie 2025" },
-  { img: noiembrie4, name: "Lavinia Sabau", title: "Locul 4 Noiembrie 2025" },
-  { img: noiembrie5, name: "Mocanu Adrian Ionel", title: "Locul 5 Noiembrie 2025" },
+  { img: aprilie1, name: "Ciprian Penisoara", place: 1, month: "Aprilie", year: 2025 },
+  { img: aprilie2, name: "Florin Juravle", place: 2, month: "Aprilie", year: 2025 },
+  { img: aprilie3, name: "Marian Tanase", place: 3, month: "Aprilie", year: 2025 },
+  { img: mai1, name: "Florin Juravle", place: 1, month: "Mai", year: 2025 },
+  { img: mai2, name: "Erik Cirstea", place: 2, month: "Mai", year: 2025 },
+  { img: iunie1, name: "Paul Mendosa", place: 1, month: "Iunie", year: 2025 },
+  { img: iunie2, name: "Erik Cirstea", place: 2, month: "Iunie", year: 2025 },
+  { img: iunie3, name: "Mihai Vlada", place: 3, month: "Iunie", year: 2025 },
+  { img: iulie1, name: "Romeo Bradeanu", place: 1, month: "Iulie", year: 2025 },
+  { img: iulie2, name: "Mihai Vlada", place: 2, month: "Iulie", year: 2025 },
+  { img: iulie3, name: "Lucian Solomonean", place: 3, month: "Iulie", year: 2025 },
+  { img: august1, name: "Lavinia Sabau", place: 1, month: "August", year: 2025 },
+  { img: august2, name: "Marian Tanase", place: 2, month: "August", year: 2025 },
+  { img: august3, name: "Erik Cirstea", place: 3, month: "August", year: 2025 },
+  { img: august4, name: "Romeo Bradeanu", place: 4, month: "August", year: 2025 },
+  { img: august5, name: "Adela Mercea", place: 5, month: "August", year: 2025 },
+  { img: septembrie1, name: "Horatiu Evu", place: 1, month: "Septembrie", year: 2025 },
+  { img: septembrie2, name: "Gabriel Suciu", place: 2, month: "Septembrie", year: 2025 },
+  { img: septembrie3, name: "Gabriel Muresan", place: 3, month: "Septembrie", year: 2025 },
+  { img: septembrie4, name: "Erik Cirstea", place: 4, month: "Septembrie", year: 2025 },
+  { img: septembrie5, name: "Adela Mercea", place: 5, month: "Septembrie", year: 2025 },
+  { img: octombrie1, name: "Mihai Ilie", place: 1, month: "Octombrie", year: 2025 },
+  { img: octombrie2, name: "Adela Mercea", place: 2, month: "Octombrie", year: 2025 },
+  { img: octombrie3, name: "Adrian Crainic", place: 3, month: "Octombrie", year: 2025 },
+  { img: octombrie4, name: "Marius Sebastian Gheorghita", place: 4, month: "Octombrie", year: 2025 },
+  { img: octombrie5, name: "Marian Musoiu", place: 5, month: "Octombrie", year: 2025 },
+  { img: noiembrie1, name: "Dan Floroiu", place: 1, month: "Noiembrie", year: 2025 },
+  { img: noiembrie2, name: "Paul Madosa", place: 2, month: "Noiembrie", year: 2025 },
+  { img: noiembrie3, name: "Erik Cirstea", place: 3, month: "Noiembrie", year: 2025 },
+  { img: noiembrie4, name: "Lavinia Sabau", place: 4, month: "Noiembrie", year: 2025 },
+  { img: noiembrie5, name: "Mocanu Adrian Ionel", place: 5, month: "Noiembrie", year: 2025 },
 ];
 
 const HallOfFameCarousel = () => {
+  const { language, translations } = useLanguage();
+  const t = translations.carusel;
+  
   const [modalImg, setModalImg] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("Toate");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Mapping pentru traduceri luni
+  const monthTranslations = {
+    "Aprilie": t.aprilie,
+    "Mai": t.mai,
+    "Iunie": t.iunie,
+    "Iulie": t.iulie,
+    "August": t.august,
+    "Septembrie": t.septembrie,
+    "Octombrie": t.octombrie,
+    "Noiembrie": t.noiembrie,
+    "Decembrie": t.decembrie,
+    "Ianuarie": t.ianuarie,
+    "Februarie": t.februarie,
+    "Martie": t.martie,
+  };
+
+  // Mapping pentru traduceri poziții
+  const placeTranslations = {
+    1: t.place1,
+    2: t.place2,
+    3: t.place3,
+    4: t.place4,
+    5: t.place5,
+  };
+
+  // Funcție pentru a genera titlul tradus
+  const getTranslatedTitle = (item) => {
+    const placeText = placeTranslations[item.place] || `${item.place}`;
+    const monthText = monthTranslations[item.month] || item.month;
+    return `${placeText} ${monthText} ${item.year}`;
+  };
+
+  // Extrage lunile unice din array (în română din data)
+  const uniqueMonthsRo = [...new Set(hallOfFame.map(item => item.month))];
+  
+  // Construiește array de luni traduse pentru butoane
+  const months = [t.allMonths, ...uniqueMonthsRo.map(monthRo => monthTranslations[monthRo] || monthRo)];
+
+  // Filtrare diplome
+  const filteredDiplomas = hallOfFame.filter(item => {
+    const translatedMonth = monthTranslations[item.month] || item.month;
+    const matchesMonth = selectedMonth === t.allMonths || translatedMonth === selectedMonth;
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesMonth && matchesSearch;
+  });
 
   // Blochează scroll-ul pe body când modalul e deschis
   useEffect(() => {
@@ -102,12 +143,115 @@ const HallOfFameCarousel = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Reset selectedMonth la schimbarea limbii
+  useEffect(() => {
+    setSelectedMonth(t.allMonths);
+  }, [language, t.allMonths]);
+
   return (
-    <>
-      <h2 className="text-3xl sm:text-5xl font-extrabold text-yellow-600 font-[Montserrat] mb-6 tracking-wider text-center drop-shadow">
-        Galeria Campionilor ProFX
+    <div key={language} className="w-full max-w-7xl mx-auto px-4 py-8 animate-language-change">
+      <h2 className="text-3xl sm:text-5xl font-extrabold text-yellow-600 font-[Montserrat] mb-8 tracking-wider text-center drop-shadow">
+        {t.pageTitle}
       </h2>
 
+      {/* Filtre și Search */}
+      <div className="mb-8 space-y-4">
+        {/* Search Box */}
+        <div className="flex justify-center">
+          <input
+            type="text"
+            placeholder={t.searchPlaceholder}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full max-w-md px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
+          />
+        </div>
+
+        {/* Filtre Luni */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {months.map((month) => (
+            <button
+              key={month}
+              onClick={() => setSelectedMonth(month)}
+              className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 backdrop-blur-sm ${
+                selectedMonth === month
+                  ? "bg-yellow-600/80 text-white shadow-lg scale-105 border border-yellow-400/50"
+                  : "bg-gray-700/80 text-gray-300 hover:bg-gray-600/80 hover:text-yellow-400 hover:border-yellow-400/30 border border-gray-600/50"
+              }`}
+            >
+              {month}
+            </button>
+          ))}
+        </div>
+
+        {/* Contor rezultate */}
+        <div className="text-center text-gray-300">
+          {filteredDiplomas.length} {filteredDiplomas.length === 1 ? t.diplomaSingular : t.diplomaPlural} {t.found}
+        </div>
+      </div>
+
+      {/* Grid cu Diplome */}
+      <motion.div
+        layout
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+      >
+        <AnimatePresence>
+          {filteredDiplomas.map((item, idx) => (
+            <motion.div
+              key={`${item.month}-${idx}`}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              className="group relative flex flex-col items-center justify-center p-3 cursor-pointer text-center bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl hover:border-yellow-400/30 hover:scale-105 transition-all duration-300 overflow-hidden"
+              onClick={() => setModalImg(item.img)}
+            >
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10 w-full">
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  className="rounded-xl shadow-md w-full aspect-square object-cover"
+                />
+                <div className="mt-3 font-bold text-sm text-gray-200 group-hover:text-yellow-400 transition-colors duration-300">{item.name}</div>
+                <div className="text-yellow-500 text-xs mt-1">{getTranslatedTitle(item)}</div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Mesaj când nu sunt rezultate */}
+      {filteredDiplomas.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-xl text-gray-400">
+            {t.noResults}
+          </p>
+        </div>
+      )}
+
+      {/* Motto final */}
+      <div className="mt-12 mb-8 group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-yellow-400/30 transition-all duration-500 overflow-hidden">
+        {/* Background gradient effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="relative z-10 text-center space-y-4">
+          <h3 className="text-2xl sm:text-3xl font-bold text-yellow-400 group-hover:text-yellow-300 transition-colors duration-300">
+            {t.mottoTitle}
+          </h3>
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            {t.mottoDescription}
+          </p>
+          <div className="pt-2">
+            <span className="text-4xl">🏆</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal pentru imagine mărită */}
       {createPortal(
         <AnimatePresence>
           {modalImg && (
@@ -122,9 +266,9 @@ const HallOfFameCarousel = () => {
             >
               <motion.img
                 src={modalImg}
-                alt="Expanded"
+                alt={t.expandedAlt}
                 className="max-w-[92vw] max-h-[85vh] rounded-2xl border-4 border-yellow-400 shadow-2xl"
-                onClick={(e) => e.stopPropagation()} // nu închide când dai click pe imagine
+                onClick={(e) => e.stopPropagation()}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
@@ -134,8 +278,8 @@ const HallOfFameCarousel = () => {
               {/* buton închidere */}
               <button
                 onClick={() => setModalImg(null)}
-                className="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold shadow"
-                aria-label="Închide"
+                className="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold shadow hover:bg-white transition-colors"
+                aria-label={t.closeButton}
               >
                 ✕
               </button>
@@ -144,37 +288,7 @@ const HallOfFameCarousel = () => {
         </AnimatePresence>,
         document.body
       )}
-
-      <div className="flex justify-center items-center w-full">
-        <Slider
-          dots
-          infinite
-          speed={600}
-          slidesToShow={3}
-          slidesToScroll={1}
-          autoplay
-          autoplaySpeed={2500}
-          className="w-full max-w-4xl"
-          responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }]}
-        >
-          {hallOfFame.map((item, idx) => (
-            <div
-              className="flex flex-col items-center justify-center h-full w-full p-2 cursor-pointer text-center"
-              key={idx}
-              onClick={() => setModalImg(item.img)}
-            >
-              <img
-                src={item.img}
-                alt={item.name}
-                className="rounded-xl shadow-md w-[160px] h-[160px] object-cover mx-auto"
-              />
-              <div className="mt-2 font-bold">{item.name}</div>
-              <div className="text-yellow-600 text-xs">{item.title}</div>
-            </div>
-          ))}
-        </Slider>
-      </div>
-    </>
+    </div>
   );
 };
 

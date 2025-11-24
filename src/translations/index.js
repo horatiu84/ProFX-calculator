@@ -21,6 +21,7 @@ import { educatieTranslations } from './educatie';
 import { trainingTranslations } from './training';
 import { flipcardTranslations } from './flipcard';
 import { bibliaTranslations } from './biblia';
+import { caruselTranslations } from './carusel';
 
 // Funcție helper pentru a combina traducerile
 const mergeTranslations = (...translations) => {
@@ -56,7 +57,8 @@ export const translations = mergeTranslations(
   educatieTranslations,
   trainingTranslations,
   flipcardTranslations,
-  bibliaTranslations
+  bibliaTranslations,
+  caruselTranslations
 );
 
 // Export individual pentru debugging sau utilizare selectivă
@@ -82,4 +84,5 @@ export {
   trainingTranslations,
   flipcardTranslations,
   bibliaTranslations,
+  caruselTranslations,
 };
