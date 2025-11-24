@@ -1,6 +1,6 @@
 export const competitieTranslations = {
   ro: {
-    competitionTitle: "CONCURS NOIEMBRIE 2025!",
+    competitionTitle: "CONCURS DECEMBRIE 2025!",
     competitionRegistrationsOpen: "✅ ÎNSCRIERILE SUNT DESCHISE! ✅",
     competitionRegistrationMessage: "🎯 Completează formularul de mai jos pentru a te înscrie la următorul concurs și să-ți asiguri locul în competiție!",
     competitionRunning: "🔥 CONCURSUL ESTE ÎN DESFĂȘURARE! 🔥",
@@ -43,9 +43,9 @@ export const competitieTranslations = {
     competitionWinnerDeterminationTitle: "Cum se stabilește câștigătorul:",
     competitionWinnerStep1: "Se verifică dacă potențialii câștigători au respectat condițiile de participare.",
     competitionWinnerStep2: "Se verifică",
-    competitionWinnerStep2Bold: "raportul PROFIT/DRAWDOWN",
-    competitionWinnerStep2Continue: ". Cine are raportul cel mai mare câștigă.",
-    competitionWinnerStep3: "Dacă mai mulți concurenți au același raport, departajarea se face pe baza drawdown-ului (mai mic = avantaj).",
+    competitionWinnerStep2Bold: "diferența PROFIT - DRAWDOWN",
+    competitionWinnerStep2Continue: ". Cine are rezultatul cel mai mare câștigă.",
+    competitionWinnerStep3: "Dacă mai mulți concurenți au același rezultat, departajarea se face pe baza drawdown-ului (mai mic = avantaj).",
     competitionMyfxbookWarning: "🚨 Toată lumea trebuie să își lege contul la MyFXbook! 🚨",
     competitionMyfxbookVideo: "MyFXbook Video",
     competitionChallengeText: "Vă așteptăm să vă alăturați acestei provocări și să demonstrați că știți să gestionați riscul și să vă maximizați profitul!",
@@ -59,7 +59,7 @@ export const competitieTranslations = {
     competitionTeam: "Echipa ProFX"
   },
   en: {
-    competitionTitle: "NOVEMBER 2025 COMPETITION!",
+    competitionTitle: "DECEMBER 2025 COMPETITION!",
     competitionRegistrationsOpen: "✅ REGISTRATIONS ARE OPEN! ✅",
     competitionRegistrationMessage: "🎯 Fill out the form below to register for the next competition and secure your spot!",
     competitionRunning: "🔥 COMPETITION IS ONGOING! 🔥",
@@ -102,9 +102,9 @@ export const competitieTranslations = {
     competitionWinnerDeterminationTitle: "How the winner is determined:",
     competitionWinnerStep1: "It is verified whether potential winners have complied with the participation conditions.",
     competitionWinnerStep2: "The",
-    competitionWinnerStep2Bold: "PROFIT/DRAWDOWN ratio",
-    competitionWinnerStep2Continue: " is checked. Whoever has the highest ratio wins.",
-    competitionWinnerStep3: "If several competitors have the same ratio, the tie-breaker is based on the drawdown (lower = advantage).",
+    competitionWinnerStep2Bold: "PROFIT - DRAWDOWN result",
+    competitionWinnerStep2Continue: " is checked. Whoever has the highest result wins.",
+    competitionWinnerStep3: "If several competitors have the same result, the tie-breaker is based on the drawdown (lower = advantage).",
     competitionMyfxbookWarning: "🚨 Everyone must link their account to MyFXbook! 🚨",
     competitionMyfxbookVideo: "MyFXbook Video",
     competitionChallengeText: "We look forward to you joining this challenge and demonstrating that you know how to manage risk and maximize your profit!",
