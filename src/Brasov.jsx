@@ -35,7 +35,7 @@ const BrasovEvent = () => {
         "Vei învăța Bazele Tradingului",
         "Vei învăța cum să folosești aplicațiile",
         "Vom tranzacționa LIVE împreună",
-        "Vei afla cum să participi la competiția lunară de 2000€ din ProFX",
+        "Vei afla cum să participi la competiția lunară de 2000$ din ProFX",
         "Vei învăța psihologie în trading",
         "Vei putea pune întrebări într-o sesiune Q&A"
       ]
@@ -70,7 +70,7 @@ const BrasovEvent = () => {
         "You will learn the Trading Basics",
         "You will learn how to use the applications",
         "We will trade LIVE together",
-        "You will discover how to participate in the monthly ProFX competition worth €2000",
+        "You will discover how to participate in the monthly ProFX competition worth $2000",
         "You will learn trading psychology",
         "You will be able to ask questions in a Q&A session"
       ]
