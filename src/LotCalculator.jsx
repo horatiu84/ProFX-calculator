@@ -431,7 +431,7 @@ export default function LotCalculator() {
             { key: "pierdere", label: "Trade Medic", icon: "⚙️", component: <HowTo />, color: "red" }
           ]
         },
-        { key: "raport", label: "The Bible", icon: "📊", component: <Raport />, color: "yellow" },
+        { key: "biblia", label: "Trader's Bible", icon: "📖", component: <Biblia />, color: "yellow" },
         { key: "mentor", label: "I Am Mentor", icon: "👨‍🏫", component: <TradingJournal />, color: "yellow" },
         { 
           key: "calculatoare", 
