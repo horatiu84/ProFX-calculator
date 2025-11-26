@@ -38,7 +38,7 @@ const WeeklySchedule = () => {
     londonWithFlavius: t.sessionLondonWithFlavius,
     newYorkWithFlavius: t.sessionNewYorkWithFlavius,
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
-    beginnersWebinar: t.beginnersWebinarWithSergiuAndJohn,
+    beginnersWebinar: t.beginnersWebinarWithSergiu,
     class1to20: t.class1to20,
   };
 

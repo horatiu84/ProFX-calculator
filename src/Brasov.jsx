@@ -28,12 +28,14 @@ const BrasovEvent = () => {
       free: "Totul Gratuit",
       freeDesc: "fără costuri ascunse. Doar educație reală și o experiență intensă care îți poate schimba modul de a privi tradingul.",
       limited: "Locurile sunt limitate",
+      registerButton: "Înscrie-te Acum",
+      registerInfo: "Locuri limitate disponibile",
       whatToExpect: "Ce vei avea de câștigat?",
       expectations: [
         "Vei învăța Bazele Tradingului",
         "Vei învăța cum să folosești aplicațiile",
         "Vom tranzacționa LIVE împreună",
-        "Vei afla cum să participi la competiția lunară de 2000€ din ProFX",
+        "Vei afla cum să participi la competiția lunară de 2000$ din ProFX",
         "Vei învăța psihologie în trading",
         "Vei putea pune întrebări într-o sesiune Q&A"
       ]
@@ -61,12 +63,14 @@ const BrasovEvent = () => {
       free: "Completely Free",
       freeDesc: "no hidden costs. Just real education and an intense experience that can change the way you look at trading.",
       limited: "Limited seats available",
+      registerButton: "Register Now",
+      registerInfo: "Limited seats available",
       whatToExpect: "What will you gain?",
       expectations: [
         "You will learn the Trading Basics",
         "You will learn how to use the applications",
         "We will trade LIVE together",
-        "You will discover how to participate in the monthly ProFX competition worth €2000",
+        "You will discover how to participate in the monthly ProFX competition worth $2000",
         "You will learn trading psychology",
         "You will be able to ask questions in a Q&A session"
       ]
@@ -199,6 +203,30 @@ const BrasovEvent = () => {
           <p className="text-lg md:text-2xl text-gray-200 font-medium">
             {t.freeDesc}
           </p>
+        </div>
+
+        {/* Registration CTA */}
+        <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-2 border-amber-500/50 rounded-2xl p-6 md:p-10 mb-8 md:mb-12 text-center">
+          <h3 className="text-2xl md:text-4xl font-bold text-amber-400 mb-4 md:mb-6">
+            🎯 {t.limited}
+          </h3>
+          <p className="text-base md:text-xl text-gray-200 mb-6 md:mb-8">
+            {t.registerInfo}
+          </p>
+          <a 
+            href="https://linktr.ee/profxromania?utm_source=linktree_profile_share&ltsid=320a3ea5-bc83-40ff-b536-38276cc08d72"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-gray-900 font-bold text-lg md:text-xl px-8 md:px-12 py-4 md:py-5 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>{t.registerButton}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
         </div>
 
         {/* Additional Info */}

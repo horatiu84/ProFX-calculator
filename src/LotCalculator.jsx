@@ -21,6 +21,7 @@ import EventPhotoGallery from "./Galerie.jsx";
 import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
 import TradingJournal from "./Jurnal.jsx";
+import Biblia from "./Biblia.jsx";
 import "./LotCalculator.css";
 
 // Brain Loading Screen Component
