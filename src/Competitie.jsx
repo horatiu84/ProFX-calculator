@@ -277,9 +277,6 @@ const CompetitionBanner = () => {
             <li>
               {t.competitionWinnerStep2} <b className="text-white">{t.competitionWinnerStep2Bold}</b>{t.competitionWinnerStep2Continue}
             </li>
-            <li>
-              {t.competitionWinnerStep3}
-            </li>
           </ol>
         </div>
         
