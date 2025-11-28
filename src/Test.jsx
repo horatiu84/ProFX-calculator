@@ -54,10 +54,10 @@ function usePersistentState(key, initial) {
 const Badge = ({ tone = "neutral", children }) => {
   const map = {
     neutral: "bg-white/10 text-white",
-    rose: "bg-rose-500/20 text-rose-300 border border-rose-500/40",
-    amber: "bg-amber-500/20 text-amber-300 border border-amber-500/40",
-    sky: "bg-sky-500/20 text-sky-300 border border-sky-500/40",
-    emerald: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40",
+    rose: "bg-transparent text-gray-400 border border-gray-500/30",
+    amber: "bg-transparent text-amber-400 border border-amber-500/30",
+    sky: "bg-transparent text-white border border-white/20",
+    emerald: "bg-transparent text-gray-300 border border-gray-500/30",
     gold: "bg-yellow-500/20 text-yellow-300 border border-yellow-500/40",
   };
   return (
@@ -313,7 +313,7 @@ const Test = () => {
             <div className="flex items-start gap-3">
               <div
                 className={`mt-1 h-6 w-6 shrink-0 rounded-full ${
-                  ok ? "bg-emerald-500" : "bg-rose-500"
+                  ok ? "bg-white" : "bg-red-500"
                 }`}
               />
               <div className="space-y-2">
@@ -478,11 +478,11 @@ const Test = () => {
                       selected ? `ring-2 ${brand.accentRing} ring-offset-0` : ""
                     } ${
                       show && correct
-                        ? "bg-emerald-600/15 border-emerald-500"
+                        ? "bg-white/5 border-white/30"
                         : ""
                     } ${
                       show && selected && !correct
-                        ? "bg-rose-600/15 border-rose-500"
+                        ? "bg-red-500/10 border-red-500/50"
                         : ""
                     }`}
                   >

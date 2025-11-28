@@ -294,13 +294,13 @@ const HowTo = () => {
 
   const getDifficultyColor = (difficulty) => {
     if (difficulty === t.howTo.difficultyBeginner) {
-      return 'bg-green-500/20 text-green-300 border-green-500/30';
+      return 'text-amber-400 border border-amber-400/30';
     } else if (difficulty === t.howTo.difficultyIntermediate) {
-      return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+      return 'text-white border border-white/20';
     } else if (difficulty === t.howTo.difficultyAdvanced) {
-      return 'bg-red-500/20 text-red-300 border-red-500/30';
+      return 'text-red-400 border border-red-400/30';
     } else {
-      return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      return 'text-gray-400 border border-gray-400/20';
     }
   };
 
@@ -355,11 +355,11 @@ const HowTo = () => {
               <div className="relative z-10">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`flex items-center justify-center w-12 h-12 bg-gradient-to-r ${guide.color} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <span className="text-xl">{guide.icon}</span>
+                  <div className="flex items-center justify-center w-12 h-12 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">
+                    <span className="text-4xl">{guide.icon}</span>
                   </div>
 
-                  <div className={`px-3 py-1 rounded-full border text-xs font-medium ${getDifficultyColor(guide.difficulty)}`}>
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${getDifficultyColor(guide.difficulty)}`}>
                     {guide.difficulty}
                   </div>
                 </div>
@@ -394,7 +394,7 @@ const HowTo = () => {
                     onClick={() => handleViewPDF(guide)}
                     className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 
                              flex items-center justify-center space-x-2 group-hover:shadow-lg
-                             bg-gray-700/80 text-gray-200 hover:bg-gray-600/80 border border-gray-600/50 hover:border-gray-500/50"
+                             bg-transparent text-gray-400 hover:text-amber-400 border border-gray-700/50 hover:border-amber-400/50"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -411,8 +411,8 @@ const HowTo = () => {
                       flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 
                       flex items-center justify-center space-x-2 group-hover:shadow-lg
                       ${downloadingItem === guide.fileName
-                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                        : `bg-gradient-to-r ${guide.color} hover:${guide.hoverColor} text-white hover:scale-[1.02] active:scale-95 shadow-lg`
+                        ? 'bg-transparent text-gray-500 cursor-not-allowed border border-gray-700/30'
+                        : 'bg-transparent text-amber-400 hover:text-amber-300 border border-amber-400/30 hover:border-amber-400/50 hover:scale-[1.02] active:scale-95'
                       }
                     `}
                   >

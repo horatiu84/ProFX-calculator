@@ -52,8 +52,8 @@ const Home = ({ menuItems, onTabSelect }) => {
                 <span className={`
                   px-2 py-1 text-xs font-bold rounded-full
                   ${item.isAfiliere
-                    ? 'text-emerald-100 bg-emerald-500/80'
-                    : 'text-indigo-100 bg-indigo-500/80'
+                    ? 'text-amber-400 border border-amber-400/30 bg-transparent'
+                    : 'text-white border border-white/20 bg-transparent'
                   }
                 `}>
                   {t.vipBadge}
@@ -65,9 +65,9 @@ const Home = ({ menuItems, onTabSelect }) => {
             <h3 className={`
               text-xl font-semibold mb-2 transition-colors duration-300
               ${item.isAfiliere
-                ? 'text-emerald-200'
+                ? 'text-amber-400'
                 : item.isSpecial 
-                  ? 'text-indigo-200' 
+                  ? 'text-white' 
                   : 'text-white group-hover:text-amber-400'
               }
             `}>

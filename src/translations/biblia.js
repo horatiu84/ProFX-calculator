@@ -12,52 +12,92 @@ export const bibliaTranslations = {
         {
           title: "Niciodată FOMO",
           subtitle: "Nu intra în piață de frică să nu pierzi oportunitatea",
-          content: "FOMO (Fear Of Missing Out) apare atunci când vezi o mișcare puternică pe piață și simți nevoia să intri în tranzacție fără analiză, doar de teamă să nu pierzi momentul. Această reacție emoțională duce de cele mai multe ori la intrări greșite, pierderi rapide și frustrare. Un trader profesionist înțelege că piața oferă mereu noi oportunități și că răbdarea este o formă de putere. Succesul nu vine din a prinde fiecare mișcare, ci din a acționa calculat, conform planului și strategiei proprii."
+          content: "FOMO (Fear Of Missing Out) apare atunci când vezi o mișcare puternică pe piață și simți nevoia să intri în tranzacție fără analiză, doar de teamă să nu pierzi momentul. Această reacție emoțională duce de cele mai multe ori la intrări greșite, pierderi rapide și frustrare. Un trader profesionist înțelege că piața oferă mereu noi oportunități și că răbdarea este o formă de putere. Succesul nu vine din a prinde fiecare mișcare, ci din a acționa calculat, conform planului și strategiei proprii.",
+          progressLabels: {
+            min: "Nu am control",
+            max: "Control total"
+          }
         },
         {
           title: "Niciodată Trading din Răzbunare",
           subtitle: "Nu încerca să recuperezi pierderile impulsiv",
-          content: "După o pierdere, mulți traderi sunt tentați să reintre imediat pe piață din dorința de a demonstra că au dreptate sau de a-și recupera rapid banii. Această atitudine duce, însă, la decizii grăbite, ignorărea analizei și pierderi și mai mari. Un trader disciplinat știe că fiecare pierdere face parte din proces și alege să se oprească, să analizeze și să învețe din greșeli. Recuperarea reală nu vine din impuls, ci din claritate, răbdare și strategie."
+          content: "După o pierdere, mulți traderi sunt tentați să reintre imediat pe piață din dorința de a demonstra că au dreptate sau de a-și recupera rapid banii. Această atitudine duce, însă, la decizii grăbite, ignorărea analizei și pierderi și mai mari. Un trader disciplinat știe că fiecare pierdere face parte din proces și alege să se oprească, să analizeze și să învețe din greșeli. Recuperarea reală nu vine din impuls, ci din claritate, răbdare și strategie.",
+          progressLabels: {
+            min: "Tranzacționez impulsiv",
+            max: "Total disciplinat"
+          }
         },
         {
           title: "Niciodată Overtrading",
           subtitle: "Nu tranzacționa excesiv!",
-          content: "Overtradingul apare atunci când un trader deschide prea multe poziții sau tranzacționează fără un plan clar, condus de emoții precum frica, lăcomia sau dorința de a recupera pierderile. Acest comportament duce la oboseală mentală, decizii impulsive și, de cele mai multe ori, la pierderi. Un trader de succes învață să aștepte setup-urile potrivite, să respecte planul de tranzacționare și să se concentreze pe calitatea tranzacțiilor, nu pe cantitate. În trading, mai puțin înseamnă adesea mai mult."
+          content: "Overtradingul apare atunci când un trader deschide prea multe poziții sau tranzacționează fără un plan clar, condus de emoții precum frica, lăcomia sau dorința de a recupera pierderile. Acest comportament duce la oboseală mentală, decizii impulsive și, de cele mai multe ori, la pierderi. Un trader de succes învață să aștepte setup-urile potrivite, să respecte planul de tranzacționare și să se concentreze pe calitatea tranzacțiilor, nu pe cantitate. În trading, mai puțin înseamnă adesea mai mult.",
+          progressLabels: {
+            min: "Tranzacționez excesiv",
+            max: "Selectiv și disciplinat"
+          }
         },
         {
           title: "Frica",
           subtitle: "Cel mai mare dușman al traderului",
-          content: "Frica în trading este una dintre cele mai puternice emoții care influențează deciziile unui trader. Ea apare adesea din teama de a pierde bani, teama de a greși sau teama de a rata o oportunitate. Dacă nu este controlată, frica poate duce la decizii impulsive, închiderea prematură a pozițiilor sau evitarea tranzacțiilor profitabile. Un trader de succes învață să recunoască și să gestioneze frica, transformând-o într-un instrument de disciplină și prudență, nu într-un obstacol."
+          content: "Frica în trading este una dintre cele mai puternice emoții care influențează deciziile unui trader. Ea apare adesea din teama de a pierde bani, teama de a greși sau teama de a rata o oportunitate. Dacă nu este controlată, frica poate duce la decizii impulsive, închiderea prematură a pozițiilor sau evitarea tranzacțiilor profitabile. Un trader de succes învață să recunoască și să gestioneze frica, transformând-o într-un instrument de disciplină și prudență, nu într-un obstacol.",
+          progressLabels: {
+            min: "Frica maximă",
+            max: "Sub control"
+          }
         },
         {
           title: "Lăcomia",
           subtitle: "Capcana care îți sabotează profitul",
-          content: "Lăcomia în trading este o emoție periculoasă care îi face pe traderi să își asume riscuri excesive și să ignore planul de tranzacționare. Ea apare din dorința de a câștiga mai mult, mai repede, fără a ține cont de strategie sau disciplină. Sub influența lăcomiei, traderii tind să forțeze piața, să mărească volumele și să rămână prea mult într-o poziție, pierzând adesea profitul obținut. Un trader matur învață să controleze lăcomia, să respecte regulile și să se concentreze pe consistență, nu pe câștiguri rapide."
+          content: "Lăcomia în trading este o emoție periculoasă care îi face pe traderi să își asume riscuri excesive și să ignore planul de tranzacționare. Ea apare din dorința de a câștiga mai mult, mai repede, fără a ține cont de strategie sau disciplină. Sub influența lăcomiei, traderii tind să forțeze piața, să mărească volumele și să rămână prea mult într-o poziție, pierzând adesea profitul obținut. Un trader matur învață să controleze lăcomia, să respecte regulile și să se concentreze pe consistență, nu pe câștiguri rapide.",
+          progressLabels: {
+            min: "Lăcomie dominantă",
+            max: "Echilibrat și realist"
+          }
         },
         {
           title: "Performanță, Nu Bani",
           subtitle: "Tranzacționează pentru performanță, nu pentru profit rapid",
-          content: "Atunci când obiectivul principal devine performanța și disciplina, rezultatele financiare vin natural. Traderii care urmăresc doar profitul tind să devină emoționali, impulsivi și lipsiți de obiectivitate, ceea ce duce inevitabil la greșeli. În schimb, cei care se concentrează pe proces, analiză și îmbunătățirea continuă ajung să obțină stabilitate și încredere în propriile decizii. Adevăratul succes în trading nu se măsoară în bani, ci în consistență și control emoțional."
+          content: "Atunci când obiectivul principal devine performanța și disciplina, rezultatele financiare vin natural. Traderii care urmăresc doar profitul tind să devină emoționali, impulsivi și lipsiți de obiectivitate, ceea ce duce inevitabil la greșeli. În schimb, cei care se concentrează pe proces, analiză și îmbunătățirea continuă ajung să obțină stabilitate și încredere în propriile decizii. Adevăratul succes în trading nu se măsoară în bani, ci în consistență și control emoțional.",
+          progressLabels: {
+            min: "Focusat pe bani",
+            max: "Focusat pe proces"
+          }
         },
         {
           title: "Fii Organizat",
           subtitle: "În viața de zi cu zi și în trading, ia notițe",
-          content: "Organizarea îți oferă structură, disciplină și control, iar notițele te ajută să înțelegi ce funcționează și ce trebuie îmbunătățit. Un trader organizat își notează fiecare tranzacție, motivele deciziei și rezultatul, analizând ulterior performanța pentru a evolua constant. Aceeași disciplină aplicată în viața de zi cu zi se reflectă și în modul de a tranzacționa — clar, calculat și fără haos. Succesul în trading începe cu claritate și ordine, nu cu noroc."
+          content: "Organizarea îți oferă structură, disciplină și control, iar notițele te ajută să înțelegi ce funcționează și ce trebuie îmbunătățit. Un trader organizat își notează fiecare tranzacție, motivele deciziei și rezultatul, analizând ulterior performanța pentru a evolua constant. Aceeași disciplină aplicată în viața de zi cu zi se reflectă și în modul de a tranzacționa — clar, calculat și fără haos. Succesul în trading începe cu claritate și ordine, nu cu noroc.",
+          progressLabels: {
+            min: "Haotic și dezorganizat",
+            max: "Perfect organizat"
+          }
         },
         {
           title: "Disciplină Absolută",
           subtitle: "Respectarea planului de trading chiar și atunci când piața provoacă",
-          content: "Piața va testa mereu răbdarea și încrederea, dar doar cei care rămân fideli planului lor reușesc să obțină rezultate constante. Disciplină absolută înseamnă să urmezi regulile stabilite, să nu te lași influențat de emoții sau impulsuri și să acționezi doar când condițiile se aliniază strategiei tale. Traderii indisciplinați pierd controlul, în timp ce cei disciplinați câștigă prin consistență, echilibru și stăpânire de sine. În trading, disciplina nu e o opțiune — este cheia succesului."
+          content: "Piața va testa mereu răbdarea și încrederea, dar doar cei care rămân fideli planului lor reușesc să obțină rezultate constante. Disciplină absolută înseamnă să urmezi regulile stabilite, să nu te lași influențat de emoții sau impulsuri și să acționezi doar când condițiile se aliniază strategiei tale. Traderii indisciplinați pierd controlul, în timp ce cei disciplinați câștigă prin consistență, echilibru și stăpânire de sine. În trading, disciplina nu e o opțiune — este cheia succesului.",
+          progressLabels: {
+            min: "Indisciplinat",
+            max: "Disciplină de fier"
+          }
         },
         {
           title: "Răbdarea",
           subtitle: "Un trader bun știe să aștepte momentul potrivit",
-          content: "Piața nu răsplătește graba, ci calmul și așteptarea momentului potrivit. Răbdarea înseamnă să nu forțezi tranzacții, să aștepți setup-urile ideale și să ai încredere în proces, chiar și atunci când piața pare statică. Traderii nerăbdători caută profit rapid și ajung adesea la pierderi, în timp ce cei răbdători câștigă prin claritate, control și disciplină. În trading, răbdarea nu înseamnă pasivitate — înseamnă puterea de a acționa doar atunci când trebuie."
+          content: "Piața nu răsplătește graba, ci calmul și așteptarea momentului potrivit. Răbdarea înseamnă să nu forțezi tranzacții, să aștepți setup-urile ideale și să ai încredere în proces, chiar și atunci când piața pare statică. Traderii nerăbdători caută profit rapid și ajung adesea la pierderi, în timp ce cei răbdători câștigă prin claritate, control și disciplină. În trading, răbdarea nu înseamnă pasivitate — înseamnă puterea de a acționa doar atunci când trebuie.",
+          progressLabels: {
+            min: "Nerăbdător",
+            max: "Răbdare exemplară"
+          }
         },
         {
           title: "Focus 100%",
           subtitle: "Elimină toate distragerile, stai focusat doar pe trading",
-          content: "În momentul în care analizezi piața, mintea ta trebuie să fie complet prezentă, fără distrageri, fără zgomot și fără multitasking. Fiecare decizie contează, iar claritatea vine doar din concentrare totală și liniște interioară. Elimină notificările, grijile și gândurile inutile — tradingul cere atenție deplină și respect față de proces. Când ești 100% focusat, vezi piața așa cum este cu adevărat și iei decizii inspirate, nu impulsive."
+          content: "În momentul în care analizezi piața, mintea ta trebuie să fie complet prezentă, fără distrageri, fără zgomot și fără multitasking. Fiecare decizie contează, iar claritatea vine doar din concentrare totală și liniște interioară. Elimină notificările, grijile și gândurile inutile — tradingul cere atenție deplină și respect față de proces. Când ești 100% focusat, vezi piața așa cum este cu adevărat și iei decizii inspirate, nu impulsive.",
+          progressLabels: {
+            min: "Distras permanent",
+            max: "Concentrare totală"
+          }
         }
       ],
       

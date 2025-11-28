@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 
-const Calculator = () => {
+const Calculator = ({ onBack }) => {
   const { t, language } = useLanguage();
   const [accountSize, setAccountSize] = useState("");
   const [riskPerTrade, setRiskPerTrade] = useState("");
@@ -197,6 +197,19 @@ const Calculator = () => {
   return (
     <div className="min-h-screen text-white p-6">
       <div key={language} className="max-w-7xl mx-auto animate-language-change">
+        {/* Back Button */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mb-6 flex items-center gap-2 px-4 py-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-600/50 hover:border-gray-500 rounded-lg transition-all duration-200 group"
+          >
+            <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Înapoi la Calculatoare</span>
+          </button>
+        )}
+        
         {/* Header Section */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
@@ -368,7 +381,7 @@ const Calculator = () => {
                     <span className="text-gray-300 font-medium">
                       {t('calculator.lotSizeLabel')}
                     </span>
-                    <span className="text-2xl font-bold text-blue-400">
+                    <span className="text-2xl font-bold text-amber-400">
                       {formatNumber(results.lotSize)} {t('calculator.lotSizeUnit')}
                     </span>
                   </div>
@@ -386,12 +399,12 @@ const Calculator = () => {
                 </div>
 
                 {takeProfit && (
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300 font-medium">
                         {t('calculator.takeProfitValueLabel')}
                       </span>
-                      <span className="text-2xl font-bold text-green-400">
+                      <span className="text-2xl font-bold text-white">
                         +${formatNumber(results.takeProfitValue)}
                       </span>
                     </div>
@@ -399,12 +412,12 @@ const Calculator = () => {
                 )}
 
                 {takeProfit && results.stopLossValue > 0 && (
-                  <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6 backdrop-blur-sm">
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-6 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-yellow-300 font-medium">
+                      <span className="text-gray-300 font-medium">
                         {t('calculator.riskRewardLabel')}
                       </span>
-                      <span className="text-2xl font-bold text-yellow-400">
+                      <span className="text-2xl font-bold text-amber-400">
                         1:
                         {formatNumber(
                           results.takeProfitValue / results.stopLossValue
@@ -433,7 +446,7 @@ const Calculator = () => {
                       </p>
                       <p>
                         {t('calculator.pipValueLabel')}{" "}
-                        <span className="text-green-400">
+                        <span className="text-amber-400">
                           ${allPairs[selectedPair].pipValue}
                         </span>
                       </p>
@@ -457,7 +470,7 @@ const Calculator = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-gray-300">
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                <h3 className="text-xl font-semibold text-amber-400 mb-3">
                   {t('calculator.step1Title')}
                 </h3>
                 <div className="space-y-3">
@@ -517,7 +530,7 @@ const Calculator = () => {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-green-300 mb-3">
+                <h3 className="text-xl font-semibold text-white mb-3">
                   {t('calculator.step2Title')}
                 </h3>
                 <div className="space-y-3">
@@ -530,7 +543,7 @@ const Calculator = () => {
                     </p>
                   </div>
                   <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-                    <span className="font-semibold text-blue-400">
+                    <span className="font-semibold text-amber-400">
                       {t('calculator.step2Point2Title')}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
@@ -609,7 +622,7 @@ const Calculator = () => {
                 <h3 className="text-lg font-bold text-white mb-1">
                   💡 {t('calculator.infoNoteTitle')}
                 </h3>
-                <p className="text-cyan-200 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   {t('calculator.infoNoteText')}{" "}
                   <span className="font-bold text-white">
                     {t('calculator.infoNoteBold')}
@@ -619,7 +632,7 @@ const Calculator = () => {
               </div>
               <div className="flex-shrink-0">
                 <svg
-                  className="w-8 h-8 text-cyan-400 animate-bounce"
+                  className="w-8 h-8 text-amber-400 animate-bounce"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -671,7 +684,7 @@ const Calculator = () => {
                 <div className="space-y-4">
                   <div className="flex items-center mb-4">
                     <svg
-                      className="w-6 h-6 text-green-400 mr-2"
+                      className="w-6 h-6 text-amber-400 mr-2"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -692,7 +705,7 @@ const Calculator = () => {
                   </p>
                   <p className="text-gray-300">
                     {t('calculator.pipValueText2')}{" "}
-                    <span className="text-green-400 font-semibold">{t('calculator.pipValueHighlight')}</span>
+                    <span className="text-amber-400 font-semibold">{t('calculator.pipValueHighlight')}</span>
                     .
                   </p>
                 </div>
@@ -772,7 +785,7 @@ const Calculator = () => {
                           className="border-t border-gray-700 hover:bg-gray-700/50 transition-colors"
                         >
                           <td className="p-3 font-medium">{lot}</td>
-                          <td className="p-3 text-green-400">{value}</td>
+                          <td className="p-3 text-white">{value}</td>
                           <td className="p-3 text-yellow-400">{example}</td>
                         </tr>
                       ))}

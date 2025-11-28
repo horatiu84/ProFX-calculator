@@ -519,7 +519,7 @@ export default function ProFXbook() {
   // Ecran de selectare cont sau adăugare cont nou
   if (authStep === "select") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-4 md:p-8">
+      <div className="min-h-screen text-white p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
@@ -543,12 +543,12 @@ export default function ProFXbook() {
               <div
                 key={account.id}
                 onClick={() => handleSelectAccount(account.id)}
-                className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 hover:from-gray-700/50 hover:to-gray-800/50 border-2 border-gray-700/50 hover:border-amber-400/60 rounded-2xl p-6 transition-all duration-300 hover:scale-105 cursor-pointer hover:shadow-2xl hover:shadow-amber-500/10"
+                className="group relative bg-transparent border-2 border-gray-700/50 hover:border-amber-400/60 rounded-2xl p-6 transition-all duration-300 hover:scale-105 cursor-pointer"
               >
                 {/* Delete Button - Redesigned */}
                 <button
                   onClick={(e) => handleDeleteAccount(account.id, e)}
-                  className="absolute top-3 right-3 w-9 h-9 bg-gradient-to-br from-red-500/20 to-red-600/20 hover:from-red-500/40 hover:to-red-600/40 border border-red-500/40 hover:border-red-400/70 rounded-xl flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 hover:scale-110 hover:rotate-90 shadow-lg hover:shadow-red-500/30"
+                  className="absolute top-3 right-3 w-9 h-9 bg-transparent border border-red-500/40 hover:border-red-400/70 rounded-xl flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 hover:scale-110 hover:rotate-90"
                   title={language === "ro" ? "Șterge cont" : "Delete account"}
                 >
                   <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -559,7 +559,7 @@ export default function ProFXbook() {
                 <div className="flex flex-col gap-4">
                   {/* Broker Icon & Name */}
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg flex items-center justify-center overflow-hidden p-1">
+                    <div className="w-12 h-12 bg-transparent border border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden p-1">
                       {account.broker === "FP Markets" ? (
                         <img 
                           src="/fpmarkets-logo.png" 
@@ -593,8 +593,8 @@ export default function ProFXbook() {
                       <span className="text-gray-400 text-xs">{language === "ro" ? "Tip" : "Type"}:</span>
                       <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                         account.serverType === "Live" 
-                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                          ? "bg-transparent text-emerald-400 border border-emerald-500/30"
+                          : "bg-transparent text-blue-400 border border-blue-500/30"
                       }`}>
                         {account.serverType}
                       </span>
@@ -614,7 +614,7 @@ export default function ProFXbook() {
                   </div>
 
                   {/* Select Button */}
-                  <div className="mt-2 px-4 py-2 bg-amber-500/20 rounded-lg border border-amber-400/30 group-hover:bg-amber-500/30 transition-all duration-300 text-center">
+                  <div className="mt-2 px-4 py-2 bg-transparent rounded-lg border border-amber-400/30 transition-all duration-300 text-center">
                     <span className="text-amber-400 font-semibold text-sm">
                       {language === "ro" ? "Selectează" : "Select"} →
                     </span>
@@ -626,9 +626,9 @@ export default function ProFXbook() {
             {/* Add New Account Card */}
             <button
               onClick={handleAddNewAccount}
-              className="group bg-gradient-to-br from-amber-600/10 to-orange-800/10 hover:from-amber-600/20 hover:to-orange-800/20 border-2 border-dashed border-amber-500/30 hover:border-amber-400/60 rounded-2xl p-6 transition-all duration-300 hover:scale-105 min-h-[280px] flex flex-col items-center justify-center gap-4"
+              className="group bg-transparent border-2 border-dashed border-amber-500/30 hover:border-amber-400/60 rounded-2xl p-6 transition-all duration-300 hover:scale-105 min-h-[280px] flex flex-col items-center justify-center gap-4"
             >
-              <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center group-hover:bg-amber-500/30 transition-all duration-300">
+              <div className="w-16 h-16 bg-transparent border border-amber-500/30 rounded-full flex items-center justify-center transition-all duration-300">
                 <span className="text-4xl">➕</span>
               </div>
               <div>
@@ -651,10 +651,10 @@ export default function ProFXbook() {
         {/* Custom Delete Confirmation Modal */}
         {showDeleteModal && accountToDelete && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-red-500/30 rounded-2xl p-8 max-w-md w-full shadow-2xl shadow-red-500/20 animate-scaleIn">
+            <div className="bg-gray-900/95 border-2 border-red-500/30 rounded-2xl p-8 max-w-md w-full animate-scaleIn">
               {/* Icon */}
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center border-2 border-red-500/40 animate-pulse">
+                <div className="w-20 h-20 bg-transparent rounded-full flex items-center justify-center border-2 border-red-500/40 animate-pulse">
                   <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
@@ -676,7 +676,7 @@ export default function ProFXbook() {
               {/* Account Info Preview */}
               <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl p-4 mb-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-lg flex items-center justify-center overflow-hidden p-1">
+                  <div className="w-10 h-10 bg-transparent border border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden p-1">
                     {accountToDelete.broker === "FP Markets" ? (
                       <img 
                         src="/fpmarkets-logo.png" 
@@ -719,7 +719,7 @@ export default function ProFXbook() {
                 </button>
                 <button
                   onClick={confirmDeleteAccount}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/30 hover:shadow-red-500/50"
+                  className="flex-1 px-6 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105"
                 >
                   {language === "ro" ? "Șterge" : "Delete"}
                 </button>
@@ -734,7 +734,7 @@ export default function ProFXbook() {
   // Dacă utilizatorul nu a selectat încă brokerul
   if (authStep === "broker") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-4 md:p-8 flex items-center justify-center">
+      <div className="min-h-screen text-white p-4 md:p-8 flex items-center justify-center">
         <div className="max-w-4xl w-full">
           {/* Header */}
           <div className="text-center mb-12">
@@ -772,7 +772,7 @@ export default function ProFXbook() {
               {/* FP Markets Card */}
               <button
                 onClick={() => handleBrokerSelection("FP Markets")}
-                className="group bg-gradient-to-br from-blue-600/20 to-blue-800/20 hover:from-blue-600/30 hover:to-blue-800/30 border-2 border-blue-500/30 hover:border-blue-400/60 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+                className="group bg-transparent border-2 border-blue-500/30 hover:border-blue-400/60 rounded-2xl p-8 transition-all duration-300 hover:scale-105"
               >
                 <div className="flex flex-col items-center gap-4">
                   {/* FP Markets Logo */}
@@ -805,7 +805,7 @@ export default function ProFXbook() {
               {/* FPM Trading Card */}
               <button
                 onClick={() => handleBrokerSelection("FPM Trading")}
-                className="group bg-gradient-to-br from-cyan-600/20 to-blue-800/20 hover:from-cyan-600/30 hover:to-blue-800/30 border-2 border-cyan-500/30 hover:border-cyan-400/60 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20"
+                className="group bg-transparent border-2 border-cyan-500/30 hover:border-cyan-400/60 rounded-2xl p-8 transition-all duration-300 hover:scale-105"
               >
                 <div className="flex flex-col items-center gap-4">
                   {/* FPM Trading Text Logo */}
@@ -845,7 +845,7 @@ export default function ProFXbook() {
   // Dacă utilizatorul a selectat brokerul și trebuie să introducă datele contului
   if (authStep === "account") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-4 md:p-8 flex items-center justify-center">
+      <div className="min-h-screen text-white p-4 md:p-8 flex items-center justify-center">
         <div className="max-w-2xl w-full">
           {/* Header */}
           <div className="text-center mb-8">
@@ -923,7 +923,7 @@ export default function ProFXbook() {
                 disabled={!accountNumber || !accountPassword}
                 className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
                   accountNumber && accountPassword
-                    ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-gray-900 shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:scale-[1.02]"
+                    ? "bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-400 hover:scale-[1.02]"
                     : "bg-gray-700 text-gray-500 cursor-not-allowed"
                 }`}
               >
@@ -955,7 +955,7 @@ export default function ProFXbook() {
 
   // Dacă utilizatorul este autentificat, afișează dashboard-ul
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white p-4 md:p-8">
+    <div className="min-h-screen text-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -991,8 +991,8 @@ export default function ProFXbook() {
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     accountType === "real"
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                      : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      ? "bg-transparent text-emerald-400 border border-emerald-500/30"
+                      : "bg-transparent text-blue-400 border border-blue-500/30"
                   }`}
                 >
                   {accountType === "real" ? `🟢 ${t.realAccount}` : `🔵 ${t.demoAccount}`}
@@ -1204,7 +1204,7 @@ export default function ProFXbook() {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-amber-400/20 transition-all duration-300 animate-language-change">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-amber-400/20 transition-all duration-300 animate-language-change">
             <h3 className="text-base md:text-lg font-semibold text-amber-400 mb-3 md:mb-4 flex items-center gap-2">
               ⚡ {t.quickStats}
             </h3>
@@ -1341,7 +1341,7 @@ export default function ProFXbook() {
         <div className="mt-8 flex justify-center" key={`doctor-button-${language}`}>
           <button
             onClick={() => setShowDoctor(!showDoctor)}
-            className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 flex items-center gap-3"
+            className="group relative px-8 py-4 bg-transparent border border-blue-500/40 hover:border-purple-500/60 text-white font-bold text-lg rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
           >
             <span className="text-3xl">🏥</span>
             <span>

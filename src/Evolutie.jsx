@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import InvestmentCalculator from "./InvestmentCalculator.jsx";
 import { useLanguage } from "./contexts/LanguageContext";
 
-export default function Evolutie() {
+export default function Evolutie({ onBack }) {
   const { language, translations } = useLanguage();
   const t = translations.evolutie;
 
@@ -85,7 +85,20 @@ export default function Evolutie() {
   };
 
   return (
-    <div key={language} className="max-w-3xl mx-auto animate-language-change">
+    <div key={language} className="max-w-3xl mx-auto mb-12 animate-language-change">
+      {/* Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="mb-6 flex items-center gap-2 px-4 py-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-600/50 hover:border-gray-500 rounded-lg transition-all duration-200 group"
+        >
+          <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>Înapoi la Calculatoare</span>
+        </button>
+      )}
+      
       {/* Tracking zilnic și săptămânal */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {/* Card zilnic */}
@@ -94,7 +107,7 @@ export default function Evolutie() {
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           <div className="relative z-10">
-          <h3 className="text-lg font-semibold mb-4 text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300">{t.dailyEvolution}</h3>
+          <h3 className="text-lg font-semibold mb-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">{t.dailyEvolution}</h3>
           
           <label className="block mb-2 text-gray-300">{t.startOfDay}</label>
           <input
@@ -120,7 +133,7 @@ export default function Evolutie() {
           
           <div className="text-center">
             <h2 className="text-lg text-gray-300 mb-2">{t.dailyPercentage}</h2>
-            <p className={`text-2xl font-bold ${parseFloat(dayChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-2xl font-bold ${parseFloat(dayChange) >= 0 ? 'text-white' : 'text-red-400'}`}>
               {dayChange}%
             </p>
           </div>
@@ -133,7 +146,7 @@ export default function Evolutie() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           <div className="relative z-10">
-          <h3 className="text-lg font-semibold mb-4 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">{t.weeklyEvolution}</h3>
+          <h3 className="text-lg font-semibold mb-4 text-amber-400 group-hover:text-amber-300 transition-colors duration-300">{t.weeklyEvolution}</h3>
           
           <label className="block mb-2 text-gray-300">{t.startOfWeek}</label>
           <input
@@ -159,7 +172,7 @@ export default function Evolutie() {
           
           <div className="text-center">
             <h2 className="text-lg text-gray-300 mb-2">{t.weeklyPercentage}</h2>
-            <p className={`text-2xl font-bold ${parseFloat(weekChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-2xl font-bold ${parseFloat(weekChange) >= 0 ? 'text-white' : 'text-red-400'}`}>
               {weekChange}%
             </p>
           </div>
@@ -199,7 +212,7 @@ export default function Evolutie() {
         
         <div className="text-center">
           <h2 className="text-lg text-gray-300 mb-2">{t.tradePercentage}</h2>
-          <p className={`text-2xl font-bold ${parseFloat(tradeChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-2xl font-bold ${parseFloat(tradeChange) >= 0 ? 'text-white' : 'text-red-400'}`}>
             {tradeChange}%
           </p>
         </div>

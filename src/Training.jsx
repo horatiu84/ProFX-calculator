@@ -228,16 +228,16 @@ const Training = () => {
         <div className="group relative max-w-md w-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-blue-400/30 transition-all duration-500 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">{t.training.accessTitle}</h2>
+            <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">{t.training.accessTitle}</h2>
             <form onSubmit={handleSubmit} className="space-y-4 mb-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">{t.training.passwordLabel}</label>
                 <input type="password" placeholder={t.training.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
               </div>
               {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.training.accessButton}</button>
+              <button type="submit" className="w-full p-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 hover:text-amber-300 border border-amber-400/30 hover:border-amber-400/50 font-semibold transition-colors">{t.training.accessButton}</button>
             </form>
-            <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500/80 text-white font-semibold transition-colors mb-4">
+            <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/20 hover:border-white/30 font-semibold transition-colors mb-4">
               {showSignup ? t.training.signupButtonHide : t.training.signupButtonShow}
             </button>
             {showSignup && (
@@ -281,7 +281,7 @@ const Training = () => {
             <ol className="space-y-3 list-decimal list-inside relative z-10">
               {beginnerLinks.map((item, idx) => (
                 <li key={idx} className="text-gray-300 text-sm">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-emerald-300 underline underline-offset-4 transition-colors font-medium ml-2">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400 underline underline-offset-4 transition-colors font-medium ml-2">
                     {item.title}
                   </a>
                 </li>
@@ -312,7 +312,7 @@ const Training = () => {
             <ol className="space-y-3 list-decimal list-inside relative z-10">
               {backtestingLinks.map((item, idx) => (
                 <li key={idx} className="text-gray-300 text-sm">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-cyan-300 underline underline-offset-4 transition-colors font-medium ml-2">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400 underline underline-offset-4 transition-colors font-medium ml-2">
                     {item.title}
                   </a>
                 </li>
@@ -327,7 +327,7 @@ const Training = () => {
             <ol className="space-y-3 list-decimal list-inside relative z-10">
               {macroeconomieLinks.map((item, idx) => (
                 <li key={idx} className="text-gray-300 text-sm">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-purple-300 underline underline-offset-4 transition-colors font-medium ml-2">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400 underline underline-offset-4 transition-colors font-medium ml-2">
                     {item.title}
                   </a>
                 </li>
@@ -365,7 +365,7 @@ const Training = () => {
             <ol className="space-y-3 list-decimal list-inside relative z-10">
               {analizeSaptamanale.map((item, idx) => (
                 <li key={idx} className="text-gray-300 text-sm">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-pink-300 underline underline-offset-4 transition-colors font-medium ml-2">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-amber-400 underline underline-offset-4 transition-colors font-medium ml-2">
                     {item.title}
                   </a>
                 </li>

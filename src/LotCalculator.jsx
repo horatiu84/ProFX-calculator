@@ -22,7 +22,143 @@ import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
 import TradingJournal from "./Jurnal.jsx";
 import Biblia from "./Biblia.jsx";
+import ProFXbook from "./ProFXbook.jsx";
+import Calculatoare from "./Calculatoare.jsx";
 import "./LotCalculator.css";
+
+// Simple SVG Icon Components
+const Icons = {
+  TrendingUp: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+  ),
+  TrendingDown: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+    </svg>
+  ),
+  Settings: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  BookOpen: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  ),
+  Users: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  ),
+  Calendar: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  ),
+  Camera: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  DocumentText: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  Trophy: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+  ),
+  TrophyCup: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v7a7 7 0 01-14 0V5z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v6m-3 0h6M19 8h1a2 2 0 010 4h-1M5 8H4a2 2 0 000 4h1" />
+    </svg>
+  ),
+  Flag: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+    </svg>
+  ),
+  ClipboardList: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+    </svg>
+  ),
+  ChatAlt: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+    </svg>
+  ),
+  Newspaper: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+    </svg>
+  ),
+  ChartBar: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+  ),
+  AcademicCap: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+    </svg>
+  ),
+  Calculator: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    </svg>
+  ),
+  QuestionMarkCircle: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  LightningBolt: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+  ),
+  UserGroup: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  ),
+  Beaker: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
+  ),
+  Book: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  ),
+  Home: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+  ),
+  ClipboardCheck: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+    </svg>
+  ),
+  Chip: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+    </svg>
+  )
+};
 
 // Brain Loading Screen Component
 const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading complete!") }) => {
@@ -34,18 +170,18 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
   const [visibleItems, setVisibleItems] = useState([]);
 
   const menuItems = [
-    { key: "evolutie", label: t.evolutie, icon: "📈", angle: 0 },
-    { key: "lot", label: t.lot, icon: "📉", angle: 32.7 },
-    { key: "pierdere", label: t.pierdere, icon: "⚙️", angle: 65.4 },
-    { key: "educatie", label: t.educatie, icon: "ℹ️", angle: 98.1 },
-    { key: "training", label: t.training, icon: "🧑‍🏫", angle: 130.8 },
-    { key: "agenda", label: t.agenda, icon: "🗓️", angle: 163.5 },
-    { key: "galerie", label: t.galerie, icon: "📷", angle: 196.2 },
-    { key: "raport", label: t.raport, icon: "📝", angle: 228.9 },
-    { key: "concurs", label: t.concurs, icon: "🏆", angle: 261.6 },
-    { key: "evenimente", label: t.evenimente, icon: "🏝️", angle: 294.3 },
-    { key: "test", label: t.test, icon: "📋", angle: 327 },
-    { key: "contact", label: t.contact, icon: "💬", angle: 359.7 },
+    { key: "evolutie", label: t.evolutie, icon: <Icons.TrendingUp className="w-6 h-6" />, angle: 0 },
+    { key: "lot", label: t.lot, icon: <Icons.TrendingDown className="w-6 h-6" />, angle: 32.7 },
+    { key: "pierdere", label: t.pierdere, icon: <Icons.Settings className="w-6 h-6" />, angle: 65.4 },
+    { key: "educatie", label: t.educatie, icon: <Icons.BookOpen className="w-6 h-6" />, angle: 98.1 },
+    { key: "training", label: t.training, icon: <Icons.Users className="w-6 h-6" />, angle: 130.8 },
+    { key: "agenda", label: t.agenda, icon: <Icons.Calendar className="w-6 h-6" />, angle: 163.5 },
+    { key: "galerie", label: t.galerie, icon: <Icons.Camera className="w-6 h-6" />, angle: 196.2 },
+    { key: "raport", label: t.raport, icon: <Icons.DocumentText className="w-6 h-6" />, angle: 228.9 },
+    { key: "concurs", label: t.concurs, icon: <Icons.TrophyCup className="w-6 h-6" />, angle: 261.6 },
+    { key: "evenimente", label: t.evenimente, icon: <Icons.Flag className="w-6 h-6" />, angle: 294.3 },
+    { key: "test", label: t.test, icon: <Icons.ClipboardList className="w-6 h-6" />, angle: 327 },
+    { key: "contact", label: t.contact, icon: <Icons.ChatAlt className="w-6 h-6" />, angle: 359.7 },
   ];
 
   useEffect(() => {
@@ -387,10 +523,7 @@ export default function LotCalculator() {
     education: false,
     wall: false
   });
-  const [expandedSubGroups, setExpandedSubGroups] = useState({
-    performance: false,
-    calculatoare: false
-  });
+  const [expandedSubGroups, setExpandedSubGroups] = useState({});
 
   // Structura nouă de meniu cu grupuri și submeniuri
   const menuGroups = [
@@ -398,80 +531,56 @@ export default function LotCalculator() {
       key: "wall",
       label: "WALL",
       tag: "FREE",
-      icon: "📰",
+      icon: <Icons.Newspaper className="w-5 h-5" />,
       color: "green",
       isGroup: true,
       hasSubmenu: true,
       items: [
-        { key: "stiri", label: "News & Announcements", icon: "📰", component: <Stiri />, color: "green" },
-        { key: "galerie", label: "Photos", icon: "📷", component: <EventPhotoGallery />, color: "green" },
-        { key: "evenimente", label: "Events / Bootcamps", icon: "🏝️", component: <Evenimente />, color: "green" }
+        { key: "stiri", label: "News & Announcements", icon: <Icons.Newspaper className="w-5 h-5" />, component: <Stiri />, color: "green" },
+        { key: "galerie", label: "Photos", icon: <Icons.Camera className="w-5 h-5" />, component: <EventPhotoGallery />, color: "green" },
+        { key: "evenimente", label: "Events / Bootcamps", icon: <Icons.Flag className="w-5 h-5" />, component: <Evenimente />, color: "green" }
       ]
     },
     {
       key: "dashboard",
       label: "DASHBOARD",
       tag: "ARMY",
-      icon: "📊",
+      icon: <Icons.ChartBar className="w-5 h-5" />,
       color: "yellow",
       isGroup: true,
       hasSubmenu: true,
       items: [
-        { key: "agenda", label: "Program ProFx", icon: "🗓️", component: <ProFXSchedule />, color: "yellow" },
-        { 
-          key: "performance", 
-          label: "My Performance", 
-          icon: "📈", 
-          color: "yellow",
-          isSubGroup: true,
-          hasSubmenu: true,
-          items: [
-            { key: "performance-stats", label: "Trading Stats", icon: "📊", component: <Evolutie />, color: "red" },
-            { key: "jurnal", label: "My Journal", icon: "📓", component: <TradingJournal />, color: "red" },
-            { key: "pierdere", label: "Trade Medic", icon: "⚙️", component: <HowTo />, color: "red" }
-          ]
-        },
-        { key: "biblia", label: "Trader's Bible", icon: "📖", component: <Biblia />, color: "yellow" },
-        { key: "mentor", label: "I Am Mentor", icon: "👨‍🏫", component: <TradingJournal />, color: "yellow" },
-        { 
-          key: "calculatoare", 
-          label: "Calculatoare", 
-          icon: "🧮", 
-          color: "yellow",
-          isSubGroup: true,
-          hasSubmenu: true,
-          items: [
-            { key: "lot", label: "Calc LOT", icon: "📉", component: <Calculator />, color: "red" },
-            { key: "evolutie", label: "Evolutie", icon: "📈", component: <Evolutie />, color: "red" },
-            { key: "raport-calc", label: "Raports", icon: "📝", component: <Raport />, color: "red" }
-          ]
-        }
+        { key: "agenda", label: "Program ProFx", icon: <Icons.Calendar className="w-5 h-5" />, component: <ProFXSchedule />, color: "yellow" },
+        { key: "performance", label: "My Performance", icon: <Icons.TrendingUp className="w-5 h-5" />, component: <ProFXbook />, color: "yellow" },
+        { key: "biblia", label: "Trader's Bible", icon: <Icons.Book className="w-5 h-5" />, component: <Biblia />, color: "yellow" },
+        { key: "mentor", label: "I Am Mentor", icon: <Icons.Users className="w-5 h-5" />, component: <TradingJournal />, color: "yellow" },
+        { key: "calculatoare", label: "Calculatoare", icon: <Icons.Calculator className="w-5 h-5" />, component: null, color: "yellow" }
       ]
     },
     {
       key: "education",
       label: "EDUCATION",
       tag: "VIP",
-      icon: "🎓",
+      icon: <Icons.AcademicCap className="w-5 h-5" />,
       color: "purple",
       isGroup: true,
       hasSubmenu: true,
       items: [
-        { key: "educatie", label: "Curs BASIC", icon: "📚", component: <Educatie />, color: "purple" },
-        { key: "training", label: "Curs Avansați", icon: "🧑‍🏫", component: <Training />, color: "purple" },
-        { key: "test", label: "Curs Macro", icon: "📊", component: <Test />, color: "purple" },
-        { key: "clase", label: "Curs Psihologie", icon: "👥", component: <ProFXChecklist />, color: "purple" },
-        { key: "clase-algo", label: "Curs Algo", icon: "🤖", component: <ProFXChecklist />, color: "purple" },
-        { key: "pdfs", label: "PDFs", icon: "📋", component: <Test />, color: "purple" },
-        { key: "how-to", label: "How To", icon: "❓", component: <HowTo />, color: "purple" },
-        { key: "training-extra", label: "Training", icon: "💪", component: <Training />, color: "purple" }
+        { key: "educatie", label: "Curs BASIC", icon: <Icons.BookOpen className="w-5 h-5" />, component: <Educatie />, color: "purple" },
+        { key: "training", label: "Curs Avansați", icon: <Icons.Users className="w-5 h-5" />, component: <Training />, color: "purple" },
+        { key: "test", label: "Curs Macro", icon: <Icons.ChartBar className="w-5 h-5" />, component: <Test />, color: "purple" },
+        { key: "clase", label: "Curs Psihologie", icon: <Icons.UserGroup className="w-5 h-5" />, component: <ProFXChecklist />, color: "purple" },
+        { key: "clase-algo", label: "Curs Algo", icon: <Icons.Chip className="w-5 h-5" />, component: <ProFXChecklist />, color: "purple" },
+        { key: "pdfs", label: "PDFs", icon: <Icons.ClipboardList className="w-5 h-5" />, component: <Test />, color: "purple" },
+        { key: "how-to", label: "How To", icon: <Icons.QuestionMarkCircle className="w-5 h-5" />, component: <HowTo />, color: "purple" },
+        { key: "training-extra", label: "Training", icon: <Icons.LightningBolt className="w-5 h-5" />, component: <Training />, color: "purple" }
       ]
     },
     {
       key: "feedback",
       label: "FEEDBACK",
       tag: "FREE",
-      icon: "💬",
+      icon: <Icons.ChatAlt className="w-5 h-5" />,
       color: "free",
       isGroup: false,
       component: <Contact />
@@ -480,7 +589,7 @@ export default function LotCalculator() {
       key: "concurs",
       label: "CONCURS",
       tag: "FREE",
-      icon: "🏆",
+      icon: <Icons.TrophyCup className="w-5 h-5" />,
       color: "concurs",
       isGroup: false,
       component: <Concurs />,
@@ -590,13 +699,13 @@ export default function LotCalculator() {
   const getTagColor = (tag) => {
     switch(tag) {
       case 'FREE':
-        return 'bg-gradient-to-r from-green-600 to-emerald-600 text-white border-green-500';
+        return 'text-green-400 border border-green-400/30 bg-transparent';
       case 'VIP':
-        return 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-500';
+        return 'text-purple-400 border border-purple-400/30 bg-transparent';
       case 'ARMY':
-        return 'bg-gradient-to-r from-orange-600 to-amber-600 text-white border-orange-500';
+        return 'text-amber-400 border border-amber-400/30 bg-transparent';
       default:
-        return 'bg-gradient-to-r from-gray-800 to-gray-900 text-white border-gray-600';
+        return 'text-gray-400 border border-gray-400/30 bg-transparent';
     }
   };
 
@@ -604,32 +713,12 @@ export default function LotCalculator() {
   const SidebarButton = ({ item }) => {
     const isActive = activeTab === item.key;
     
-    // Color scheme based on item color
+    // Stil uniform pentru toate butoanele - glassmorphism
     const getColorClasses = () => {
       if (isActive) {
-        return 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-400/30 hover:shadow-cyan-400/50 border border-cyan-300/50';
+        return 'bg-white/10 backdrop-blur-sm text-white shadow-lg';
       }
-      
-      switch(item.color) {
-        case 'green':
-          return 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 text-white hover:from-emerald-500 hover:to-teal-600 shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 border border-emerald-400/30';
-        case 'yellow':
-          return 'bg-gradient-to-r from-yellow-600/80 to-amber-600/80 text-white hover:from-yellow-600 hover:to-amber-600 shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/20 border border-yellow-500/30';
-        case 'purple':
-          return 'bg-gradient-to-r from-purple-600/80 to-violet-600/80 text-white hover:from-purple-600 hover:to-violet-600 shadow-md shadow-purple-500/10 hover:shadow-purple-500/20 border border-purple-500/30';
-        case 'concurs':
-          return 'bg-gradient-to-r from-red-600/80 to-rose-600/80 text-white hover:from-red-600 hover:to-rose-600 shadow-md shadow-red-500/10 hover:shadow-red-500/20 border border-red-500/30';
-        case 'red':
-          return 'bg-gradient-to-r from-pink-600/70 to-rose-600/70 text-white hover:from-pink-600/80 hover:to-rose-600/80 shadow-sm border border-pink-500/30';
-        default:
-          if (item.isAfiliere) {
-            return 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 border border-emerald-400/30';
-          }
-          if (item.isSpecial) {
-            return 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-400 hover:to-purple-500 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 border border-indigo-400/30';
-          }
-          return 'bg-gray-800/50 backdrop-blur-sm text-gray-200 hover:bg-gray-700/50 hover:border-amber-400/50 shadow-md border border-gray-700/50';
-      }
+      return 'bg-transparent text-gray-400 hover:bg-white/5 hover:backdrop-blur-sm hover:text-gray-200';
     };
     
     return (
@@ -637,45 +726,31 @@ export default function LotCalculator() {
         <button
           onClick={() => handleTabChange(item.key)}
           className={`
-            relative w-full flex items-center rounded-lg font-semibold transition-all duration-300 
-            ease-in-out hover:scale-[1.02] active:scale-95 overflow-visible text-sm
-            ${item.tag ? 'px-3 py-3 pt-3' : 'px-3 py-2'}
+            relative w-full flex items-center gap-3 rounded-md font-normal transition-all duration-200 
+            ease-in-out overflow-visible text-sm
+            ${item.tag ? 'px-3 py-2.5 pt-2.5' : 'px-3 py-2'}
             ${getColorClasses()}
           `}
         >
           {/* Tag în colțul stânga sus pentru itemii cu tag */}
           {item.tag && isSidebarExpanded && (
             <span className={`absolute -top-2 -left-2 px-2 py-0.5 text-[9px] font-bold tracking-wider
-                           rounded shadow-lg transform -rotate-12 z-20
+                           rounded transform -rotate-12 z-20
                            ${getTagColor(item.tag)}`}>
               {item.tag}
             </span>
           )}
           
-          <span className="text-base flex-shrink-0 w-6 h-6 flex items-center justify-center z-10">
+          <span className="flex-shrink-0 flex items-center justify-center z-10 text-gray-300 group-hover:text-gray-100 transition-colors duration-200">
             {item.icon}
           </span>
           
           <span className={`
-            ml-2.5 whitespace-nowrap transition-all duration-300 overflow-hidden z-10
+            flex-1 whitespace-nowrap transition-all duration-300 overflow-hidden text-left z-10 font-normal
             ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
           `}>
             {item.label}
           </span>
-          
-          {/* VIP Badge  */}
-          {item.isSpecial && (
-            <span className={`
-              absolute -top-1.5 -right-3 px-1.5  text-xs font-bold rounded-full shadow-lg transition-all duration-300
-              ${isSidebarExpanded ? 'translate-x-0' : 'translate-x-0'}
-              ${item.isAfiliere 
-                ? 'text-emerald-100 bg-emerald-500/90 border border-emerald-400/50'
-                : 'text-indigo-100 bg-indigo-500/90 border border-indigo-400/50'
-              }
-            `}>
-              VIP
-            </span>
-          )}
         </button>
         
         {/* Tooltip pentru starea collapsed */}
@@ -687,17 +762,6 @@ export default function LotCalculator() {
             pointer-events-none whitespace-nowrap z-50
           ">
             {item.label}
-            {item.isSpecial && (
-              <span className={`
-                ml-2 px-1.5 py-0.5 text-xs font-bold rounded-full
-                ${item.isAfiliere 
-                  ? 'text-emerald-100 bg-emerald-500/90 border border-emerald-400/50'
-                  : 'text-indigo-100 bg-indigo-500/90 border border-indigo-400/50'
-                }
-              `}>
-                VIP
-              </span>
-            )}
             <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 
                           border-4 border-transparent border-r-gray-900"></div>
           </div>
@@ -711,20 +775,9 @@ export default function LotCalculator() {
     const isExpanded = expandedGroups[group.key];
     const hasSubmenu = group.hasSubmenu && group.items;
     
-    // Color scheme for group header
+    // Stil uniform pentru header-ul grupului - glassmorphism
     const getGroupColor = () => {
-      switch(group.color) {
-        case 'green':
-          return 'from-emerald-500 to-teal-600 border-emerald-400/50';
-        case 'yellow':
-          return 'from-yellow-500 to-amber-600 border-yellow-400/50';
-        case 'purple':
-          return 'from-purple-500 to-violet-600 border-purple-400/50';
-        case 'free':
-          return 'from-blue-500 to-cyan-600 border-blue-400/50';
-        default:
-          return 'from-gray-600 to-gray-700 border-gray-500/50';
-      }
+      return 'bg-white/5 backdrop-blur-sm';
     };
 
     // Dacă nu e grup sau nu are submeniu, afișează direct componenta
@@ -741,33 +794,33 @@ export default function LotCalculator() {
         <button
           onClick={() => toggleGroup(group.key)}
           className={`
-            relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold 
-            transition-all duration-300 ease-in-out hover:scale-105 active:scale-95
-            bg-gradient-to-r ${getGroupColor()} text-white shadow-lg overflow-visible
+            relative w-full flex items-center justify-between px-3 py-2 rounded-md font-medium 
+            transition-all duration-200 ease-in-out overflow-visible text-xs
+            ${getGroupColor()} text-gray-300 hover:bg-white/10 hover:backdrop-blur-sm hover:text-white
           `}
         >
           {/* Tag în colțul stânga sus */}
           {group.tag && isSidebarExpanded && (
             <span className={`absolute -top-2 -left-2 px-2 py-0.5 text-[9px] font-bold tracking-wider
-                           rounded shadow-lg transform -rotate-12 z-10
+                           rounded transform -rotate-12 z-10
                            ${getTagColor(group.tag)}`}>
               {group.tag}
             </span>
           )}
           
-          <div className="flex items-center">
-            <span className="text-lg flex-shrink-0 w-6 h-6 flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <span className="flex-shrink-0 flex items-center justify-center text-gray-300 group-hover:text-gray-100 transition-colors duration-200">
               {group.icon}
             </span>
             <span className={`
-              ml-3 text-sm whitespace-nowrap transition-all duration-300 overflow-hidden uppercase tracking-wider
+              text-xs whitespace-nowrap transition-all duration-300 overflow-hidden uppercase tracking-wider
               ${isSidebarExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
             `}>
               {group.label}
             </span>
           </div>
           {isSidebarExpanded && (
-            <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+            <span className={`transform transition-transform duration-300 text-xs ${isExpanded ? 'rotate-180' : ''}`}>
               ▼
             </span>
           )}
@@ -776,9 +829,9 @@ export default function LotCalculator() {
         {/* Submenu Items */}
         <div className={`
           overflow-hidden transition-all duration-300 ease-in-out
-          ${isExpanded && isSidebarExpanded ? 'max-h-[1000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}
+          ${isExpanded && isSidebarExpanded ? 'max-h-[1000px] opacity-100 mt-1' : 'max-h-0 opacity-0'}
         `}>
-          <div className="ml-2 space-y-2 border-l-2 border-gray-600/30 pl-3">
+          <div className="ml-2 space-y-1 border-l-2 border-white/5 pl-3">
             {group.items.map((item) => {
               // Dacă e sub-grup cu dropdown (ex: My Performance, Calculatoare)
               if (item.isSubGroup && item.hasSubmenu && item.items) {
@@ -789,10 +842,9 @@ export default function LotCalculator() {
                     <button
                       onClick={() => toggleSubGroup(item.key)}
                       className={`
-                        w-full flex items-center justify-between px-3 py-2 rounded-lg font-semibold 
-                        transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-95 text-sm
-                        bg-gradient-to-r from-yellow-600/80 to-amber-600/80 text-white hover:from-yellow-600 hover:to-amber-600 
-                        shadow-md shadow-yellow-500/10 hover:shadow-yellow-500/20 border border-yellow-500/30
+                        w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md font-normal 
+                        transition-all duration-200 ease-in-out text-sm
+                        bg-transparent text-gray-400 hover:bg-white/5 hover:backdrop-blur-sm hover:text-gray-200
                       `}
                     >
                       <div className="flex items-center">
@@ -831,26 +883,26 @@ export default function LotCalculator() {
 
   // Logo Section - clickable
   const LogoSection = ({ isExpanded, onClick }) => (
-    <div className="p-4 border-b border-gray-700/50">
+    <div className="p-3 border-b border-white/5 backdrop-blur-sm">
       <div 
         className={`
           flex items-center transition-all duration-300 cursor-pointer
-          hover:bg-gray-800/50 hover:border-amber-400/30 rounded-xl p-2 -m-2 border border-transparent
+          hover:bg-white/5 rounded-lg p-2 -m-2
           ${isExpanded ? 'justify-start' : 'justify-center'}
         `}
         onClick={onClick}
       >
-        <div className="w-12 h-12 bg-gradient-to-br from-gray-900 to-black border border-gray-700/50 rounded-xl flex items-center justify-center flex-shrink-0 hover:border-amber-400/50 transition-all duration-300 shadow-md">
-          <span className="text-white font-bold text-sm">
+        <div className="w-10 h-10 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-white/10 rounded-lg flex items-center justify-center flex-shrink-0 hover:border-white/20 transition-all duration-300">
+          <span className="text-white font-bold text-xs">
             Pro<span className="text-amber-400">FX</span>
           </span>
         </div>
         <div className={`
-          ml-3 transition-all duration-300 overflow-hidden
+          ml-2.5 transition-all duration-300 overflow-hidden
           ${isExpanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'}
         `}>
-          <h2 className="font-bold text-white">ProFX Academy</h2>
-          <p className="text-xs text-gray-400">{t.clickForHome}</p>
+          <h2 className="font-semibold text-white text-sm">ProFX Academy</h2>
+          <p className="text-[10px] text-gray-400">{t.clickForHome}</p>
         </div>
       </div>
     </div>
@@ -861,29 +913,17 @@ export default function LotCalculator() {
     const isActive = activeTab === item.key;
     
     let buttonClasses = `
-      relative w-full px-4 py-3.5 rounded-xl font-medium transition-all duration-300
-      ease-in-out text-left shadow-md overflow-hidden
+      relative w-full px-4 py-3.5 rounded-lg font-medium transition-all duration-200
+      ease-in-out text-left shadow-sm overflow-hidden flex items-center justify-between
     `;
     
     if (isActive) {
       buttonClasses += ` 
-        bg-gradient-to-r from-amber-400 to-amber-600 text-black 
-        shadow-amber-400/30 border border-amber-300/50
-      `;
-    } else if (item.isAfiliere) {
-      buttonClasses += ` 
-        bg-gradient-to-r from-emerald-500 to-teal-600 text-white 
-        shadow-emerald-500/30 border border-emerald-400/30
-      `;
-    } else if (item.isSpecial) {
-      buttonClasses += ` 
-        bg-gradient-to-r from-indigo-500 to-purple-600 text-white 
-        shadow-indigo-500/30 border border-indigo-400/30
+        bg-gray-700/80 text-white border-l-4 border-l-blue-500
       `;
     } else {
       buttonClasses += ` 
-        bg-gray-800/50 backdrop-blur-sm text-gray-200 
-        hover:bg-gray-700/50 hover:border-amber-400/50 border border-gray-700/50
+        bg-gray-800/60 text-gray-300 hover:bg-gray-700/70 hover:text-white border-l-4 border-l-transparent
       `;
     }
 
@@ -896,19 +936,17 @@ export default function LotCalculator() {
           setIsMobileMenuOpen(false);
         }}
       >
-        <span className="flex items-center justify-between">
-          <span className="flex items-center gap-2">{item.icon} {item.label}</span>
-          {item.isSpecial && (
-            <span className={`
-              px-2 py-0.5 text-xs font-bold rounded-full shadow-sm
-              ${item.isAfiliere 
-                ? 'text-white bg-emerald-600/90 border border-emerald-400/50'
-                : 'text-white bg-indigo-600/90 border border-indigo-400/50'
-              }
-            `}>
-              VIP
-            </span>
-          )}
+        {/* Tag în colțul stânga sus pentru mobile */}
+        {item.tag && (
+          <span className={`absolute -top-1.5 -left-1.5 px-2 py-0.5 text-[9px] font-bold tracking-wider
+                         rounded transform -rotate-12 z-10
+                         ${getTagColor(item.tag)}`}>
+            {item.tag}
+          </span>
+        )}
+        <span className="flex items-center gap-3">
+          <span className="text-gray-300">{item.icon}</span>
+          <span>{item.label}</span>
         </span>
       </button>
     );
@@ -917,6 +955,22 @@ export default function LotCalculator() {
   const getCurrentComponent = () => {
     if (activeTab === "home") {
       return <Home menuItems={menuItems} onTabSelect={handleTabChange} />;
+    }
+    
+    // Special handling pentru Calculatoare - afișează cardurile
+    if (activeTab === "calculatoare") {
+      return <Calculatoare onSelectCalculator={handleTabChange} />;
+    }
+    
+    // Pentru calculatoarele individuale - cu buton Back
+    if (activeTab === "lot") {
+      return <Calculator onBack={() => handleTabChange("calculatoare")} />;
+    }
+    if (activeTab === "evolutie") {
+      return <Evolutie onBack={() => handleTabChange("calculatoare")} />;
+    }
+    if (activeTab === "raport-calc") {
+      return <Raport onBack={() => handleTabChange("calculatoare")} />;
     }
     
     const currentItem = menuItems.find(item => item.key === activeTab);
@@ -930,9 +984,8 @@ export default function LotCalculator() {
   {/* Sidebar */}
   <div 
     className={`
-      fixed left-0 top-0 h-full bg-gray-900/50 backdrop-blur-sm border-r border-gray-700/50
+      fixed left-0 top-0 h-full bg-gray-900/30 backdrop-blur-xl border-r border-gray-700/30
       transition-all duration-500 ease-in-out z-40 shadow-2xl flex flex-col
-      hover:bg-gray-900/60 hover:border-amber-400/30
       ${isSidebarExpanded ? 'w-64' : 'w-20'}
     `}
     onMouseEnter={() => setIsSidebarExpanded(true)}
@@ -943,10 +996,10 @@ export default function LotCalculator() {
 
     {/* Navigation Items - Scrollable only when expanded and needed */}
     <nav className={`
-      flex-1 p-4 transition-all duration-300
+      flex-1 p-3 pt-2 transition-all duration-300
       ${isSidebarExpanded ? 'overflow-y-auto scrollbar-none' : 'overflow-hidden'}
     `}>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {menuGroups.map((group) => (
           <MenuGroup key={group.key} group={group} />
         ))}
@@ -972,8 +1025,8 @@ export default function LotCalculator() {
         <img 
           src={logo} 
           alt="Logo ProFX" 
-          className="w-64 md:w-80 h-auto mb-2 transition-all duration-300"
-          style={{ maxWidth: "350px" }}
+          className="w-80 md:w-[280px] h-auto mb-2 transition-all duration-300"
+          style={{ maxWidth: "320px" }}
         />
         <span className="text-lg text-gray-300 font-light tracking-wide">
           {t.learnTradingFree}
@@ -1003,8 +1056,8 @@ export default function LotCalculator() {
           <img 
             src={logo} 
             alt="Logo ProFX" 
-            className="w-64 md:w-80 h-auto mb-2 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
-            style={{ maxWidth: "350px" }}
+            className="w-80 md:w-[420px] h-auto mb-2 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
+            style={{ maxWidth: "450px" }}
             onClick={goToHome}
           />
           <span className="text-lg md:text-xl text-gray-300 font-light tracking-wide">
@@ -1024,9 +1077,14 @@ export default function LotCalculator() {
                        flex items-center justify-between transition-all duration-300 hover:bg-gray-700/50 
                        hover:border-amber-400/50 shadow-md hover:shadow-lg active:scale-95"
             >
-              <span className="font-medium text-gray-200">
-                {activeTab === "home" ? "🏠 Home" : 
-                 `${menuItems.find(item => item.key === activeTab)?.icon} ${menuItems.find(item => item.key === activeTab)?.label}` || "Selectează opțiunea"}
+              <span className="font-medium text-gray-200 flex items-center gap-2">
+                {activeTab === "home" ? (
+                  <>
+                    <Icons.Home className="w-5 h-5" />
+                    <span>Home</span>
+                  </>
+                ) : 
+                 <>{menuItems.find(item => item.key === activeTab)?.icon} {menuItems.find(item => item.key === activeTab)?.label}</> || "Selectează opțiunea"}
               </span>
               <svg
                 className={`w-5 h-5 transition-transform duration-300 text-gray-400 ${

@@ -288,16 +288,16 @@ const Educatie = () => {
         <div className="group relative max-w-md w-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-blue-400/30 transition-all duration-500 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="relative z-10">
-            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">{t.educatie.accessTitle}</h2>
+            <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">{t.educatie.accessTitle}</h2>
             <form onSubmit={handleSubmit} className="space-y-4 mb-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">{t.educatie.passwordLabel}</label>
                 <input type="password" placeholder={t.educatie.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
               </div>
               {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.educatie.accessButton}</button>
+              <button type="submit" className="w-full p-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 hover:text-amber-300 border border-amber-400/30 hover:border-amber-400/50 font-semibold transition-colors">{t.educatie.accessButton}</button>
             </form>
-            <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500/80 text-white font-semibold transition-colors mb-4">
+            <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/20 hover:border-white/30 font-semibold transition-colors mb-4">
               {showSignup ? t.educatie.signupButtonHide : t.educatie.signupButtonShow}
             </button>
             {showSignup && (
@@ -484,12 +484,12 @@ const Educatie = () => {
               {
                 title: t.educatie.dictionary,
                 file: "/Dictionar ProFX.pdf",
-                iconColor: "text-green-400",
+                iconColor: "text-amber-400",
               },
               {
                 title: t.educatie.mt5MobileGuide,
                 file: "/Ghid folosire mt5.pdf",
-                iconColor: "text-purple-400",
+                iconColor: "text-white",
               },
               {
                 title: t.educatie.mt5ConnectionGuide,
@@ -499,7 +499,7 @@ const Educatie = () => {
               {
                 title: t.educatie.candleFormations,
                 file: "/ProFX - Introducere-in-Formatiile-de-Lumanari ( Mitica ).pdf",
-                iconColor: "text-cyan-400",
+                iconColor: "text-gray-400",
               },
             ].map((resource, idx) => (
             <div

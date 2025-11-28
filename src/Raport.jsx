@@ -1,7 +1,7 @@
 import React from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 
-const Raport = () => {
+const Raport = ({ onBack }) => {
   const { translations, language } = useLanguage();
   const t = translations;
 
@@ -15,7 +15,21 @@ const Raport = () => {
   ];
 
   return (
-    <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-md mx-auto hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden animate-language-change">
+    <div className="max-w-md mx-auto">
+      {/* Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="mb-6 flex items-center gap-2 px-4 py-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-600/50 hover:border-gray-500 rounded-lg transition-all duration-200 group"
+        >
+          <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>Înapoi la Calculatoare</span>
+        </button>
+      )}
+      
+      <div key={language} className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 hover:border-blue-400/30 transition-all duration-500 hover:scale-[1.02] overflow-hidden animate-language-change">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -39,6 +53,7 @@ const Raport = () => {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 };
