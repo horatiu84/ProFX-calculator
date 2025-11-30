@@ -10,7 +10,14 @@ const CompetitionBanner = () => {
     minutes: 0,
     seconds: 0,
   });
+  const [registrationTimeLeft, setRegistrationTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [phase, setPhase] = useState(""); // "waiting", "running", "ended"
+  const [registrationOpen, setRegistrationOpen] = useState(false);
 
   useEffect(() => {
     const updateTimer = () => {
@@ -22,8 +29,34 @@ const CompetitionBanner = () => {
       // Data de sfârșit a concursului din decembrie (19 decembrie 2025, 23:59:59)
       const endDate = new Date(2025, 11, 19, 23, 59, 59);
       
+      // Data de închidere a înscrierilor (5 decembrie 2025, 23:59:59)
+      const registrationCloseDate = new Date(2025, 11, 5, 23, 59, 59);
+      
       // Data de început a concursului următor (1 ianuarie 2026)
       const nextStartDate = new Date(2026, 0, 1, 0, 0, 0); // 0 = January
+
+      // Verifică dacă înscrierile sunt încă deschise
+      const regOpen = now < registrationCloseDate;
+      setRegistrationOpen(regOpen);
+
+      // Calculează timpul rămas până la închiderea înscrierilor
+      if (regOpen) {
+        const regTimeDiff = registrationCloseDate - now;
+        const regDays = Math.floor(regTimeDiff / (1000 * 60 * 60 * 24));
+        const regHours = Math.floor(
+          (regTimeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const regMinutes = Math.floor(
+          (regTimeDiff % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const regSeconds = Math.floor((regTimeDiff % (1000 * 60)) / 1000);
+        setRegistrationTimeLeft({ 
+          days: regDays, 
+          hours: regHours, 
+          minutes: regMinutes, 
+          seconds: regSeconds 
+        });
+      }
 
       let targetDate;
       let currentPhase;
@@ -117,9 +150,42 @@ const CompetitionBanner = () => {
             <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
               {t.competitionRegistrationsOpen}
             </div>
-            <p className="text-base font-semibold text-green-400 max-w-2xl mx-auto">
+            <p className="text-base font-semibold text-green-400 max-w-2xl mx-auto mb-3">
               {t.competitionRegistrationMessage}
             </p>
+            <div className="inline-block bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm text-blue-300 px-6 py-3 rounded-lg font-medium text-base shadow-sm border border-blue-400/40 transition-all duration-300 hover:from-blue-600/30 hover:to-indigo-600/30 hover:border-blue-400/60 hover:shadow-md hover:scale-105 mb-3">
+              {t.competitionRegistrationDeadline}
+            </div>
+            {registrationOpen && (
+              <div className="max-w-md mx-auto bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-blue-400/20">
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                    <span className="text-xl font-bold text-blue-300">
+                      {registrationTimeLeft.days}
+                    </span>
+                    <span className="text-xs text-blue-400/70">{t.competitionDays}</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                    <span className="text-xl font-bold text-blue-300">
+                      {registrationTimeLeft.hours}
+                    </span>
+                    <span className="text-xs text-blue-400/70">{t.competitionHours}</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                    <span className="text-xl font-bold text-blue-300">
+                      {registrationTimeLeft.minutes}
+                    </span>
+                    <span className="text-xs text-blue-400/70">{t.competitionMinutes}</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                    <span className="text-xl font-bold text-blue-300">
+                      {registrationTimeLeft.seconds}
+                    </span>
+                    <span className="text-xs text-blue-400/70">{t.competitionSeconds}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
         
