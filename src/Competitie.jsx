@@ -26,8 +26,8 @@ const CompetitionBanner = () => {
       // Data de început a concursului din decembrie (1 decembrie 2025, 00:00:00)
       const startDate = new Date(2025, 11, 1, 0, 0, 0); // Month is 0-indexed: 11 = December
       
-      // Data de sfârșit a concursului din decembrie (31 decembrie 2025, 23:59:59)
-      const endDate = new Date(2025, 11, 31, 23, 59, 59);
+      // Data de sfârșit a concursului din decembrie (26 decembrie 2025, 23:59:59)
+      const endDate = new Date(2025, 11, 26, 23, 59, 59);
       
       // Data de închidere a înscrierilor (5 decembrie 2025, 23:59:59)
       const registrationCloseDate = new Date(2025, 11, 5, 23, 59, 59);
