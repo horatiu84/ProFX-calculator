@@ -191,9 +191,44 @@ const CompetitionBanner = () => {
         
         {phase === "running" && (
           <div className="text-center mb-6">
-            <span className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
+            <span className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
               {t.competitionRunning}
             </span>
+            {registrationOpen && (
+              <div className="mt-4">
+                <div className="inline-block bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm text-blue-300 px-6 py-3 rounded-lg font-medium text-base shadow-sm border border-blue-400/40 mb-3">
+                  {t.competitionRegistrationDeadline}
+                </div>
+                <div className="max-w-md mx-auto bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-blue-400/20">
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                      <span className="text-xl font-bold text-blue-300">
+                        {registrationTimeLeft.days}
+                      </span>
+                      <span className="text-xs text-blue-400/70">{t.competitionDays}</span>
+                    </div>
+                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                      <span className="text-xl font-bold text-blue-300">
+                        {registrationTimeLeft.hours}
+                      </span>
+                      <span className="text-xs text-blue-400/70">{t.competitionHours}</span>
+                    </div>
+                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                      <span className="text-xl font-bold text-blue-300">
+                        {registrationTimeLeft.minutes}
+                      </span>
+                      <span className="text-xs text-blue-400/70">{t.competitionMinutes}</span>
+                    </div>
+                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
+                      <span className="text-xl font-bold text-blue-300">
+                        {registrationTimeLeft.seconds}
+                      </span>
+                      <span className="text-xs text-blue-400/70">{t.competitionSeconds}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
         
