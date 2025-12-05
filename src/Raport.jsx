@@ -12,6 +12,7 @@ const Raport = ({ onBack }) => {
     { label: t.raportAugust, href: "/Rapoarte/RaportAugust.html" },
     { label: t.raportSeptember, href: "/Rapoarte/RaportSeptembrie.html" },
     { label: t.raportOctober, href: "/Rapoarte/RaportOctombrie.html" },
+    { label: t.raportNovember, href: "/Rapoarte/RaportNoiembrie.html" },
   ];
 
   return (

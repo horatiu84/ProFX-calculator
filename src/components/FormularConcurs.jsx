@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import {
   collection,
   addDoc,
@@ -22,6 +22,16 @@ const FormularInscriereConcurs = () => {
   const [linkMyFxBook, setLinkMyFxBook] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  // Custom input component with forwardRef
+  const CustomPhoneInput = forwardRef((props, ref) => (
+    <input
+      {...props}
+      ref={ref}
+      id="telefon"
+      className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
+    />
+  ));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,7 +104,7 @@ const FormularInscriereConcurs = () => {
             required
           />
 
-          <label className="text-sm text-gray-300" htmlFor="telefon">
+          <label className="text-sm text-gray-300">
             {t.phoneLabel}
           </label>
           <PhoneInput
@@ -103,8 +113,7 @@ const FormularInscriereConcurs = () => {
             value={telefon}
             onChange={setTelefon}
             className="PhoneInput dark-theme"
-            inputClassName="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
-            countrySelectClassName="bg-gray-800/50 text-white border-gray-600/50 rounded-xl"
+            inputComponent={CustomPhoneInput}
             placeholder={t.phonePlaceholder}
             required
           />

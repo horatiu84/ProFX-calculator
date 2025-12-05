@@ -51,6 +51,7 @@ export const commonTranslations = {
     raportAugust: "Luna August 2025",
     raportSeptember: "Luna Septembrie 2025",
     raportOctober: "Luna Octombrie 2025",
+    raportNovember: "Luna Noiembrie 2025",
     // ReportsModal
     reportsTitle: "📊 Rapoarte Performanță",
     reportPeriod: "Perioada Raport",
@@ -145,6 +146,7 @@ export const commonTranslations = {
     raportAugust: "August 2025",
     raportSeptember: "September 2025",
     raportOctober: "October 2025",
+    raportNovember: "November 2025",
     // ReportsModal
     reportsTitle: "📊 Performance Reports",
     reportPeriod: "Report Period",

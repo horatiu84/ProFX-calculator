@@ -442,7 +442,7 @@ const BrainLoadingScreen = ({ onLoadingComplete = () => console.log("Loading com
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes orbit-item {
           from {
             opacity: 0;
@@ -1124,7 +1124,7 @@ export default function LotCalculator() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-in-out;
         }
