@@ -87,7 +87,7 @@ export default function Simulare() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-white">
-                Preț abonament lunar ($)
+                Preț abonament lunar (€)
               </label>
               <Input
                 type="number"
@@ -302,10 +302,10 @@ export default function Simulare() {
                 <div className="text-gray-300 text-sm mb-1">Venit Lunar Recurent</div>
                 <div className="text-2xl font-bold text-green-400">
                   {!currentLevel 
-                    ? "$0"
+                    ? "€0"
                     : currentLevel.name === "ELITE" 
                     ? "Personalizat" 
-                    : `$${monthlyRevenue.toFixed(0)}`}
+                    : `€${monthlyRevenue.toFixed(0)}`}
                 </div>
               </div>
               
@@ -313,17 +313,17 @@ export default function Simulare() {
                 <div className="text-gray-300 text-sm mb-1">Venit Anual Estimat</div>
                 <div className="text-2xl font-bold text-blue-400">
                   {!currentLevel 
-                    ? "$0"
+                    ? "€0"
                     : currentLevel.name === "ELITE" 
                     ? "Personalizat" 
-                    : `$${yearlyRevenue.toFixed(0)}`}
+                    : `€${yearlyRevenue.toFixed(0)}`}
                 </div>
               </div>
             </div>
 
             {currentLevel && currentLevel.commission > 0 && (
-              <div className="text-center text-gray-300 text-sm mt-4">
-                Comision per client: <span className="font-bold text-yellow-400">${(currentLevel.commission * price).toFixed(2)}/lună</span> ({(currentLevel.commission * 100).toFixed(0)}%)
+              <div className="text-center text-gray-300 text-sm mt-4 relative z-10">
+                Comision per client: <span className="font-bold text-yellow-400">€{(currentLevel.commission * price).toFixed(2)}/lună</span> ({(currentLevel.commission * 100).toFixed(0)}%)
               </div>
             )}
           </div>
@@ -395,22 +395,22 @@ export default function Simulare() {
                     <td className="p-3 border border-gray-700 font-semibold">SILVER</td>
                     <td className="p-3 border border-gray-700 text-center">10</td>
                     <td className="p-3 border border-gray-700 text-center">15%</td>
-                    <td className="p-3 border border-gray-700 text-right text-green-400">${(0.15 * price * 10).toFixed(0)}</td>
-                    <td className="p-3 border border-gray-700 text-right text-blue-400">${(0.15 * price * 10 * 12).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-green-400">€{(0.15 * price * 10).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-blue-400">€{(0.15 * price * 10 * 12).toFixed(0)}</td>
                   </tr>
                   <tr className="border-t border-gray-700">
                     <td className="p-3 border border-gray-700 font-semibold">GOLD</td>
                     <td className="p-3 border border-gray-700 text-center">30</td>
                     <td className="p-3 border border-gray-700 text-center">20%</td>
-                    <td className="p-3 border border-gray-700 text-right text-green-400">${(0.20 * price * 30).toFixed(0)}</td>
-                    <td className="p-3 border border-gray-700 text-right text-blue-400">${(0.20 * price * 30 * 12).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-green-400">€{(0.20 * price * 30).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-blue-400">€{(0.20 * price * 30 * 12).toFixed(0)}</td>
                   </tr>
                   <tr className="border-t border-gray-700 bg-gray-700/30">
                     <td className="p-3 border border-gray-700 font-semibold">PLATINUM</td>
                     <td className="p-3 border border-gray-700 text-center">75</td>
                     <td className="p-3 border border-gray-700 text-center">25%</td>
-                    <td className="p-3 border border-gray-700 text-right text-green-400">${(0.25 * price * 75).toFixed(0)}</td>
-                    <td className="p-3 border border-gray-700 text-right text-blue-400">${(0.25 * price * 75 * 12).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-green-400">€{(0.25 * price * 75).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-blue-400">€{(0.25 * price * 75 * 12).toFixed(0)}</td>
                   </tr>
                   <tr className="border-t border-gray-700">
                     <td className="p-3 border border-gray-700 font-semibold">ELITE</td>
