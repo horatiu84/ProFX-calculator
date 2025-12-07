@@ -14,22 +14,32 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  ComposedChart,
+  ReferenceLine,
 } from "recharts";
 
-// Custom tooltip pentru growth chart (afișează procente)
-const CustomTooltip = ({ active, payload }) => {
+// Custom tooltip pentru growth chart combinat (afișează procente și daily profit)
+const CustomGrowthTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    const growthPercent = payload[0].value || 0;
-    const balanceValue = payload[0].payload.balance || 0;
+    const data = payload[0].payload;
+    const growthPercent = data.growth || 0;
+    const dailyProfit = data.dailyProfit || 0;
+    const balanceValue = data.balance || 0;
+    
     return (
       <div className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-lg p-3 shadow-xl">
-        <p className="text-gray-300 text-sm font-semibold">{payload[0].payload.date}</p>
-        <p className={`font-bold text-lg ${growthPercent >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-          {growthPercent >= 0 ? '+' : ''}{growthPercent.toFixed(2)}%
-        </p>
-        <p className="text-gray-400 text-xs mt-1">
-          Balanță: ${balanceValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </p>
+        <p className="text-gray-300 text-sm font-semibold mb-2">{data.date}</p>
+        <div className="space-y-1">
+          <p className={`font-bold text-base ${growthPercent >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            Growth: {growthPercent >= 0 ? '+' : ''}{growthPercent.toFixed(2)}%
+          </p>
+          <p className={`text-sm ${dailyProfit >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+            Daily: {dailyProfit >= 0 ? '+' : ''}{dailyProfit.toFixed(2)}%
+          </p>
+          <p className="text-gray-400 text-xs mt-1">
+            Balance: ${balanceValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+        </div>
       </div>
     );
   }
@@ -70,19 +80,64 @@ const generateRandomAccountData = (initialBalance = 2000) => {
     });
   }
 
-  // Generare date pentru growth chart
+  // Generare date pentru growth chart cu daily profit bars
   const growthData = [];
   let growthBalance = balance;
+  const tradingDaysToGenerate = 100; // ~20 weeks of trading days (5 days/week)
+  let daysGenerated = 0;
   
-  for (let i = 0; i < months.length; i++) {
-    const growthPercent = ((growthBalance - balance) / balance * 100).toFixed(2);
-    growthData.push({
-      date: months[i],
-      balance: parseFloat(growthBalance.toFixed(2)),
-      growth: parseFloat(growthPercent)
-    });
-    growthBalance += monthlyData[i].profit;
+  // Start from 100 days ago and move forward
+  let currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - tradingDaysToGenerate - 30); // Start further back to account for weekends
+  
+  // Add day 0 with 0% growth
+  growthData.push({
+    date: `${currentDate.getDate()}/${currentDate.getMonth() + 1}`,
+    balance: balance,
+    growth: 0,
+    dailyProfit: 0
+  });
+  currentDate.setDate(currentDate.getDate() + 1);
+  
+  // Generate only weekday data (skip weekends)
+  while (daysGenerated < tradingDaysToGenerate) {
+    const dayOfWeek = currentDate.getDay();
+    
+    // Skip weekends (0 = Sunday, 6 = Saturday)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // Daily profit/loss random with 70% win rate (realistic trading)
+      const isWin = Math.random() < 0.70; // 70% win rate
+      const dailyChange = isWin 
+        ? (Math.random() * 2 + 0.2)  // Win: between +0.2% and +2.2%
+        : (Math.random() * -2 - 0.2); // Loss: between -0.2% and -2.2%
+      
+      const dailyProfitAmount = (growthBalance * dailyChange / 100);
+      const newBalance = growthBalance + dailyProfitAmount;
+      const cumulativeGrowth = ((newBalance - balance) / balance * 100);
+      
+      // Format date
+      const dateStr = `${currentDate.getDate()}/${currentDate.getMonth() + 1}`;
+      
+      growthData.push({
+        date: dateStr,
+        balance: parseFloat(newBalance.toFixed(2)),
+        growth: parseFloat(cumulativeGrowth.toFixed(2)),
+        dailyProfit: parseFloat(dailyChange.toFixed(2))
+      });
+      
+      // Update balance for next day (this is the key - balance accumulates)
+      growthBalance = newBalance;
+      daysGenerated++;
+    }
+    
+    // Move to next day (going forward now)
+    currentDate.setDate(currentDate.getDate() + 1);
   }
+  
+  // Debug: log wins/losses count
+  const wins = growthData.filter(d => d.dailyProfit > 0).length;
+  const losses = growthData.filter(d => d.dailyProfit < 0).length;
+  console.log(`Generated ${tradingDaysToGenerate} trading days (no weekends): ${wins} wins (green), ${losses} losses (red)`);
 
   return {
     stats: {
@@ -417,13 +472,17 @@ export default function ProFXbook() {
   // Date pentru growth chart bazate pe perioadă
   const growthDataByPeriod = {
     all: currentAccountData?.growthData || [],
-    today: currentAccountData?.growthData?.slice(-1) || [],
-    week: currentAccountData?.growthData?.slice(-2) || [],
-    month: currentAccountData?.growthData?.slice(-3) || [],
+    today: currentAccountData?.growthData?.slice(-30) || [], // Last 30 days
+    week: currentAccountData?.growthData?.slice(-7) || [], // Last 7 days
+    month: currentAccountData?.growthData?.slice(-30) || [], // Last 30 days
     custom: currentAccountData?.growthData || [],
   };
   
-  const growthData = growthDataByPeriod[timePeriod] || growthDataByPeriod.all;
+  let growthData = growthDataByPeriod[timePeriod] || growthDataByPeriod.all;
+  
+  console.log('Chart Growth Data Length:', growthData.length);
+  console.log('First 3 entries:', growthData.slice(0, 3));
+  console.log('Has dailyProfit?', growthData[0]?.dailyProfit !== undefined);
 
   const periodButtons = [
     { id: "today", label: t.today, icon: "📅" },
@@ -1113,228 +1172,268 @@ export default function ProFXbook() {
           </div>
         </div>
 
-        {/* Statistics - Grouped Design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8" key={`stats-${language}`}>
+        {/* Dashboard Grid Layout - 2 Rows */}
+        <div className="space-y-4" key={`dashboard-${language}`}>
           
-          {/* Performance Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-emerald-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-base md:text-lg font-semibold text-emerald-400 mb-3 md:mb-4 flex items-center gap-2">
-              📈 {t.performance}
-            </h3>
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.gain}</div>
-                <div className="text-emerald-400 text-lg md:text-xl font-bold">+{stats.gain}%</div>
+          {/* Row 1: Performance Card + Account Growth Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Performance Card - Left */}
+            <div className="lg:col-span-5">
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5 hover:border-emerald-400/30 transition-all duration-300 animate-language-change h-full">
+                <h3 className="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                  📊 {t.performance}
+                </h3>
+                
+                {/* Main Performance Metrics */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.gain}</span>
+                    <span className="text-emerald-400 font-bold text-lg">+{stats.gain}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.absGain}</span>
+                    <span className="text-emerald-400 font-semibold">${formatCurrency(stats.profit)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.drawdown}</span>
+                    <span className="text-red-400 font-bold">{stats.drawdown}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.equityDrawdown}</span>
+                    <span className="text-red-400 font-semibold">{stats.drawdown}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.profitEuro}</span>
+                    <span className="text-emerald-400 font-bold">${formatCurrency(stats.profit)}</span>
+                  </div>
+                </div>
+
+                {/* Advanced Metrics Box */}
+                <div className="my-4 p-3 bg-gray-900/40 rounded-lg border border-gray-700/40">
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                    <div className="text-gray-400">Profit Factor</div>
+                    <div className="text-cyan-400 font-semibold text-right">2.5</div>
+                    <div className="text-gray-400">Standard Deviation</div>
+                    <div className="text-blue-400 font-semibold text-right">13.2%</div>
+                    <div className="text-gray-400">Sharpe Ratio</div>
+                    <div className="text-purple-400 font-semibold text-right">1.8</div>
+                    <div className="text-gray-400">Expectancy</div>
+                    <div className="text-emerald-400 font-semibold text-right">$85</div>
+                  </div>
+                </div>
+
+                {/* Trading Stats Section */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.nrOfTrades}</span>
+                    <span className="text-purple-400 font-bold">{stats.totalTrades}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.tradesWon}</span>
+                    <span className="text-emerald-400 font-semibold">{Math.floor(stats.totalTrades * stats.winRate / 100)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.tradesLost}</span>
+                    <span className="text-red-400 font-semibold">{stats.totalTrades - Math.floor(stats.totalTrades * stats.winRate / 100)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.averageLost}</span>
+                    <span className="text-gray-400 font-semibold">-$50.00</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.averageWin}</span>
+                    <span className="text-emerald-400 font-semibold">+$120.00</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.maxConsecutiveWins}</span>
+                    <span className="text-emerald-400 font-bold">8</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{t.maxConsecutiveLosses}</span>
+                    <span className="text-red-400 font-bold">3</span>
+                  </div>
+                </div>
+
+                {/* Account Balance Section */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Sold</span>
+                    <span className="text-blue-400 font-bold">${formatCurrency(stats.balance)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Equity</span>
+                    <span className="text-blue-400 font-semibold">${formatCurrency(stats.equity)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Retragere</span>
+                    <span className="text-gray-400 font-semibold">${formatCurrency(stats.withdrawals)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Swap</span>
+                    <span className="text-red-400 font-semibold">${formatCurrency(stats.interest)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Comision</span>
+                    <span className="text-red-400 font-semibold">$0.00</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.daily}</div>
-                <div className="text-emerald-400 text-lg md:text-xl font-bold">{stats.daily}%</div>
-              </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.monthly}</div>
-                <div className="text-emerald-400 text-lg md:text-xl font-bold">{stats.monthly}%</div>
-              </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.drawdown}</div>
-                <div className="text-red-400 text-lg md:text-xl font-bold">{stats.drawdown}%</div>
+            </div>
+
+            {/* Account Growth Chart - Right */}
+            <div className="lg:col-span-7">
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5 hover:border-emerald-400/30 transition-all duration-300 h-full" key={`growth-${language}`}>
+                <h3 className="text-lg font-bold text-emerald-400 mb-4 animate-language-change flex items-center gap-2">
+                  📈 {t.accountGrowth}
+                </h3>
+                <ResponsiveContainer width="100%" height={450}>
+                  <ComposedChart data={growthData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '11px' }}
+                    />
+                    <YAxis 
+                      yAxisId="left"
+                      stroke="#10b981"
+                      style={{ fontSize: '11px' }}
+                      tickFormatter={(value) => `${value}%`}
+                      domain={[-20, 20]}
+                      allowDataOverflow={false}
+                    />
+                    <YAxis 
+                      yAxisId="right"
+                      orientation="right"
+                      stroke="#3b82f6"
+                      style={{ fontSize: '11px' }}
+                      tickFormatter={(value) => `${value}%`}
+                      domain={[0, 'dataMax + 10']}
+                    />
+                    <Tooltip content={<CustomGrowthTooltip />} />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      iconType="rect"
+                      formatter={(value, entry) => {
+                        if (value === 'dailyProfit') return 'Daily Profit/Loss';
+                        if (value === 'growth') return 'Cumulative Growth';
+                        return value;
+                      }}
+                      wrapperStyle={{ paddingTop: '10px' }}
+                    />
+                    <ReferenceLine yAxisId="left" y={0} stroke="#6B7280" strokeDasharray="3 3" strokeWidth={2} />
+                    <Bar 
+                      yAxisId="left"
+                      dataKey="dailyProfit" 
+                      name="Daily Profit/Loss"
+                      barSize={4}
+                      isAnimationActive={true}
+                    >
+                      {growthData.map((entry, index) => {
+                        return (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.dailyProfit >= 0 ? "#10b981" : "#ef4444"}
+                            fillOpacity={0.75}
+                          />
+                        );
+                      })}
+                    </Bar>
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="growth"
+                      name="Cumulative Growth"
+                      stroke="#3b82f6"
+                      strokeWidth={3}
+                      dot={{ fill: "#3b82f6", r: 5, strokeWidth: 2, stroke: "#1e3a8a" }}
+                      activeDot={{ r: 7 }}
+                      isAnimationActive={true}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
 
-          {/* Account Balance Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-blue-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-base md:text-lg font-semibold text-blue-400 mb-3 md:mb-4 flex items-center gap-2">
-              💰 {t.accountBalance}
-            </h3>
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.balance}</div>
-                <div className="text-blue-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.balance)}
-                </div>
+          {/* Row 2: Trading Calendar + Monthly Performance + Trade Time Performance */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Trading Calendar - Left (Larger) */}
+            <div className="lg:col-span-6">
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5 hover:border-purple-400/30 transition-all duration-300 h-full" key={`calendar-${language}`}>
+                <h3 className="text-lg font-bold text-purple-400 mb-4 animate-language-change flex items-center gap-2">
+                  📆 Calendar Trading
+                </h3>
+                <ProFXbookCalendar 
+                  accountData={currentAccountData} 
+                  onDataGenerated={handleCalendarDataGenerated}
+                />
               </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.equity}</div>
-                <div className="text-blue-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.equity)}
-                </div>
-                <div className="text-gray-500 text-[9px] md:text-xs">({stats.equityPercent}%)</div>
+            </div>
+
+            {/* Right Side - Two Smaller Cards Stacked */}
+            <div className="lg:col-span-6 grid grid-cols-1 gap-4">
+              {/* Monthly Performance */}
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5 hover:border-amber-400/30 transition-all duration-300" key={`monthly-${language}`}>
+                <h3 className="text-lg font-bold text-amber-400 mb-4 animate-language-change flex items-center gap-2">
+                  📅 {t.monthlyPerformance}
+                </h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={monthlyData.slice(-6)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '10px' }}
+                    />
+                    <YAxis 
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '10px' }}
+                      tickFormatter={(value) => `${value}%`}
+                    />
+                    <Tooltip content={<MonthlyTooltip />} />
+                    <Bar 
+                      dataKey="return" 
+                      radius={[6, 6, 0, 0]}
+                    >
+                      {monthlyData.slice(-6).map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.return >= 0 ? "#10b981" : "#ef4444"}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.highest}</div>
-                <div className="text-amber-400 text-base md:text-lg font-bold">
-                  ${formatCurrency(stats.highest)}
-                </div>
-                <div className="text-gray-500 text-[9px] md:text-xs">({stats.highestDate})</div>
-              </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.profit}</div>
-                <div className="text-emerald-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.profit)}
+
+              {/* Trade Time Performance */}
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5 hover:border-cyan-400/30 transition-all duration-300 animate-language-change">
+                <h3 className="text-lg font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                  🕐 {t.tradeTimePerformance}
+                </h3>
+                <div className="h-[200px] flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <div className="text-5xl">📊</div>
+                    <div className="text-gray-400 text-sm font-semibold">
+                      {language === "ro" ? "Analiză performanță pe ore" : "Hourly performance analysis"}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
+                        <div className="text-gray-400 text-xs mb-1">Best Time</div>
+                        <div className="text-emerald-400 font-bold text-lg">09:00-12:00</div>
+                      </div>
+                      <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
+                        <div className="text-gray-400 text-xs mb-1">Win Rate</div>
+                        <div className="text-emerald-400 font-bold text-lg">{stats.winRate}%</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Transactions Group */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-purple-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-base md:text-lg font-semibold text-purple-400 mb-3 md:mb-4 flex items-center gap-2">
-              💳 {t.transactions}
-            </h3>
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.deposits}</div>
-                <div className="text-blue-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.deposits)}
-                </div>
-              </div>
-              <div>
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.withdrawals}</div>
-                <div className="text-gray-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.withdrawals)}
-                </div>
-              </div>
-              <div className="col-span-2">
-                <div className="text-gray-400 text-[10px] md:text-xs mb-1">{t.interest}</div>
-                <div className="text-red-400 text-lg md:text-xl font-bold">
-                  ${formatCurrency(stats.interest)}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-amber-400/20 transition-all duration-300 animate-language-change">
-            <h3 className="text-base md:text-lg font-semibold text-amber-400 mb-3 md:mb-4 flex items-center gap-2">
-              ⚡ {t.quickStats}
-            </h3>
-            <div className="space-y-2 md:space-y-3">
-              <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-xs md:text-sm">{t.totalTrades}</span>
-                <span className="text-purple-400 font-bold text-base md:text-lg">{stats.totalTrades}</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-xs md:text-sm">{t.winRate}</span>
-                <span className="text-emerald-400 font-bold text-base md:text-lg">{stats.winRate}%</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-xs md:text-sm">{t.totalGain}</span>
-                <span className="text-emerald-400 font-bold text-base md:text-lg">+{stats.gain}%</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-xs md:text-sm">{t.netProfit}</span>
-                <span className="text-emerald-400 font-bold text-base md:text-lg">
-                  ${formatCurrency(stats.profit)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-gray-700/30">
-                <span className="text-gray-400 text-xs md:text-sm">{t.maxDrawdown}</span>
-                <span className="text-red-400 font-bold text-base md:text-lg">{stats.drawdown}%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400 text-xs md:text-sm">{t.currentBalance}</span>
-                <span className="text-blue-400 font-bold text-base md:text-lg">
-                  ${formatCurrency(stats.balance)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Growth Chart */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6" key={`growth-${language}`}>
-          <h3 className="text-base md:text-xl font-semibold mb-3 md:mb-4 text-emerald-400 animate-language-change">
-            📊 {t.accountGrowth}
-          </h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={growthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis 
-                dataKey="date" 
-                stroke="#9CA3AF"
-                style={{ fontSize: '10px' }}
-              />
-              <YAxis 
-                stroke="#9CA3AF"
-                style={{ fontSize: '10px' }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="growth"
-                stroke="#10b981"
-                strokeWidth={2}
-                dot={{ fill: "#10b981", r: 3 }}
-                activeDot={{ r: 5 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Monthly Performance Chart */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl md:rounded-2xl p-4 md:p-6" key={`monthly-${language}`}>
-          <h3 className="text-base md:text-xl font-semibold mb-3 md:mb-4 text-amber-400 animate-language-change">
-            📅 {t.monthlyPerformance}
-          </h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis 
-                dataKey="month" 
-                stroke="#9CA3AF"
-                style={{ fontSize: '10px' }}
-              />
-              <YAxis 
-                stroke="#9CA3AF"
-                style={{ fontSize: '10px' }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip content={<MonthlyTooltip />} />
-              <Bar 
-                dataKey="return" 
-                radius={[8, 8, 0, 0]}
-              >
-                {monthlyData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.return >= 0 ? "#10b981" : "#ef4444"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          
-          {/* Monthly Summary */}
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
-            {monthlyData.slice(-5).map((month, index) => (
-              <div
-                key={index}
-                className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30"
-              >
-                <div className="text-gray-400 text-xs mb-1">{month.month}</div>
-                <div
-                  className={`font-bold text-lg ${
-                    month.return >= 0 ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  {month.return >= 0 ? "+" : ""}{month.return}%
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Trading Calendar */}
-        <div key={`calendar-${language}`} className="animate-language-change">
-          <h3 className="text-xl font-semibold mb-4 text-amber-400">
-            📆 {language === "ro" ? "Calendar Trading" : "Trading Calendar"}
-          </h3>
-          <ProFXbookCalendar 
-            accountData={currentAccountData} 
-            onDataGenerated={handleCalendarDataGenerated}
-          />
         </div>
 
         {/* ProFX Doctor Button */}
