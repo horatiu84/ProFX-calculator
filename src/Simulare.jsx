@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import logo from "./logo2.png";
 
 export default function Simulare() {
   const [price, setPrice] = useState(20);
@@ -35,11 +36,20 @@ export default function Simulare() {
   const yearlyRevenue = monthlyRevenue * 12;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900">
       <div className="max-w-6xl mx-auto pt-10 space-y-6 text-white px-4 pb-10">
-        <Card className="bg-[#1a1d29] border border-gray-700 shadow-2xl">
+        <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 shadow-2xl hover:border-amber-400/30 transition-all duration-500">
           <CardContent className="p-6 space-y-6">
           <div className="text-center space-y-2">
+            {/* Logo ProFX */}
+            <div className="flex justify-center mb-4">
+              <img 
+                src={logo} 
+                alt="ProFX Logo" 
+                className="h-16 md:h-20 w-auto"
+              />
+            </div>
+            
             <h1 className="text-3xl font-bold text-blue-400">
               ProFX Affiliate Program
             </h1>
@@ -51,11 +61,12 @@ export default function Simulare() {
             </p>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg space-y-4">
-            <h3 className="text-xl font-bold text-yellow-400 mb-4">
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-6 rounded-2xl space-y-4 hover:border-amber-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <h3 className="text-xl font-bold text-yellow-400 mb-4 relative z-10">
               Cum Funcționează?
             </h3>
-            <div className="flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 text-sm">
+            <div className="flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 text-sm relative z-10">
               <div className="flex-1 text-center">
                 <div className="text-blue-400 font-semibold mb-1">Recomandă ProFX</div>
                 <div className="text-gray-300 text-xs md:text-sm">Promovează platforma</div>
@@ -86,7 +97,7 @@ export default function Simulare() {
                   if (val === "") setPrice("");
                   else setPrice(parseFloat(val) < 0 ? 0 : parseFloat(val));
                 }}
-                className="w-full bg-gray-800 text-white border-gray-600"
+                className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 transition-all duration-300"
               />
             </div>
 
@@ -102,18 +113,19 @@ export default function Simulare() {
                   if (val === "") setActiveClients("");
                   else setActiveClients(parseInt(val) < 0 ? 0 : parseInt(val));
                 }}
-                className="w-full bg-gray-800 text-white border-gray-600"
+                className="w-full p-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 transition-all duration-300"
               />
             </div>
           </div>
 
           {/* Piramida nivelurilor */}
-          <div className="pt-6 pb-8 bg-gradient-to-b from-gray-900/50 to-transparent rounded-lg">
-            <h3 className="text-xl font-bold text-center text-yellow-400 mb-8">
+          <div className="group relative pt-6 pb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl hover:border-purple-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <h3 className="text-xl font-bold text-center text-yellow-400 mb-8 relative z-10">
               Nivelurile Programului
             </h3>
             
-            <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 max-w-6xl mx-auto bg-[#0a0e1a]/60 rounded-xl p-6 md:p-8 overflow-hidden">
+            <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 max-w-6xl mx-auto rounded-xl p-6 md:p-8 overflow-hidden relative z-10">
               {/* Piramida - Layout similar cu imaginea - ascunsă pe mobile */}
               <div className="hidden md:flex relative flex-col items-center gap-3 flex-shrink-0 md:ml-16 md:mr-8" style={{ maxWidth: '320px' }}>
                 {/* STARTER - Vârful (Triunghi) */}
@@ -224,8 +236,8 @@ export default function Simulare() {
                       key={level.name}
                       className={`p-4 rounded-lg border-l-4 transition-all duration-300 mb-5 ${
                         isCurrentLevel
-                          ? "bg-yellow-900/30 border-yellow-400 shadow-lg md:scale-105"
-                          : "bg-gray-800/50 border-gray-600"
+                          ? "bg-yellow-900/20 border-yellow-400 shadow-lg md:scale-105"
+                          : "bg-gray-900/30 border-gray-600"
                       }`}
                       style={{
                         marginTop: index === 0 ? `${topPaddings[0]}` : '0'
@@ -265,27 +277,28 @@ export default function Simulare() {
           </div>
 
           {/* Rezultate calcule */}
-          <div className="bg-gradient-to-r from-blue-900 to-purple-900 p-6 rounded-lg space-y-4 mt-6">
-            <h3 className="text-2xl font-bold text-center text-yellow-400">
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-6 rounded-2xl space-y-4 mt-6 hover:border-emerald-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <h3 className="text-2xl font-bold text-center text-yellow-400 relative z-10">
               Rezultatele Tale
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
-              <div className="bg-gray-800 p-4 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center relative z-10">
+              <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 backdrop-blur-sm border border-cyan-500/30 p-4 rounded-xl hover:border-cyan-400/60 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300">
                 <div className="text-gray-300 text-sm mb-1">Clienți Activi</div>
                 <div className="text-2xl font-bold text-cyan-400">
                   {activeClients}
                 </div>
               </div>
               
-              <div className="bg-gray-800 p-4 rounded-lg">
+              <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 backdrop-blur-sm border border-yellow-500/30 p-4 rounded-xl hover:border-yellow-400/60 hover:shadow-lg hover:shadow-yellow-500/10 transition-all duration-300">
                 <div className="text-gray-300 text-sm mb-1">Nivel Actual</div>
                 <div className="text-2xl font-bold text-yellow-400">
                   {currentLevel ? currentLevel.name : "Niciun nivel activ"}
                 </div>
               </div>
               
-              <div className="bg-gray-800 p-4 rounded-lg">
+              <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 backdrop-blur-sm border border-green-500/30 p-4 rounded-xl hover:border-green-400/60 hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300">
                 <div className="text-gray-300 text-sm mb-1">Venit Lunar Recurent</div>
                 <div className="text-2xl font-bold text-green-400">
                   {!currentLevel 
@@ -296,7 +309,7 @@ export default function Simulare() {
                 </div>
               </div>
               
-              <div className="bg-gray-800 p-4 rounded-lg">
+              <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm border border-blue-500/30 p-4 rounded-xl hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
                 <div className="text-gray-300 text-sm mb-1">Venit Anual Estimat</div>
                 <div className="text-2xl font-bold text-blue-400">
                   {!currentLevel 
@@ -316,11 +329,12 @@ export default function Simulare() {
           </div>
 
           {/* Beneficii */}
-          <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h3 className="text-xl font-bold text-yellow-400 mb-4">
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-6 rounded-2xl mt-6 hover:border-blue-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <h3 className="text-xl font-bold text-yellow-400 mb-4 relative z-10">
               De Ce Să Devii Affiliate ProFX?
             </h3>
-            <ul className="space-y-3 text-gray-300">
+            <ul className="space-y-3 text-gray-300 relative z-10">
               <li className="flex items-start">
                 <span className="text-green-400 mr-2">✓</span>
                 <span><strong>Comision recurent lunar</strong> - Câștig continuu din abonamentele active</span>
@@ -353,11 +367,12 @@ export default function Simulare() {
           </div>
 
           {/* Exemple de scenarii */}
-          <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h3 className="text-xl font-bold text-yellow-400 mb-4">
+          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-6 rounded-2xl mt-6 hover:border-indigo-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <h3 className="text-xl font-bold text-yellow-400 mb-4 relative z-10">
               Exemple de Scenarii
             </h3>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto relative z-10">
               <table className="w-full text-sm text-white border border-gray-700">
                 <thead className="bg-gray-900 text-yellow-400">
                   <tr>
