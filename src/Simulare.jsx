@@ -55,20 +55,20 @@ export default function Simulare() {
             <h3 className="text-xl font-bold text-yellow-400 mb-4">
               Cum Funcționează?
             </h3>
-            <div className="flex items-center space-x-4 text-sm">
+            <div className="flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 text-sm">
               <div className="flex-1 text-center">
                 <div className="text-blue-400 font-semibold mb-1">Recomandă ProFX</div>
-                <div className="text-gray-300">Promovează platforma</div>
+                <div className="text-gray-300 text-xs md:text-sm">Promovează platforma</div>
               </div>
-              <div className="text-yellow-400 text-2xl">→</div>
+              <div className="text-yellow-400 text-2xl transform md:rotate-0 rotate-90">→</div>
               <div className="flex-1 text-center">
                 <div className="text-blue-400 font-semibold mb-1">Oamenii se înscriu</div>
-                <div className="text-gray-300">Clienți noi</div>
+                <div className="text-gray-300 text-xs md:text-sm">Clienți noi</div>
               </div>
-              <div className="text-yellow-400 text-2xl">→</div>
+              <div className="text-yellow-400 text-2xl transform md:rotate-0 rotate-90">→</div>
               <div className="flex-1 text-center">
                 <div className="text-blue-400 font-semibold mb-1">Primești comision lunar recurent</div>
-                <div className="text-gray-300">Simplu. Transparent. Scalabil.</div>
+                <div className="text-gray-300 text-xs md:text-sm">Simplu. Transparent. Scalabil.</div>
               </div>
             </div>
           </div>
@@ -114,8 +114,8 @@ export default function Simulare() {
             </h3>
             
             <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 max-w-6xl mx-auto bg-[#0a0e1a]/60 rounded-xl p-6 md:p-8 overflow-hidden">
-              {/* Piramida - Layout similar cu imaginea */}
-              <div className="relative flex flex-col items-center gap-3 flex-shrink-0 w-full md:w-auto md:ml-16 md:mr-8" style={{ maxWidth: '320px' }}>
+              {/* Piramida - Layout similar cu imaginea - ascunsă pe mobile */}
+              <div className="hidden md:flex relative flex-col items-center gap-3 flex-shrink-0 md:ml-16 md:mr-8" style={{ maxWidth: '320px' }}>
                 {/* STARTER - Vârful (Triunghi) */}
                 <div 
                   className={`relative flex items-center justify-center ${
@@ -213,10 +213,10 @@ export default function Simulare() {
               </div>
 
               {/* Textele pe dreapta - aliniate cu fiecare nivel */}
-              <div className="flex flex-col justify-start mt-0 flex-1 max-w-md ml-4">
+              <div className="flex flex-col justify-start mt-0 flex-1 max-w-md md:ml-4 w-full">
                 {affiliateLevels.map((level, index) => {
                   const isCurrentLevel = currentLevel?.name === level.name;
-                  // Ajustăm padding-ul pentru a alinia cu nivelele piramidei
+                  // Ajustăm padding-ul pentru a alinia cu nivelele piramidei doar pe desktop
                   const topPaddings = ['0px', '90px', '180px', '270px', '360px'];
                   
                   return (
@@ -224,11 +224,11 @@ export default function Simulare() {
                       key={level.name}
                       className={`p-4 rounded-lg border-l-4 transition-all duration-300 mb-5 ${
                         isCurrentLevel
-                          ? "bg-yellow-900/30 border-yellow-400 shadow-lg scale-105"
+                          ? "bg-yellow-900/30 border-yellow-400 shadow-lg md:scale-105"
                           : "bg-gray-800/50 border-gray-600"
                       }`}
                       style={{
-                        marginTop: index === 0 ? topPaddings[0] : '0'
+                        marginTop: index === 0 ? `${topPaddings[0]}` : '0'
                       }}
                     >
                       <div className="flex items-center justify-between mb-1">
