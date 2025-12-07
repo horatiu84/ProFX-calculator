@@ -4,6 +4,7 @@ import { useLanguage } from "./contexts/LanguageContext";
 import Dashboard from "./db/Dashboard";
 import LotCalculator from "./LotCalculator";
 import ProFXbook from "./ProFXbook";
+import Simulare from "./Simulare";
 
 export default function App() {
   const { language, setLanguage } = useLanguage();
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/" element={<LotCalculator />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profxbook" element={<ProFXbook />} />
+        <Route path="/afiliere" element={<Simulare />} />
       </Routes>
     </Router>
   );
