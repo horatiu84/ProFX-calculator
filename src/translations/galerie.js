@@ -16,6 +16,7 @@ export const galerieTranslations = {
       office: "Birou ProFX",
       herculane: "Bootcamp Herculane",
       eforieNord: "Bootcamp Eforie Nord",
+      citybreak: "CityBreak ProFX",
       
       // Photo Titles & Alt
       founders: "Fondatorii ProFX",
@@ -72,6 +73,7 @@ export const galerieTranslations = {
       office: "ProFX Office",
       herculane: "Herculane Bootcamp",
       eforieNord: "Eforie Nord Bootcamp",
+      citybreak: "CityBreak ProFX",
       
       // Photo Titles & Alt
       founders: "ProFX Founders",

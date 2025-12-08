@@ -5,7 +5,7 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import FlipCard from "./FlipCard";
-import FormularInscriere from "./components/FormularInscriere";
+import VipInfoModal from "./components/VipInfoModal";
 import { useLanguage } from './contexts/LanguageContext';
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
@@ -235,16 +235,12 @@ const Training = () => {
                 <input type="password" placeholder={t.training.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400/40 transition" />
               </div>
               {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-              <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.training.accessButton}</button>
+            <button type="submit" className="w-full p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500/80 text-white font-semibold transition-colors">{t.training.accessButton}</button>
             </form>
             <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500/80 text-white font-semibold transition-colors mb-4">
               {showSignup ? t.training.signupButtonHide : t.training.signupButtonShow}
             </button>
-            {showSignup && (
-              <div className="mt-4 bg-gray-800/40 border border-gray-700/40 rounded-xl p-4">
-                <FormularInscriere />
-              </div>
-            )}
+            <VipInfoModal open={showSignup} onClose={() => setShowSignup(false)} />
           </div>
         </div>
       </div>
