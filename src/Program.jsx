@@ -750,7 +750,7 @@ const WeeklySchedule = () => {
                 )}
               </div>
               {/* Afișează detalii Zoom pentru sesiunile de Asia cu Mihai când accesul este disponibil */}
-              {event.name === sessionNames.asiaWithMihai && zoomAccessAvailable && status !== "passed" && (
+              {event.name === sessionNames.asiaWithMihai && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-green-500/10 border border-green-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-green-400 text-lg">🎥</span>
@@ -786,7 +786,7 @@ const WeeklySchedule = () => {
                 </div>
               )}
               {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
-              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && dayIndex !== 2 && (
+              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && dayIndex !== 2 && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-blue-400 text-lg">🎥</span>
