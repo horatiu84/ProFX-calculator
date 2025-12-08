@@ -439,14 +439,15 @@ const WeeklySchedule = () => {
       setShowVIPModal(false);
       setVipError("");
       setVipPassword("");
-      if (pendingSessionLink) {
-        setRedirectLink(pendingSessionLink);
-        setShowZoomRedirect(true);
-        setPendingSessionLink("");
-      }
+      setPendingSessionLink(""); // Clear pending link without redirecting
     } else {
       setVipError("Parolă incorectă! Te rugăm să încerci din nou.");
     }
+  };
+
+  const handleVIPLogout = () => {
+    setIsVIP(false);
+    sessionStorage.removeItem("vipAccess");
   };
 
   const closeVIPModal = () => {
@@ -668,7 +669,7 @@ const WeeklySchedule = () => {
                         FREE
                       </span>
                     )}
-                    {!isFree && hasLink && isVIP && status !== "passed" && (
+                    {!isFree && hasLink && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
                       </span>
@@ -772,10 +773,11 @@ const WeeklySchedule = () => {
                     ) : (
                       // Luni, Marți, Joi, Vineri - VIP sessions
                       <>
-                        <div className="flex items-center gap-2">
+                        {/* Meeting ID commented out - can be re-enabled if needed in the future */}
+                        {/* <div className="flex items-center gap-2">
                           <span className="text-gray-400">Meeting ID:</span>
                           <span className="text-white font-mono font-semibold">878 4225 2532</span>
-                        </div>
+                        </div> */}
                         <div className="flex items-center gap-2">
                           <span className="text-gray-400">Passcode:</span>
                           <span className="text-white font-mono font-semibold">2026</span>
@@ -971,6 +973,13 @@ const WeeklySchedule = () => {
                 <span className="text-sm font-medium text-purple-300">
                   {t.vipActive}
                 </span>
+                <button
+                  onClick={handleVIPLogout}
+                  className="ml-2 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 hover:border-red-400/50 rounded-full text-xs font-medium text-red-300 hover:text-red-200 transition-all duration-300"
+                  title={language === "ro" ? "Ieșire VIP" : "Logout VIP"}
+                >
+                  {language === "ro" ? "🚪 Ieșire" : "🚪 Logout"}
+                </button>
               </div>
             )}
           </div>
