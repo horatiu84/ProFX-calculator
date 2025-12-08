@@ -82,7 +82,7 @@ const WeeklySchedule = () => {
   const weekdayEvents = [
     { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
-    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
+    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 5 }, // Temporar pentru testare - până la 19:45
   ];
 
   const specialEvents = {
@@ -320,9 +320,9 @@ const WeeklySchedule = () => {
   useEffect(() => {
     if (!showZoomRedirect || !redirectLink) return;
 
-    // Redirect simplu după 1s
+    // Redirect simplu după 1s - folosim location.href pentru compatibilitate mobilă
     const redirectTimer = setTimeout(() => {
-      window.open(redirectLink, '_blank', 'noopener,noreferrer');
+      window.location.href = redirectLink;
     }, 1000);
 
     // Countdown interval (3, 2, 1, 0)
@@ -458,9 +458,7 @@ const WeeklySchedule = () => {
   };
 
   const handleManualRedirect = () => {
-    window.open(redirectLink, '_blank', 'noopener,noreferrer');
-    setShowZoomRedirect(false);
-    setRedirectCountdown(3);
+    window.location.href = redirectLink;
   };
 
   const closeZoomRedirect = () => {
