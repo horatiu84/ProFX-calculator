@@ -14,7 +14,7 @@ import {
   EyeOff,
   GraduationCap,
 } from "lucide-react";
-import FormularInscriere from "./components/FormularInscriere";
+import VipInfoModal from "./components/VipInfoModal";
 import { useLanguage } from './contexts/LanguageContext';
 
 // Import CSS-urile necesare pentru PDF viewer
@@ -300,11 +300,7 @@ const Educatie = () => {
             <button onClick={toggleSignup} className="w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/20 hover:border-white/30 font-semibold transition-colors mb-4">
               {showSignup ? t.educatie.signupButtonHide : t.educatie.signupButtonShow}
             </button>
-            {showSignup && (
-              <div className="mt-4 bg-gray-800/40 border border-gray-700/40 rounded-xl p-4">
-                <FormularInscriere />
-              </div>
-            )}
+            <VipInfoModal open={showSignup} onClose={() => setShowSignup(false)} />
           </div>
         </div>
       </div>

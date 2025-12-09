@@ -28,7 +28,7 @@ const WeeklySchedule = () => {
   const [nextSession, setNextSession] = useState(null);
   const [timeUntilNextSession, setTimeUntilNextSession] = useState(null);
 
-  const VIP_PASSWORD = "2025";
+  const VIP_PASSWORD = "VIP2026";
 
   const daysOfWeek = t.daysOfWeek;
 
@@ -51,25 +51,25 @@ const WeeklySchedule = () => {
 
   const sessionLinksByDay = {
     [sessionNames.asiaWithMihai]: {
-      0: "https://us06web.zoom.us/j/81939789882?pwd=nYMZIPf35UOX9iXfy9gXSncpFplb7t.1",
-      1: "https://us06web.zoom.us/j/86842038204?pwd=95PrxbdVZ3W4GO5Io96RRzAPeoovXC.1",
-      2: "https://us06web.zoom.us/j/85726576733?pwd=UBFrodfm7MaWm5qYIu3YS3VmZ8ZfCP.1",
-      3: "https://us06web.zoom.us/j/86894910414?pwd=zRbudSqJ0w24ZBe4ZdpdVvCzuNoLCG.1",
-      4: "https://us06web.zoom.us/j/85496511951?pwd=PePROIb8kDZ9CtbuunvP4TUSWe5KbK.1",
+      0: "https://us06web.zoom.us/j/87842252532", // Luni - VIP
+      1: "https://us06web.zoom.us/j/87842252532",// Marți - VIP
+      2: "https://us06web.zoom.us/j/87468438970", // Miercuri - FREE
+      3: "https://us06web.zoom.us/j/87842252532", // Joi - VIP
+      4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP
     },
     [sessionNames.londonWithFlavius]: {
-      0: "https://us02web.zoom.us/j/83106081532?pwd=6q1gPZXj6Km0S6Kmt9zPuOu4yyjAwU.1", // Luni
-      1: "https://us02web.zoom.us/j/84521169544?pwd=BIDOTaxlxUmcSMld7FQOCXGbljBRbG.1", // Marți
-      2: "https://us02web.zoom.us/j/81460784651?pwd=3o9p7mOgYhnXjQNzLgXUy0uDLFjMIU.1", // Miercuri
-      3: "https://us02web.zoom.us/j/82194753195?pwd=YH31GkbXbiyU36VfSteVsFlfcFd5PZ.1", // Joi
-      4: "https://us02web.zoom.us/j/84248988761?pwd=jZJxERPs9UOLfpQfpboMCn0L7pAEa9.1", // Vineri
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025", // Marți - VIP
+      2: "https://us02web.zoom.us/j/81460784651?pwd=3o9p7mOgYhnXjQNzLgXUy0uDLFjMIU.1", // Miercuri - FREE
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.newYorkWithFlavius]: {
-      0: "https://us02web.zoom.us/j/89284532502?pwd=GIO8R9cUQfiApN7ZaiDITL7AVxh9ec.1", // Luni
-      1: "https://us02web.zoom.us/j/84428384626?pwd=EtamY9Lr4FllbMUDM8oSTTuy4G05mJ.1", // Marți
-      2: "https://us02web.zoom.us/j/89235648526?pwd=8AGuuwt8XrxAnpHmUJbjJojb3AFbq2.1", // Miercuri
-      3: "https://us02web.zoom.us/j/83839932271?pwd=bsCbaCC0Bks7Wrt6L4ptYvky9QEOLd.1", // Joi
-      4: "https://us02web.zoom.us/j/84507872229?pwd=F3QDiFNQ4lb9BDktht8CVLI5AB6RSp.1", // Vineri
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025", // Marți - VIP
+      2: "https://us02web.zoom.us/j/89235648526?pwd=8AGuuwt8XrxAnpHmUJbjJojb3AFbq2.1", // Miercuri - FREE
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.macroAnalysisWithJohn]: {
       1: "https://us06web.zoom.us/j/82243984757?pwd=QBCn16XU7fwGYYgyPa9jaWmuVfkKrZ.1",
@@ -82,7 +82,7 @@ const WeeklySchedule = () => {
   const weekdayEvents = [
     { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
-    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
+    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 }, 
   ];
 
   const specialEvents = {
@@ -320,9 +320,9 @@ const WeeklySchedule = () => {
   useEffect(() => {
     if (!showZoomRedirect || !redirectLink) return;
 
-    // Redirect simplu după 1s
+    // Redirect simplu după 1s - folosim location.href pentru compatibilitate mobilă
     const redirectTimer = setTimeout(() => {
-      window.open(redirectLink, '_blank', 'noopener,noreferrer');
+      window.location.href = redirectLink;
     }, 1000);
 
     // Countdown interval (3, 2, 1, 0)
@@ -350,15 +350,22 @@ const WeeklySchedule = () => {
   }, [showZoomRedirect, redirectLink]);
 
   const isSessionFree = (eventName, dayIndex) => {
-    // Toate sesiunile lui Flavius sunt gratuite momentan
-    if (eventName.toLowerCase().includes("flavius")) return true;
+    // Sesiunile de Miercuri sunt gratuite (Asia cu Mihai + sesiunile lui Flavius)
+    if (dayIndex === 2) {
+      // Sesiunea de Asia cu Mihai de Miercuri este gratis
+      if (eventName === sessionNames.asiaWithMihai) return true;
+      // Sesiunile lui Flavius de Miercuri sunt gratuite
+      if (eventName.toLowerCase().includes("flavius")) return true;
+    }
 
-    // În plus, păstrăm gratuitățile existente de luni
-    const freeSessions = [
-      sessionNames.asiaWithMihai,
-      sessionNames.beginnersWebinar,
-    ];
-    return dayIndex === 0 && freeSessions.includes(eventName);
+    // Webinarul cu Sergiu de Luni este gratuit
+    if (dayIndex === 0 && eventName === sessionNames.beginnersWebinar) return true;
+
+    // Sesiunea cu John de Vineri este gratuită
+    if (dayIndex === 4 && eventName === sessionNames.macroAnalysisWithJohn) return true;
+
+    // Toate celelalte sesiuni necesită VIP
+    return false;
   };
 
   const getSessionLink = (eventName, dayIndex) =>
@@ -432,14 +439,15 @@ const WeeklySchedule = () => {
       setShowVIPModal(false);
       setVipError("");
       setVipPassword("");
-      if (pendingSessionLink) {
-        setRedirectLink(pendingSessionLink);
-        setShowZoomRedirect(true);
-        setPendingSessionLink("");
-      }
+      setPendingSessionLink(""); // Clear pending link without redirecting
     } else {
       setVipError("Parolă incorectă! Te rugăm să încerci din nou.");
     }
+  };
+
+  const handleVIPLogout = () => {
+    setIsVIP(false);
+    sessionStorage.removeItem("vipAccess");
   };
 
   const closeVIPModal = () => {
@@ -450,9 +458,7 @@ const WeeklySchedule = () => {
   };
 
   const handleManualRedirect = () => {
-    window.open(redirectLink, '_blank', 'noopener,noreferrer');
-    setShowZoomRedirect(false);
-    setRedirectCountdown(3);
+    window.location.href = redirectLink;
   };
 
   const closeZoomRedirect = () => {
@@ -661,7 +667,7 @@ const WeeklySchedule = () => {
                         FREE
                       </span>
                     )}
-                    {!isFree && hasLink && isVIP && status !== "passed" && (
+                    {!isFree && hasLink && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
                       </span>
@@ -742,6 +748,58 @@ const WeeklySchedule = () => {
                   </div>
                 )}
               </div>
+              {/* Afișează detalii Zoom pentru sesiunile de Asia cu Mihai când accesul este disponibil */}
+              {event.name === sessionNames.asiaWithMihai && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-green-500/10 border border-green-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-green-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-green-400 uppercase">Zoom Details</p>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    {dayIndex === 2 ? (
+                      // Miercuri - FREE session
+                      <>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400">Meeting ID:</span>
+                          <span className="text-white font-mono font-semibold">874 6843 8970</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400">Passcode:</span>
+                          <span className="text-white font-mono font-semibold">Freeasia</span>
+                        </div>
+                      </>
+                    ) : (
+                      // Luni, Marți, Joi, Vineri - VIP sessions
+                      <>
+                        {/* Meeting ID commented out - can be re-enabled if needed in the future */}
+                        {/* <div className="flex items-center gap-2">
+                          <span className="text-gray-400">Meeting ID:</span>
+                          <span className="text-white font-mono font-semibold">878 4225 2532</span>
+                        </div> */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400">Passcode:</span>
+                          <span className="text-white font-mono font-semibold">2026</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
+              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && dayIndex !== 2 && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-blue-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details - VIP</p>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div
               className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold uppercase ${
@@ -913,6 +971,13 @@ const WeeklySchedule = () => {
                 <span className="text-sm font-medium text-purple-300">
                   {t.vipActive}
                 </span>
+                <button
+                  onClick={handleVIPLogout}
+                  className="ml-2 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 hover:border-red-400/50 rounded-full text-xs font-medium text-red-300 hover:text-red-200 transition-all duration-300"
+                  title={language === "ro" ? "Ieșire VIP" : "Logout VIP"}
+                >
+                  {language === "ro" ? "🚪 Ieșire" : "🚪 Logout"}
+                </button>
               </div>
             )}
           </div>

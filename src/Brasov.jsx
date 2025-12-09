@@ -7,10 +7,10 @@ const BrasovEvent = () => {
   const content = {
     ro: {
       title: "Mastermind ProFX",
-      subtitle: "Brașov",
-      date: "5 Decembrie 2024",
-      location: "Radisson Blu Aurum",
-      hero: "O zi întreagă dedicată tradingului, fără teorie reciclată, fără promisiuni goale.",
+      subtitle: "Cluj",
+      date: "Curând în 2026",
+      location: "Locația va fi anunțată curând",
+      hero: "O zi întreagă dedicată tradingului, fără teorie reciclață, fără promisiuni goale.",
       intro: "Aici înveți direct de la traderi, mentori și invitați internaționali care activează zilnic pe piețe.",
       benefits: [
         "Idei reale, explicații clare, perspectivă nouă",
@@ -18,7 +18,7 @@ const BrasovEvent = () => {
         "Totul gratuit"
       ],
       mainMessage: "Dacă vrei mai mult decât tutoriale, conturi demo și informații reciclate de pe internet, asta e ziua în care faci diferența.",
-      description: "Pe 5 Decembrie, în sala Aurum a hotelului Radisson Blu, vei învăța trading direct de la mentori, traderi și antreprenori care chiar fac asta zi de zi, plus invitați internaționali din industrie.",
+      description: "În curând, în 2026, în Cluj, vei învăța trading direct de la mentori, traderi și antreprenori care chiar fac asta zi de zi, plus invitați internaționali din industrie.",
       dayTitle: "O zi întreagă în care:",
       points: [
         "Înțelegi piața dintr-o perspectivă nouă",
@@ -29,7 +29,7 @@ const BrasovEvent = () => {
       freeDesc: "fără costuri ascunse. Doar educație reală și o experiență intensă care îți poate schimba modul de a privi tradingul.",
       limited: "Locurile sunt limitate",
       registerButton: "Înscrie-te Acum",
-      registerInfo: "Locuri limitate disponibile",
+      registerInfo: "Înscrierile vor începe în curând",
       whatToExpect: "Ce vei avea de câștigat?",
       expectations: [
         "Vei învăța Bazele Tradingului",
@@ -42,9 +42,9 @@ const BrasovEvent = () => {
     },
     en: {
       title: "ProFX Mastermind",
-      subtitle: "Brașov",
-      date: "December 5th, 2024",
-      location: "Radisson Blu Aurum",
+      subtitle: "Cluj",
+      date: "Coming Soon in 2026",
+      location: "Location to be announced soon",
       hero: "A full day dedicated to trading, without recycled theory or empty promises.",
       intro: "Here you learn directly from traders, mentors and international guests who are active daily in the markets.",
       benefits: [
@@ -53,7 +53,7 @@ const BrasovEvent = () => {
         "Everything for free"
       ],
       mainMessage: "If you want more than tutorials, demo accounts and recycled information from the internet, this is the day you make a difference.",
-      description: "On December 5th, in the Aurum room of the Radisson Blu hotel, you will learn trading directly from mentors, traders and entrepreneurs who actually do this every day, plus international guests from the industry.",
+      description: "Coming soon in 2026, in Cluj, you will learn trading directly from mentors, traders and entrepreneurs who actually do this every day, plus international guests from the industry.",
       dayTitle: "A full day where you will:",
       points: [
         "Understand the market from a new perspective",
@@ -64,7 +64,7 @@ const BrasovEvent = () => {
       freeDesc: "no hidden costs. Just real education and an intense experience that can change the way you look at trading.",
       limited: "Limited seats available",
       registerButton: "Register Now",
-      registerInfo: "Limited seats available",
+      registerInfo: "Registration will open soon",
       whatToExpect: "What will you gain?",
       expectations: [
         "You will learn the Trading Basics",
@@ -84,8 +84,8 @@ const BrasovEvent = () => {
       {/* Hero Section with Image */}
       <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
         <img 
-          src="/Brasov.jpg" 
-          alt="Brașov Event" 
+          src="/Cluj.jpg" 
+          alt="Cluj Event" 
           className="w-full h-full object-cover opacity-80"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
@@ -213,20 +213,15 @@ const BrasovEvent = () => {
           <p className="text-base md:text-xl text-gray-200 mb-6 md:mb-8">
             {t.registerInfo}
           </p>
-          <a 
-            href="https://linktr.ee/profxromania?utm_source=linktree_profile_share&ltsid=320a3ea5-bc83-40ff-b536-38276cc08d72"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-gray-900 font-bold text-lg md:text-xl px-8 md:px-12 py-4 md:py-5 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+          <button
+            disabled
+            className="inline-flex items-center gap-3 bg-gray-600 text-gray-400 font-bold text-lg md:text-xl px-8 md:px-12 py-4 md:py-5 rounded-xl cursor-not-allowed opacity-60"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <span>{t.registerButton}</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
+          </button>
         </div>
 
         {/* Additional Info */}

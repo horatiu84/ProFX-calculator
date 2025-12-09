@@ -331,11 +331,27 @@ const EventPhotoGallery = () => {
       title: { ro: "Eforie Nord 2025", en: "Eforie Nord 2025" },
       type: "photo"
     },
+    {
+      id: 16,
+      src: "/Galerie/Brasov.jpg",
+      alt: { ro: "CityBreak Brașov - Mastermind ProFX", en: "CityBreak Brasov - ProFX Mastermind" },
+      category: "citybreak",
+      title: { ro: "Mastermind Brașov", en: "Brasov Mastermind" },
+      type: "photo"
+    },
+    {
+      id: 17,
+      src: "/Galerie/Brasov1.jpg",
+      alt: { ro: "CityBreak Brașov - Eveniment ProFX", en: "CityBreak Brasov - ProFX Event" },
+      category: "citybreak",
+      title: { ro: "Eveniment Brașov", en: "Brasov Event" },
+      type: "photo"
+    },
   ];
 
   const videos = [
     {
-      id: 16,
+      id: 18,
       src: "/Galerie/bootcamp-eforie-1.mp4",
       alt: "",
       category: "eforie",
@@ -343,7 +359,7 @@ const EventPhotoGallery = () => {
       type: "video"
     },
     {
-      id: 17,
+      id: 19,
       src: "/Galerie/bootcamp-eforie-2.mp4",
       alt: "",
       category: "eforie",
@@ -351,7 +367,7 @@ const EventPhotoGallery = () => {
       type: "video"
     },
     {
-      id: 18,
+      id: 20,
       src: "/Galerie/Bootcamp-eforie-3.mp4",
       alt: "",
       category: "eforie",
@@ -359,7 +375,7 @@ const EventPhotoGallery = () => {
       type: "video"
     },
     {
-      id: 19,
+      id: 21,
       src: "/Galerie/Bootcamp-eforie-4.mp4",
       alt: "",
       category: "eforie",
@@ -383,6 +399,7 @@ const EventPhotoGallery = () => {
     { id: "birou", name: t.office, icon: MapPin },
     { id: "herculane", name: t.herculane, icon: Calendar },
     { id: "eforie", name: t.eforieNord, icon: Calendar },
+    { id: "citybreak", name: t.citybreak, icon: MapPin },
   ];
 
   const mediaTypes = [
