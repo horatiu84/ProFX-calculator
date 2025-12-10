@@ -756,32 +756,10 @@ const WeeklySchedule = () => {
                     <p className="text-xs font-bold text-green-400 uppercase">Zoom Details</p>
                   </div>
                   <div className="space-y-1 text-xs">
-                    {dayIndex === 2 ? (
-                      // Miercuri - FREE session
-                      <>
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Meeting ID:</span>
-                          <span className="text-white font-mono font-semibold">874 6843 8970</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Passcode:</span>
-                          <span className="text-white font-mono font-semibold">Freeasia</span>
-                        </div>
-                      </>
-                    ) : (
-                      // Luni, Marți, Joi, Vineri - VIP sessions
-                      <>
-                        {/* Meeting ID commented out - can be re-enabled if needed in the future */}
-                        {/* <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Meeting ID:</span>
-                          <span className="text-white font-mono font-semibold">878 4225 2532</span>
-                        </div> */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Passcode:</span>
-                          <span className="text-white font-mono font-semibold">2026</span>
-                        </div>
-                      </>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
                   </div>
                 </div>
               )}
