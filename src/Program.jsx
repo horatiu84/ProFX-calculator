@@ -764,11 +764,11 @@ const WeeklySchedule = () => {
                 </div>
               )}
               {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
-              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && dayIndex !== 2 && (isFree || isVIP) && (
+              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-blue-400 text-lg">🎥</span>
-                    <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details - VIP</p>
+                    <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details</p>
                   </div>
                   <div className="space-y-1 text-xs">
                     <div className="flex items-center gap-2">
