@@ -53,21 +53,21 @@ const WeeklySchedule = () => {
     [sessionNames.asiaWithMihai]: {
       0: "https://us06web.zoom.us/j/87842252532", // Luni - VIP
       1: "https://us06web.zoom.us/j/87842252532",// Marți - VIP
-      2: "https://us06web.zoom.us/j/87468438970", // Miercuri - FREE
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
       3: "https://us06web.zoom.us/j/87842252532", // Joi - VIP
       4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP
     },
     [sessionNames.londonWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni - VIP
       1: "https://zoom.us/j/4505052025", // Marți - VIP
-      2: "https://us02web.zoom.us/j/81460784651?pwd=3o9p7mOgYhnXjQNzLgXUy0uDLFjMIU.1", // Miercuri - FREE
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
       3: "https://zoom.us/j/4505052025", // Joi - VIP
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.newYorkWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni - VIP
       1: "https://zoom.us/j/4505052025", // Marți - VIP
-      2: "https://us02web.zoom.us/j/89235648526?pwd=8AGuuwt8XrxAnpHmUJbjJojb3AFbq2.1", // Miercuri - FREE
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
       3: "https://zoom.us/j/4505052025", // Joi - VIP
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
