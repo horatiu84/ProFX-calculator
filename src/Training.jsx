@@ -182,6 +182,7 @@ const Training = () => {
     { title: t.training.advancedLink13, url: "https://youtu.be/20dxanOrkUI?si=alOYeIumDYs8ucla" },
     { title: t.training.advancedLink14, url: "https://youtu.be/31RKuSQZKOg?si=L5kZFkpuERPO9fBI" },
     { title: t.training.advancedLink15, url: "https://youtu.be/Z-jQjTuotso?si=oJR6Mq9GMuHzoJ3N" },
+    { title: t.training.advancedLink16, url: "https://youtu.be/GZMfE-NZzdE?si=cUxeITp0JF84DsFE" },
   ];
 
   const backtestingLinks = [

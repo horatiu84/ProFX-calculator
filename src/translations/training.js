@@ -60,6 +60,7 @@ export const trainingTranslations = {
     advancedLink13: "Webinar Mihai- Strategia consolidarii pe 15 minute-sesiunea ASIA",
     advancedLink14: "Cum sa va construiti un Plan de Succes in Trading",
     advancedLink15: "Planul in executie AVANSAȚI",
+    advancedLink16: "Executii - Pe Trend, contra trend & respingeri si RiskManagement",
     
     // Backtesting Links
     backtestingLink1: "Webinar backtesting si Q&A - 1",
@@ -162,6 +163,7 @@ export const trainingTranslations = {
     advancedLink13: "Webinar Mihai - Consolidation strategy on 15 minutes - ASIA session",
     advancedLink14: "How to build a Success Plan in Trading",
     advancedLink15: "The plan in ADVANCED execution",
+    advancedLink16: "Executions - On Trend, counter trend & rejections and RiskManagement",
     
     // Backtesting Links
     backtestingLink1: "Backtesting and Q&A webinar - 1",
