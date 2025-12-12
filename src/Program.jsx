@@ -80,11 +80,10 @@ const WeeklySchedule = () => {
   };
 
   const weekdayEvents = [
-    { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
+    { name: sessionNames.asiaWithMihai, time: "03:45", duration: 4 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
     { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 }, 
   ];
-
   const specialEvents = {
     0: [
       {
@@ -614,6 +613,9 @@ const WeeklySchedule = () => {
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
     
+    // Verifică dacă sesiunea conține "(Revine în Ianuarie)" sau "(Returns in January)"
+    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January");
+    
     // Verifică dacă această sesiune este următoarea programată
     const isNextSession = nextSession && 
       nextSession.name === event.name && 
@@ -631,12 +633,16 @@ const WeeklySchedule = () => {
         className={`group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-gray-600/50 overflow-hidden ${
           status === "passed"
             ? "opacity-60"
+            : isComingSoon
+            ? "opacity-75 cursor-not-allowed"
             : isWebinar
             ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
             : ""
         } ${isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
         onClick={
-          isClickable
+          isComingSoon
+            ? undefined
+            : isClickable
             ? () => handleSessionClick(event.name, dayIndex, event)
             : needsVIP
             ? () => handleSessionClick(event.name, dayIndex, event)
@@ -657,23 +663,34 @@ const WeeklySchedule = () => {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3
                       className={`font-semibold text-sm md:text-base ${
-                        status === "passed" ? "text-gray-400" : "text-white"
+                        status === "passed" ? "text-gray-400" : isComingSoon ? "text-gray-400" : "text-white"
                       }`}
                     >
-                      {event.name}
+                      {isComingSoon ? (
+                        <>
+                          <span className="opacity-60">
+                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January)\)/i, '')}
+                          </span>
+                          <span className="ml-2 px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-lg shadow-lg">
+                            {event.name.match(/\((Revine în Ianuarie|Returns in January)\)/i)?.[1]}
+                          </span>
+                        </>
+                      ) : (
+                        event.name
+                      )}
                     </h3>
-                    {isFree && hasLink && status !== "passed" && (
+                    {isFree && hasLink && status !== "passed" && !isComingSoon && (
                       <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded uppercase">
                         FREE
                       </span>
                     )}
-                    {!isFree && hasLink && status !== "passed" && (
+                    {!isFree && hasLink && status !== "passed" && !isComingSoon && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
                       </span>
                     )}
                     {/* Countdown badge pentru următoarea sesiune */}
-                    {isNextSession && timeUntilNextSession > 0 && status !== "passed" && (
+                    {isNextSession && timeUntilNextSession > 0 && status !== "passed" && !isComingSoon && (
                       <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⏰ {t.startsIn} {formatTimeRemaining(timeUntilNextSession)}
                       </span>
@@ -682,7 +699,7 @@ const WeeklySchedule = () => {
                   {mentors.length > 0 && (
                     <p
                       className={`text-xs ${
-                        status === "passed" ? "text-gray-500" : "text-gray-300"
+                        status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-60" : "text-gray-300"
                       }`}
                     >
                       {mentors.length > 1 ? t.mentors : t.mentor}:{" "}
@@ -696,12 +713,14 @@ const WeeklySchedule = () => {
                   className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium w-fit ${
                     status === "passed"
                       ? "bg-gray-700 text-gray-400"
+                      : isComingSoon
+                      ? "bg-gray-700 text-gray-400 opacity-60"
                       : "bg-yellow-400 text-black"
                   }`}
                 >
                   {formatTimeRange(event, dayIndex)}
                 </div>
-                {isWebinar && status !== "passed" && (
+                {isWebinar && status !== "passed" && !isComingSoon && (
                   <div className="px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded uppercase w-fit">
                     {t.webinar}
                   </div>
@@ -710,12 +729,12 @@ const WeeklySchedule = () => {
               <div className="flex items-center justify-between">
                 <p
                   className={`text-xs ${
-                    status === "passed" ? "text-gray-500" : "text-gray-400"
+                    status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-60" : "text-gray-400"
                   }`}
                 >
                   {t.duration}: {duration} {duration === 1 ? t.hour : t.hours}
                 </p>
-                {hasLink && status !== "passed" && (
+                {hasLink && status !== "passed" && !isComingSoon && (
                   <div className="flex items-center space-x-1 text-xs">
                     {!zoomAccessAvailable ? (
                       // Afișează countdown DOAR pentru următoarea sesiune, altfel text static
