@@ -633,16 +633,12 @@ const WeeklySchedule = () => {
         className={`group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-gray-600/50 overflow-hidden ${
           status === "passed"
             ? "opacity-60"
-            : isComingSoon
-            ? "opacity-75 cursor-not-allowed"
             : isWebinar
             ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
             : ""
         } ${isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
         onClick={
-          isComingSoon
-            ? undefined
-            : isClickable
+          isClickable
             ? () => handleSessionClick(event.name, dayIndex, event)
             : needsVIP
             ? () => handleSessionClick(event.name, dayIndex, event)
@@ -679,18 +675,18 @@ const WeeklySchedule = () => {
                         event.name
                       )}
                     </h3>
-                    {isFree && hasLink && status !== "passed" && !isComingSoon && (
+                    {isFree && hasLink && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded uppercase">
                         FREE
                       </span>
                     )}
-                    {!isFree && hasLink && status !== "passed" && !isComingSoon && (
+                    {!isFree && hasLink && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
                       </span>
                     )}
                     {/* Countdown badge pentru următoarea sesiune */}
-                    {isNextSession && timeUntilNextSession > 0 && status !== "passed" && !isComingSoon && (
+                    {isNextSession && timeUntilNextSession > 0 && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⏰ {t.startsIn} {formatTimeRemaining(timeUntilNextSession)}
                       </span>
@@ -714,13 +710,13 @@ const WeeklySchedule = () => {
                     status === "passed"
                       ? "bg-gray-700 text-gray-400"
                       : isComingSoon
-                      ? "bg-gray-700 text-gray-400 opacity-60"
+                      ? "bg-gray-700 text-gray-500 opacity-70"
                       : "bg-yellow-400 text-black"
                   }`}
                 >
                   {formatTimeRange(event, dayIndex)}
                 </div>
-                {isWebinar && status !== "passed" && !isComingSoon && (
+                {isWebinar && status !== "passed" && (
                   <div className="px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded uppercase w-fit">
                     {t.webinar}
                   </div>
@@ -729,12 +725,12 @@ const WeeklySchedule = () => {
               <div className="flex items-center justify-between">
                 <p
                   className={`text-xs ${
-                    status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-60" : "text-gray-400"
+                    status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-70" : "text-gray-400"
                   }`}
                 >
                   {t.duration}: {duration} {duration === 1 ? t.hour : t.hours}
                 </p>
-                {hasLink && status !== "passed" && !isComingSoon && (
+                {hasLink && status !== "passed" && (
                   <div className="flex items-center space-x-1 text-xs">
                     {!zoomAccessAvailable ? (
                       // Afișează countdown DOAR pentru următoarea sesiune, altfel text static
