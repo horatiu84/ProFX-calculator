@@ -40,6 +40,7 @@ const WeeklySchedule = () => {
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
     beginnersWebinar: t.beginnersWebinarWithSergiu,
     class1to20: t.class1to20,
+    specialWebinarMihai: t.specialWebinarMihai,
   };
 
   const mentorAvatars = {
@@ -77,6 +78,9 @@ const WeeklySchedule = () => {
     [sessionNames.beginnersWebinar]: {
       0: "https://us06web.zoom.us/j/84144689182?pwd=uRoZpakhgy7feSR29XDxDf1Q1wRm3J.1",
     },
+    [sessionNames.specialWebinarMihai]: {
+      4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP (același link ca sesiunea Asia)
+    },
   };
 
   const weekdayEvents = [
@@ -98,6 +102,7 @@ const WeeklySchedule = () => {
     ],
     4: [
       { name: sessionNames.macroAnalysisWithJohn, time: "16:00", duration: 1 },
+      { name: sessionNames.specialWebinarMihai, time: "20:00", duration: 2 },
     ],
   };
 
@@ -769,6 +774,21 @@ const WeeklySchedule = () => {
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-green-400 text-lg">🎥</span>
                     <p className="text-xs font-bold text-green-400 uppercase">Zoom Details</p>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {/* Afișează detalii Zoom pentru webinarul special cu Mihai când accesul este disponibil */}
+              {event.name === sessionNames.specialWebinarMihai && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-amber-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-amber-400 uppercase">Zoom Details</p>
                   </div>
                   <div className="space-y-1 text-xs">
                     <div className="flex items-center gap-2">

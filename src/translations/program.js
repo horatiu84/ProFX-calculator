@@ -58,6 +58,7 @@ export const programTranslations = {
       macroAnalysisWithJohn: "Analiza macro saptamanala cu John",
       beginnersWebinarWithSergiu: "Webinar începători cu Sergiu",
       class1to20: "Clasa 1 la 20",
+      specialWebinarMihai: "Webinar Special - Explicatii pentru tranzacțiile pe Aur și Argint - cu Mihai",
     },
   },
   en: {
@@ -118,6 +119,7 @@ export const programTranslations = {
       macroAnalysisWithJohn: "Weekly Macro Analysis with John",
       beginnersWebinarWithSergiu: "Beginners Webinar with Sergiu",
       class1to20: "Class 1 to 20",
+      specialWebinarMihai: "Special Webinar - Buy Trades on Gold & Silver with Mihai",
     },
   },
 };
