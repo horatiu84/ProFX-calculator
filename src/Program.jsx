@@ -40,7 +40,6 @@ const WeeklySchedule = () => {
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
     beginnersWebinar: t.beginnersWebinarWithSergiu,
     class1to20: t.class1to20,
-    specialWebinarMihai: t.specialWebinarMihai,
   };
 
   const mentorAvatars = {
@@ -73,13 +72,10 @@ const WeeklySchedule = () => {
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.macroAnalysisWithJohn]: {
-      1: "https://us06web.zoom.us/j/82243984757?pwd=QBCn16XU7fwGYYgyPa9jaWmuVfkKrZ.1",
+      1: "https://us06web.zoom.us/j/82243984757", // Marți - VIP
     },
     [sessionNames.beginnersWebinar]: {
       0: "https://us06web.zoom.us/j/84144689182?pwd=uRoZpakhgy7feSR29XDxDf1Q1wRm3J.1",
-    },
-    [sessionNames.specialWebinarMihai]: {
-      4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP (același link ca sesiunea Asia)
     },
   };
 
@@ -97,12 +93,11 @@ const WeeklySchedule = () => {
       },
     ],
     1: [
-      { name: sessionNames.macroAnalysisWithJohn, time: "12:00", duration: 1 },
-      { name: sessionNames.class1to20, time: "20:00", duration: 1 },
+      { name: sessionNames.macroAnalysisWithJohn, time: "20:00", duration: 1 },
+    
     ],
     4: [
       { name: sessionNames.macroAnalysisWithJohn, time: "16:00", duration: 1 },
-      { name: sessionNames.specialWebinarMihai, time: "20:00", duration: 2 },
     ],
   };
 
@@ -783,12 +778,12 @@ const WeeklySchedule = () => {
                   </div>
                 </div>
               )}
-              {/* Afișează detalii Zoom pentru webinarul special cu Mihai când accesul este disponibil */}
-              {event.name === sessionNames.specialWebinarMihai && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
-                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+              {/* Afișează detalii Zoom pentru sesiunea lui John de la 20:00 (VIP) când accesul este disponibil */}
+              {event.name === sessionNames.macroAnalysisWithJohn && event.time === "20:00" && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-purple-500/10 border border-purple-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-amber-400 text-lg">🎥</span>
-                    <p className="text-xs font-bold text-amber-400 uppercase">Zoom Details</p>
+                    <span className="text-purple-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-purple-400 uppercase">Zoom Details</p>
                   </div>
                   <div className="space-y-1 text-xs">
                     <div className="flex items-center gap-2">
@@ -798,6 +793,7 @@ const WeeklySchedule = () => {
                   </div>
                 </div>
               )}
+              
               {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
               {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
