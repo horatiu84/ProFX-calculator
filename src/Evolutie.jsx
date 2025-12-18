@@ -85,7 +85,7 @@ export default function Evolutie() {
   };
 
   return (
-    <div key={language} className="max-w-3xl mx-auto animate-language-change">
+    <div key={language} className="max-w-3xl mx-auto animate-language-change mb-[15px]">
       {/* Tracking zilnic și săptămânal */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {/* Card zilnic */}
@@ -218,7 +218,7 @@ export default function Evolutie() {
       </div>
 
       {/* Investment Calculator */}
-      <div>
+      <div className="mb-[50px]">
         <InvestmentCalculator />
       </div>
     </div>
