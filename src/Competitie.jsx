@@ -23,17 +23,17 @@ const CompetitionBanner = () => {
     const updateTimer = () => {
       const now = new Date();
       
-      // Data de început a concursului din decembrie (1 decembrie 2025, 00:00:00)
-      const startDate = new Date(2025, 11, 1, 0, 0, 0); // Month is 0-indexed: 11 = December
+      // Data de început a concursului din ianuarie (5 ianuarie 2026, 00:00:00)
+      const startDate = new Date(2026, 0, 5, 0, 0, 0); // Month is 0-indexed: 0 = January
       
-      // Data de sfârșit a concursului din decembrie (26 decembrie 2025, 23:59:59)
-      const endDate = new Date(2025, 11, 26, 23, 59, 59);
+      // Data de sfârșit a concursului din ianuarie (26 ianuarie 2026, 23:59:59)
+      const endDate = new Date(2026, 0, 26, 23, 59, 59);
       
-      // Data de închidere a înscrierilor (5 decembrie 2025, 23:59:59)
-      const registrationCloseDate = new Date(2025, 11, 5, 23, 59, 59);
+      // Data de închidere a înscrierilor (5 ianuarie 2026, 00:00:00 - la start)
+      const registrationCloseDate = new Date(2026, 0, 5, 0, 0, 0);
       
-      // Data de început a concursului următor (1 ianuarie 2026)
-      const nextStartDate = new Date(2026, 0, 1, 0, 0, 0); // 0 = January
+      // Data de început a concursului următor (1 februarie 2026)
+      const nextStartDate = new Date(2026, 1, 1, 0, 0, 0); // 1 = February
 
       // Verifică dacă înscrierile sunt încă deschise
       const regOpen = now < registrationCloseDate;
@@ -153,39 +153,6 @@ const CompetitionBanner = () => {
             <p className="text-base font-semibold text-green-400 max-w-2xl mx-auto mb-3">
               {t.competitionRegistrationMessage}
             </p>
-            <div className="inline-block bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm text-blue-300 px-6 py-3 rounded-lg font-medium text-base shadow-sm border border-blue-400/40 transition-all duration-300 hover:from-blue-600/30 hover:to-indigo-600/30 hover:border-blue-400/60 hover:shadow-md hover:scale-105 mb-3">
-              {t.competitionRegistrationDeadline}
-            </div>
-            {registrationOpen && (
-              <div className="max-w-md mx-auto bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-blue-400/20">
-                <div className="grid grid-cols-4 gap-2">
-                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                    <span className="text-xl font-bold text-blue-300">
-                      {registrationTimeLeft.days}
-                    </span>
-                    <span className="text-xs text-blue-400/70">{t.competitionDays}</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                    <span className="text-xl font-bold text-blue-300">
-                      {registrationTimeLeft.hours}
-                    </span>
-                    <span className="text-xs text-blue-400/70">{t.competitionHours}</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                    <span className="text-xl font-bold text-blue-300">
-                      {registrationTimeLeft.minutes}
-                    </span>
-                    <span className="text-xs text-blue-400/70">{t.competitionMinutes}</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                    <span className="text-xl font-bold text-blue-300">
-                      {registrationTimeLeft.seconds}
-                    </span>
-                    <span className="text-xs text-blue-400/70">{t.competitionSeconds}</span>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
         
@@ -194,41 +161,6 @@ const CompetitionBanner = () => {
             <span className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse mb-3">
               {t.competitionRunning}
             </span>
-            {registrationOpen && (
-              <div className="mt-4">
-                <div className="inline-block bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm text-blue-300 px-6 py-3 rounded-lg font-medium text-base shadow-sm border border-blue-400/40 mb-3">
-                  {t.competitionRegistrationDeadline}
-                </div>
-                <div className="max-w-md mx-auto bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-blue-400/20">
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                      <span className="text-xl font-bold text-blue-300">
-                        {registrationTimeLeft.days}
-                      </span>
-                      <span className="text-xs text-blue-400/70">{t.competitionDays}</span>
-                    </div>
-                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                      <span className="text-xl font-bold text-blue-300">
-                        {registrationTimeLeft.hours}
-                      </span>
-                      <span className="text-xs text-blue-400/70">{t.competitionHours}</span>
-                    </div>
-                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                      <span className="text-xl font-bold text-blue-300">
-                        {registrationTimeLeft.minutes}
-                      </span>
-                      <span className="text-xs text-blue-400/70">{t.competitionMinutes}</span>
-                    </div>
-                    <div className="flex flex-col items-center bg-blue-600/20 rounded-lg p-2">
-                      <span className="text-xl font-bold text-blue-300">
-                        {registrationTimeLeft.seconds}
-                      </span>
-                      <span className="text-xs text-blue-400/70">{t.competitionSeconds}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
         

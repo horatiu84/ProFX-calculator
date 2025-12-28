@@ -12,7 +12,7 @@ const Concurs = () => {
   useEffect(() => {
     const checkRegistrationStatus = () => {
       const now = new Date();
-      const registrationCloseDate = new Date(2025, 11, 5, 23, 59, 59); // 5 decembrie 2025, 23:59:59
+      const registrationCloseDate = new Date(2026, 0, 5, 0, 0, 0); // 5 ianuarie 2026, 00:00:00
       setRegistrationOpen(now < registrationCloseDate);
     };
 
