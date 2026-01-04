@@ -34,6 +34,11 @@ import noiembrie2 from "../../utils/Noiembrie 2.jpg";
 import noiembrie3 from "../../utils/Noiembrie 3.jpg";
 import noiembrie4 from "../../utils/Noiembrie 4.jpg";
 import noiembrie5 from "../../utils/Noiembrie 5.jpg";
+import decembrie1 from "../../utils/Decembrie 1.jpg";
+import decembrie2 from "../../utils/Decembrie 2.jpg";
+import decembrie3 from "../../utils/Decembrie 3.jpg";
+import decembrie4 from "../../utils/Decembrie 4.jpg";
+import decembrie5 from "../../utils/Decembrie 5.jpg";
 
 const hallOfFame = [
   { img: aprilie1, name: "Ciprian Penisoara", place: 1, month: "Aprilie", year: 2025 },
@@ -67,6 +72,11 @@ const hallOfFame = [
   { img: noiembrie3, name: "Erik Cirstea", place: 3, month: "Noiembrie", year: 2025 },
   { img: noiembrie4, name: "Lavinia Sabau", place: 4, month: "Noiembrie", year: 2025 },
   { img: noiembrie5, name: "Mocanu Adrian Ionel", place: 5, month: "Noiembrie", year: 2025 },
+  { img: decembrie1, name: "Ion Andrei", place: 1, month: "Decembrie", year: 2025 },
+  { img: decembrie2, name: "Solomonean Lucian", place: 2, month: "Decembrie", year: 2025 },
+  { img: decembrie3, name: "Ilie Mihai", place: 3, month: "Decembrie", year: 2025 },
+  { img: decembrie4, name: "Lavinia Sabau", place: 4, month: "Decembrie", year: 2025 },
+  { img: decembrie5, name: "Cotoc Adrian", place: 5, month: "Decembrie", year: 2025 },
 ];
 
 const HallOfFameCarousel = () => {

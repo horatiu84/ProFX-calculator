@@ -53,7 +53,7 @@ export const programTranslations = {
       daysOfWeek: ["LUNI", "MARȚI", "MIERCURI", "JOI", "VINERI", "SÂMBĂTĂ", "DUMINICĂ"],
       
       // Session names
-      sessionAsiaWithMihai: "Sesiune Asia cu Mihai (Revine în Ianuarie)",
+      sessionAsiaWithMihai: "Sesiune Asia cu Mihai",
       sessionLondonWithFlavius: "Sesiune Londra cu Flavius",
       sessionNewYorkWithFlavius: "Sesiune New York cu Flavius",
       macroAnalysisWithJohn: "Analiza macro saptamanala cu John",
@@ -115,7 +115,7 @@ export const programTranslations = {
       daysOfWeek: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
       
       // Session names
-      sessionAsiaWithMihai: "Asia Session with Mihai (Returns in January)",
+      sessionAsiaWithMihai: "Asia Session with Mihai",
       sessionLondonWithFlavius: "London Session with Flavius",
       sessionNewYorkWithFlavius: "New York Session with Flavius",
       macroAnalysisWithJohn: "Weekly Macro Analysis with John",
