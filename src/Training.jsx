@@ -212,6 +212,9 @@ const Training = () => {
     { title: t.training.resourceLink6, url: "/Curs Inflatie Forex.pdf", type: "pdf" },
     { title: t.training.resourceLink7, url: "/Indicatori Macroeconomici.pdf", type: "pdf" },
     { title: t.training.resourceLink8, url: "/Intelegerea PIB-ului.pdf", type: "pdf" },
+    { title: t.training.resourceLink9, url: "https://www.youtube.com/watch?v=mGEqsTBlyiI" },
+    { title: t.training.resourceLink10, url: "https://youtu.be/BawywU-U-SY" },
+    { title: t.training.resourceLink11, url: "https://youtu.be/tGU7e1jtfrM" },
   ];
 
   const analizeSaptamanale = [

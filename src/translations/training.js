@@ -82,11 +82,14 @@ export const trainingTranslations = {
     resourceLink1: "Ce este un model de tip cupă și mâner? - by Daniel Sarbu",
     resourceLink2: "Head and shoulders pattern - by Daniel Sarbu",
     resourceLink3: "Masterclass Divergențe în Trading - cu Mihai Tiepac",
-    resourceLink4: "Masterclass 'Divergențe în Trading - 2 -cu Mihai Tiepac",
-    resourceLink5: "Podcast Mihai Tiepac cu Florin Mircea : In trading, NU renunta niciodata",
-    resourceLink6: "Curs inflatie Forex",
+    resourceLink4: "Masterclass 'Divergențe în Trading - 2 - cu Mihai Tiepac",
+    resourceLink5: "Podcast Mihai Tiepac cu Florin Mircea : În trading, NU renunța niciodată",
+    resourceLink6: "Curs inflație Forex",
     resourceLink7: "Indicatori Macroeconomici",
-    resourceLink8: "Înțelegerea PIB-ului: Coloana vertebral a analizei economice",
+    resourceLink8: "Înțelegerea PIB-ului: Coloana vertebrală a analizei economice",
+    resourceLink9: "Ce urmează pentru economia globală în 2026 | ProFX x IM Podcast",
+    resourceLink10: "În sport și trading nu există scurtături - Mihai Tiepac și John",
+    resourceLink11: "Cum gestionezi stresul în trading - Mihai Tiepac, Sergiu, Flavius și Daniel",
     
     // Weekly Analysis Links
     weeklyLink1: "Analiza saptamanala 18 08 2025",
@@ -190,6 +193,9 @@ export const trainingTranslations = {
     resourceLink6: "Forex Inflation Course",
     resourceLink7: "Macroeconomic Indicators",
     resourceLink8: "Understanding GDP: The backbone of economic analysis",
+    resourceLink9: "What's next for the global economy in 2026 | ProFX x IM Podcast",
+    resourceLink10: "In sports and trading there are no shortcuts - Mihai Tiepac and John",
+    resourceLink11: "How to manage stress in trading - Mihai Tiepac, Sergiu, Flavius and Daniel",
     
     // Weekly Analysis Links
     weeklyLink1: "Weekly analysis 18 08 2025",
