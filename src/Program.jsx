@@ -37,6 +37,7 @@ const WeeklySchedule = () => {
     asiaWithMihai: t.sessionAsiaWithMihai,
     londonWithFlavius: t.sessionLondonWithFlavius,
     newYorkWithFlavius: t.sessionNewYorkWithFlavius,
+    ismManufacturingPmiUsdWithFlavius: t.ismManufacturingPmiUsdWithFlavius,
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
     armyWithJohn: t.armyWithJohn,
     beginnersWebinar: t.beginnersWebinarWithSergiu,
@@ -72,6 +73,9 @@ const WeeklySchedule = () => {
       3: "https://zoom.us/j/4505052025", // Joi - VIP
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
+    [sessionNames.ismManufacturingPmiUsdWithFlavius]: {
+      0: "https://zoom.us/j/4505052025", // Luni 05 Ianuarie 2026 - sesiune specială (identic cu Flavius)
+    },
     [sessionNames.macroAnalysisWithJohn]: {
       1: "https://us06web.zoom.us/j/82243984757", // Marți - VIP
     },
@@ -80,12 +84,42 @@ const WeeklySchedule = () => {
     },
   };
 
-  const weekdayEvents = [
+  let weekdayEvents = [
     { name: sessionNames.asiaWithMihai, time: "03:45", duration: 4 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
     { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 }, 
   ];
-  const specialEvents = {
+  const getRomaniaDateParts = () => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Europe/Bucharest",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+
+    const year = Number(parts.find((p) => p.type === "year")?.value);
+    const month = Number(parts.find((p) => p.type === "month")?.value);
+    const day = Number(parts.find((p) => p.type === "day")?.value);
+    return { year, month, day };
+  };
+
+  const { year: roYear, month: roMonth, day: roDay } = getRomaniaDateParts();
+  const isRomaniaJan5_2026 = roYear === 2026 && roMonth === 1 && roDay === 5;
+
+  // Doar azi (Luni, 05 Ianuarie 2026): sesiune pe știri cu Flavius (USD)
+  // Link + passcode identice cu restul sesiunilor lui Flavius.
+  if (isRomaniaJan5_2026) {
+    weekdayEvents = [
+      ...weekdayEvents,
+      {
+        name: sessionNames.ismManufacturingPmiUsdWithFlavius,
+        time: "16:45",
+        duration: 1,
+      },
+    ];
+  }
+
+  let specialEvents = {
     0: [
       {
         name: sessionNames.beginnersWebinar,
@@ -100,6 +134,9 @@ const WeeklySchedule = () => {
       { name: sessionNames.armyWithJohn, time: "20:00", duration: 1.5 },
     ],
   };
+
+  // (Intenționat) sesiunea de azi cu Flavius este un eveniment normal (nu webinar),
+  // de aceea este adăugată în weekdayEvents.
 
   // Helper: calculează timestamp-ul unei sesiuni pentru ziua specificată
   // Orele sunt în fusul orar românesc (Europe/Bucharest) și convertite automat în ora locală
@@ -612,6 +649,10 @@ const WeeklySchedule = () => {
     const hasLink = hasSessionLink(event.name, dayIndex);
     const isFree = isSessionFree(event.name, dayIndex);
     const zoomAccessAvailable = isZoomAccessAvailable(event, dayIndex);
+    const isFlaviusSession =
+      event.name === sessionNames.londonWithFlavius ||
+      event.name === sessionNames.newYorkWithFlavius ||
+      event.name === sessionNames.ismManufacturingPmiUsdWithFlavius;
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
     
@@ -810,7 +851,7 @@ const WeeklySchedule = () => {
               )}
               
               {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
-              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+              {isFlaviusSession && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-blue-400 text-lg">🎥</span>
