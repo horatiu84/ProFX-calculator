@@ -656,8 +656,8 @@ const WeeklySchedule = () => {
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
     
-    // Verifică dacă sesiunea conține "(Revine în Ianuarie)", "(Returns in January)", "(Începe din 15 Ianuarie)" sau "(Starts January 15)"
-    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January") || event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15");
+    // Verifică dacă sesiunea conține "(Revine în Ianuarie)", "(Returns in January)", "(Începe din 15 Ianuarie)", "(Starts January 15)", "(Începe din 12 Ianuarie)" sau "(Starts January 12)"
+    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January") || event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") || event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12");
     
     // Verifică dacă această sesiune este următoarea programată
     const isNextSession = nextSession && 
@@ -708,11 +708,15 @@ const WeeklySchedule = () => {
                       {isComingSoon ? (
                         <>
                           <span className="opacity-60">
-                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January|Începe din 15 Ianuarie|Starts January 15)\)/i, '')}
+                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January|Începe din 15 Ianuarie|Starts January 15|Începe din 12 Ianuarie|Starts January 12)\)/i, '')}
                           </span>
                           {event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") ? (
                             <span className="ml-2 px-2 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-semibold rounded-lg shadow-md">
                               {event.name.match(/\((Începe din 15 Ianuarie|Starts January 15)\)/i)?.[1]}
+                            </span>
+                          ) : event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12") ? (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-xs font-semibold rounded-lg shadow-md">
+                              {event.name.match(/\((Începe din 12 Ianuarie|Starts January 12)\)/i)?.[1]}
                             </span>
                           ) : (
                             <span className="ml-2 px-2 py-1 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-xs font-medium rounded-lg">
