@@ -29,8 +29,8 @@ const CompetitionBanner = () => {
       // Data de sfârșit a concursului din ianuarie (23 ianuarie 2026, 23:59:59)
       const endDate = new Date(2026, 0, 23, 23, 59, 59);
       
-      // Data de închidere a înscrierilor (5 ianuarie 2026, 00:00:00 - la start)
-      const registrationCloseDate = new Date(2026, 0, 5, 0, 0, 0);
+      // Data de închidere a înscrierilor (5 ianuarie 2026, 23:59:59 - sfârșitul zilei)
+      const registrationCloseDate = new Date(2026, 0, 5, 23, 59, 59);
       
       // Data de început a concursului următor (1 februarie 2026)
       const nextStartDate = new Date(2026, 1, 1, 0, 0, 0); // 1 = February
@@ -143,6 +143,16 @@ const CompetitionBanner = () => {
             🚨
           </span>
         </div>
+        
+        {/* Last day registration warning - shown regardless of phase if registration is still open */}
+        {registrationOpen && registrationTimeLeft.days === 0 && (
+          <div className="text-center mb-6">
+            <div className="mx-auto max-w-2xl bg-gradient-to-r from-red-600 to-orange-600 border-2 border-red-400 rounded-xl p-4 shadow-lg animate-pulse">
+              <p className="text-white font-bold text-lg mb-1">⏰ {t.competitionLastDayWarning}</p>
+              <p className="text-white/90 text-sm">{t.competitionLastDayMessage}</p>
+            </div>
+          </div>
+        )}
         
         {/* Status indicators */}
         {phase === "waiting" && (
