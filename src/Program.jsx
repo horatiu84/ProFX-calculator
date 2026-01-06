@@ -105,6 +105,9 @@ const WeeklySchedule = () => {
 
   const { year: roYear, month: roMonth, day: roDay } = getRomaniaDateParts();
   const isRomaniaJan5_2026 = roYear === 2026 && roMonth === 1 && roDay === 5;
+  
+  // Verifică dacă suntem după 13 Ianuarie 2026
+  const isAfterJan13_2026 = roYear > 2026 || (roYear === 2026 && roMonth === 1 && roDay >= 13);
 
   // Doar azi (Luni, 05 Ianuarie 2026): sesiune pe știri cu Flavius (USD)
   // Link + passcode identice cu restul sesiunilor lui Flavius.
@@ -128,7 +131,8 @@ const WeeklySchedule = () => {
       },
     ],
     1: [
-      { name: sessionNames.macroAnalysisWithJohn, time: "20:00", duration: 1 },
+      // Sesiunea cu John începe doar din 13 Ianuarie 2026
+      ...(isAfterJan13_2026 ? [{ name: sessionNames.macroAnalysisWithJohn, time: "20:00", duration: 1 }] : []),
     ],
     3: [
       { name: sessionNames.armyWithJohn, time: "20:00", duration: 1.5 },
@@ -282,7 +286,12 @@ const WeeklySchedule = () => {
     const timeDiff = sessionTime - now;
     const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
 
-    // Accesul e disponibil cu 10 min înainte sau în timpul sesiunii
+    // Pentru sesiunile FREE, accesul este ÎNTOTDEAUNA disponibil (oricând)
+    if (isSessionFree(event.name, dayIndex)) {
+      return true;
+    }
+
+    // Pentru sesiunile VIP, accesul e disponibil doar cu 10 min înainte sau în timpul sesiunii
     return timeDiff <= ACCESS_WINDOW && now <= sessionEndTime;
   };
 
@@ -647,6 +656,7 @@ const WeeklySchedule = () => {
     const duration = event.duration || 1;
     const mentors = extractAllMentors(event.name);
     const hasLink = hasSessionLink(event.name, dayIndex);
+    const link = getSessionLink(event.name, dayIndex);
     const isFree = isSessionFree(event.name, dayIndex);
     const zoomAccessAvailable = isZoomAccessAvailable(event, dayIndex);
     const isFlaviusSession =
@@ -656,8 +666,8 @@ const WeeklySchedule = () => {
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
     
-    // Verifică dacă sesiunea conține "(Revine în Ianuarie)", "(Returns in January)", "(Începe din 15 Ianuarie)", "(Starts January 15)", "(Începe din 12 Ianuarie)" sau "(Starts January 12)"
-    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January") || event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") || event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12");
+    // Verifică dacă sesiunea conține "(Revine în Ianuarie)", "(Returns in January)", "(Începe din 15 Ianuarie)", "(Starts January 15)", "(Începe din 13 Ianuarie)", "(Starts January 13)", "(Începe din 12 Ianuarie)" sau "(Starts January 12)"
+    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January") || event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") || event.name.includes("Începe din 13 Ianuarie") || event.name.includes("Starts January 13") || event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12");
     
     // Verifică dacă această sesiune este următoarea programată
     const isNextSession = nextSession && 
@@ -679,9 +689,9 @@ const WeeklySchedule = () => {
             : isWebinar
             ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
             : ""
-        } ${isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
+        } ${!isFree && isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
         onClick={
-          isClickable
+          !isFree && isClickable
             ? () => handleSessionClick(event.name, dayIndex, event)
             : needsVIP
             ? () => handleSessionClick(event.name, dayIndex, event)
@@ -708,11 +718,15 @@ const WeeklySchedule = () => {
                       {isComingSoon ? (
                         <>
                           <span className="opacity-60">
-                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January|Începe din 15 Ianuarie|Starts January 15|Începe din 12 Ianuarie|Starts January 12)\)/i, '')}
+                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January|Începe din 15 Ianuarie|Starts January 15|Începe din 13 Ianuarie|Starts January 13|Începe din 12 Ianuarie|Starts January 12)\)/i, '')}
                           </span>
                           {event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") ? (
                             <span className="ml-2 px-2 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-semibold rounded-lg shadow-md">
                               {event.name.match(/\((Începe din 15 Ianuarie|Starts January 15)\)/i)?.[1]}
+                            </span>
+                          ) : event.name.includes("Începe din 13 Ianuarie") || event.name.includes("Starts January 13") ? (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-xs font-semibold rounded-lg shadow-md">
+                              {event.name.match(/\((Începe din 13 Ianuarie|Starts January 13)\)/i)?.[1]}
                             </span>
                           ) : event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12") ? (
                             <span className="ml-2 px-2 py-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-xs font-semibold rounded-lg shadow-md">
@@ -830,7 +844,38 @@ const WeeklySchedule = () => {
                     <span className="text-green-400 text-lg">🎥</span>
                     <p className="text-xs font-bold text-green-400 uppercase">Zoom Details</p>
                   </div>
-                  <div className="space-y-1 text-xs">
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-green-400 font-mono text-xs break-all hover:text-green-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400">Passcode:</span>
                       <span className="text-white font-mono font-semibold">2026</span>
@@ -861,7 +906,85 @@ const WeeklySchedule = () => {
                     <span className="text-blue-400 text-lg">🎥</span>
                     <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details</p>
                   </div>
-                  <div className="space-y-1 text-xs">
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-blue-400 font-mono text-xs break-all hover:text-blue-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Afișează detalii Zoom pentru webinar-ul cu Sergiu (FREE pe Luni) când accesul este disponibil */}
+              {event.name === sessionNames.beginnersWebinar && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-amber-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-amber-400 uppercase">Zoom Details</p>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-amber-400 font-mono text-xs break-all hover:text-amber-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400">Passcode:</span>
                       <span className="text-white font-mono font-semibold">2026</span>

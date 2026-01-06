@@ -23,7 +23,7 @@ export const programTranslations = {
       duration: "Durată",
       hour: "oră",
       hours: "ore",
-      accessBefore: "Acces cu 10 min înainte",
+      accessBefore: "Acces VIP cu 10 min înainte",
       availableNow: "Disponibil acum!",
       availableIn: "Disponibil în",
       requiresVip: "Necesită VIP",
@@ -48,6 +48,7 @@ export const programTranslations = {
       wantAccess: "Vrei acces la toate sesiunile?",
       becomeVip: "Devino membru VIP și accesează toate sesiunile săptămânale",
       learnMore: "Află mai mult",
+      accessZoom: "Accesează Zoom",
       
       // Days of week
       daysOfWeek: ["LUNI", "MARȚI", "MIERCURI", "JOI", "VINERI", "SÂMBĂTĂ", "DUMINICĂ"],
@@ -86,7 +87,7 @@ export const programTranslations = {
       duration: "Duration",
       hour: "hour",
       hours: "hours",
-      accessBefore: "Access 10 min before",
+      accessBefore: "VIP Access 10 min before",
       availableNow: "Available now!",
       availableIn: "Available in",
       requiresVip: "Requires VIP",
@@ -111,6 +112,7 @@ export const programTranslations = {
       wantAccess: "Want access to all sessions?",
       becomeVip: "Become a VIP member and access all weekly sessions",
       learnMore: "Learn more",
+      accessZoom: "Access Zoom",
       
       // Days of week
       daysOfWeek: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
