@@ -38,6 +38,7 @@ const WeeklySchedule = () => {
     londonWithFlavius: t.sessionLondonWithFlavius,
     newYorkWithFlavius: t.sessionNewYorkWithFlavius,
     ismManufacturingPmiUsdWithFlavius: t.ismManufacturingPmiUsdWithFlavius,
+    ismServicesPmiWithFlavius: t.ismServicesPmiWithFlavius,
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
     armyWithJohn: t.armyWithJohn,
     beginnersWebinar: t.beginnersWebinarWithSergiu,
@@ -76,6 +77,9 @@ const WeeklySchedule = () => {
     [sessionNames.ismManufacturingPmiUsdWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni 05 Ianuarie 2026 - sesiune specială (identic cu Flavius)
     },
+    [sessionNames.ismServicesPmiWithFlavius]: {
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri 07 Ianuarie 2026 - sesiune specială FREE cu Flavius
+    },
     [sessionNames.macroAnalysisWithJohn]: {
       1: "https://us06web.zoom.us/j/82243984757", // Marți - VIP
     },
@@ -105,6 +109,7 @@ const WeeklySchedule = () => {
 
   const { year: roYear, month: roMonth, day: roDay } = getRomaniaDateParts();
   const isRomaniaJan5_2026 = roYear === 2026 && roMonth === 1 && roDay === 5;
+  const isRomaniaJan7_2026 = roYear === 2026 && roMonth === 1 && roDay === 7;
   
   // Verifică dacă suntem după 13 Ianuarie 2026
   const isAfterJan13_2026 = roYear > 2026 || (roYear === 2026 && roMonth === 1 && roDay >= 13);
@@ -116,6 +121,18 @@ const WeeklySchedule = () => {
       ...weekdayEvents,
       {
         name: sessionNames.ismManufacturingPmiUsdWithFlavius,
+        time: "16:45",
+        duration: 1,
+      },
+    ];
+  }
+  
+  // Doar azi (Marți, 07 Ianuarie 2026): sesiune pe știri cu Flavius (ISM Services PMI) - FREE
+  if (isRomaniaJan7_2026) {
+    weekdayEvents = [
+      ...weekdayEvents,
+      {
+        name: sessionNames.ismServicesPmiWithFlavius,
         time: "16:45",
         duration: 1,
       },
@@ -401,7 +418,7 @@ const WeeklySchedule = () => {
     if (dayIndex === 2) {
       // Sesiunea de Asia cu Mihai de Miercuri este gratis
       if (eventName === sessionNames.asiaWithMihai) return true;
-      // Sesiunile lui Flavius de Miercuri sunt gratuite
+      // Sesiunile lui Flavius de Miercuri sunt gratuite (inclusiv ISM Services PMI)
       if (eventName.toLowerCase().includes("flavius")) return true;
     }
 
@@ -662,7 +679,8 @@ const WeeklySchedule = () => {
     const isFlaviusSession =
       event.name === sessionNames.londonWithFlavius ||
       event.name === sessionNames.newYorkWithFlavius ||
-      event.name === sessionNames.ismManufacturingPmiUsdWithFlavius;
+      event.name === sessionNames.ismManufacturingPmiUsdWithFlavius ||
+      event.name === sessionNames.ismServicesPmiWithFlavius;
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
     
