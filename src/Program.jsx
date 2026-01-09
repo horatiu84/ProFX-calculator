@@ -54,11 +54,11 @@ const WeeklySchedule = () => {
 
   const sessionLinksByDay = {
     [sessionNames.asiaWithMihai]: {
-      0: "https://us06web.zoom.us/j/87842252532", // Luni - VIP
-      1: "https://us06web.zoom.us/j/87842252532",// Marți - VIP
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025",// Marți - VIP
       2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
-      3: "https://us06web.zoom.us/j/87842252532", // Joi - VIP
-      4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.londonWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni - VIP
