@@ -73,6 +73,7 @@ export const trainingTranslations = {
     backtestingLink8: "Backtesting Session - 13/07/2025",
     backtestingLink9: "Backtesting Session - 03/08/2025",
     backtestingLink10: "Backtesting Session - 17/08/2025",
+    backtestingLink11: "Backtesting Session - 04/01/2026",
     
     // Macroeconomics Links
     macroLink1: "Macroeconomie - Ep.1 Inflatie",
@@ -179,6 +180,7 @@ export const trainingTranslations = {
     backtestingLink8: "Backtesting Session - 13/07/2025",
     backtestingLink9: "Backtesting Session - 03/08/2025",
     backtestingLink10: "Backtesting Session - 17/08/2025",
+    backtestingLink11: "Backtesting Session - 04/01/2026",
     
     // Macroeconomics Links
     macroLink1: "Macroeconomics - Ep.1 Inflation",
