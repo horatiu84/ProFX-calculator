@@ -37,6 +37,7 @@ const WeeklySchedule = () => {
     asiaWithMihai: t.sessionAsiaWithMihai,
     londonWithFlavius: t.sessionLondonWithFlavius,
     newYorkWithFlavius: t.sessionNewYorkWithFlavius,
+    nyUs100WithFlavius: "NY - US 100 - Flavius Radu",
     ismManufacturingPmiUsdWithFlavius: t.ismManufacturingPmiUsdWithFlavius,
     ismServicesPmiWithFlavius: t.ismServicesPmiWithFlavius,
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
@@ -74,6 +75,13 @@ const WeeklySchedule = () => {
       3: "https://zoom.us/j/4505052025", // Joi - VIP
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
+    [sessionNames.nyUs100WithFlavius]: {
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025", // Marți - VIP
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
+    },
     [sessionNames.ismManufacturingPmiUsdWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni 05 Ianuarie 2026 - sesiune specială (identic cu Flavius)
     },
@@ -91,7 +99,8 @@ const WeeklySchedule = () => {
   let weekdayEvents = [
     { name: sessionNames.asiaWithMihai, time: "03:45", duration: 4 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
-    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 }, 
+    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
+    { name: sessionNames.nyUs100WithFlavius, time: "16:20", duration: 1 },
   ];
   const getRomaniaDateParts = () => {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -301,9 +310,16 @@ const WeeklySchedule = () => {
     sessionEndTime.setHours(sessionTime.getHours() + (event.duration || 1));
 
     const timeDiff = sessionTime - now;
+    
+    // Pentru webinarul cu Sergiu de luni (FREE), accesul este disponibil doar cu 1 oră înainte
+    if (event.name === sessionNames.beginnersWebinar && dayIndex === 0) {
+      const SERGIU_ACCESS_WINDOW = 60 * 60 * 1000; // 60 minute în milliseconds
+      return timeDiff <= SERGIU_ACCESS_WINDOW && now <= sessionEndTime;
+    }
+    
     const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
 
-    // Pentru sesiunile FREE, accesul este ÎNTOTDEAUNA disponibil (oricând)
+    // Pentru sesiunile FREE (exceptând webinarul cu Sergiu deja verificat), accesul este ÎNTOTDEAUNA disponibil (oricând)
     if (isSessionFree(event.name, dayIndex)) {
       return true;
     }
@@ -679,6 +695,7 @@ const WeeklySchedule = () => {
     const isFlaviusSession =
       event.name === sessionNames.londonWithFlavius ||
       event.name === sessionNames.newYorkWithFlavius ||
+      event.name === sessionNames.nyUs100WithFlavius ||
       event.name === sessionNames.ismManufacturingPmiUsdWithFlavius ||
       event.name === sessionNames.ismServicesPmiWithFlavius;
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
@@ -692,10 +709,13 @@ const WeeklySchedule = () => {
       nextSession.name === event.name && 
       nextSession.dayIndex === dayIndex;
 
-    // Calculează timpul până când accesul Zoom devine disponibil (cu 10 min înainte de sesiune)
+    // Calculează timpul până când accesul Zoom devine disponibil
     const sessionTime = getSessionTimestamp(dayIndex, event.time);
-    const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
-    const zoomAccessTime = new Date(sessionTime.getTime() - ACCESS_WINDOW); // 10 min înainte
+    // Pentru webinarul cu Sergiu, accesul este disponibil cu 60 min înainte; pentru restul cu 10 min
+    const ACCESS_WINDOW = (event.name === sessionNames.beginnersWebinar && dayIndex === 0) 
+      ? 60 * 60 * 1000  // 60 minute pentru Sergiu
+      : 10 * 60 * 1000; // 10 minute pentru celelalte
+    const zoomAccessTime = new Date(sessionTime.getTime() - ACCESS_WINDOW);
     const timeUntilZoomAccess = zoomAccessTime - new Date();
     const minutesUntilAccess = Math.floor(timeUntilZoomAccess / (60 * 1000));
 
@@ -837,7 +857,11 @@ const WeeklySchedule = () => {
                         <>
                           <span>🔒</span>
                           <span className="text-gray-400">
-                            {t.accessBefore}
+                            {event.name === sessionNames.beginnersWebinar && dayIndex === 0
+                              ? language === "ro" 
+                                ? "Acces FREE cu 1h înainte"
+                                : "FREE Access 1h before"
+                              : t.accessBefore}
                           </span>
                         </>
                       )
