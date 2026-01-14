@@ -6,6 +6,7 @@ import logo from "./logo2.png";
 export default function Simulare() {
   const [price, setPrice] = useState(20);
   const [activeClients, setActiveClients] = useState(3);
+  const [eliteCommission, setEliteCommission] = useState(0.30);
 
   // Noul model de afiliere
   const affiliateLevels = [
@@ -13,7 +14,7 @@ export default function Simulare() {
     { name: "SILVER", commission: 0.15, minClients: 4, maxClients: 19, description: "15%" },
     { name: "GOLD", commission: 0.20, minClients: 20, maxClients: 49, description: "20%" },
     { name: "PLATINUM", commission: 0.25, minClients: 50, maxClients: 99, description: "25%" },
-    { name: "ELITE", commission: 0, minClients: 100, maxClients: Infinity, description: "Deal Personalizat" },
+    { name: "ELITE", commission: eliteCommission, minClients: 100, maxClients: Infinity, description: "Deal Personalizat" },
   ];
 
   // Determină nivelul curent bazat pe clienți activi
@@ -127,7 +128,7 @@ export default function Simulare() {
             
             <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 max-w-6xl mx-auto rounded-xl p-6 md:p-8 overflow-hidden relative z-10">
               {/* Piramida - Layout similar cu imaginea - ascunsă pe mobile */}
-              <div className="hidden md:flex relative flex-col items-center gap-3 flex-shrink-0 md:ml-16 md:mr-8" style={{ maxWidth: '320px' }}>
+              <div className="hidden md:flex relative flex-col items-center gap-3 flex-shrink-0 md:ml-16 md:mr-8" style={{ maxWidth: "320px" }}>
                 {/* STARTER - Vârful (Triunghi) */}
                 <div 
                   className={`relative flex items-center justify-center ${
@@ -136,12 +137,12 @@ export default function Simulare() {
                       : ""
                   }`}
                   style={{
-                    width: '90px',
-                    height: '90px',
-                    clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
+                    width: "90px",
+                    height: "90px",
+                    clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
                     background: currentLevel?.name === "STARTER" 
-                      ? 'linear-gradient(to bottom, #bfdbfe, #93c5fd)' 
-                      : 'linear-gradient(to bottom, #dbeafe, #bfdbfe)',
+                      ? "linear-gradient(to bottom, #bfdbfe, #93c5fd)" 
+                      : "linear-gradient(to bottom, #dbeafe, #bfdbfe)",
                   }}
                 >
                   <div className="text-blue-700/70 text-2xl mt-6">👤</div>
@@ -155,12 +156,12 @@ export default function Simulare() {
                       : ""
                   }`}
                   style={{
-                    width: '180px',
-                    height: '90px',
-                    clipPath: 'polygon(22% 0%, 78% 0%, 100% 100%, 0% 100%)',
+                    width: "180px",
+                    height: "90px",
+                    clipPath: "polygon(22% 0%, 78% 0%, 100% 100%, 0% 100%)",
                     background: currentLevel?.name === "SILVER" 
-                      ? 'linear-gradient(to bottom, #60a5fa, #3b82f6)' 
-                      : 'linear-gradient(to bottom, #93c5fd, #60a5fa)',
+                      ? "linear-gradient(to bottom, #60a5fa, #3b82f6)" 
+                      : "linear-gradient(to bottom, #93c5fd, #60a5fa)",
                   }}
                 >
                   <div className="text-slate-200 text-3xl drop-shadow-lg">⚪</div>
@@ -174,12 +175,12 @@ export default function Simulare() {
                       : ""
                   }`}
                   style={{
-                    width: '275px',
-                    height: '90px',
-                    clipPath: 'polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%)',
+                    width: "275px",
+                    height: "90px",
+                    clipPath: "polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%)",
                     background: currentLevel?.name === "GOLD" 
-                      ? 'linear-gradient(to bottom, #2563eb, #1d4ed8)' 
-                      : 'linear-gradient(to bottom, #3b82f6, #2563eb)',
+                      ? "linear-gradient(to bottom, #2563eb, #1d4ed8)" 
+                      : "linear-gradient(to bottom, #3b82f6, #2563eb)",
                   }}
                 >
                   <div className="text-yellow-400/90 text-3xl">🟨</div>
@@ -193,12 +194,12 @@ export default function Simulare() {
                       : ""
                   }`}
                   style={{
-                    width: '370px',
-                    height: '90px',
-                    clipPath: 'polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%)',
+                    width: "370px",
+                    height: "90px",
+                    clipPath: "polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%)",
                     background: currentLevel?.name === "PLATINUM" 
-                      ? 'linear-gradient(to bottom, #1e40af, #1e3a8a)' 
-                      : 'linear-gradient(to bottom, #2563eb, #1e40af)',
+                      ? "linear-gradient(to bottom, #1e40af, #1e3a8a)" 
+                      : "linear-gradient(to bottom, #2563eb, #1e40af)",
                   }}
                 >
                   <div className="text-cyan-200/90 text-3xl">💎</div>
@@ -212,12 +213,12 @@ export default function Simulare() {
                       : ""
                   }`}
                   style={{
-                    width: '450px',
-                    height: '90px',
-                    clipPath: 'polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%)',
+                    width: "450px",
+                    height: "90px",
+                    clipPath: "polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%)",
                     background: currentLevel?.name === "ELITE" 
-                      ? 'linear-gradient(to bottom, #1e3a8a, #1e293b)' 
-                      : 'linear-gradient(to bottom, #1e40af, #1e3a8a)',
+                      ? "linear-gradient(to bottom, #1e3a8a, #1e293b)" 
+                      : "linear-gradient(to bottom, #1e40af, #1e3a8a)",
                   }}
                 >
                   <div className="text-orange-400/90 text-3xl">👑</div>
@@ -229,7 +230,7 @@ export default function Simulare() {
                 {affiliateLevels.map((level, index) => {
                   const isCurrentLevel = currentLevel?.name === level.name;
                   // Ajustăm padding-ul pentru a alinia cu nivelele piramidei doar pe desktop
-                  const topPaddings = ['0px', '90px', '180px', '270px', '360px'];
+                  const topPaddings = ["0px", "90px", "180px", "270px", "360px"];
                   
                   return (
                     <div
@@ -260,10 +261,10 @@ export default function Simulare() {
                         {level.name === "STARTER" ? (
                           "3 clienți activi = Abonamentul tău Gratuit"
                         ) : level.name === "ELITE" ? (
-                          "100+ clienți activi - Deal Personalizat"
+                          "100+ clienți activi - Comision 30%, 35% sau 40%"
                         ) : level.name === "SILVER" ? (
                           "3-20 clienți activi"
-                        ): level.name === "GOLD" ? (
+                        ) : level.name === "GOLD" ? (
                           "20-50 clienți activi"
                         ) : (
                           `50-100 clienți activi`
@@ -275,6 +276,33 @@ export default function Simulare() {
               </div>
             </div>
           </div>
+
+          {/* Selector comision ELITE - apare doar când suntem la nivel ELITE */}
+          {activeClients >= 100 && (
+            <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 backdrop-blur-sm border border-purple-500/40 p-6 rounded-2xl">
+              <label className="block text-lg font-semibold mb-3 text-purple-300">
+                👑 Comision ELITE (100+ clienți)
+              </label>
+              <div className="flex flex-wrap gap-3">
+                {[0.30, 0.35, 0.40].map((commission) => (
+                  <button
+                    key={commission}
+                    onClick={() => setEliteCommission(commission)}
+                    className={`flex-1 min-w-[120px] px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 ${
+                      eliteCommission === commission
+                        ? "bg-gradient-to-br from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/50 scale-105"
+                        : "bg-gray-800/50 text-gray-300 border border-gray-600/50 hover:bg-gray-700/50 hover:border-purple-500/50"
+                    }`}
+                  >
+                    {(commission * 100).toFixed(0)}%
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-400 mt-3 text-center">
+                Selectează comisionul pentru nivelul ELITE (implicit 30%)
+              </p>
+            </div>
+          )}
 
           {/* Rezultate calcule */}
           <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 p-6 rounded-2xl space-y-4 mt-6 hover:border-emerald-400/30 transition-all duration-500 overflow-hidden hover:scale-[1.01]">
@@ -303,8 +331,6 @@ export default function Simulare() {
                 <div className="text-2xl font-bold text-green-400">
                   {!currentLevel 
                     ? "€0"
-                    : currentLevel.name === "ELITE" 
-                    ? "Personalizat" 
                     : `€${monthlyRevenue.toFixed(0)}`}
                 </div>
               </div>
@@ -314,8 +340,6 @@ export default function Simulare() {
                 <div className="text-2xl font-bold text-blue-400">
                   {!currentLevel 
                     ? "€0"
-                    : currentLevel.name === "ELITE" 
-                    ? "Personalizat" 
                     : `€${yearlyRevenue.toFixed(0)}`}
                 </div>
               </div>
@@ -415,9 +439,9 @@ export default function Simulare() {
                   <tr className="border-t border-gray-700">
                     <td className="p-3 border border-gray-700 font-semibold">ELITE</td>
                     <td className="p-3 border border-gray-700 text-center">100+</td>
-                    <td className="p-3 border border-gray-700 text-center">Personalizat</td>
-                    <td className="p-3 border border-gray-700 text-right text-yellow-400">Custom</td>
-                    <td className="p-3 border border-gray-700 text-right text-yellow-400">Custom</td>
+                    <td className="p-3 border border-gray-700 text-center">30% / 35% / 40%</td>
+                    <td className="p-3 border border-gray-700 text-right text-yellow-400">€{(0.30 * price * 100).toFixed(0)} - €{(0.40 * price * 100).toFixed(0)}</td>
+                    <td className="p-3 border border-gray-700 text-right text-yellow-400">€{(0.30 * price * 100 * 12).toFixed(0)} - €{(0.40 * price * 100 * 12).toFixed(0)}</td>
                   </tr>
                 </tbody>
               </table>

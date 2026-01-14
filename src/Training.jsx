@@ -182,6 +182,7 @@ const Training = () => {
     { title: t.training.advancedLink13, url: "https://youtu.be/20dxanOrkUI?si=alOYeIumDYs8ucla" },
     { title: t.training.advancedLink14, url: "https://youtu.be/31RKuSQZKOg?si=L5kZFkpuERPO9fBI" },
     { title: t.training.advancedLink15, url: "https://youtu.be/Z-jQjTuotso?si=oJR6Mq9GMuHzoJ3N" },
+    { title: t.training.advancedLink16, url: "https://youtu.be/GZMfE-NZzdE?si=cUxeITp0JF84DsFE" },
   ];
 
   const backtestingLinks = [
@@ -195,6 +196,7 @@ const Training = () => {
     { title: t.training.backtestingLink8, url: "https://youtu.be/pz1V-Vc_JWA?si=qRqH_kljeQNbPfwI" },
     { title: t.training.backtestingLink9, url: "https://youtu.be/OioK9t2lc8M" },
     { title: t.training.backtestingLink10, url: "https://youtu.be/RjdGXZxft5s?si=dAFFjSmwY95u7Dvm" },
+    { title: t.training.backtestingLink11, url: "https://youtu.be/Cuadw4IEqvs" },
   ];
 
   const macroeconomieLinks = [
@@ -211,6 +213,9 @@ const Training = () => {
     { title: t.training.resourceLink6, url: "/Curs Inflatie Forex.pdf", type: "pdf" },
     { title: t.training.resourceLink7, url: "/Indicatori Macroeconomici.pdf", type: "pdf" },
     { title: t.training.resourceLink8, url: "/Intelegerea PIB-ului.pdf", type: "pdf" },
+    { title: t.training.resourceLink9, url: "https://www.youtube.com/watch?v=mGEqsTBlyiI" },
+    { title: t.training.resourceLink10, url: "https://youtu.be/BawywU-U-SY" },
+    { title: t.training.resourceLink11, url: "https://youtu.be/tGU7e1jtfrM" },
   ];
 
   const analizeSaptamanale = [

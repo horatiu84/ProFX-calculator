@@ -13,6 +13,16 @@ import { isValidPhoneNumber } from "libphonenumber-js";
 import "react-phone-number-input/style.css";
 import { useLanguage } from "../contexts/LanguageContext";
 
+// Custom input component with forwardRef - definit în afara componentei pentru a evita re-crearea
+const CustomPhoneInput = forwardRef((props, ref) => (
+  <input
+    {...props}
+    ref={ref}
+    id="telefon"
+    className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
+  />
+));
+
 const FormularInscriereConcurs = () => {
   const { language, translations } = useLanguage();
   const t = translations.formularConcurs;
@@ -22,16 +32,6 @@ const FormularInscriereConcurs = () => {
   const [linkMyFxBook, setLinkMyFxBook] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  // Custom input component with forwardRef
-  const CustomPhoneInput = forwardRef((props, ref) => (
-    <input
-      {...props}
-      ref={ref}
-      id="telefon"
-      className="p-2 rounded-xl border border-gray-600/50 bg-gray-800/50 text-white placeholder-gray-400 hover:bg-gray-700/50 hover:border-amber-400/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all duration-300 w-full"
-    />
-  ));
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -85,7 +85,7 @@ export default function Evolutie({ onBack }) {
   };
 
   return (
-    <div key={language} className="max-w-3xl mx-auto mb-12 animate-language-change">
+    <div key={language} className="max-w-3xl mx-auto animate-language-change mb-[15px]">
       {/* Back Button */}
       {onBack && (
         <button
@@ -231,7 +231,7 @@ export default function Evolutie({ onBack }) {
       </div>
 
       {/* Investment Calculator */}
-      <div>
+      <div className="mb-[50px]">
         <InvestmentCalculator />
       </div>
     </div>

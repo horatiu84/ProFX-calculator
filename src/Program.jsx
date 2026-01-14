@@ -37,7 +37,11 @@ const WeeklySchedule = () => {
     asiaWithMihai: t.sessionAsiaWithMihai,
     londonWithFlavius: t.sessionLondonWithFlavius,
     newYorkWithFlavius: t.sessionNewYorkWithFlavius,
+    nyUs100WithFlavius: "NY - US 100 - Flavius Radu",
+    ismManufacturingPmiUsdWithFlavius: t.ismManufacturingPmiUsdWithFlavius,
+    ismServicesPmiWithFlavius: t.ismServicesPmiWithFlavius,
     macroAnalysisWithJohn: t.macroAnalysisWithJohn,
+    armyWithJohn: t.armyWithJohn,
     beginnersWebinar: t.beginnersWebinarWithSergiu,
     class1to20: t.class1to20,
   };
@@ -51,11 +55,11 @@ const WeeklySchedule = () => {
 
   const sessionLinksByDay = {
     [sessionNames.asiaWithMihai]: {
-      0: "https://us06web.zoom.us/j/87842252532", // Luni - VIP
-      1: "https://us06web.zoom.us/j/87842252532",// Marți - VIP
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025",// Marți - VIP
       2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
-      3: "https://us06web.zoom.us/j/87842252532", // Joi - VIP
-      4: "https://us06web.zoom.us/j/87842252532", // Vineri - VIP
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
     [sessionNames.londonWithFlavius]: {
       0: "https://zoom.us/j/4505052025", // Luni - VIP
@@ -71,21 +75,80 @@ const WeeklySchedule = () => {
       3: "https://zoom.us/j/4505052025", // Joi - VIP
       4: "https://zoom.us/j/4505052025", // Vineri - VIP
     },
+    [sessionNames.nyUs100WithFlavius]: {
+      0: "https://zoom.us/j/4505052025", // Luni - VIP
+      1: "https://zoom.us/j/4505052025", // Marți - VIP
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri - FREE
+      3: "https://zoom.us/j/4505052025", // Joi - VIP
+      4: "https://zoom.us/j/4505052025", // Vineri - VIP
+    },
+    [sessionNames.ismManufacturingPmiUsdWithFlavius]: {
+      0: "https://zoom.us/j/4505052025", // Luni 05 Ianuarie 2026 - sesiune specială (identic cu Flavius)
+    },
+    [sessionNames.ismServicesPmiWithFlavius]: {
+      2: "https://us02web.zoom.us/j/83647707202", // Miercuri 07 Ianuarie 2026 - sesiune specială FREE cu Flavius
+    },
     [sessionNames.macroAnalysisWithJohn]: {
-      1: "https://us06web.zoom.us/j/82243984757?pwd=QBCn16XU7fwGYYgyPa9jaWmuVfkKrZ.1",
+      1: "https://us06web.zoom.us/j/82243984757", // Marți - VIP
     },
     [sessionNames.beginnersWebinar]: {
       0: "https://us06web.zoom.us/j/84144689182?pwd=uRoZpakhgy7feSR29XDxDf1Q1wRm3J.1",
     },
   };
 
-  const weekdayEvents = [
-    { name: sessionNames.asiaWithMihai, time: "03:45", duration: 3 },
+  let weekdayEvents = [
+    { name: sessionNames.asiaWithMihai, time: "03:45", duration: 4 },
     { name: sessionNames.londonWithFlavius, time: "08:45", duration: 1 },
-    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 }, 
+    { name: sessionNames.newYorkWithFlavius, time: "14:45", duration: 1 },
+    { name: sessionNames.nyUs100WithFlavius, time: "16:20", duration: 1 },
   ];
+  const getRomaniaDateParts = () => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Europe/Bucharest",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
 
-  const specialEvents = {
+    const year = Number(parts.find((p) => p.type === "year")?.value);
+    const month = Number(parts.find((p) => p.type === "month")?.value);
+    const day = Number(parts.find((p) => p.type === "day")?.value);
+    return { year, month, day };
+  };
+
+  const { year: roYear, month: roMonth, day: roDay } = getRomaniaDateParts();
+  const isRomaniaJan5_2026 = roYear === 2026 && roMonth === 1 && roDay === 5;
+  const isRomaniaJan7_2026 = roYear === 2026 && roMonth === 1 && roDay === 7;
+  
+  // Verifică dacă suntem după 13 Ianuarie 2026
+  const isAfterJan13_2026 = roYear > 2026 || (roYear === 2026 && roMonth === 1 && roDay >= 13);
+
+  // Doar azi (Luni, 05 Ianuarie 2026): sesiune pe știri cu Flavius (USD)
+  // Link + passcode identice cu restul sesiunilor lui Flavius.
+  if (isRomaniaJan5_2026) {
+    weekdayEvents = [
+      ...weekdayEvents,
+      {
+        name: sessionNames.ismManufacturingPmiUsdWithFlavius,
+        time: "16:45",
+        duration: 1,
+      },
+    ];
+  }
+  
+  // Doar azi (Marți, 07 Ianuarie 2026): sesiune pe știri cu Flavius (ISM Services PMI) - FREE
+  if (isRomaniaJan7_2026) {
+    weekdayEvents = [
+      ...weekdayEvents,
+      {
+        name: sessionNames.ismServicesPmiWithFlavius,
+        time: "16:45",
+        duration: 1,
+      },
+    ];
+  }
+
+  let specialEvents = {
     0: [
       {
         name: sessionNames.beginnersWebinar,
@@ -94,13 +157,16 @@ const WeeklySchedule = () => {
       },
     ],
     1: [
-      { name: sessionNames.macroAnalysisWithJohn, time: "12:00", duration: 1 },
-      { name: sessionNames.class1to20, time: "20:00", duration: 1 },
+      // Sesiunea cu John începe doar din 13 Ianuarie 2026
+      ...(isAfterJan13_2026 ? [{ name: sessionNames.macroAnalysisWithJohn, time: "20:00", duration: 1 }] : []),
     ],
-    4: [
-      { name: sessionNames.macroAnalysisWithJohn, time: "16:00", duration: 1 },
+    3: [
+      { name: sessionNames.armyWithJohn, time: "20:00", duration: 1.5 },
     ],
   };
+
+  // (Intenționat) sesiunea de azi cu Flavius este un eveniment normal (nu webinar),
+  // de aceea este adăugată în weekdayEvents.
 
   // Helper: calculează timestamp-ul unei sesiuni pentru ziua specificată
   // Orele sunt în fusul orar românesc (Europe/Bucharest) și convertite automat în ora locală
@@ -224,7 +290,9 @@ const WeeklySchedule = () => {
     const startMinutes = sessionTimestamp.getMinutes();
     
     const endTimestamp = new Date(sessionTimestamp);
-    endTimestamp.setHours(endTimestamp.getHours() + (event.duration || 1));
+    // Convertim durata în milisecunde pentru a suporta durate cu zecimale (ex: 1.5 ore)
+    const durationMs = (event.duration || 1) * 60 * 60 * 1000;
+    endTimestamp.setTime(endTimestamp.getTime() + durationMs);
     const endHours = endTimestamp.getHours();
     const endMinutes = endTimestamp.getMinutes();
     
@@ -242,9 +310,21 @@ const WeeklySchedule = () => {
     sessionEndTime.setHours(sessionTime.getHours() + (event.duration || 1));
 
     const timeDiff = sessionTime - now;
+    
+    // Pentru webinarul cu Sergiu de luni (FREE), accesul este disponibil doar cu 1 oră înainte
+    if (event.name === sessionNames.beginnersWebinar && dayIndex === 0) {
+      const SERGIU_ACCESS_WINDOW = 60 * 60 * 1000; // 60 minute în milliseconds
+      return timeDiff <= SERGIU_ACCESS_WINDOW && now <= sessionEndTime;
+    }
+    
     const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
 
-    // Accesul e disponibil cu 10 min înainte sau în timpul sesiunii
+    // Pentru sesiunile FREE (exceptând webinarul cu Sergiu deja verificat), accesul este ÎNTOTDEAUNA disponibil (oricând)
+    if (isSessionFree(event.name, dayIndex)) {
+      return true;
+    }
+
+    // Pentru sesiunile VIP, accesul e disponibil doar cu 10 min înainte sau în timpul sesiunii
     return timeDiff <= ACCESS_WINDOW && now <= sessionEndTime;
   };
 
@@ -354,7 +434,7 @@ const WeeklySchedule = () => {
     if (dayIndex === 2) {
       // Sesiunea de Asia cu Mihai de Miercuri este gratis
       if (eventName === sessionNames.asiaWithMihai) return true;
-      // Sesiunile lui Flavius de Miercuri sunt gratuite
+      // Sesiunile lui Flavius de Miercuri sunt gratuite (inclusiv ISM Services PMI)
       if (eventName.toLowerCase().includes("flavius")) return true;
     }
 
@@ -388,8 +468,8 @@ const WeeklySchedule = () => {
 
     // Dacă e weekend (sâmbătă=5 sau duminică=6)
     if (currentDay === 0 || currentDay === 6) {
-      if (dayIndex === 0 || dayIndex === 1) return "scheduled"; // Luni = programat
-      if (dayIndex > 1 && dayIndex < 5) return "passed"; // Marți-Vineri = trecut
+      if (dayIndex === 4) return "passed"; // Vineri = trecut
+      if (dayIndex >= 0 && dayIndex < 4) return "scheduled"; // Luni-Joi = programat
       return "scheduled"; // Weekend = programat (deși n-ar trebui să apară evenimente)
     }
 
@@ -609,20 +689,33 @@ const WeeklySchedule = () => {
     const duration = event.duration || 1;
     const mentors = extractAllMentors(event.name);
     const hasLink = hasSessionLink(event.name, dayIndex);
+    const link = getSessionLink(event.name, dayIndex);
     const isFree = isSessionFree(event.name, dayIndex);
     const zoomAccessAvailable = isZoomAccessAvailable(event, dayIndex);
+    const isFlaviusSession =
+      event.name === sessionNames.londonWithFlavius ||
+      event.name === sessionNames.newYorkWithFlavius ||
+      event.name === sessionNames.nyUs100WithFlavius ||
+      event.name === sessionNames.ismManufacturingPmiUsdWithFlavius ||
+      event.name === sessionNames.ismServicesPmiWithFlavius;
     const needsVIP = hasLink && !isFree && !isVIP && status !== "passed";
     const isClickable = hasLink && (isFree || isVIP) && status !== "passed" && zoomAccessAvailable;
+    
+    // Verifică dacă sesiunea conține "(Revine în Ianuarie)", "(Returns in January)", "(Începe din 15 Ianuarie)", "(Starts January 15)", "(Începe din 13 Ianuarie)", "(Starts January 13)", "(Începe din 12 Ianuarie)" sau "(Starts January 12)"
+    const isComingSoon = event.name.includes("Revine în Ianuarie") || event.name.includes("Returns in January") || event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") || event.name.includes("Începe din 13 Ianuarie") || event.name.includes("Starts January 13") || event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12");
     
     // Verifică dacă această sesiune este următoarea programată
     const isNextSession = nextSession && 
       nextSession.name === event.name && 
       nextSession.dayIndex === dayIndex;
 
-    // Calculează timpul până când accesul Zoom devine disponibil (cu 10 min înainte de sesiune)
+    // Calculează timpul până când accesul Zoom devine disponibil
     const sessionTime = getSessionTimestamp(dayIndex, event.time);
-    const ACCESS_WINDOW = 10 * 60 * 1000; // 10 minute în milliseconds
-    const zoomAccessTime = new Date(sessionTime.getTime() - ACCESS_WINDOW); // 10 min înainte
+    // Pentru webinarul cu Sergiu, accesul este disponibil cu 60 min înainte; pentru restul cu 10 min
+    const ACCESS_WINDOW = (event.name === sessionNames.beginnersWebinar && dayIndex === 0) 
+      ? 60 * 60 * 1000  // 60 minute pentru Sergiu
+      : 10 * 60 * 1000; // 10 minute pentru celelalte
+    const zoomAccessTime = new Date(sessionTime.getTime() - ACCESS_WINDOW);
     const timeUntilZoomAccess = zoomAccessTime - new Date();
     const minutesUntilAccess = Math.floor(timeUntilZoomAccess / (60 * 1000));
 
@@ -634,9 +727,9 @@ const WeeklySchedule = () => {
             : isWebinar
             ? "bg-amber-500/5 border-amber-400/30 hover:border-amber-400/50"
             : ""
-        } ${isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
+        } ${!isFree && isClickable ? "cursor-pointer" : needsVIP ? "cursor-pointer" : !zoomAccessAvailable && status !== "passed" ? "cursor-not-allowed" : ""}`}
         onClick={
-          isClickable
+          !isFree && isClickable
             ? () => handleSessionClick(event.name, dayIndex, event)
             : needsVIP
             ? () => handleSessionClick(event.name, dayIndex, event)
@@ -657,17 +750,47 @@ const WeeklySchedule = () => {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3
                       className={`font-semibold text-sm md:text-base ${
-                        status === "passed" ? "text-gray-400" : "text-white"
+                        status === "passed" ? "text-gray-400" : isComingSoon ? "text-gray-400" : "text-white"
                       }`}
                     >
-                      {event.name}
+                      {isComingSoon ? (
+                        <>
+                          <span className="opacity-60">
+                            {event.name.replace(/\s*\((Revine în Ianuarie|Returns in January|Începe din 15 Ianuarie|Starts January 15|Începe din 13 Ianuarie|Starts January 13|Începe din 12 Ianuarie|Starts January 12)\)/i, '')}
+                          </span>
+                          {event.name.includes("Începe din 15 Ianuarie") || event.name.includes("Starts January 15") ? (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-semibold rounded-lg shadow-md">
+                              {event.name.match(/\((Începe din 15 Ianuarie|Starts January 15)\)/i)?.[1]}
+                            </span>
+                          ) : event.name.includes("Începe din 13 Ianuarie") || event.name.includes("Starts January 13") ? (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-purple-600 to-violet-600 text-white text-xs font-semibold rounded-lg shadow-md">
+                              {event.name.match(/\((Începe din 13 Ianuarie|Starts January 13)\)/i)?.[1]}
+                            </span>
+                          ) : event.name.includes("Începe din 12 Ianuarie") || event.name.includes("Starts January 12") ? (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-xs font-semibold rounded-lg shadow-md">
+                              {event.name.match(/\((Începe din 12 Ianuarie|Starts January 12)\)/i)?.[1]}
+                            </span>
+                          ) : (
+                            <span className="ml-2 px-2 py-1 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-xs font-medium rounded-lg">
+                              {event.name.match(/\((Revine în Ianuarie|Returns in January)\)/i)?.[1]}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        event.name
+                      )}
                     </h3>
                     {isFree && hasLink && status !== "passed" && (
                       <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded uppercase">
                         FREE
                       </span>
                     )}
-                    {!isFree && hasLink && status !== "passed" && (
+                    {event.name === sessionNames.armyWithJohn && status !== "passed" && (
+                      <span className="px-3 py-1 bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs font-bold rounded-lg uppercase flex items-center gap-1 shadow-md">
+                        🎖️ {t.army}
+                      </span>
+                    )}
+                    {!isFree && hasLink && status !== "passed" && event.name !== sessionNames.armyWithJohn && (
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded uppercase flex items-center gap-1">
                         ⭐ VIP
                       </span>
@@ -682,7 +805,7 @@ const WeeklySchedule = () => {
                   {mentors.length > 0 && (
                     <p
                       className={`text-xs ${
-                        status === "passed" ? "text-gray-500" : "text-gray-300"
+                        status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-60" : "text-gray-300"
                       }`}
                     >
                       {mentors.length > 1 ? t.mentors : t.mentor}:{" "}
@@ -696,12 +819,16 @@ const WeeklySchedule = () => {
                   className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium w-fit ${
                     status === "passed"
                       ? "bg-gray-700 text-gray-400"
+                      : event.name === sessionNames.armyWithJohn
+                      ? "bg-amber-400 text-black font-bold"
+                      : isComingSoon
+                      ? "bg-gray-700 text-gray-500 opacity-70"
                       : "bg-yellow-400 text-black"
                   }`}
                 >
                   {formatTimeRange(event, dayIndex)}
                 </div>
-                {isWebinar && status !== "passed" && (
+                {isWebinar && event.name !== sessionNames.armyWithJohn && status !== "passed" && (
                   <div className="px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded uppercase w-fit">
                     {t.webinar}
                   </div>
@@ -710,7 +837,7 @@ const WeeklySchedule = () => {
               <div className="flex items-center justify-between">
                 <p
                   className={`text-xs ${
-                    status === "passed" ? "text-gray-500" : "text-gray-400"
+                    status === "passed" ? "text-gray-500" : isComingSoon ? "text-gray-500 opacity-70" : "text-gray-400"
                   }`}
                 >
                   {t.duration}: {duration} {duration === 1 ? t.hour : t.hours}
@@ -730,7 +857,11 @@ const WeeklySchedule = () => {
                         <>
                           <span>🔒</span>
                           <span className="text-gray-400">
-                            {t.accessBefore}
+                            {event.name === sessionNames.beginnersWebinar && dayIndex === 0
+                              ? language === "ro" 
+                                ? "Acces FREE cu 1h înainte"
+                                : "FREE Access 1h before"
+                              : t.accessBefore}
                           </span>
                         </>
                       )
@@ -755,44 +886,147 @@ const WeeklySchedule = () => {
                     <span className="text-green-400 text-lg">🎥</span>
                     <p className="text-xs font-bold text-green-400 uppercase">Zoom Details</p>
                   </div>
-                  <div className="space-y-1 text-xs">
-                    {dayIndex === 2 ? (
-                      // Miercuri - FREE session
-                      <>
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Meeting ID:</span>
-                          <span className="text-white font-mono font-semibold">874 6843 8970</span>
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-green-400 font-mono text-xs break-all hover:text-green-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Passcode:</span>
-                          <span className="text-white font-mono font-semibold">Freeasia</span>
-                        </div>
-                      </>
-                    ) : (
-                      // Luni, Marți, Joi, Vineri - VIP sessions
-                      <>
-                        {/* Meeting ID commented out - can be re-enabled if needed in the future */}
-                        {/* <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Meeting ID:</span>
-                          <span className="text-white font-mono font-semibold">878 4225 2532</span>
-                        </div> */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-400">Passcode:</span>
-                          <span className="text-white font-mono font-semibold">2026</span>
-                        </div>
-                      </>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
                     )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
                   </div>
                 </div>
               )}
+              {/* Afișează detalii Zoom pentru sesiunea lui John de la 20:00 (VIP) când accesul este disponibil */}
+              {event.name === sessionNames.macroAnalysisWithJohn && event.time === "20:00" && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-purple-500/10 border border-purple-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-purple-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-purple-400 uppercase">Zoom Details</p>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Afișează detalii Zoom pentru sesiunile lui Flavius când accesul este disponibil */}
-              {(event.name === sessionNames.londonWithFlavius || event.name === sessionNames.newYorkWithFlavius) && zoomAccessAvailable && status !== "passed" && dayIndex !== 2 && (isFree || isVIP) && (
+              {isFlaviusSession && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-400/30 rounded-xl">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-blue-400 text-lg">🎥</span>
-                    <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details - VIP</p>
+                    <p className="text-xs font-bold text-blue-400 uppercase">Zoom Details</p>
                   </div>
-                  <div className="space-y-1 text-xs">
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-blue-400 font-mono text-xs break-all hover:text-blue-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">Passcode:</span>
+                      <span className="text-white font-mono font-semibold">2026</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Afișează detalii Zoom pentru webinar-ul cu Sergiu (FREE pe Luni) când accesul este disponibil */}
+              {event.name === sessionNames.beginnersWebinar && zoomAccessAvailable && status !== "passed" && (isFree || isVIP) && (
+                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-amber-400 text-lg">🎥</span>
+                    <p className="text-xs font-bold text-amber-400 uppercase">Zoom Details</p>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    {isFree && hasLink && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-gray-400">Link Zoom:</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(link);
+                              const btn = e.currentTarget;
+                              const originalText = btn.textContent;
+                              btn.textContent = '✓ Copiat!';
+                              setTimeout(() => {
+                                btn.textContent = originalText;
+                              }, 2000);
+                            }}
+                            className="text-amber-400 font-mono text-xs break-all hover:text-amber-300 text-left cursor-pointer"
+                          >
+                            {link}
+                          </button>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        >
+                          🚀 {t.accessZoom || 'Accesează Zoom'}
+                        </button>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400">Passcode:</span>
                       <span className="text-white font-mono font-semibold">2026</span>
