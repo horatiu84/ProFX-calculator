@@ -80,6 +80,7 @@ const Raport = ({ onBack }) => {
           ))}
         </div>
       </div>
+      </div>
     </div>
   );
 };
