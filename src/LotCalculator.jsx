@@ -415,7 +415,7 @@ export default function LotCalculator() {
     { key: "concurs", label: t.concurs, icon: "🏆", component: <Concurs /> },
     { key: "evenimente", label: t.evenimente, icon: "🏝️", component: <Evenimente /> },
     { key: "test", label: t.test, icon: "📋", component: <Test /> },
-    // { key: "biblia", label: t.biblia, icon: "📖", component: <Biblia /> },
+    { key: "biblia", label: t.biblia, icon: "📖", component: <Biblia /> },
     { key: "contact", label: t.contact, icon: "💬", component: <Contact /> },
     { key: "galerie", label: t.galerie, icon: "📷", component: <EventPhotoGallery /> },
     { key: "stiri", label: t.stiri, icon: "📰", component: <Stiri /> }
@@ -438,11 +438,8 @@ export default function LotCalculator() {
       }
       
       const validTabs = menuItems.map(item => item.key);
-      // Adaugă tab-uri ascunse care pot fi accesate prin URL
-      const hiddenTabs = ['biblia'];
-      const allValidTabs = [...validTabs, ...hiddenTabs];
       
-      if (tab && allValidTabs.includes(tab)) {
+      if (tab && validTabs.includes(tab)) {
         setActiveTab(tab);
       } else {
         setActiveTab("home");

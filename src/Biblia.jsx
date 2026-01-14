@@ -1,25 +1,56 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
-import { Book, ChevronDown, ChevronUp, Download, User } from "lucide-react";
-import jsPDF from "jspdf";
+import { Book, ChevronDown, ChevronUp, User, LogOut, Save } from "lucide-react";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { db } from "./db/FireBase.js";
 
 const Biblia = () => {
   const { language, translations } = useLanguage();
   const t = translations.biblia;
   const [expandedSection, setExpandedSection] = useState(null);
   
+  // State pentru autentificare
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const savedAuth = localStorage.getItem('bibliaAuth');
+    return savedAuth ? JSON.parse(savedAuth) : false;
+  });
+  const [authenticatedUser, setAuthenticatedUser] = useState(() => {
+    const savedUser = localStorage.getItem('bibliaUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [loginForm, setLoginForm] = useState({ nume: "", telefon: "" });
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  
+  // State pentru salvare progres
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
   // State pentru numele cursantului
   const [studentName, setStudentName] = useState(() => {
+    const savedUser = localStorage.getItem('bibliaUser');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      return user.nume || '';
+    }
     const saved = localStorage.getItem('bibliaStudentName');
     return saved || '';
   });
   
   // State pentru progresul fiecărui principiu (0-100%)
   const [principleProgress, setPrincipleProgress] = useState(() => {
+    const savedUser = localStorage.getItem('bibliaUser');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      if (user.progres && Array.isArray(user.progres)) {
+        return [...user.progres, ...Array(Math.max(0, 20 - user.progres.length)).fill(0)].slice(0, 20);
+      }
+    }
     const saved = localStorage.getItem('bibliaProgress');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Asigură-te că avem exact 20 elemente, completând cu 0 pentru cele noi
       return [...parsed, ...Array(Math.max(0, 20 - parsed.length)).fill(0)].slice(0, 20);
     }
     return Array(20).fill(0);
@@ -34,10 +65,93 @@ const Biblia = () => {
     localStorage.setItem('bibliaStudentName', studentName);
   }, [studentName]);
 
+  // Actualizare progres când se schimbă utilizatorul autentificat
+  useEffect(() => {
+    if (authenticatedUser && authenticatedUser.progres) {
+      const userProgress = Array.isArray(authenticatedUser.progres) 
+        ? [...authenticatedUser.progres, ...Array(Math.max(0, 20 - authenticatedUser.progres.length)).fill(0)].slice(0, 20)
+        : Array(20).fill(0);
+      setPrincipleProgress(userProgress);
+      setHasUnsavedChanges(false);
+    } else if (authenticatedUser && !authenticatedUser.progres) {
+      // User nou fără progres - setează tot la 0
+      setPrincipleProgress(Array(20).fill(0));
+      setHasUnsavedChanges(false);
+    }
+  }, [authenticatedUser]);
+
+  // Funcție de autentificare
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError("");
+    setLoginLoading(true);
+
+    try {
+      // Normalizează datele de intrare
+      const numeNormalized = loginForm.nume.trim().toLowerCase();
+      const telefonNormalized = loginForm.telefon.trim().replace(/\s+/g, '');
+
+      // Obține toți cursanții din Army
+      const snapshot = await getDocs(collection(db, "Army"));
+      const cursanti = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Caută un cursant care se potrivește
+      const cursant = cursanti.find(c => {
+        const numeDB = c.nume.trim().toLowerCase();
+        const telefonDB = c.telefon.trim().replace(/\s+/g, '');
+        return numeDB === numeNormalized && telefonDB === telefonNormalized;
+      });
+
+      if (cursant) {
+        // Autentificare reușită - include și progresul dacă există
+        const userData = {
+          id: cursant.id,
+          nume: cursant.nume,
+          telefon: cursant.telefon,
+          perecheValutara: cursant.perecheValutara,
+          progres: cursant.progres || Array(20).fill(0)
+        };
+        
+        setAuthenticatedUser(userData);
+        setIsAuthenticated(true);
+        setStudentName(cursant.nume);
+        
+        // Setează progresul din baza de date
+        if (cursant.progres && Array.isArray(cursant.progres)) {
+          setPrincipleProgress([...cursant.progres, ...Array(Math.max(0, 20 - cursant.progres.length)).fill(0)].slice(0, 20));
+        }
+        
+        // Salvează în localStorage
+        localStorage.setItem('bibliaAuth', JSON.stringify(true));
+        localStorage.setItem('bibliaUser', JSON.stringify(userData));
+        
+        setLoginForm({ nume: "", telefon: "" });
+      } else {
+        setLoginError("Datele introduse nu corespund cu niciun cursant înregistrat. Verifică numele și numărul de telefon.");
+      }
+    } catch (err) {
+      console.error("Eroare autentificare:", err);
+      setLoginError("Eroare la autentificare. Te rugăm să încerci din nou.");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  // Funcție de logout
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setAuthenticatedUser(null);
+    localStorage.removeItem('bibliaAuth');
+    localStorage.removeItem('bibliaUser');
+    setLoginForm({ nume: "", telefon: "" });
+  };
+
   const updateProgress = (index, value) => {
     const newProgress = [...principleProgress];
     newProgress[index] = parseInt(value);
     setPrincipleProgress(newProgress);
+    setHasUnsavedChanges(true);
+    setSaveSuccess(false);
   };
 
   const getProgressColor = (value) => {
@@ -53,6 +167,44 @@ const Biblia = () => {
     if (value < 75) return '🟡 Bine';
     if (value < 100) return '🟢 Foarte bine';
     return '✅ Perfect';
+  };
+
+  // Funcție pentru salvare progres în Firebase
+  const handleSaveProgress = async () => {
+    if (!authenticatedUser) {
+      setSaveError("Nu ești autentificat!");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError("");
+    setSaveSuccess(false);
+
+    try {
+      const userRef = doc(db, "Army", authenticatedUser.id);
+      await updateDoc(userRef, {
+        progres: principleProgress,
+        lastUpdated: new Date().toISOString()
+      });
+
+      // Actualizează și localStorage
+      const updatedUser = { ...authenticatedUser, progres: principleProgress };
+      localStorage.setItem('bibliaUser', JSON.stringify(updatedUser));
+      setAuthenticatedUser(updatedUser);
+
+      setSaveSuccess(true);
+      setHasUnsavedChanges(false);
+      
+      // Ascunde mesajul de succes după 3 secunde
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error("Eroare la salvare:", err);
+      setSaveError("Eroare la salvarea progresului. Încearcă din nou.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const principleIcons = ["🚫", "⚔️", "🔄", "😰", "💰", "🎯", "📝", "⚡", "⏳", "🧘", "💪", "📚", "🎓", "🌱", "🧠", "📖", "🎭", "🎯", "💼", "🌊"];
@@ -83,133 +235,6 @@ const Biblia = () => {
     setExpandedSection(expandedSection === id ? null : id);
   };
 
-  // Funcție pentru normalizarea diacriticelor românești pentru PDF
-  const normalizeDiacritics = (text) => {
-    const diacriticsMap = {
-      'ă': 'a', 'â': 'a', 'î': 'i', 'ș': 's', 'ț': 't',
-      'Ă': 'A', 'Â': 'A', 'Î': 'I', 'Ș': 'S', 'Ț': 'T'
-    };
-    return text.replace(/[ăâîșțĂÂÎȘȚ]/g, match => diacriticsMap[match] || match);
-  };
-
-  // Funcție pentru exportul PDF
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    let yPosition = 20;
-
-    // Helper pentru adăugare pagină nouă
-    const checkPageBreak = (neededSpace = 15) => {
-      if (yPosition + neededSpace > doc.internal.pageSize.getHeight() - 20) {
-        doc.addPage();
-        yPosition = 20;
-        return true;
-      }
-      return false;
-    };
-
-    // Helper pentru desenare dreptunghi cu fundal
-    const drawBox = (y, height, color) => {
-      doc.setFillColor(color[0], color[1], color[2]);
-      doc.rect(margin - 2, y - 5, pageWidth - 2 * margin + 4, height, 'F');
-    };
-
-    // Header
-    doc.setFontSize(22);
-    doc.setTextColor(251, 191, 36);
-    doc.text(normalizeDiacritics(t.title), pageWidth / 2, yPosition, { align: 'center' });
-    yPosition += 15;
-
-    // Nume cursant
-    if (studentName) {
-      doc.setFontSize(14);
-      doc.setTextColor(80, 80, 80);
-      doc.text(`${normalizeDiacritics(language === 'ro' ? 'Cursant' : 'Student')}: ${normalizeDiacritics(studentName)}`, margin, yPosition);
-      yPosition += 10;
-    }
-
-    // Data export
-    const exportDate = new Date().toLocaleDateString(language === 'ro' ? 'ro-RO' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    doc.setFontSize(10);
-    doc.setTextColor(120, 120, 120);
-    doc.text(`${normalizeDiacritics(language === 'ro' ? 'Data exportului' : 'Export date')}: ${normalizeDiacritics(exportDate)}`, margin, yPosition);
-    yPosition += 15;
-
-    // Progres general - cu fundal discret
-    drawBox(yPosition, 18, [245, 245, 245]);
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`${normalizeDiacritics(language === 'ro' ? 'Progres general' : 'Overall progress')}: ${overallProgress}%`, margin, yPosition);
-    yPosition += 7;
-    doc.text(`${normalizeDiacritics(language === 'ro' ? 'Principii completate' : 'Completed principles')}: ${completedCount}/${totalPrinciples}`, margin, yPosition);
-    yPosition += 15;
-
-    // Principii principale
-    doc.setFontSize(16);
-    doc.setTextColor(251, 191, 36);
-    doc.text(normalizeDiacritics(language === 'ro' ? 'Principii Principale' : 'Main Principles'), margin, yPosition);
-    yPosition += 10;
-
-    t.principles.forEach((principle, index) => {
-      checkPageBreak(30);
-      
-      // Fundal discret pentru fiecare principiu
-      drawBox(yPosition, 22, [250, 250, 250]);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont(undefined, 'bold');
-      doc.text(`${index + 1}. ${normalizeDiacritics(principle.title)}`, margin, yPosition);
-      yPosition += 7;
-      
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(10);
-      doc.setTextColor(80, 80, 80);
-      const subtitleLines = doc.splitTextToSize(normalizeDiacritics(principle.subtitle), pageWidth - 2 * margin - 5);
-      doc.text(subtitleLines, margin + 3, yPosition);
-      yPosition += subtitleLines.length * 5 + 3;
-      
-      // Progres cu culoare
-      doc.setFontSize(11);
-      const progress = principleProgress[index];
-      if (progress >= 75) doc.setTextColor(34, 197, 94); // Verde
-      else if (progress >= 50) doc.setTextColor(234, 179, 8); // Galben
-      else if (progress >= 25) doc.setTextColor(249, 115, 22); // Portocaliu
-      else doc.setTextColor(239, 68, 68); // Rosu
-      
-      doc.setFont(undefined, 'bold');
-      doc.text(`${normalizeDiacritics(language === 'ro' ? 'Progres' : 'Progress')}: ${progress}%`, margin + 3, yPosition);
-      doc.setFont(undefined, 'normal');
-      yPosition += 12;
-    });
-
-    // Footer
-    const totalPages = doc.internal.pages.length - 1;
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
-      doc.text(
-        `${normalizeDiacritics(language === 'ro' ? 'Pagina' : 'Page')} ${i} ${normalizeDiacritics(language === 'ro' ? 'din' : 'of')} ${totalPages} | (c) ProFX Academy`,
-        pageWidth / 2,
-        doc.internal.pageSize.getHeight() - 10,
-        { align: 'center' }
-      );
-    }
-
-    // Salvare PDF
-    const fileName = studentName 
-      ? `Biblia_Traderului_${normalizeDiacritics(studentName).replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
-      : `Biblia_Traderului_${new Date().toISOString().split('T')[0]}.pdf`;
-    
-    doc.save(fileName);
-  };
-
   // Calculează progresul general
   const totalPrinciples = principleProgress.length;
   const overallProgress = Math.round(
@@ -217,6 +242,89 @@ const Biblia = () => {
   );
 
   const completedCount = principleProgress.filter(p => p === 100).length;
+
+  // Dacă nu este autentificat, afișează ecranul de login
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <Book className="w-12 h-12 text-amber-400" />
+              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400">
+                Biblia Traderului
+              </h1>
+            </div>
+            <p className="text-gray-400">
+              Acces exclusiv pentru cursanții ProFX Army
+            </p>
+          </div>
+
+          {/* Formular Login */}
+          <div className="bg-gray-900/50 backdrop-blur-sm border border-amber-400/30 rounded-2xl p-8">
+            <div className="mb-6 text-center">
+              <User className="w-16 h-16 text-amber-400 mx-auto mb-3" />
+              <h2 className="text-2xl font-bold text-white mb-2">Autentificare Cursant</h2>
+              <p className="text-sm text-gray-400">
+                Introdu numele și numărul de telefon cu care te-ai înscris
+              </p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Nume Complet
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Ion Popescu"
+                  value={loginForm.nume}
+                  onChange={(e) => setLoginForm({ ...loginForm, nume: e.target.value })}
+                  className="w-full p-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-500 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Număr Telefon
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Ex: 0751234567"
+                  value={loginForm.telefon}
+                  onChange={(e) => setLoginForm({ ...loginForm, telefon: e.target.value })}
+                  className="w-full p-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-500 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all"
+                  required
+                />
+              </div>
+
+              {loginError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-red-400 text-sm">{loginError}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loginLoading}
+                className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold rounded-lg hover:from-amber-600 hover:to-yellow-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loginLoading ? "Se verifică..." : "Accesează Biblia"}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-xs text-gray-500">
+                Nu ești înscris încă? Contactează administratorul pentru a fi adăugat în programul Army.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-white py-12 px-4 md:px-6">
@@ -232,6 +340,26 @@ const Biblia = () => {
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             {t.subtitle}
           </p>
+          
+          {/* Info user și logout */}
+          {authenticatedUser && (
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-gray-800/50 border border-amber-400/30 rounded-lg">
+                <User className="w-5 h-5 text-amber-400" />
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-white">{authenticatedUser.nume}</p>
+                  <p className="text-xs text-gray-400">{authenticatedUser.perecheValutara}</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/20 transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Deconectează-te</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Overall Progress Dashboard */}
@@ -287,6 +415,38 @@ const Biblia = () => {
                   {completedCount} din {totalPrinciples} principii stăpânite
                 </p>
               </div>
+            </div>
+
+            {/* Buton Salvare Progres */}
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <button
+                onClick={handleSaveProgress}
+                disabled={isSaving || !hasUnsavedChanges}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                  hasUnsavedChanges
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 hover:from-amber-600 hover:to-yellow-600'
+                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                } disabled:opacity-50`}
+              >
+                <Save className="w-5 h-5" />
+                {isSaving ? 'Se salvează...' : hasUnsavedChanges ? 'Aplică schimbările' : 'Nicio modificare'}
+              </button>
+              
+              {saveSuccess && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-lg">
+                  <span className="text-green-400 text-sm font-medium">✅ Progresul a fost salvat cu succes!</span>
+                </div>
+              )}
+              
+              {saveError && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <span className="text-red-400 text-sm font-medium">{saveError}</span>
+                </div>
+              )}
+              
+              {hasUnsavedChanges && !isSaving && (
+                <p className="text-xs text-yellow-400">⚠️ Ai modificări nesalvate</p>
+              )}
             </div>
           </div>
         </div>
@@ -1238,7 +1398,7 @@ const Biblia = () => {
               {/* Conținut */}
               <div className="space-y-6 text-gray-300 leading-relaxed">
                 <p className="text-lg md:text-xl text-center font-medium text-amber-400/90">
-                  Aceste 19 principii nu sunt simple sugestii – sunt legile nescrise ale traderilor profesioniști care obțin rezultate constante. Fiecare regulă a fost învățată prin experiență, pierderi și eșecuri.
+                  Aceste 20 principii nu sunt simple sugestii – sunt legile nescrise ale traderilor profesioniști care obțin rezultate constante. Fiecare regulă a fost învățată prin experiență, pierderi și eșecuri.
                 </p>
 
                 <div className="border-t border-b border-amber-500/20 py-6 my-6">
@@ -1261,69 +1421,6 @@ const Biblia = () => {
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6 mt-8">
                   <p className="text-lg md:text-xl font-bold text-amber-400 text-center">
                     Acum înțelegi regulile. Acum începe adevărata muncă: aplicarea lor zilnică până devin parte din tine.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Student Name & Export Section */}
-        <div className="mt-12 mb-8">
-          <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6 md:p-8 hover:border-blue-400/50 transition-all duration-500 hover:scale-[1.01] overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-6">
-                <Download className="w-6 h-6 text-blue-400" />
-                <h3 className="text-xl md:text-2xl font-bold text-blue-400">
-                  {language === 'ro' ? 'Exportă Progresul' : 'Export Progress'}
-                </h3>
-              </div>
-
-              <div className="space-y-6">
-                {/* Input pentru nume */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                    <User className="w-4 h-4" />
-                    {language === 'ro' ? 'Numele Cursantului' : 'Student Name'}
-                  </label>
-                  <input
-                    type="text"
-                    value={studentName}
-                    onChange={(e) => setStudentName(e.target.value)}
-                    placeholder={language === 'ro' ? 'Introdu numele tău...' : 'Enter your name...'}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 text-white rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 hover:bg-gray-700/50 transition-all duration-300"
-                  />
-                </div>
-
-                {/* Buton export */}
-                <button
-                  onClick={exportToPDF}
-                  disabled={!studentName.trim()}
-                  className={`w-full md:w-auto px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 transform flex items-center justify-center gap-3 ${
-                    studentName.trim()
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:scale-[1.02] active:scale-95 shadow-lg hover:shadow-blue-500/50'
-                      : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                  }`}
-                >
-                  <Download className="w-5 h-5" />
-                  {language === 'ro' ? 'Exportă PDF' : 'Export PDF'}
-                </button>
-
-                {!studentName.trim() && (
-                  <p className="text-sm text-gray-500 italic">
-                    {language === 'ro' 
-                      ? '💡 Adaugă numele tău pentru a exporta raportul în format PDF' 
-                      : '💡 Add your name to export the report as PDF'}
-                  </p>
-                )}
-
-                <div className="pt-4 border-t border-gray-700/50">
-                  <p className="text-xs text-gray-400">
-                    {language === 'ro'
-                      ? '📄 PDF-ul va conține toate principiile, progresul tău actual, numele și data exportului.'
-                      : '📄 The PDF will contain all principles, your current progress, name and export date.'}
                   </p>
                 </div>
               </div>
