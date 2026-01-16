@@ -109,6 +109,8 @@ const Biblia = () => {
           nume: cursant.nume,
           telefon: cursant.telefon,
           perecheValutara: cursant.perecheValutara,
+          tipParticipant: cursant.tipParticipant || 'Cursant',
+          oraLumanare: cursant.oraLumanare || '8:00 - 12:00',
           progres: cursant.progres || Array(20).fill(0)
         };
         
@@ -341,16 +343,51 @@ const Biblia = () => {
             {t.subtitle}
           </p>
           
+          {/* Mesaj de intampinare personalizat */}
+          {authenticatedUser && (
+            <div className="mt-8 mx-auto max-w-2xl">
+              <div className="p-6">
+                <div className="text-center">
+                  <h2 className="text-2xl md:text-3xl font-bold text-amber-400 mb-4">
+                    👋 Bună, {authenticatedUser.nume}!
+                  </h2>
+                  <div className="space-y-3 text-left max-w-lg mx-auto">
+                    <div className="flex items-center gap-3 p-3 bg-gray-900/40 rounded-lg border border-gray-700/50">
+                      <span className="text-2xl">{authenticatedUser.tipParticipant?.toLowerCase() === 'mentor' ? '👨‍🏫' : '🎓'}</span>
+                      <div>
+                        <p className="text-xs text-gray-400">Rol</p>
+                        <p className="text-base font-semibold text-white">
+                          {authenticatedUser.tipParticipant?.toLowerCase() === 'mentor' ? 'Mentor' : 'Cursant Army'}
+                        </p>
+                      </div>
+                    </div>
+                    {authenticatedUser.tipParticipant?.toLowerCase() !== 'mentor' && (
+                      <>
+                        <div className="flex items-center gap-3 p-3 bg-gray-900/40 rounded-lg border border-gray-700/50">
+                          <span className="text-2xl">💱</span>
+                          <div>
+                            <p className="text-xs text-gray-400">Pereche Valutară</p>
+                            <p className="text-base font-semibold text-blue-300">{authenticatedUser.perecheValutara}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 bg-gray-900/40 rounded-lg border border-gray-700/50">
+                          <span className="text-2xl">🕐</span>
+                          <div>
+                            <p className="text-xs text-gray-400">Ora Tranzacționare (Lumânare 4H)</p>
+                            <p className="text-base font-semibold text-green-300">{authenticatedUser.oraLumanare || '8:00 - 12:00'}</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Info user și logout */}
           {authenticatedUser && (
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="flex items-center gap-3 px-4 py-2 bg-gray-800/50 border border-amber-400/30 rounded-lg">
-                <User className="w-5 h-5 text-amber-400" />
-                <div className="text-left">
-                  <p className="text-sm font-semibold text-white">{authenticatedUser.nume}</p>
-                  <p className="text-xs text-gray-400">{authenticatedUser.perecheValutara}</p>
-                </div>
-              </div>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/20 transition-all"
@@ -360,95 +397,6 @@ const Biblia = () => {
               </button>
             </div>
           )}
-        </div>
-
-        {/* Overall Progress Dashboard */}
-        <div className="mb-12 group relative bg-gray-900/50 backdrop-blur-sm border border-amber-400/30 rounded-2xl p-6 md:p-8 hover:border-amber-400/50 transition-all duration-500 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <div className="relative z-10">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-amber-400 mb-2">Progres General</h3>
-              <p className="text-gray-400 text-sm">Aplicarea principiilor din Biblia Traderului</p>
-            </div>
-
-            <div className="flex flex-col items-center gap-4">
-              {/* Circular Progress */}
-              <div className="relative w-32 h-32">
-                <svg className="transform -rotate-90 w-32 h-32">
-                  <circle
-                    cx="64"
-                    cy="64"
-                    r="56"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    fill="transparent"
-                    className="text-gray-700"
-                  />
-                  <circle
-                    cx="64"
-                    cy="64"
-                    r="56"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    fill="transparent"
-                    strokeDasharray={`${2 * Math.PI * 56}`}
-                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - overallProgress / 100)}`}
-                    className={`${
-                      overallProgress < 25 ? 'text-red-500' :
-                      overallProgress < 50 ? 'text-orange-500' :
-                      overallProgress < 75 ? 'text-yellow-500' : 'text-green-500'
-                    } transition-all duration-1000`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-bold text-white">{overallProgress}%</span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="text-lg font-semibold text-gray-300">
-                  {getProgressLabel(overallProgress)}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  {completedCount} din {totalPrinciples} principii stăpânite
-                </p>
-              </div>
-            </div>
-
-            {/* Buton Salvare Progres */}
-            <div className="mt-6 flex flex-col items-center gap-3">
-              <button
-                onClick={handleSaveProgress}
-                disabled={isSaving || !hasUnsavedChanges}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                  hasUnsavedChanges
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 hover:from-amber-600 hover:to-yellow-600'
-                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                } disabled:opacity-50`}
-              >
-                <Save className="w-5 h-5" />
-                {isSaving ? 'Se salvează...' : hasUnsavedChanges ? 'Aplică schimbările' : 'Nicio modificare'}
-              </button>
-              
-              {saveSuccess && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-lg">
-                  <span className="text-green-400 text-sm font-medium">✅ Progresul a fost salvat cu succes!</span>
-                </div>
-              )}
-              
-              {saveError && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg">
-                  <span className="text-red-400 text-sm font-medium">{saveError}</span>
-                </div>
-              )}
-              
-              {hasUnsavedChanges && !isSaving && (
-                <p className="text-xs text-yellow-400">⚠️ Ai modificări nesalvate</p>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* === CELE TREI CURSE MORTALE === */}
@@ -1378,6 +1326,95 @@ const Biblia = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        {/* Overall Progress Dashboard - Mutat înainte de concluzie pentru acces rapid */}
+        <div className="mb-12 group relative bg-gray-900/50 backdrop-blur-sm border border-amber-400/30 rounded-2xl p-6 md:p-8 hover:border-amber-400/50 transition-all duration-500 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-amber-400 mb-2">Progres General</h3>
+              <p className="text-gray-400 text-sm">Aplicarea principiilor din Biblia Traderului</p>
+            </div>
+
+            <div className="flex flex-col items-center gap-4">
+              {/* Circular Progress */}
+              <div className="relative w-32 h-32">
+                <svg className="transform -rotate-90 w-32 h-32">
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="56"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    className="text-gray-700"
+                  />
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="56"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={`${2 * Math.PI * 56}`}
+                    strokeDashoffset={`${2 * Math.PI * 56 * (1 - overallProgress / 100)}`}
+                    className={`${
+                      overallProgress < 25 ? 'text-red-500' :
+                      overallProgress < 50 ? 'text-orange-500' :
+                      overallProgress < 75 ? 'text-yellow-500' : 'text-green-500'
+                    } transition-all duration-1000`}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-white">{overallProgress}%</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-lg font-semibold text-gray-300">
+                  {getProgressLabel(overallProgress)}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {completedCount} din {totalPrinciples} principii stăpânite
+                </p>
+              </div>
+            </div>
+
+            {/* Buton Salvare Progres */}
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <button
+                onClick={handleSaveProgress}
+                disabled={isSaving || !hasUnsavedChanges}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                  hasUnsavedChanges
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 hover:from-amber-600 hover:to-yellow-600'
+                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                } disabled:opacity-50`}
+              >
+                <Save className="w-5 h-5" />
+                {isSaving ? 'Se salvează...' : hasUnsavedChanges ? 'Aplică schimbările' : 'Nicio modificare'}
+              </button>
+              
+              {saveSuccess && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-lg">
+                  <span className="text-green-400 text-sm font-medium">✅ Progresul a fost salvat cu succes!</span>
+                </div>
+              )}
+              
+              {saveError && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <span className="text-red-400 text-sm font-medium">{saveError}</span>
+                </div>
+              )}
+              
+              {hasUnsavedChanges && !isSaving && (
+                <p className="text-xs text-yellow-400">⚠️ Ai modificări nesalvate</p>
+              )}
+            </div>
           </div>
         </div>
 

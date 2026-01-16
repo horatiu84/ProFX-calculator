@@ -72,6 +72,8 @@ const Dashboard = () => {
   const [cursantToDelete, setCursantToDelete] = useState(null);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [selectedCursant, setSelectedCursant] = useState(null);
+  const [searchCursant, setSearchCursant] = useState("");
+  const [sortCursanti, setSortCursanti] = useState("asc");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -1023,7 +1025,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2">
                 <span>🎓</span>
-                Lista Cursanti ({armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length})
+                Lista Cursanti ({armyCursanti.filter(c => c.tipParticipant !== 'Mentor').filter(c => c.nume.toLowerCase().includes(searchCursant.toLowerCase())).length})
               </h3>
               {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length > 0 && (
                 <button
@@ -1035,6 +1037,45 @@ const Dashboard = () => {
                 </button>
               )}
             </div>
+            
+            {/* Filtre si Sortare */}
+            {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length > 0 && (
+              <div className="mb-4 flex flex-wrap gap-3 items-center">
+                <div className="flex-1 min-w-[250px]">
+                  <input
+                    type="text"
+                    placeholder="Cauta dupa nume..."
+                    value={searchCursant}
+                    onChange={(e) => setSearchCursant(e.target.value)}
+                    className="w-full p-2 rounded border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSortCursanti("asc")}
+                    className={`px-4 py-2 rounded text-sm flex items-center gap-2 ${
+                      sortCursanti === "asc" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    <span>🔼</span>
+                    A-Z
+                  </button>
+                  <button
+                    onClick={() => setSortCursanti("desc")}
+                    className={`px-4 py-2 rounded text-sm flex items-center gap-2 ${
+                      sortCursanti === "desc" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    <span>🔽</span>
+                    Z-A
+                  </button>
+                </div>
+              </div>
+            )}
             {loadingArmy && !armyCursanti.length ? (
               <p>Se incarca cursantii...</p>
             ) : armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length === 0 ? (
@@ -1054,7 +1095,19 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').map((cursant, idx) => (
+                    {armyCursanti
+                      .filter(c => c.tipParticipant !== 'Mentor')
+                      .filter(c => c.nume.toLowerCase().includes(searchCursant.toLowerCase()))
+                      .sort((a, b) => {
+                        const nameA = a.nume.toLowerCase();
+                        const nameB = b.nume.toLowerCase();
+                        if (sortCursanti === 'asc') {
+                          return nameA.localeCompare(nameB);
+                        } else {
+                          return nameB.localeCompare(nameA);
+                        }
+                      })
+                      .map((cursant, idx) => (
                       <tr key={cursant.id} className="hover:bg-gray-700">
                         <td className="p-2 border border-gray-700 text-center font-semibold">
                           {idx + 1}
