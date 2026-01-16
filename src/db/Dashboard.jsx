@@ -25,19 +25,7 @@ const Dashboard = () => {
   const [loginError, setLoginError] = useState("");
 
   // Tab management
-  const [activeTab, setActiveTab] = useState("inscrieri");
-
-  const [inscrieri, setInscrieri] = useState([]);
-  const [allInscrieri, setAllInscrieri] = useState([]);
-  const [searchNume, setSearchNume] = useState("");
-  const [searchTelefon, setSearchTelefon] = useState("");
-  const [searchEmail, setSearchEmail] = useState("");
-  const [sortBy, setSortBy] = useState("data-desc");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [updatingId, setUpdatingId] = useState(null); // Pentru loading pe toggle
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [confirmData, setConfirmData] = useState({ id: null, currentVerified: null, nume: "" });
+  const [activeTab, setActiveTab] = useState("army");
 
   const [feedbackAnonim, setFeedbackAnonim] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
@@ -68,13 +56,17 @@ const Dashboard = () => {
   const [newCursant, setNewCursant] = useState({
     nume: "",
     telefon: "",
-    perecheValutara: ""
+    perecheValutara: "",
+    tipParticipant: "Cursant",
+    oraLumanare: "8:00 - 12:00"
   });
   const [editingCursant, setEditingCursant] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nume: "",
     telefon: "",
-    perecheValutara: ""
+    perecheValutara: "",
+    tipParticipant: "Cursant",
+    oraLumanare: "8:00 - 12:00"
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [cursantToDelete, setCursantToDelete] = useState(null);
@@ -85,12 +77,10 @@ const Dashboard = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        fetchAllInscrieri();
         fetchFeedbackAnonim();
         fetchConcursInscrieri();
         fetchArmyCursanti();
       } else {
-        setLoading(false);
         setLoadingFeedback(false);
         setLoadingConcurs(false);
         setLoadingArmy(false);
@@ -112,59 +102,6 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
-  };
-
-  const fetchAllInscrieri = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const q = collection(db, "inscrieri");
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setAllInscrieri(data);
-      applyFiltersAndSort(data);
-    } catch (err) {
-      setError("Eroare la încărcare: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Funcție pentru deschiderea modalului de confirmare
-  const openConfirmModal = (id, currentVerified, nume) => {
-    setConfirmData({ id, currentVerified, nume });
-    setShowConfirmModal(true);
-  };
-
-  // Funcție pentru închiderea modalului
-  const closeConfirmModal = () => {
-    setShowConfirmModal(false);
-    setConfirmData({ id: null, currentVerified: null, nume: "" });
-  };
-
-  // Funcție pentru toggle verified status cu confirmare
-  const confirmToggleVerified = async () => {
-    const { id, currentVerified } = confirmData;
-    setUpdatingId(id);
-    closeConfirmModal();
-    
-    try {
-      const docRef = doc(db, "inscrieri", id);
-      await updateDoc(docRef, {
-        verified: !currentVerified
-      });
-      
-      // Actualizez datele local
-      const updatedAllInscrieri = allInscrieri.map(item => 
-        item.id === id ? { ...item, verified: !currentVerified } : item
-      );
-      setAllInscrieri(updatedAllInscrieri);
-      applyFiltersAndSort(updatedAllInscrieri);
-    } catch (err) {
-      setError("Eroare la actualizarea statusului: " + err.message);
-    } finally {
-      setUpdatingId(null);
-    }
   };
 
   const fetchFeedbackAnonim = async () => {
@@ -217,68 +154,6 @@ const Dashboard = () => {
     } finally {
       setLoadingConcurs(false);
     }
-  };
-
-  const applyFiltersAndSort = (data) => {
-    let filtered = data.filter((item) => {
-      const numeMatch = searchNume
-        ? item.nume?.toLowerCase().includes(searchNume.toLowerCase())
-        : true;
-      const telefonMatch = searchTelefon
-        ? item.telefon?.includes(searchTelefon)
-        : true;
-      const emailMatch = searchEmail
-        ? item.email?.toLowerCase().includes(searchEmail.toLowerCase())
-        : true;
-      return numeMatch && telefonMatch && emailMatch;
-    });
-
-    filtered.sort((a, b) => {
-      if (sortBy === "nume-asc") {
-        return a.nume.toLowerCase().localeCompare(b.nume.toLowerCase());
-      } else if (sortBy === "nume-desc") {
-        return b.nume.toLowerCase().localeCompare(a.nume.toLowerCase());
-      } else if (sortBy === "data-asc") {
-        return (
-          (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) -
-          (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt))
-        );
-      } else {
-        return (
-          (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) -
-          (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt))
-        );
-      }
-    });
-    setInscrieri(filtered);
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    applyFiltersAndSort(allInscrieri);
-  };
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-    applyFiltersAndSort(allInscrieri);
-  };
-
-  // Export cu verified status
-  const exportInscrieriToExcel = () => {
-    if (inscrieri.length === 0) return;
-    const dataToExport = inscrieri.map((item, idx) => ({
-      Nr: idx + 1,
-      Nume: item.nume || "",
-      Telefon: item.telefon || "",
-      Email: item.email || "",
-      Verificat: item.verified ? "DA" : "NU",
-      "Data Creării": formatDate(item.createdAt),
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Înscrieri");
-    XLSX.writeFile(workbook, "inscrieri-profx.xlsx");
   };
 
   // --- FEEDBACK: SORTARE & PAGINARE ---
@@ -376,7 +251,7 @@ const Dashboard = () => {
     setErrorArmy("");
     setSuccessArmy("");
 
-    if (!newCursant.nume || !newCursant.telefon || !newCursant.perecheValutara) {
+    if (!newCursant.nume || !newCursant.telefon || !newCursant.perecheValutara || !newCursant.tipParticipant || !newCursant.oraLumanare) {
       setErrorArmy("Toate câmpurile sunt obligatorii!");
       return;
     }
@@ -390,12 +265,14 @@ const Dashboard = () => {
         nume: newCursant.nume,
         telefon: newCursant.telefon,
         perecheValutara: newCursant.perecheValutara,
+        tipParticipant: newCursant.tipParticipant,
+        oraLumanare: newCursant.oraLumanare,
         createdAt: Timestamp.now(),
       });
       
       console.log("Cursant adăugat cu succes!");
       setSuccessArmy("Cursant adăugat cu succes!");
-      setNewCursant({ nume: "", telefon: "", perecheValutara: "" });
+      setNewCursant({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
       fetchArmyCursanti(); // Reîncarcă lista
     } catch (err) {
       console.error("Eroare completă:", err);
@@ -412,7 +289,9 @@ const Dashboard = () => {
     setEditFormData({
       nume: cursant.nume,
       telefon: cursant.telefon,
-      perecheValutara: cursant.perecheValutara
+      perecheValutara: cursant.perecheValutara,
+      tipParticipant: cursant.tipParticipant || "Cursant",
+      oraLumanare: cursant.oraLumanare || "8:00 - 12:00"
     });
     setErrorArmy("");
     setSuccessArmy("");
@@ -420,7 +299,7 @@ const Dashboard = () => {
 
   const handleCancelEdit = () => {
     setEditingCursant(null);
-    setEditFormData({ nume: "", telefon: "", perecheValutara: "" });
+    setEditFormData({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
     setErrorArmy("");
   };
 
@@ -428,7 +307,7 @@ const Dashboard = () => {
     setErrorArmy("");
     setSuccessArmy("");
 
-    if (!editFormData.nume || !editFormData.telefon || !editFormData.perecheValutara) {
+    if (!editFormData.nume || !editFormData.telefon || !editFormData.perecheValutara || !editFormData.tipParticipant || !editFormData.oraLumanare) {
       setErrorArmy("Toate câmpurile sunt obligatorii!");
       return;
     }
@@ -440,11 +319,13 @@ const Dashboard = () => {
         nume: editFormData.nume,
         telefon: editFormData.telefon,
         perecheValutara: editFormData.perecheValutara,
+        tipParticipant: editFormData.tipParticipant,
+        oraLumanare: editFormData.oraLumanare,
       });
       
       setSuccessArmy("Cursant actualizat cu succes!");
       setEditingCursant(null);
-      setEditFormData({ nume: "", telefon: "", perecheValutara: "" });
+      setEditFormData({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
       fetchArmyCursanti();
     } catch (err) {
       setErrorArmy("Eroare la actualizare: " + err.message);
@@ -535,9 +416,12 @@ const Dashboard = () => {
 
   // Export Army cursanți to Excel
   const exportArmyToExcel = () => {
-    if (armyCursanti.length === 0) return;
+    // Filtrăm doar cursanții (nu mentorii)
+    const cursanti = armyCursanti.filter(c => c.tipParticipant !== 'Mentor');
     
-    const dataToExport = armyCursanti.map((item, idx) => {
+    if (cursanti.length === 0) return;
+    
+    const dataToExport = cursanti.map((item, idx) => {
       // Calculează progresul general
       const progres = item.progres || Array(20).fill(0);
       const total = progres.reduce((acc, val) => acc + val, 0);
@@ -549,9 +433,9 @@ const Dashboard = () => {
         Nume: item.nume || "",
         Telefon: item.telefon || "",
         "Pereche Valutară": item.perecheValutara || "",
+        "Ora Lumânare 4H": item.oraLumanare || "8:00 - 12:00",
         "Progres General (%)": progresGeneral,
         "Principii Complete": `${principiiComplete}/20`,
-        "Data Adăugării": formatDate(item.createdAt),
       };
     });
 
@@ -612,14 +496,14 @@ const Dashboard = () => {
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-700 pb-2">
         <button
-          onClick={() => setActiveTab("inscrieri")}
+          onClick={() => setActiveTab("army")}
           className={`px-4 py-2 rounded-t ${
-            activeTab === "inscrieri"
+            activeTab === "army"
               ? "bg-blue-600 text-white"
               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
           }`}
         >
-          Înscrieri
+          🎖️ Army
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
@@ -641,155 +525,7 @@ const Dashboard = () => {
         >
           Concurs ProFX
         </button>
-        <button
-          onClick={() => setActiveTab("army")}
-          className={`px-4 py-2 rounded-t ${
-            activeTab === "army"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-          }`}
-        >
-          🎖️ Army
-        </button>
       </div>
-
-      {/* Tab Content: Înscrieri */}
-      {activeTab === "inscrieri" && (
-        <div>
-
-      <form
-        onSubmit={handleSearch}
-        className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6"
-        autoComplete="off"
-      >
-        <input
-          type="text"
-          name="search-name-field"
-          placeholder="Caută după nume (partial)"
-          value={searchNume}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          onChange={(e) => setSearchNume(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
-        />
-        <input
-          type="text"
-          name="search-phone-field"
-          placeholder="Caută după telefon (partial)"
-          value={searchTelefon}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          onChange={(e) => setSearchTelefon(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
-        />
-        <input
-          type="text"
-          name="search-email-field"
-          placeholder="Caută după email (partial)"
-          value={searchEmail}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          onChange={(e) => setSearchEmail(e.target.value)}
-          className="p-2 rounded border border-gray-600 bg-gray-800 text-white flex-1"
-        />
-        <button
-          type="submit"
-          className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Caută
-        </button>
-      </form>
-
-      <div className="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <div>
-          <label className="text-gray-300 mr-2">Sortare:</label>
-          <select
-            value={sortBy}
-            onChange={handleSortChange}
-            className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
-          >
-            <option value="data-desc">Data (recentă primul)</option>
-            <option value="data-asc">Data (veche primul)</option>
-            <option value="nume-asc">Nume (A-Z)</option>
-            <option value="nume-desc">Nume (Z-A)</option>
-          </select>
-        </div>
-        
-        <button
-          onClick={exportInscrieriToExcel}
-          className="p-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-        >
-          Exportă Înscrieri în Excel
-        </button>
-      </div>
-
-      {error && <p className="text-red-400 mb-4 text-center">{error}</p>}
-      {loading ? (
-        <p className="text-center">Se încarcă...</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-800">
-                <th className="p-2 border border-gray-700">Nume</th>
-                <th className="p-2 border border-gray-700">Telefon</th>
-                <th className="p-2 border border-gray-700">Email</th>
-                <th className="p-2 border border-gray-700">Verificat</th>
-                <th className="p-2 border border-gray-700">Data Creării</th>
-              </tr>
-            </thead>
-            <tbody>
-              {inscrieri.length > 0 ? (
-                inscrieri.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-700">
-                    <td className="p-2 border border-gray-700">{item.nume}</td>
-                    <td className="p-2 border border-gray-700">
-                      {item.telefon}
-                    </td>
-                    <td className="p-2 border border-gray-700">{item.email}</td>
-                    <td className="p-2 border border-gray-700 text-center">
-                      <button
-                        onClick={() => openConfirmModal(item.id, item.verified, item.nume)}
-                        disabled={updatingId === item.id}
-                        className={`px-3 py-1 rounded text-sm font-semibold min-w-[70px] ${
-                          item.verified
-                            ? "bg-green-600 hover:bg-green-700 text-white"
-                            : "bg-red-600 hover:bg-red-700 text-white"
-                        } ${updatingId === item.id ? "opacity-50 cursor-not-allowed" : ""}`}
-                      >
-                        {updatingId === item.id ? (
-                          "..."
-                        ) : item.verified ? (
-                          "DA"
-                        ) : (
-                          "NU"
-                        )}
-                      </button>
-                    </td>
-                    <td className="p-2 border border-gray-700">
-                      {formatDate(item.createdAt)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="p-2 text-center">
-                    Nicio înscriere găsită.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-        </div>
-      )}
 
       {/* Tab Content: Feedback Anonim */}
       {activeTab === "feedback" && (
@@ -1078,6 +814,40 @@ const Dashboard = () => {
                   required
                 />
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Tip Participant
+                  </label>
+                  <select
+                    value={newCursant.tipParticipant}
+                    onChange={(e) => setNewCursant({ ...newCursant, tipParticipant: e.target.value })}
+                    className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
+                    required
+                  >
+                    <option value="Cursant">Cursant</option>
+                    <option value="Mentor">Mentor</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Ora Lumânare 4H (Tranzacționare)
+                  </label>
+                  <select
+                    value={newCursant.oraLumanare}
+                    onChange={(e) => setNewCursant({ ...newCursant, oraLumanare: e.target.value })}
+                    className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
+                    required
+                  >
+                    <option value="0:00 - 4:00">0:00 - 4:00</option>
+                    <option value="4:00 - 8:00">4:00 - 8:00</option>
+                    <option value="8:00 - 12:00">8:00 - 12:00</option>
+                    <option value="12:00 - 16:00">12:00 - 16:00</option>
+                    <option value="16:00 - 20:00">16:00 - 20:00</option>
+                    <option value="20:00 - 24:00">20:00 - 24:00</option>
+                  </select>
+                </div>
+              </div>
               <button
                 type="submit"
                 disabled={loadingArmy}
@@ -1094,41 +864,34 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Lista cursanți */}
-          <div>
+          {/* Tabel Mentori */}
+          <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-blue-300">
-                Lista Cursanți ({armyCursanti.length})
+              <h3 className="text-lg font-semibold text-purple-400 flex items-center gap-2">
+                <span>👨‍🏫</span>
+                Lista Mentori ({armyCursanti.filter(c => c.tipParticipant === 'Mentor').length})
               </h3>
-              {armyCursanti.length > 0 && (
-                <button
-                  onClick={exportArmyToExcel}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center gap-2"
-                >
-                  <span>📊</span>
-                  Exportă în Excel
-                </button>
-              )}
             </div>
             {loadingArmy && !armyCursanti.length ? (
-              <p>Se încarcă cursanții...</p>
-            ) : armyCursanti.length === 0 ? (
-              <p className="text-gray-400">Nu există cursanți înregistrați încă.</p>
+              <p>Se încarcă mentorii...</p>
+            ) : armyCursanti.filter(c => c.tipParticipant === 'Mentor').length === 0 ? (
+              <p className="text-gray-400">Nu există mentori înregistrați încă.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse">
                   <thead>
-                    <tr className="bg-gray-800">
+                    <tr className="bg-purple-900">
                       <th className="p-2 border border-gray-700 text-center">#</th>
                       <th className="p-2 border border-gray-700">Nume</th>
                       <th className="p-2 border border-gray-700">Telefon</th>
+                      <th className="p-2 border border-gray-700 text-center">Tip Participant</th>
                       <th className="p-2 border border-gray-700 text-center">Pereche Valutară</th>
-                      <th className="p-2 border border-gray-700">Data Adăugării</th>
+                      <th className="p-2 border border-gray-700 text-center">Ora Lumânare 4H</th>
                       <th className="p-2 border border-gray-700 text-center">Acțiuni</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {armyCursanti.map((cursant, idx) => (
+                    {armyCursanti.filter(c => c.tipParticipant === 'Mentor').map((cursant, idx) => (
                       <tr key={cursant.id} className="hover:bg-gray-700">
                         <td className="p-2 border border-gray-700 text-center font-semibold">
                           {idx + 1}
@@ -1152,6 +915,16 @@ const Dashboard = () => {
                               />
                             </td>
                             <td className="p-2 border border-gray-700">
+                              <select
+                                value={editFormData.tipParticipant}
+                                onChange={(e) => setEditFormData({ ...editFormData, tipParticipant: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                              >
+                                <option value="Cursant">Cursant</option>
+                                <option value="Mentor">Mentor</option>
+                              </select>
+                            </td>
+                            <td className="p-2 border border-gray-700">
                               <input
                                 type="text"
                                 value={editFormData.perecheValutara}
@@ -1160,7 +933,18 @@ const Dashboard = () => {
                               />
                             </td>
                             <td className="p-2 border border-gray-700">
-                              {formatDate(cursant.createdAt)}
+                              <select
+                                value={editFormData.oraLumanare}
+                                onChange={(e) => setEditFormData({ ...editFormData, oraLumanare: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                              >
+                                <option value="0:00 - 4:00">0:00 - 4:00</option>
+                                <option value="4:00 - 8:00">4:00 - 8:00</option>
+                                <option value="8:00 - 12:00">8:00 - 12:00</option>
+                                <option value="12:00 - 16:00">12:00 - 16:00</option>
+                                <option value="16:00 - 20:00">16:00 - 20:00</option>
+                                <option value="20:00 - 24:00">20:00 - 24:00</option>
+                              </select>
                             </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">
@@ -1184,18 +968,190 @@ const Dashboard = () => {
                         ) : (
                           <>
                             <td 
-                              className="p-2 border border-gray-700 cursor-pointer hover:bg-blue-600 transition-colors"
+                              className="p-2 border border-gray-700 cursor-pointer hover:bg-purple-600 transition-colors"
                               onClick={() => openProgressModal(cursant)}
                               title="Click pentru a vedea progresul"
                             >
                               {cursant.nume}
                             </td>
                             <td className="p-2 border border-gray-700">{cursant.telefon}</td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              <span className={`px-2 py-1 rounded text-sm font-semibold ${
+                                cursant.tipParticipant === 'Mentor' 
+                                  ? 'bg-purple-600 text-white' 
+                                  : 'bg-green-600 text-white'
+                              }`}>
+                                {cursant.tipParticipant || 'Cursant'}
+                              </span>
+                            </td>
                             <td className="p-2 border border-gray-700 text-center font-semibold text-blue-300">
                               {cursant.perecheValutara}
                             </td>
+                            <td className="p-2 border border-gray-700 text-center text-sm">
+                              {cursant.oraLumanare || '8:00 - 12:00'}
+                            </td>
                             <td className="p-2 border border-gray-700">
-                              {formatDate(cursant.createdAt)}
+                              <div className="flex gap-2 justify-center">
+                                <button
+                                  onClick={() => handleEditCursant(cursant)}
+                                  disabled={loadingArmy || editingCursant !== null}
+                                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm disabled:opacity-50"
+                                >
+                                  Editează
+                                </button>
+                                <button
+                                  onClick={() => openDeleteModal(cursant)}
+                                  disabled={loadingArmy || editingCursant !== null}
+                                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm disabled:opacity-50"
+                                >
+                                  Șterge
+                                </button>
+                              </div>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Tabel Cursanti */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2">
+                <span>🎓</span>
+                Lista Cursanti ({armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length})
+              </h3>
+              {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length > 0 && (
+                <button
+                  onClick={exportArmyToExcel}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center gap-2"
+                >
+                  <span>📊</span>
+                  Exporta cursanti
+                </button>
+              )}
+            </div>
+            {loadingArmy && !armyCursanti.length ? (
+              <p>Se incarca cursantii...</p>
+            ) : armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length === 0 ? (
+              <p className="text-gray-400">Nu exista cursanti inregistrati inca.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse">
+                  <thead>
+                    <tr className="bg-green-900">
+                      <th className="p-2 border border-gray-700 text-center">#</th>
+                      <th className="p-2 border border-gray-700">Nume</th>
+                      <th className="p-2 border border-gray-700">Telefon</th>
+                      <th className="p-2 border border-gray-700 text-center">Tip Participant</th>
+                      <th className="p-2 border border-gray-700 text-center">Pereche Valutară</th>
+                      <th className="p-2 border border-gray-700 text-center">Ora Lumânare 4H</th>
+                      <th className="p-2 border border-gray-700 text-center">Acțiuni</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').map((cursant, idx) => (
+                      <tr key={cursant.id} className="hover:bg-gray-700">
+                        <td className="p-2 border border-gray-700 text-center font-semibold">
+                          {idx + 1}
+                        </td>
+                        {editingCursant === cursant.id ? (
+                          <>
+                            <td className="p-2 border border-gray-700">
+                              <input
+                                type="text"
+                                value={editFormData.nume}
+                                onChange={(e) => setEditFormData({ ...editFormData, nume: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white"
+                              />
+                            </td>
+                            <td className="p-2 border border-gray-700">
+                              <input
+                                type="tel"
+                                value={editFormData.telefon}
+                                onChange={(e) => setEditFormData({ ...editFormData, telefon: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white"
+                              />
+                            </td>
+                            <td className="p-2 border border-gray-700">
+                              <select
+                                value={editFormData.tipParticipant}
+                                onChange={(e) => setEditFormData({ ...editFormData, tipParticipant: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                              >
+                                <option value="Cursant">Cursant</option>
+                                <option value="Mentor">Mentor</option>
+                              </select>
+                            </td>
+                            <td className="p-2 border border-gray-700">
+                              <input
+                                type="text"
+                                value={editFormData.perecheValutara}
+                                onChange={(e) => setEditFormData({ ...editFormData, perecheValutara: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                              />
+                            </td>
+                            <td className="p-2 border border-gray-700">
+                              <select
+                                value={editFormData.oraLumanare}
+                                onChange={(e) => setEditFormData({ ...editFormData, oraLumanare: e.target.value })}
+                                className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                              >
+                                <option value="0:00 - 4:00">0:00 - 4:00</option>
+                                <option value="4:00 - 8:00">4:00 - 8:00</option>
+                                <option value="8:00 - 12:00">8:00 - 12:00</option>
+                                <option value="12:00 - 16:00">12:00 - 16:00</option>
+                                <option value="16:00 - 20:00">16:00 - 20:00</option>
+                                <option value="20:00 - 24:00">20:00 - 24:00</option>
+                              </select>
+                            </td>
+                            <td className="p-2 border border-gray-700">
+                              <div className="flex gap-2 justify-center">
+                                <button
+                                  onClick={() => handleSaveEdit(cursant.id)}
+                                  disabled={loadingArmy}
+                                  className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm disabled:opacity-50"
+                                >
+                                  Salvează
+                                </button>
+                                <button
+                                  onClick={handleCancelEdit}
+                                  disabled={loadingArmy}
+                                  className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm disabled:opacity-50"
+                                >
+                                  Anulează
+                                </button>
+                              </div>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td 
+                              className="p-2 border border-gray-700 cursor-pointer hover:bg-green-600 transition-colors"
+                              onClick={() => openProgressModal(cursant)}
+                              title="Click pentru a vedea progresul"
+                            >
+                              {cursant.nume}
+                            </td>
+                            <td className="p-2 border border-gray-700">{cursant.telefon}</td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              <span className={`px-2 py-1 rounded text-sm font-semibold ${
+                                cursant.tipParticipant === 'Mentor' 
+                                  ? 'bg-purple-600 text-white' 
+                                  : 'bg-green-600 text-white'
+                              }`}>
+                                {cursant.tipParticipant || 'Cursant'}
+                              </span>
+                            </td>
+                            <td className="p-2 border border-gray-700 text-center font-semibold text-blue-300">
+                              {cursant.perecheValutara}
+                            </td>
+                            <td className="p-2 border border-gray-700 text-center text-sm">
+                              {cursant.oraLumanare || '8:00 - 12:00'}
                             </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">
@@ -1384,43 +1340,6 @@ const Dashboard = () => {
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
               >
                 {loadingArmy ? "Se șterge..." : "Șterge"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de confirmare */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-white mb-4">
-              Confirmare modificare status
-            </h3>
-            <p className="text-gray-300 mb-6">
-              Ești sigur că vrei să schimbi statusul de verificare pentru{" "}
-              <span className="font-semibold text-blue-400">{confirmData.nume}</span>{" "}
-              din{" "}
-              <span className={`font-semibold ${confirmData.currentVerified ? 'text-green-400' : 'text-red-400'}`}>
-                {confirmData.currentVerified ? "VERIFICAT" : "NEVERIFICAT"}
-              </span>{" "}
-              în{" "}
-              <span className={`font-semibold ${!confirmData.currentVerified ? 'text-green-400' : 'text-red-400'}`}>
-                {!confirmData.currentVerified ? "VERIFICAT" : "NEVERIFICAT"}
-              </span>?
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={closeConfirmModal}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-              >
-                Anulează
-              </button>
-              <button
-                onClick={confirmToggleVerified}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Confirmă
               </button>
             </div>
           </div>
