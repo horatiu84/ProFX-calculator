@@ -72,6 +72,10 @@ const Dashboard = () => {
   const [cursantToDelete, setCursantToDelete] = useState(null);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [selectedCursant, setSelectedCursant] = useState(null);
+  const [selectedScreenshot, setSelectedScreenshot] = useState(null);
+  const [showPrinciples, setShowPrinciples] = useState(false);
+  const [screenshotsPage, setScreenshotsPage] = useState(1);
+  const screenshotsPerPage = 10;
   const [searchCursant, setSearchCursant] = useState("");
   const [sortCursanti, setSortCursanti] = useState("asc");
 
@@ -371,11 +375,32 @@ const Dashboard = () => {
   const openProgressModal = (cursant) => {
     setSelectedCursant(cursant);
     setShowProgressModal(true);
+    setScreenshotsPage(1);
   };
 
   const closeProgressModal = () => {
     setShowProgressModal(false);
     setSelectedCursant(null);
+  };
+
+  // Funcție pentru download screenshot
+  const handleDownloadScreenshot = async (screenshot) => {
+    try {
+      const response = await fetch(screenshot.url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = screenshot.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Eroare la download:', error);
+      // Fallback - deschide într-o fereastră nouă
+      window.open(screenshot.url, '_blank');
+    }
   };
 
   const getProgressColor = (value) => {
@@ -1306,10 +1331,22 @@ const Dashboard = () => {
             </div>
 
             {/* Lista principiilor */}
-            <div className="p-6">
-              <h4 className="text-lg font-semibold text-white mb-4">
-                Cele 20 de Principii ale Bibliei Traderului
-              </h4>
+            <div className="p-6 border-t border-gray-700">
+              <button
+                onClick={() => setShowPrinciples(!showPrinciples)}
+                className="w-full flex items-center justify-between text-lg font-semibold text-white mb-4 hover:text-blue-400 transition-colors"
+              >
+                <span>Cele 20 de Principii ale Bibliei Traderului</span>
+                <svg 
+                  className={`w-5 h-5 transition-transform duration-200 ${showPrinciples ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showPrinciples && (
               <div className="space-y-3">
                 {principleNames.map((name, idx) => {
                   const progres = selectedCursant.progres || Array(20).fill(0);
@@ -1351,7 +1388,102 @@ const Dashboard = () => {
                   );
                 })}
               </div>
+              )}
             </div>
+
+            {/* Screenshots Section */}
+            {selectedCursant.screenshots && selectedCursant.screenshots.length > 0 && (() => {
+              const reversedScreenshots = selectedCursant.screenshots.slice().reverse();
+              const totalPages = Math.ceil(reversedScreenshots.length / screenshotsPerPage);
+              const startIndex = (screenshotsPage - 1) * screenshotsPerPage;
+              const endIndex = startIndex + screenshotsPerPage;
+              const currentScreenshots = reversedScreenshots.slice(startIndex, endIndex);
+              
+              return (
+              <div className="p-6 bg-gray-900 border-t border-gray-700">
+                <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Screenshots Uploadate ({selectedCursant.screenshots.length})
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-16">#</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">Nume Fișier</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-48">Data și Ora</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentScreenshots.map((screenshot, index) => (
+                        <tr 
+                          key={index}
+                          className="border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer transition-colors"
+                          onClick={() => setSelectedScreenshot(screenshot)}
+                        >
+                          <td className="py-3 px-4 text-blue-400 font-semibold">{startIndex + index + 1}</td>
+                          <td className="py-3 px-4 text-white">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span className="truncate">{screenshot.fileName}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-300 text-sm">
+                            {new Date(screenshot.uploadDate).toLocaleDateString('ro-RO', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+                    <button
+                      onClick={() => setScreenshotsPage(prev => Math.max(1, prev - 1))}
+                      disabled={screenshotsPage === 1}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      ← Anterior
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setScreenshotsPage(page)}
+                          className={`w-10 h-10 rounded ${
+                            page === screenshotsPage
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                          } transition-colors`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setScreenshotsPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={screenshotsPage === totalPages}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Următor →
+                    </button>
+                  </div>
+                )}
+              </div>
+              );
+            })()}
 
             {/* Footer */}
             <div className="sticky bottom-0 bg-gray-800 p-4 border-t border-gray-700 rounded-b-lg">
@@ -1361,6 +1493,57 @@ const Dashboard = () => {
               >
                 Închide
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox Modal for Screenshots */}
+      {selectedScreenshot && (
+        <div 
+          className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4"
+          onClick={() => setSelectedScreenshot(null)}
+        >
+          <button
+            onClick={() => setSelectedScreenshot(null)}
+            className="absolute top-4 right-4 bg-gray-800/90 hover:bg-gray-700 text-white p-3 rounded-full transition-colors z-50"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownloadScreenshot(selectedScreenshot);
+            }}
+            className="absolute top-4 right-20 bg-blue-600/90 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors z-50 flex items-center gap-2 font-semibold"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download
+          </button>
+          
+          <div className="max-w-7xl max-h-[90vh] w-full flex flex-col items-center gap-4">
+            <img
+              src={selectedScreenshot.url}
+              alt={selectedScreenshot.fileName}
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="text-center bg-gray-900/80 backdrop-blur-sm rounded-lg px-6 py-3">
+              <p className="text-white font-medium text-lg">{selectedScreenshot.fileName}</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Uploadat: {new Date(selectedScreenshot.uploadDate).toLocaleDateString('ro-RO', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
             </div>
           </div>
         </div>

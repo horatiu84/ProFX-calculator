@@ -422,19 +422,19 @@ const Biblia = () => {
                   className={`absolute inset-0 bg-gradient-to-br ${principleColors[idx].color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                 />
                 
-                <div className="relative z-10 p-6 md:p-8">
+                <div className="relative z-10 p-4 md:p-6 lg:p-8">
                   <div
-                    className="flex items-start justify-between cursor-pointer"
+                    className="flex items-start justify-between cursor-pointer gap-2"
                     onClick={() => toggleSection(idx)}
                   >
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="text-4xl md:text-5xl">{principleIcons[idx]}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h2 className="text-2xl md:text-3xl font-bold text-white">
+                    <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                      <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[idx]}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                          <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                             {idx + 1}. {principle.title}
                           </h2>
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                             principleProgress[idx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                             principleProgress[idx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                             principleProgress[idx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -444,10 +444,10 @@ const Biblia = () => {
                             {principleProgress[idx]}%
                           </span>
                         </div>
-                        <p className="text-gray-400 text-sm md:text-base italic">
+                        <p className="text-gray-400 text-sm md:text-base italic break-words">
                           {principle.subtitle}
                         </p>
-                        <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                        <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                           <div
                             className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[idx])} transition-all duration-500`}
                             style={{ width: `${principleProgress[idx]}%` }}
@@ -455,7 +455,7 @@ const Biblia = () => {
                         </div>
                       </div>
                     </div>
-                    <button className="ml-4 text-amber-400 hover:text-amber-300 transition-colors">
+                    <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
                       {expandedSection === idx ? (
                         <ChevronUp className="w-6 h-6" />
                       ) : (
@@ -544,19 +544,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx].color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx]}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx]}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -566,10 +566,10 @@ const Biblia = () => {
                               {principleProgress[actualIdx]}%
                             </span>
                           </div>
-                          <p className="text-gray-400 text-sm md:text-base italic">
+                          <p className="text-gray-400 text-sm md:text-base italic break-words">
                             {principle.subtitle}
                           </p>
-                          <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                          <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                             <div
                               className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500`}
                               style={{ width: `${principleProgress[actualIdx]}%` }}
@@ -577,7 +577,7 @@ const Biblia = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="ml-4 text-amber-400 hover:text-amber-300 transition-colors">
+                      <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
                         {expandedSection === actualIdx ? (
                           <ChevronUp className="w-6 h-6" />
                         ) : (
@@ -665,19 +665,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx].color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx]}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx]}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -686,10 +686,10 @@ const Biblia = () => {
                               {getProgressLabel(principleProgress[actualIdx])}
                             </span>
                           </div>
-                          <p className="text-amber-400/90 font-medium text-base md:text-lg mb-4">
+                          <p className="text-amber-400/90 font-medium text-sm md:text-base lg:text-lg mb-3 md:mb-4 break-words">
                             {principle.subtitle}
                           </p>
-                          <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                          <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                             <div
                               className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500`}
                               style={{ width: `${principleProgress[actualIdx]}%` }}
@@ -697,7 +697,7 @@ const Biblia = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="ml-4 text-amber-400 hover:text-amber-300 transition-colors">
+                      <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
                         {expandedSection === actualIdx ? (
                           <ChevronUp className="w-6 h-6" />
                         ) : (
@@ -785,19 +785,19 @@ const Biblia = () => {
                   className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx].color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                 />
                 
-                <div className="relative z-10 p-6 md:p-8">
+                <div className="relative z-10 p-4 md:p-6 lg:p-8">
                   <div
-                    className="flex items-start justify-between cursor-pointer"
+                    className="flex items-start justify-between cursor-pointer gap-2"
                     onClick={() => toggleSection(actualIdx)}
                   >
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="text-4xl md:text-5xl">{principleIcons[actualIdx]}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h2 className="text-2xl md:text-3xl font-bold text-white">
+                    <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                      <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx]}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                          <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                             {actualIdx + 1}. {principle.title}
                           </h2>
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                             principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                             principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                             principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -807,10 +807,10 @@ const Biblia = () => {
                             {principleProgress[actualIdx]}%
                           </span>
                         </div>
-                        <p className="text-gray-400 text-sm md:text-base italic">
+                        <p className="text-gray-400 text-sm md:text-base italic break-words">
                           {principle.subtitle}
                         </p>
-                        <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                        <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                           <div
                             className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500`}
                             style={{ width: `${principleProgress[actualIdx]}%` }}
@@ -818,7 +818,7 @@ const Biblia = () => {
                         </div>
                       </div>
                     </div>
-                    <button className="ml-4 text-amber-400 hover:text-amber-300 transition-colors">
+                    <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
                       {expandedSection === actualIdx ? (
                         <ChevronUp className="w-6 h-6" />
                       ) : (
@@ -904,19 +904,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx]?.color || 'from-gray-500/10'} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx] || '💪'}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx] || '💪'}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -925,7 +925,7 @@ const Biblia = () => {
                               {getProgressLabel(principleProgress[actualIdx])}
                             </span>
                           </div>
-                          <p className="text-amber-400/90 font-medium text-base md:text-lg mb-4">
+                          <p className="text-amber-400/90 font-medium text-sm md:text-base lg:text-lg mb-3 md:mb-4 break-words">
                             {principle.subtitle}
                           </p>
                         </div>
@@ -995,19 +995,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx]?.color || 'from-gray-500/10'} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx] || '📚'}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx] || '📚'}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -1115,19 +1115,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx]?.color || 'from-gray-500/10'} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx] || '🧠'}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx] || '🧠'}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -1136,10 +1136,10 @@ const Biblia = () => {
                               {getProgressLabel(principleProgress[actualIdx])}
                             </span>
                           </div>
-                          <p className="text-amber-400/90 font-medium text-base md:text-lg mb-4">
+                          <p className="text-amber-400/90 font-medium text-sm md:text-base lg:text-lg mb-3 md:mb-4 break-words">
                             {principle.subtitle}
                           </p>
-                          <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                          <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                             <div
                               className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500`}
                               style={{ width: `${principleProgress[actualIdx]}%` }}
@@ -1147,7 +1147,7 @@ const Biblia = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="ml-4 text-amber-400 hover:text-amber-300 transition-colors">
+                      <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
                         {expandedSection === actualIdx ? (
                           <ChevronUp className="w-6 h-6" />
                         ) : (
@@ -1232,19 +1232,19 @@ const Biblia = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${principleColors[actualIdx]?.color || 'from-gray-500/10'} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                   />
                   
-                  <div className="relative z-10 p-6 md:p-8">
+                  <div className="relative z-10 p-4 md:p-6 lg:p-8">
                     <div
-                      className="flex items-start justify-between cursor-pointer"
+                      className="flex items-start justify-between cursor-pointer gap-2"
                       onClick={() => toggleSection(actualIdx)}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="text-4xl md:text-5xl">{principleIcons[actualIdx] || '💼'}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white">
+                      <div className="flex items-start gap-2 md:gap-4 flex-1 min-w-0">
+                        <div className="text-3xl md:text-4xl lg:text-5xl flex-shrink-0">{principleIcons[actualIdx] || '💼'}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 md:gap-3 mb-2 flex-wrap">
+                            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-white break-words">
                               {actualIdx + 1}. {principle.title}
                             </h2>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -1253,7 +1253,7 @@ const Biblia = () => {
                               {getProgressLabel(principleProgress[actualIdx])}
                             </span>
                           </div>
-                          <p className="text-amber-400/90 font-medium text-base md:text-lg mb-4">
+                          <p className="text-amber-400/90 font-medium text-sm md:text-base lg:text-lg mb-4 break-words">
                             {principle.subtitle}
                           </p>
                           <div className="mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
