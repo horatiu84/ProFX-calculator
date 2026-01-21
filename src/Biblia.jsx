@@ -4,6 +4,41 @@ import { Book, ChevronDown, ChevronUp, User, LogOut, Save } from "lucide-react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 
+// === CACHE HELPERS - Reduce Firebase reads === 
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minute
+
+const getCachedData = (key) => {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const now = Date.now();
+    
+    // Verifică dacă cache-ul este încă valid
+    if (now - timestamp < CACHE_DURATION) {
+      return data;
+    }
+    
+    // Cache-ul a expirat, șterge-l
+    localStorage.removeItem(key);
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  } catch (err) {
+    console.warn('Nu s-a putut cache-ui datele:', err);
+  }
+};
+
 const Biblia = () => {
   const { language, translations } = useLanguage();
   const t = translations.biblia;
@@ -91,9 +126,20 @@ const Biblia = () => {
       const numeNormalized = loginForm.nume.trim().toLowerCase();
       const telefonNormalized = loginForm.telefon.trim().replace(/\s+/g, '');
 
-      // Obține toți cursanții din Army
-      const snapshot = await getDocs(collection(db, "Army"));
-      const cursanti = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Verifică cache-ul mai întâi
+      let cursanti = getCachedData('biblia_army_cursanti');
+      
+      if (cursanti) {
+        console.log('📦 Cursanți încărcați din cache pentru Biblia (economisim citiri Firebase)');
+      } else {
+        // Citește din Firebase doar dacă nu există în cache
+        console.log('🔄 Citire cursanți din Firebase pentru Biblia...');
+        const snapshot = await getDocs(collection(db, "Army"));
+        cursanti = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Salvează în cache
+        setCachedData('biblia_army_cursanti', cursanti);
+      }
 
       // Caută un cursant care se potrivește
       const cursant = cursanti.find(c => {
@@ -189,10 +235,16 @@ const Biblia = () => {
         lastUpdated: new Date().toISOString()
       });
 
-      // Actualizează și localStorage
+      // Actualizează și localStorage pentru toate componentele
       const updatedUser = { ...authenticatedUser, progres: principleProgress };
       localStorage.setItem('bibliaUser', JSON.stringify(updatedUser));
+      localStorage.setItem('armyUser', JSON.stringify(updatedUser)); // Actualizează și pentru Army
       setAuthenticatedUser(updatedUser);
+      
+      // Invalidează cache-urile pentru ca Dashboard și alte componente să primească datele fresh
+      localStorage.removeItem('biblia_army_cursanti');
+      localStorage.removeItem('dashboard_army');
+      console.log('🔄 Cache invalidat după salvare progres - datele vor fi actualizate la următoarea încărcare');
 
       setSaveSuccess(true);
       setHasUnsavedChanges(false);
@@ -920,54 +972,81 @@ const Biblia = () => {
                               principleProgress[actualIdx] < 25 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
                               principleProgress[actualIdx] < 50 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
                               principleProgress[actualIdx] < 75 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                              'bg-green-500/20 text-green-400 border border-green-500/30'
+                              principleProgress[actualIdx] < 100 ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                              'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                             }`}>
-                              {getProgressLabel(principleProgress[actualIdx])}
+                              {principleProgress[actualIdx]}%
                             </span>
                           </div>
-                          <p className="text-amber-400/90 font-medium text-sm md:text-base lg:text-lg mb-3 md:mb-4 break-words">
+                          <p className="text-gray-400 text-sm md:text-base italic break-words">
                             {principle.subtitle}
                           </p>
+                          <div className="mt-2 md:mt-3 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500`}
+                              style={{ width: `${principleProgress[actualIdx]}%` }}
+                            />
+                          </div>
                         </div>
                       </div>
-                  <div className={`transform transition-transform duration-300 ${expandedSection === actualIdx ? 'rotate-180' : ''}`}>
-                    <ChevronDown className="w-6 h-6 text-amber-400" />
-                  </div>
-                </div>
-
-                {expandedSection === actualIdx && (
-                  <div className="mt-6 pt-6 border-t border-gray-700/50 space-y-6">
-                    <p className="text-gray-300 leading-relaxed text-base md:text-lg">
-                      {principle.content}
-                    </p>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 font-medium">{principle.progressLabels?.min || 'Începător'}</span>
-                        <span className="text-amber-400 font-bold">{principleProgress[actualIdx]}%</span>
-                        <span className="text-gray-400 font-medium">{principle.progressLabels?.max || 'Stăpânit'}</span>
-                      </div>
-                      
-                      <div className="relative h-3 bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className={`absolute inset-y-0 left-0 bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500 rounded-full`}
-                          style={{ width: `${principleProgress[actualIdx]}%` }}
-                        >
-                          <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                        </div>
-                      </div>
-                      
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={principleProgress[actualIdx]}
-                        onChange={(e) => updateProgress(actualIdx, parseInt(e.target.value))}
-                        className="w-full h-3 bg-transparent rounded-lg appearance-none cursor-pointer slider"
-                      />
+                      <button className="ml-2 md:ml-4 text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0">
+                        {expandedSection === actualIdx ? (
+                          <ChevronUp className="w-6 h-6" />
+                        ) : (
+                          <ChevronDown className="w-6 h-6" />
+                        )}
+                      </button>
                     </div>
-                  </div>
-                )}
+
+                    {expandedSection === actualIdx && (
+                      <div className="mt-6 space-y-6 animate-in slide-in-from-top duration-500">
+                        <div className="p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50">
+                          <p className="text-gray-300 leading-relaxed text-sm md:text-base whitespace-pre-line">
+                            {principle.content}
+                          </p>
+                        </div>
+
+                        <div className="p-6 bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/30">
+                          <h3 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
+                            <span>📊</span> Progresul Tău
+                          </h3>
+
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={principleProgress[actualIdx]}
+                            onChange={(e) => updateProgress(actualIdx, e.target.value)}
+                            className="w-full mb-4 cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, 
+                                ${principleProgress[actualIdx] < 25 ? '#ef4444' : 
+                                  principleProgress[actualIdx] < 50 ? '#f97316' : 
+                                  principleProgress[actualIdx] < 75 ? '#eab308' : '#22c55e'} 0%, 
+                                ${principleProgress[actualIdx] < 25 ? '#dc2626' : 
+                                  principleProgress[actualIdx] < 50 ? '#ea580c' : 
+                                  principleProgress[actualIdx] < 75 ? '#ca8a04' : '#16a34a'} ${principleProgress[actualIdx]}%, 
+                                #374151 ${principleProgress[actualIdx]}%, 
+                                #374151 100%)`
+                            }}
+                          />
+
+                          <div className="flex items-center justify-between text-xs text-gray-400">
+                            <span>0% - {principle.progressLabels?.min || 'Începător'}</span>
+                            <span className="font-bold text-lg text-white">{principleProgress[actualIdx]}%</span>
+                            <span>100% - {principle.progressLabels?.max || 'Stăpânit'}</span>
+                          </div>
+                          <div className="relative h-3 bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className={`absolute inset-y-0 left-0 bg-gradient-to-r ${getProgressColor(principleProgress[actualIdx])} transition-all duration-500 rounded-full`}
+                              style={{ width: `${principleProgress[actualIdx]}%` }}
+                            >
+                              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
               </div>
             </div>
           );

@@ -18,6 +18,74 @@ const formatDate = (createdAt) => {
   }
 };
 
+// === CACHE HELPERS - Reduce Firebase reads === 
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minute
+
+const getCachedData = (key) => {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const now = Date.now();
+    
+    // Verifică dacă cache-ul este încă valid
+    if (now - timestamp < CACHE_DURATION) {
+      return data;
+    }
+    
+    // Cache-ul a expirat, șterge-l
+    localStorage.removeItem(key);
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  } catch (err) {
+    console.warn('Nu s-a putut cache-ui datele:', err);
+  }
+};
+
+const clearCachedData = (key) => {
+  try {
+    localStorage.removeItem(key);
+  } catch (err) {
+    console.warn('Nu s-a putut șterge cache-ul:', err);
+  }
+};
+
+// Funcție pentru a verifica dacă utilizatorul a uploadat astăzi (ora României - EET/EEST)
+const hasUploadedToday = (lastUploadDate) => {
+  if (!lastUploadDate) return false;
+  
+  try {
+    // Convertim la data României (UTC+2 sau UTC+3 in functie de DST)
+    const lastUpload = new Date(lastUploadDate);
+    const now = new Date();
+    
+    // Convertim la ora României
+    const romaniaOffset = 2 * 60; // UTC+2 (sau +3 în timpul verii, dar vom folosi +2 ca bază)
+    const lastUploadRomania = new Date(lastUpload.getTime() + romaniaOffset * 60 * 1000);
+    const nowRomania = new Date(now.getTime() + romaniaOffset * 60 * 1000);
+    
+    // Resetare la începutul zilei (00:00:00)
+    const lastUploadDay = new Date(lastUploadRomania.getFullYear(), lastUploadRomania.getMonth(), lastUploadRomania.getDate());
+    const todayStart = new Date(nowRomania.getFullYear(), nowRomania.getMonth(), nowRomania.getDate());
+    
+    // Verificăm dacă lastUploadDay >= todayStart (adică a uploadat astăzi)
+    return lastUploadDay.getTime() >= todayStart.getTime();
+  } catch {
+    return false;
+  }
+};
+
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
@@ -110,10 +178,26 @@ const Dashboard = () => {
     await signOut(auth);
   };
 
-  const fetchFeedbackAnonim = async () => {
+  const fetchFeedbackAnonim = async (forceRefresh = false) => {
     setLoadingFeedback(true);
     setErrorFeedback("");
+    
     try {
+      // Verifică cache-ul mai întâi (doar dacă nu e forceRefresh)
+      if (!forceRefresh) {
+        const cachedData = getCachedData('dashboard_feedback');
+        if (cachedData) {
+          console.log('📦 Feedback încărcat din cache (economisim citiri Firebase)');
+          setFeedbackAnonim(cachedData.feedback);
+          setMediaEducatie(cachedData.mediaEducatie);
+          setMediaLiveTrade(cachedData.mediaLiveTrade);
+          setLoadingFeedback(false);
+          return;
+        }
+      }
+      
+      // Dacă nu există cache sau e forceRefresh, citește din Firebase
+      console.log('🔄 Citire feedback din Firebase...');
       const snapshot = await getDocs(collection(db, "formularAnonim"));
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
@@ -125,18 +209,23 @@ const Dashboard = () => {
         .map((f) => parseFloat(f.liveTrade))
         .filter((v) => !isNaN(v));
 
-      setMediaEducatie(
-        educValues.length
-          ? (educValues.reduce((a, b) => a + b, 0) / educValues.length).toFixed(2)
-          : "0.00"
-      );
-      setMediaLiveTrade(
-        liveValues.length
-          ? (liveValues.reduce((a, b) => a + b, 0) / liveValues.length).toFixed(2)
-          : "0.00"
-      );
+      const mediaEducatieCalc = educValues.length
+        ? (educValues.reduce((a, b) => a + b, 0) / educValues.length).toFixed(2)
+        : "0.00";
+      const mediaLiveTradeCalc = liveValues.length
+        ? (liveValues.reduce((a, b) => a + b, 0) / liveValues.length).toFixed(2)
+        : "0.00";
 
+      setMediaEducatie(mediaEducatieCalc);
+      setMediaLiveTrade(mediaLiveTradeCalc);
       setFeedbackAnonim(data);
+      
+      // Salvează în cache
+      setCachedData('dashboard_feedback', {
+        feedback: data,
+        mediaEducatie: mediaEducatieCalc,
+        mediaLiveTrade: mediaLiveTradeCalc
+      });
     } catch (err) {
       setErrorFeedback(
         "Eroare la încărcarea feedback-ului anonim: " + err.message
@@ -146,13 +235,30 @@ const Dashboard = () => {
     }
   };
 
-  const fetchConcursInscrieri = async () => {
+  const fetchConcursInscrieri = async (forceRefresh = false) => {
     setLoadingConcurs(true);
     setErrorConcurs("");
+    
     try {
+      // Verifică cache-ul mai întâi
+      if (!forceRefresh) {
+        const cachedData = getCachedData('dashboard_concurs');
+        if (cachedData) {
+          console.log('📦 Concurs încărcat din cache (economisim citiri Firebase)');
+          setConcursInscrieri(cachedData);
+          setLoadingConcurs(false);
+          return;
+        }
+      }
+      
+      // Citește din Firebase
+      console.log('🔄 Citire concurs din Firebase...');
       const snapshot = await getDocs(collection(db, "inscrieri_concurs"));
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setConcursInscrieri(data);
+      
+      // Salvează în cache
+      setCachedData('dashboard_concurs', data);
     } catch (err) {
       setErrorConcurs(
         "Eroare la încărcarea înscrierilor la concurs: " + err.message
@@ -238,13 +344,30 @@ const Dashboard = () => {
 
   // === ARMY FUNCTIONS ===
   
-  const fetchArmyCursanti = async () => {
+  const fetchArmyCursanti = async (forceRefresh = false) => {
     setLoadingArmy(true);
     setErrorArmy("");
+    
     try {
+      // Verifică cache-ul mai întâi
+      if (!forceRefresh) {
+        const cachedData = getCachedData('dashboard_army');
+        if (cachedData) {
+          console.log('📦 Army încărcat din cache (economisim citiri Firebase)');
+          setArmyCursanti(cachedData);
+          setLoadingArmy(false);
+          return;
+        }
+      }
+      
+      // Citește din Firebase
+      console.log('🔄 Citire Army din Firebase...');
       const snapshot = await getDocs(collection(db, "Army"));
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setArmyCursanti(data);
+      
+      // Salvează în cache
+      setCachedData('dashboard_army', data);
     } catch (err) {
       setErrorArmy("Eroare la încărcarea cursanților Army: " + err.message);
     } finally {
@@ -279,7 +402,10 @@ const Dashboard = () => {
       console.log("Cursant adăugat cu succes!");
       setSuccessArmy("Cursant adăugat cu succes!");
       setNewCursant({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
-      fetchArmyCursanti(); // Reîncarcă lista
+      
+      // Invalidează cache-ul și reîncarcă cu date fresh
+      clearCachedData('dashboard_army');
+      fetchArmyCursanti(true); // Forțează refresh
     } catch (err) {
       console.error("Eroare completă:", err);
       console.error("Cod eroare:", err.code);
@@ -332,7 +458,10 @@ const Dashboard = () => {
       setSuccessArmy("Cursant actualizat cu succes!");
       setEditingCursant(null);
       setEditFormData({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
-      fetchArmyCursanti();
+      
+      // Invalidează cache-ul și reîncarcă
+      clearCachedData('dashboard_army');
+      fetchArmyCursanti(true);
     } catch (err) {
       setErrorArmy("Eroare la actualizare: " + err.message);
     } finally {
@@ -362,7 +491,10 @@ const Dashboard = () => {
       
       setSuccessArmy(`Cursant "${cursantToDelete.nume}" șters cu succes!`);
       closeDeleteModal();
-      fetchArmyCursanti();
+      
+      // Invalidează cache-ul și reîncarcă
+      clearCachedData('dashboard_army');
+      fetchArmyCursanti(true);
     } catch (err) {
       setErrorArmy("Eroare la ștergere: " + err.message);
       closeDeleteModal();
@@ -898,6 +1030,17 @@ const Dashboard = () => {
                 <span>👨‍🏫</span>
                 Lista Mentori ({armyCursanti.filter(c => c.tipParticipant === 'Mentor').length})
               </h3>
+              {armyCursanti.filter(c => c.tipParticipant === 'Mentor').length > 0 && (
+                <button
+                  onClick={() => fetchArmyCursanti(true)}
+                  disabled={loadingArmy}
+                  className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm flex items-center gap-2 disabled:opacity-50"
+                  title="Reîncarcă datele din Firebase"
+                >
+                  <span>🔄</span>
+                  {loadingArmy ? 'Se încarcă...' : 'Refresh'}
+                </button>
+              )}
             </div>
             {loadingArmy && !armyCursanti.length ? (
               <p>Se încarcă mentorii...</p>
@@ -914,6 +1057,7 @@ const Dashboard = () => {
                       <th className="p-2 border border-gray-700 text-center">Tip Participant</th>
                       <th className="p-2 border border-gray-700 text-center">Pereche Valutară</th>
                       <th className="p-2 border border-gray-700 text-center">Ora Lumânare 4H</th>
+                      <th className="p-2 border border-gray-700 text-center">Upload Astăzi</th>
                       <th className="p-2 border border-gray-700 text-center">Acțiuni</th>
                     </tr>
                   </thead>
@@ -973,6 +1117,13 @@ const Dashboard = () => {
                                 <option value="20:00 - 24:00">20:00 - 24:00</option>
                               </select>
                             </td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              {hasUploadedToday(cursant.lastUploadDate) ? (
+                                <span className="text-2xl" title="A uploadat astăzi">🟢</span>
+                              ) : (
+                                <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
+                              )}
+                            </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">
                                 <button
@@ -1017,6 +1168,13 @@ const Dashboard = () => {
                             <td className="p-2 border border-gray-700 text-center text-sm">
                               {cursant.oraLumanare || '8:00 - 12:00'}
                             </td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              {hasUploadedToday(cursant.lastUploadDate) ? (
+                                <span className="text-2xl" title="A uploadat astăzi">🟢</span>
+                              ) : (
+                                <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
+                              )}
+                            </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">
                                 <button
@@ -1053,13 +1211,24 @@ const Dashboard = () => {
                 Lista Cursanti ({armyCursanti.filter(c => c.tipParticipant !== 'Mentor').filter(c => c.nume.toLowerCase().includes(searchCursant.toLowerCase())).length})
               </h3>
               {armyCursanti.filter(c => c.tipParticipant !== 'Mentor').length > 0 && (
-                <button
-                  onClick={exportArmyToExcel}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center gap-2"
-                >
-                  <span>📊</span>
-                  Exporta cursanti
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => fetchArmyCursanti(true)}
+                    disabled={loadingArmy}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm flex items-center gap-2 disabled:opacity-50"
+                    title="Reîncarcă datele din Firebase"
+                  >
+                    <span>🔄</span>
+                    {loadingArmy ? 'Se încarcă...' : 'Refresh'}
+                  </button>
+                  <button
+                    onClick={exportArmyToExcel}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center gap-2"
+                  >
+                    <span>📊</span>
+                    Exporta cursanti
+                  </button>
+                </div>
               )}
             </div>
             
@@ -1116,6 +1285,7 @@ const Dashboard = () => {
                       <th className="p-2 border border-gray-700 text-center">Tip Participant</th>
                       <th className="p-2 border border-gray-700 text-center">Pereche Valutară</th>
                       <th className="p-2 border border-gray-700 text-center">Ora Lumânare 4H</th>
+                      <th className="p-2 border border-gray-700 text-center">Upload Astăzi</th>
                       <th className="p-2 border border-gray-700 text-center">Acțiuni</th>
                     </tr>
                   </thead>
@@ -1187,6 +1357,13 @@ const Dashboard = () => {
                                 <option value="20:00 - 24:00">20:00 - 24:00</option>
                               </select>
                             </td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              {hasUploadedToday(cursant.lastUploadDate) ? (
+                                <span className="text-2xl" title="A uploadat astăzi">🟢</span>
+                              ) : (
+                                <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
+                              )}
+                            </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">
                                 <button
@@ -1230,6 +1407,13 @@ const Dashboard = () => {
                             </td>
                             <td className="p-2 border border-gray-700 text-center text-sm">
                               {cursant.oraLumanare || '8:00 - 12:00'}
+                            </td>
+                            <td className="p-2 border border-gray-700 text-center">
+                              {hasUploadedToday(cursant.lastUploadDate) ? (
+                                <span className="text-2xl" title="A uploadat astăzi">🟢</span>
+                              ) : (
+                                <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
+                              )}
                             </td>
                             <td className="p-2 border border-gray-700">
                               <div className="flex gap-2 justify-center">

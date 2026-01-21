@@ -1,10 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 import { User, LogOut, Loader, Book, Upload, ChevronRight } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import Biblia from "./Biblia.jsx";
 import ArmyUpload from "./ArmyUpload.jsx";
+
+// === CACHE HELPERS - Reduce Firebase reads === 
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minute
+
+const getCachedData = (key) => {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const now = Date.now();
+    
+    if (now - timestamp < CACHE_DURATION) {
+      return data;
+    }
+    
+    localStorage.removeItem(key);
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  } catch (err) {
+    console.warn('Nu s-a putut cache-ui datele:', err);
+  }
+};
 
 const Army = () => {
   const { language } = useLanguage();
@@ -25,6 +58,45 @@ const Army = () => {
   // State pentru selecția activității
   const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload'
 
+  // Listen for updates from Biblia component when user switches back
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // When returning to this tab/component, check for updated user data
+      if (document.visibilityState === 'visible' && authenticatedUser) {
+        const savedUser = localStorage.getItem('armyUser');
+        if (savedUser) {
+          const updatedUser = JSON.parse(savedUser);
+          // Update only if progress has changed
+          if (JSON.stringify(updatedUser.progres) !== JSON.stringify(authenticatedUser.progres)) {
+            setAuthenticatedUser(updatedUser);
+          }
+        }
+      }
+    };
+
+    // Check for updates when component becomes visible or activeView changes back to null (main menu)
+    const checkForUpdates = () => {
+      if (authenticatedUser && activeView === null) {
+        const savedUser = localStorage.getItem('armyUser');
+        if (savedUser) {
+          const updatedUser = JSON.parse(savedUser);
+          if (JSON.stringify(updatedUser.progres) !== JSON.stringify(authenticatedUser.progres)) {
+            setAuthenticatedUser(updatedUser);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Check for updates when returning to main menu
+    checkForUpdates();
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [authenticatedUser, activeView]);
+
   // Funcție de autentificare
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,9 +108,20 @@ const Army = () => {
       const numeNormalized = loginForm.nume.trim().toLowerCase();
       const telefonNormalized = loginForm.telefon.trim().replace(/\s+/g, '');
 
-      // Obține toți cursanții din Army
-      const snapshot = await getDocs(collection(db, "Army"));
-      const cursanti = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Verifică cache-ul mai întâi
+      let cursanti = getCachedData('army_login_cursanti');
+      
+      if (cursanti) {
+        console.log('📦 Cursanți încărcați din cache pentru Army (economisim citiri Firebase)');
+      } else {
+        // Citește din Firebase doar dacă nu există în cache
+        console.log('🔄 Citire cursanți din Firebase pentru Army...');
+        const snapshot = await getDocs(collection(db, "Army"));
+        cursanti = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Salvează în cache
+        setCachedData('army_login_cursanti', cursanti);
+      }
 
       // Caută un cursant care se potrivește
       const cursant = cursanti.find(c => {

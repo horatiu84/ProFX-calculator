@@ -25,6 +25,31 @@ export async function uploadScreenshotToCloudinary(file) {
   return await response.json();
 }
 
+// Funcție pentru a verifica dacă utilizatorul a uploadat astăzi (ora României - EET/EEST)
+const hasUploadedToday = (lastUploadDate) => {
+  if (!lastUploadDate) return false;
+  
+  try {
+    // Convertim la data României (UTC+2 sau UTC+3 in functie de DST)
+    const lastUpload = new Date(lastUploadDate);
+    const now = new Date();
+    
+    // Convertim la ora României
+    const romaniaOffset = 2 * 60; // UTC+2 (sau +3 în timpul verii, dar vom folosi +2 ca bază)
+    const lastUploadRomania = new Date(lastUpload.getTime() + romaniaOffset * 60 * 1000);
+    const nowRomania = new Date(now.getTime() + romaniaOffset * 60 * 1000);
+    
+    // Resetare la începutul zilei (00:00:00)
+    const lastUploadDay = new Date(lastUploadRomania.getFullYear(), lastUploadRomania.getMonth(), lastUploadRomania.getDate());
+    const todayStart = new Date(nowRomania.getFullYear(), nowRomania.getMonth(), nowRomania.getDate());
+    
+    // Verificăm dacă lastUploadDay >= todayStart (adică a uploadat astăzi)
+    return lastUploadDay.getTime() >= todayStart.getTime();
+  } catch {
+    return false;
+  }
+};
+
 const ArmyUpload = () => {
   const { language } = useLanguage();
   
@@ -50,6 +75,9 @@ const ArmyUpload = () => {
   // State pentru paginatie
   const [screenshotsPage, setScreenshotsPage] = useState(1);
   const screenshotsPerPage = 10;
+  
+  // State pentru verificare upload zilnic
+  const [hasUploadedTodayStatus, setHasUploadedTodayStatus] = useState(false);
 
   // Încarcă screenshot-urile utilizatorului din Firebase
   useEffect(() => {
@@ -60,7 +88,29 @@ const ArmyUpload = () => {
       }
 
       try {
-        // Reîncarcă datele utilizatorului din Firebase pentru a obține screenshots-urile actuale
+        // Verifică cache mai întâi (doar pentru screenshots, nu pentru lastUploadDate)
+        const cached = localStorage.getItem(`userScreenshots_${authenticatedUser.id}`);
+        if (cached) {
+          try {
+            const { data, timestamp } = JSON.parse(cached);
+            const now = Date.now();
+            const CACHE_DURATION = 2 * 60 * 1000; // 2 minute pentru ArmyUpload
+            
+            // Folosește cache-ul doar dacă este fresh
+            if (now - timestamp < CACHE_DURATION) {
+              console.log('📦 Screenshots încărcate din cache (economisim citiri Firebase)');
+              setUserScreenshots(data.screenshots || []);
+              setHasUploadedTodayStatus(hasUploadedToday(data.lastUploadDate));
+              setLoading(false);
+              return;
+            }
+          } catch (err) {
+            console.warn('Cache invalid, se reîncarcă din Firebase');
+          }
+        }
+        
+        // Citește din Firebase
+        console.log('🔄 Citire screenshots din Firebase...');
         const userRef = doc(db, "Army", authenticatedUser.id);
         const userDoc = await getDoc(userRef);
         
@@ -69,8 +119,17 @@ const ArmyUpload = () => {
           const screenshots = userData.screenshots || [];
           setUserScreenshots(screenshots);
           
+          // Verifică status upload zilnic
+          setHasUploadedTodayStatus(hasUploadedToday(userData.lastUploadDate));
+          
+          // Salvează în cache
+          localStorage.setItem(`userScreenshots_${authenticatedUser.id}`, JSON.stringify({
+            data: { screenshots, lastUploadDate: userData.lastUploadDate },
+            timestamp: Date.now()
+          }));
+          
           // Actualizează și localStorage cu datele fresh
-          const updatedUser = { ...authenticatedUser, screenshots };
+          const updatedUser = { ...authenticatedUser, screenshots, lastUploadDate: userData.lastUploadDate };
           localStorage.setItem('armyUser', JSON.stringify(updatedUser));
           localStorage.setItem('armyUploadUser', JSON.stringify(updatedUser));
         }
@@ -123,6 +182,9 @@ const ArmyUpload = () => {
 
       // Actualizează local
       setUserScreenshots(prev => prev.filter(s => s.publicId !== screenshot.publicId));
+      
+      // Invalidează cache-ul
+      localStorage.removeItem(`userScreenshots_${authenticatedUser.id}`);
       
       // Actualizează localStorage
       const updatedScreenshots = userScreenshots.filter(s => s.publicId !== screenshot.publicId);
@@ -204,17 +266,24 @@ const ArmyUpload = () => {
 
           results.push({ success: true, fileName: file.name, data: screenshotData });
 
-          // Salvează în Firebase
+          // Salvează în Firebase cu timestamp-ul upload-ului zilei
           const userRef = doc(db, "Army", authenticatedUser.id);
           await updateDoc(userRef, {
-            screenshots: arrayUnion(screenshotData)
+            screenshots: arrayUnion(screenshotData),
+            lastUploadDate: new Date().toISOString() // Salvăm data și ora exactă
           });
 
           // Actualizează local
           setUserScreenshots(prev => [...prev, screenshotData]);
           
+          // Actualizează status upload zilnic
+          setHasUploadedTodayStatus(true);
+          
+          // Invalidează cache-ul pentru a forța reîncărcarea
+          localStorage.removeItem(`userScreenshots_${authenticatedUser.id}`);
+          
           // Actualizează localStorage
-          const updatedUser = { ...authenticatedUser, screenshots: [...userScreenshots, screenshotData] };
+          const updatedUser = { ...authenticatedUser, screenshots: [...userScreenshots, screenshotData], lastUploadDate: new Date().toISOString() };
           localStorage.setItem('armyUser', JSON.stringify(updatedUser));
           localStorage.setItem('armyUploadUser', JSON.stringify(updatedUser));
 
@@ -258,6 +327,49 @@ const ArmyUpload = () => {
         </div>
       ) : (
         <div className="max-w-6xl mx-auto pt-12 md:pt-0">
+        
+        {/* Notificare dacă nu a uploadat astăzi */}
+        {!hasUploadedTodayStatus && (
+          <div className="bg-gradient-to-r from-red-600 to-orange-600 border-2 border-red-400 rounded-2xl p-4 mb-6 shadow-lg animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">⚠️</div>
+              <div className="flex-1">
+                <h4 className="text-white font-bold text-lg mb-1">
+                  {language === 'ro' 
+                    ? '🔴 Nu ai uploadat încă o poză astăzi!' 
+                    : '🔴 You haven\'t uploaded a photo today yet!'}
+                </h4>
+                <p className="text-white/90 text-sm">
+                  {language === 'ro' 
+                    ? 'Te rugăm să încarci screenshot-ul cu tranzacțiile tale pentru ziua de astăzi.' 
+                    : 'Please upload your screenshot with today\'s transactions.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Confirmare upload reușit */}
+        {hasUploadedTodayStatus && (
+          <div className="bg-gradient-to-r from-green-600 to-emerald-600 border-2 border-green-400 rounded-2xl p-4 mb-6 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">✅</div>
+              <div className="flex-1">
+                <h4 className="text-white font-bold text-lg mb-1">
+                  {language === 'ro' 
+                    ? '🟢 Bravo! Ai uploadat deja astăzi!' 
+                    : '🟢 Great! You\'ve already uploaded today!'}
+                </h4>
+                <p className="text-white/90 text-sm">
+                  {language === 'ro' 
+                    ? 'Screenshot-ul tău a fost înregistrat cu succes pentru ziua de astăzi.' 
+                    : 'Your screenshot has been successfully recorded for today.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Upload Section */}
         <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-gray-700/50">
           <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
