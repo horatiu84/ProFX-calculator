@@ -61,6 +61,7 @@ const ArmyUpload = () => {
   
   // State pentru upload
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [fileNotes, setFileNotes] = useState([]); // Note pentru fiecare fișier
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState([]);
   const [uploadResults, setUploadResults] = useState([]);
@@ -155,12 +156,14 @@ const ArmyUpload = () => {
     }
     
     setSelectedFiles(prev => [...prev, ...imageFiles]);
+    setFileNotes(prev => [...prev, ...Array(imageFiles.length).fill('')]);
     setUploadResults([]);
   };
 
   // Șterge fișier din selecție
   const removeFile = (index) => {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setFileNotes(prev => prev.filter((_, i) => i !== index));
   };
 
   // Șterge screenshot
@@ -254,7 +257,8 @@ const ArmyUpload = () => {
             uploadDate: new Date().toISOString(),
             fileName: file.name,
             size: file.size,
-            format: cloudinaryResponse.format
+            format: cloudinaryResponse.format,
+            note: fileNotes[i] || '' // Adaugă nota (opțională)
           };
 
           // Actualizează progresul
@@ -299,6 +303,7 @@ const ArmyUpload = () => {
       if (results.every(r => r.success)) {
         setTimeout(() => {
           setSelectedFiles([]);
+          setFileNotes([]);
           setUploadResults([]);
         }, 3000);
       }
@@ -412,34 +417,60 @@ const ArmyUpload = () => {
                   ? `Fișiere selectate (${selectedFiles.length})` 
                   : `Selected files (${selectedFiles.length})`}
               </h4>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {selectedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
-                    <div className="flex items-center gap-3 flex-1">
-                      <Image className="w-5 h-5 text-amber-400" />
-                      <span className="text-white text-sm truncate">{file.name}</span>
-                      <span className="text-gray-400 text-xs">
-                        {(file.size / 1024).toFixed(1)} KB
-                      </span>
-                    </div>
-                    {uploading && uploadProgress[index] !== undefined && (
-                      <div className="flex items-center gap-2 mx-4">
-                        <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all duration-300"
-                            style={{ width: `${uploadProgress[index]}%` }}
-                          />
-                        </div>
-                        <span className="text-gray-400 text-xs">{uploadProgress[index]}%</span>
+                  <div key={index} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Image className="w-5 h-5 text-amber-400" />
+                        <span className="text-white text-sm truncate">{file.name}</span>
+                        <span className="text-gray-400 text-xs">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </span>
                       </div>
-                    )}
+                      {uploading && uploadProgress[index] !== undefined && (
+                        <div className="flex items-center gap-2 mx-4">
+                          <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all duration-300"
+                              style={{ width: `${uploadProgress[index]}%` }}
+                            />
+                          </div>
+                          <span className="text-gray-400 text-xs">{uploadProgress[index]}%</span>
+                        </div>
+                      )}
+                      {!uploading && (
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="text-red-300 hover:text-red-200 transition-colors"
+                        >
+                          <XCircle className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                    
+                    {/* Notă opțională */}
                     {!uploading && (
-                      <button
-                        onClick={() => removeFile(index)}
-                        className="text-red-300 hover:text-red-200 transition-colors"
-                      >
-                        <XCircle className="w-5 h-5" />
-                      </button>
+                      <div>
+                        <label className="block text-gray-400 text-xs mb-1.5">
+                          {language === 'ro' 
+                            ? '📝 Notă (opțional): Analiză tehnică, motivul intrării în trade, etc.' 
+                            : '📝 Note (optional): Technical analysis, reason for entering trade, etc.'}
+                        </label>
+                        <textarea
+                          value={fileNotes[index] || ''}
+                          onChange={(e) => {
+                            const newNotes = [...fileNotes];
+                            newNotes[index] = e.target.value;
+                            setFileNotes(newNotes);
+                          }}
+                          placeholder={language === 'ro' 
+                            ? 'Ex: Breakout din range...' 
+                            : 'Ex: Breakout from range...'}
+                          className="w-full bg-gray-700/50 text-white text-sm rounded-lg px-3 py-2 border border-gray-600 focus:border-amber-400 focus:outline-none resize-none"
+                          rows="2"
+                        />
+                      </div>
                     )}
                   </div>
                 ))}

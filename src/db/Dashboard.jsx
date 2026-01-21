@@ -1598,6 +1598,7 @@ const Dashboard = () => {
                         <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-16">#</th>
                         <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">Nume Fișier</th>
                         <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-48">Data și Ora</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">Notă</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1624,6 +1625,17 @@ const Dashboard = () => {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}
+                          </td>
+                          <td className="py-3 px-4 text-gray-300 text-sm">
+                            {screenshot.note ? (
+                              <div className="max-w-xs">
+                                <span className="line-clamp-2" title={screenshot.note}>
+                                  📝 {screenshot.note}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-500 italic">-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -1717,7 +1729,7 @@ const Dashboard = () => {
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
-            <div className="text-center bg-gray-900/80 backdrop-blur-sm rounded-lg px-6 py-3">
+            <div className="text-center bg-gray-900/80 backdrop-blur-sm rounded-lg px-6 py-4 max-w-3xl">
               <p className="text-white font-medium text-lg">{selectedScreenshot.fileName}</p>
               <p className="text-gray-400 text-sm mt-1">
                 Uploadat: {new Date(selectedScreenshot.uploadDate).toLocaleDateString('ro-RO', {
@@ -1728,6 +1740,14 @@ const Dashboard = () => {
                   minute: '2-digit'
                 })}
               </p>
+              {selectedScreenshot.note && (
+                <div className="mt-3 pt-3 border-t border-gray-700">
+                  <p className="text-amber-400 font-semibold text-sm mb-1">📝 Notă:</p>
+                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                    {selectedScreenshot.note}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
