@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
-import { collection, getDocs, doc, updateDoc, addDoc, Timestamp, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, addDoc, Timestamp, deleteDoc, setDoc } from "firebase/firestore";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -126,7 +126,12 @@ const Dashboard = () => {
     telefon: "",
     perecheValutara: "",
     tipParticipant: "Cursant",
-    oraLumanare: "8:00 - 12:00"
+    oraLumanare: "8:00 - 12:00",
+    adminNotes: {
+      puncteSlabe: "",
+      strategiePlan: "",
+      alteObservatii: ""
+    }
   });
   const [editingCursant, setEditingCursant] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -134,7 +139,12 @@ const Dashboard = () => {
     telefon: "",
     perecheValutara: "",
     tipParticipant: "Cursant",
-    oraLumanare: "8:00 - 12:00"
+    oraLumanare: "8:00 - 12:00",
+    adminNotes: {
+      puncteSlabe: "",
+      strategiePlan: "",
+      alteObservatii: ""
+    }
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [cursantToDelete, setCursantToDelete] = useState(null);
@@ -147,6 +157,14 @@ const Dashboard = () => {
   const [searchCursant, setSearchCursant] = useState("");
   const [sortCursanti, setSortCursanti] = useState("asc");
 
+  // Teme zilnice pentru cursanți
+  const [temeZilnice, setTemeZilnice] = useState({});
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [currentTheme, setCurrentTheme] = useState("");
+  const [loadingTheme, setLoadingTheme] = useState(false);
+  const [successTheme, setSuccessTheme] = useState("");
+  const [errorTheme, setErrorTheme] = useState("");
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -154,6 +172,7 @@ const Dashboard = () => {
         fetchFeedbackAnonim();
         fetchConcursInscrieri();
         fetchArmyCursanti();
+        fetchTemeZilnice();
       } else {
         setLoadingFeedback(false);
         setLoadingConcurs(false);
@@ -163,6 +182,38 @@ const Dashboard = () => {
     return unsubscribe;
     // eslint-disable-next-line
   }, []);
+
+  // Auto-resize textarea-uri când se deschide modalul sau se schimbă datele
+  useEffect(() => {
+    if (showProgressModal) {
+      // Așteaptă ca DOM-ul să se actualizeze
+      setTimeout(() => {
+        const textareas = document.querySelectorAll('textarea[class*="min-h-"]');
+        textareas.forEach(textarea => {
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        });
+      }, 100);
+    }
+  }, [showProgressModal, selectedCursant, editingCursant]);
+
+  // Actualizează tema când se schimbă data selectată
+  useEffect(() => {
+    if (temeZilnice[selectedDate] !== undefined) {
+      setCurrentTheme(temeZilnice[selectedDate]);
+    } else {
+      setCurrentTheme("");
+    }
+    
+    // Auto-resize textarea pentru teme după ce se încarcă tema
+    setTimeout(() => {
+      const themeTextarea = document.querySelector('textarea[placeholder*="Scrie tema pentru"]');
+      if (themeTextarea) {
+        themeTextarea.style.height = 'auto';
+        themeTextarea.style.height = themeTextarea.scrollHeight + 'px';
+      }
+    }, 100);
+  }, [selectedDate, temeZilnice]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -396,12 +447,28 @@ const Dashboard = () => {
         perecheValutara: newCursant.perecheValutara,
         tipParticipant: newCursant.tipParticipant,
         oraLumanare: newCursant.oraLumanare,
+        adminNotes: newCursant.adminNotes || {
+          puncteSlabe: "",
+          strategiePlan: "",
+          alteObservatii: ""
+        },
         createdAt: Timestamp.now(),
       });
       
       console.log("Cursant adăugat cu succes!");
       setSuccessArmy("Cursant adăugat cu succes!");
-      setNewCursant({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
+      setNewCursant({ 
+        nume: "", 
+        telefon: "", 
+        perecheValutara: "", 
+        tipParticipant: "Cursant", 
+        oraLumanare: "8:00 - 12:00",
+        adminNotes: {
+          puncteSlabe: "",
+          strategiePlan: "",
+          alteObservatii: ""
+        }
+      });
       
       // Invalidează cache-ul și reîncarcă cu date fresh
       clearCachedData('dashboard_army');
@@ -423,7 +490,12 @@ const Dashboard = () => {
       telefon: cursant.telefon,
       perecheValutara: cursant.perecheValutara,
       tipParticipant: cursant.tipParticipant || "Cursant",
-      oraLumanare: cursant.oraLumanare || "8:00 - 12:00"
+      oraLumanare: cursant.oraLumanare || "8:00 - 12:00",
+      adminNotes: cursant.adminNotes || {
+        puncteSlabe: "",
+        strategiePlan: "",
+        alteObservatii: ""
+      }
     });
     setErrorArmy("");
     setSuccessArmy("");
@@ -431,7 +503,18 @@ const Dashboard = () => {
 
   const handleCancelEdit = () => {
     setEditingCursant(null);
-    setEditFormData({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
+    setEditFormData({ 
+      nume: "", 
+      telefon: "", 
+      perecheValutara: "", 
+      tipParticipant: "Cursant", 
+      oraLumanare: "8:00 - 12:00",
+      adminNotes: {
+        puncteSlabe: "",
+        strategiePlan: "",
+        alteObservatii: ""
+      }
+    });
     setErrorArmy("");
   };
 
@@ -453,11 +536,45 @@ const Dashboard = () => {
         perecheValutara: editFormData.perecheValutara,
         tipParticipant: editFormData.tipParticipant,
         oraLumanare: editFormData.oraLumanare,
+        adminNotes: editFormData.adminNotes || {
+          puncteSlabe: "",
+          strategiePlan: "",
+          alteObservatii: ""
+        },
       });
       
       setSuccessArmy("Cursant actualizat cu succes!");
+      
+      // Actualizează selectedCursant dacă modalul este deschis pentru acest cursant
+      if (selectedCursant && selectedCursant.id === id) {
+        setSelectedCursant({
+          ...selectedCursant,
+          nume: editFormData.nume,
+          telefon: editFormData.telefon,
+          perecheValutara: editFormData.perecheValutara,
+          tipParticipant: editFormData.tipParticipant,
+          oraLumanare: editFormData.oraLumanare,
+          adminNotes: editFormData.adminNotes || {
+            puncteSlabe: "",
+            strategiePlan: "",
+            alteObservatii: ""
+          }
+        });
+      }
+      
       setEditingCursant(null);
-      setEditFormData({ nume: "", telefon: "", perecheValutara: "", tipParticipant: "Cursant", oraLumanare: "8:00 - 12:00" });
+      setEditFormData({ 
+        nume: "", 
+        telefon: "", 
+        perecheValutara: "", 
+        tipParticipant: "Cursant", 
+        oraLumanare: "8:00 - 12:00",
+        adminNotes: {
+          puncteSlabe: "",
+          strategiePlan: "",
+          alteObservatii: ""
+        }
+      });
       
       // Invalidează cache-ul și reîncarcă
       clearCachedData('dashboard_army');
@@ -573,6 +690,83 @@ const Dashboard = () => {
     "Relația cu Piața"
   ];
 
+  // === TEME ZILNICE FUNCTIONS ===
+  
+  const fetchTemeZilnice = async (forceRefresh = false) => {
+    setLoadingTheme(true);
+    setErrorTheme("");
+    
+    try {
+      // Verifică cache-ul mai întâi
+      if (!forceRefresh) {
+        const cachedData = getCachedData('dashboard_teme');
+        if (cachedData) {
+          console.log('📦 Teme încărcate din cache (economisim citiri Firebase)');
+          setTemeZilnice(cachedData);
+          setCurrentTheme(cachedData[selectedDate] || "");
+          setLoadingTheme(false);
+          return;
+        }
+      }
+      
+      // Citește din Firebase
+      console.log('🔄 Citire teme din Firebase...');
+      const snapshot = await getDocs(collection(db, "TemeZilnice"));
+      const temesData = {};
+      snapshot.docs.forEach((doc) => {
+        temesData[doc.id] = doc.data().tema || "";
+      });
+      
+      setTemeZilnice(temesData);
+      setCurrentTheme(temesData[selectedDate] || "");
+      
+      // Salvează în cache
+      setCachedData('dashboard_teme', temesData);
+    } catch (err) {
+      // Nu afișa eroare dacă colecția nu există încă - e normal pentru prima utilizare
+      console.log("Info: Colecția TemeZilnice nu există încă sau este goală:", err.message);
+      setTemeZilnice({});
+      setCurrentTheme("");
+    } finally {
+      setLoadingTheme(false);
+    }
+  };
+
+  const handleSaveTheme = async () => {
+    setErrorTheme("");
+    setSuccessTheme("");
+    setLoadingTheme(true);
+    
+    try {
+      // Salvează tema în Firebase folosind data ca ID (setDoc creează sau actualizează)
+      const docRef = doc(db, "TemeZilnice", selectedDate);
+      await setDoc(docRef, {
+        tema: currentTheme,
+        data: selectedDate,
+        updatedAt: Timestamp.now()
+      }, { merge: true });
+      
+      setSuccessTheme(`Tema pentru ${selectedDate} a fost salvată cu succes!`);
+      
+      // Actualizează state-ul local
+      setTemeZilnice(prev => ({
+        ...prev,
+        [selectedDate]: currentTheme
+      }));
+      
+      // Invalidează cache-ul și reîncarcă
+      clearCachedData('dashboard_teme');
+      fetchTemeZilnice(true);
+      
+      // Șterge mesajul de succes după 3 secunde
+      setTimeout(() => setSuccessTheme(""), 3000);
+    } catch (err) {
+      setErrorTheme("Eroare la salvarea temei: " + err.message);
+    } finally {
+      setLoadingTheme(false);
+    }
+  };
+
   // Export Army cursanți to Excel
   const exportArmyToExcel = () => {
     // Filtrăm doar cursanții (nu mentorii)
@@ -587,6 +781,9 @@ const Dashboard = () => {
       const progresGeneral = Math.round(total / progres.length);
       const principiiComplete = progres.filter(p => p === 100).length;
       
+      // Extrage notele admin
+      const adminNotes = item.adminNotes || {};
+      
       return {
         Nr: idx + 1,
         Nume: item.nume || "",
@@ -595,6 +792,9 @@ const Dashboard = () => {
         "Ora Lumânare 4H": item.oraLumanare || "8:00 - 12:00",
         "Progres General (%)": progresGeneral,
         "Principii Complete": `${principiiComplete}/20`,
+        "Puncte Slabe": adminNotes.puncteSlabe || "",
+        "Strategie și Plan": adminNotes.strategiePlan || "",
+        "Alte Observații": adminNotes.alteObservatii || "",
       };
     });
 
@@ -1445,6 +1645,125 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Secțiunea Teme Zilnice pentru Cursanți */}
+      {activeTab === "army" && (
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-yellow-400 flex items-center gap-3">
+              <span>📚</span>
+              Tema Zilnică pentru Cursanți
+            </h3>
+          </div>
+
+          <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Selector de dată */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-3">
+                  📅 Selectează Data pentru Temă
+                </label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full p-3 rounded border border-gray-600 bg-gray-700 text-white text-lg font-semibold focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                />
+                <p className="text-sm text-gray-400 mt-2">
+                  Data selectată: {new Date(selectedDate + 'T00:00:00').toLocaleDateString('ro-RO', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+
+              {/* Info despre tema curentă */}
+              <div className="flex flex-col justify-center bg-gray-800 p-4 rounded-lg border border-gray-600">
+                <div className="text-sm text-gray-400 mb-2">Status temă:</div>
+                {currentTheme ? (
+                  <div className="flex items-center gap-2 text-green-400">
+                    <span className="text-2xl">✅</span>
+                    <span className="font-semibold">Tema existentă pentru această dată</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <span className="text-2xl">📝</span>
+                    <span className="font-semibold">Nicio temă pentru această dată</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Textarea pentru temă */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-300 mb-3">
+                ✍️ Conținutul Temei
+              </label>
+              <textarea
+                value={currentTheme}
+                onChange={(e) => {
+                  setCurrentTheme(e.target.value);
+                  // Auto-resize
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                placeholder={`Scrie tema pentru ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}...`}
+                className="w-full p-4 rounded border border-gray-600 bg-gray-700 text-white min-h-[150px] resize-none overflow-hidden focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500"
+                style={{ height: 'auto' }}
+                onInput={(e) => {
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+              />
+            </div>
+
+            {/* Butoane și mesaje */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                {successTheme && (
+                  <p className="text-green-400 font-semibold flex items-center gap-2">
+                    <span>✅</span>
+                    {successTheme}
+                  </p>
+                )}
+                {errorTheme && (
+                  <p className="text-red-400 font-semibold flex items-center gap-2">
+                    <span>❌</span>
+                    {errorTheme}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleSaveTheme}
+                disabled={loadingTheme || !currentTheme.trim()}
+                className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold flex items-center gap-2 transition-all"
+              >
+                {loadingTheme ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    Se salvează...
+                  </>
+                ) : (
+                  <>
+                    <span>💾</span>
+                    Salvează Tema
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Info suplimentară */}
+            <div className="mt-6 p-4 bg-blue-900/30 border border-blue-700/50 rounded-lg">
+              <p className="text-sm text-blue-300 flex items-center gap-2">
+                <span>💡</span>
+                <strong>Sfat:</strong> Poți programa teme în avans. Selectează o dată viitoare și scrie tema pentru acea zi.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <a
         href="/"
         className="block mt-6 text-center text-blue-400 hover:underline"
@@ -1512,6 +1831,162 @@ const Dashboard = () => {
                   </div>
                 );
               })()}
+            </div>
+
+            {/* Notele Adminului */}
+            <div className="p-6 bg-gray-900 border-t border-gray-700">
+              <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                📝 Note Admin
+              </h4>
+              <div className="space-y-4">
+                {/* Puncte Slabe */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <label className="block text-sm font-semibold text-red-400 mb-2">
+                    🔴 Puncte Slabe
+                  </label>
+                  <textarea
+                    value={editingCursant === selectedCursant.id 
+                      ? editFormData.adminNotes?.puncteSlabe || "" 
+                      : selectedCursant.adminNotes?.puncteSlabe || ""}
+                    onChange={(e) => {
+                      if (editingCursant === selectedCursant.id) {
+                        setEditFormData({
+                          ...editFormData,
+                          adminNotes: {
+                            ...editFormData.adminNotes,
+                            puncteSlabe: e.target.value
+                          }
+                        });
+                      }
+                      // Auto-resize
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    disabled={editingCursant !== selectedCursant.id}
+                    placeholder="Notează punctele slabe ale cursantului..."
+                    className={`w-full p-3 rounded border bg-gray-700 text-white min-h-[100px] resize-none overflow-hidden ${
+                      editingCursant === selectedCursant.id 
+                        ? 'border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
+                        : 'border-gray-700 cursor-default'
+                    }`}
+                    style={{ height: 'auto' }}
+                    onInput={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                  />
+                </div>
+
+                {/* Strategie și Plan de Execuție */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <label className="block text-sm font-semibold text-blue-400 mb-2">
+                    🎯 Strategie și Plan de Execuție
+                  </label>
+                  <textarea
+                    value={editingCursant === selectedCursant.id 
+                      ? editFormData.adminNotes?.strategiePlan || "" 
+                      : selectedCursant.adminNotes?.strategiePlan || ""}
+                    onChange={(e) => {
+                      if (editingCursant === selectedCursant.id) {
+                        setEditFormData({
+                          ...editFormData,
+                          adminNotes: {
+                            ...editFormData.adminNotes,
+                            strategiePlan: e.target.value
+                          }
+                        });
+                      }
+                      // Auto-resize
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    disabled={editingCursant !== selectedCursant.id}
+                    placeholder="Notează strategia și planul de execuție pentru cursant..."
+                    className={`w-full p-3 rounded border bg-gray-700 text-white min-h-[100px] resize-none overflow-hidden ${
+                      editingCursant === selectedCursant.id 
+                        ? 'border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
+                        : 'border-gray-700 cursor-default'
+                    }`}
+                    style={{ height: 'auto' }}
+                    onInput={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                  />
+                </div>
+
+                {/* Alte Observații */}
+                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                  <label className="block text-sm font-semibold text-green-400 mb-2">
+                    📋 Alte Observații
+                  </label>
+                  <textarea
+                    value={editingCursant === selectedCursant.id 
+                      ? editFormData.adminNotes?.alteObservatii || "" 
+                      : selectedCursant.adminNotes?.alteObservatii || ""}
+                    onChange={(e) => {
+                      if (editingCursant === selectedCursant.id) {
+                        setEditFormData({
+                          ...editFormData,
+                          adminNotes: {
+                            ...editFormData.adminNotes,
+                            alteObservatii: e.target.value
+                          }
+                        });
+                      }
+                      // Auto-resize
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    disabled={editingCursant !== selectedCursant.id}
+                    placeholder="Alte observații despre cursant..."
+                    className={`w-full p-3 rounded border bg-gray-700 text-white min-h-[100px] resize-none overflow-hidden ${
+                      editingCursant === selectedCursant.id 
+                        ? 'border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
+                        : 'border-gray-700 cursor-default'
+                    }`}
+                    style={{ height: 'auto' }}
+                    onInput={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                  />
+                </div>
+
+                {/* Butoane de acțiune */}
+                {editingCursant === selectedCursant.id ? (
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => handleSaveEdit(selectedCursant.id)}
+                      disabled={loadingArmy}
+                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 font-semibold"
+                    >
+                      {loadingArmy ? "Se salvează..." : "💾 Salvează Notele"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleCancelEdit();
+                        closeProgressModal();
+                      }}
+                      disabled={loadingArmy}
+                      className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50"
+                    >
+                      Anulează
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleEditCursant(selectedCursant)}
+                    disabled={loadingArmy}
+                    className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 font-semibold"
+                  >
+                    ✏️ Editează Notele
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Lista principiilor */}
@@ -1697,12 +2172,12 @@ const Dashboard = () => {
       {/* Lightbox Modal for Screenshots */}
       {selectedScreenshot && (
         <div 
-          className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/95 z-[60] overflow-y-auto"
           onClick={() => setSelectedScreenshot(null)}
         >
           <button
             onClick={() => setSelectedScreenshot(null)}
-            className="absolute top-4 right-4 bg-gray-800/90 hover:bg-gray-700 text-white p-3 rounded-full transition-colors z-50"
+            className="fixed top-4 right-4 bg-gray-800/90 hover:bg-gray-700 text-white p-3 rounded-full transition-colors z-50"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1714,7 +2189,7 @@ const Dashboard = () => {
               e.stopPropagation();
               handleDownloadScreenshot(selectedScreenshot);
             }}
-            className="absolute top-4 right-20 bg-blue-600/90 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors z-50 flex items-center gap-2 font-semibold"
+            className="fixed top-4 right-20 bg-blue-600/90 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors z-50 flex items-center gap-2 font-semibold"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -1722,32 +2197,34 @@ const Dashboard = () => {
             Download
           </button>
           
-          <div className="max-w-7xl max-h-[90vh] w-full flex flex-col items-center gap-4">
-            <img
-              src={selectedScreenshot.url}
-              alt={selectedScreenshot.fileName}
-              className="max-w-full max-h-[80vh] object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <div className="text-center bg-gray-900/80 backdrop-blur-sm rounded-lg px-6 py-4 max-w-3xl">
-              <p className="text-white font-medium text-lg">{selectedScreenshot.fileName}</p>
-              <p className="text-gray-400 text-sm mt-1">
-                Uploadat: {new Date(selectedScreenshot.uploadDate).toLocaleDateString('ro-RO', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </p>
-              {selectedScreenshot.note && (
-                <div className="mt-3 pt-3 border-t border-gray-700">
-                  <p className="text-amber-400 font-semibold text-sm mb-1">📝 Notă:</p>
-                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
-                    {selectedScreenshot.note}
-                  </p>
-                </div>
-              )}
+          <div className="min-h-screen flex items-center justify-center p-4 py-20">
+            <div className="max-w-7xl w-full flex flex-col items-center gap-4">
+              <img
+                src={selectedScreenshot.url}
+                alt={selectedScreenshot.fileName}
+                className="max-w-full h-auto object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div className="w-full bg-gray-900/90 backdrop-blur-sm rounded-lg px-6 py-4 max-w-4xl">
+                <p className="text-white font-medium text-lg text-left">{selectedScreenshot.fileName}</p>
+                <p className="text-gray-400 text-sm mt-1 text-left">
+                  Uploadat: {new Date(selectedScreenshot.uploadDate).toLocaleDateString('ro-RO', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+                {selectedScreenshot.note && (
+                  <div className="mt-3 pt-3 border-t border-gray-700">
+                    <p className="text-amber-400 font-semibold text-sm mb-2 text-left">📝 Notă:</p>
+                    <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap text-left">
+                      {selectedScreenshot.note}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
