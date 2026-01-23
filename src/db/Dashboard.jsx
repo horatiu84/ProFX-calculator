@@ -66,21 +66,26 @@ const hasUploadedToday = (lastUploadDate) => {
   if (!lastUploadDate) return false;
   
   try {
-    // Convertim la data României (UTC+2 sau UTC+3 in functie de DST)
     const lastUpload = new Date(lastUploadDate);
     const now = new Date();
     
-    // Convertim la ora României
-    const romaniaOffset = 2 * 60; // UTC+2 (sau +3 în timpul verii, dar vom folosi +2 ca bază)
-    const lastUploadRomania = new Date(lastUpload.getTime() + romaniaOffset * 60 * 1000);
-    const nowRomania = new Date(now.getTime() + romaniaOffset * 60 * 1000);
+    // Folosim toLocaleDateString cu timezone-ul României pentru a obține doar data calendaristică
+    const lastUploadDay = lastUpload.toLocaleDateString('ro-RO', { 
+      timeZone: 'Europe/Bucharest',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
     
-    // Resetare la începutul zilei (00:00:00)
-    const lastUploadDay = new Date(lastUploadRomania.getFullYear(), lastUploadRomania.getMonth(), lastUploadRomania.getDate());
-    const todayStart = new Date(nowRomania.getFullYear(), nowRomania.getMonth(), nowRomania.getDate());
+    const todayRomania = now.toLocaleDateString('ro-RO', { 
+      timeZone: 'Europe/Bucharest',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
     
-    // Verificăm dacă lastUploadDay >= todayStart (adică a uploadat astăzi)
-    return lastUploadDay.getTime() >= todayStart.getTime();
+    // Comparăm doar zilele calendaristice în timezone-ul României
+    return lastUploadDay === todayRomania;
   } catch {
     return false;
   }
