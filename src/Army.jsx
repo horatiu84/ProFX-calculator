@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
-import { User, LogOut, Loader, Book, Upload, ChevronRight } from "lucide-react";
+import { User, LogOut, Loader, Book, Upload, ChevronRight, FileText } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import Biblia from "./Biblia.jsx";
 import ArmyUpload from "./ArmyUpload.jsx";
+import MaterialeArmy from "./MaterialeArmy.jsx";
 
 // === CACHE HELPERS - Reduce Firebase reads === 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minute
@@ -56,7 +57,7 @@ const Army = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   
   // State pentru selecția activității
-  const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload'
+  const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload', 'materiale'
 
   // Listen for updates from Biblia component when user switches back
   useEffect(() => {
@@ -312,6 +313,22 @@ const Army = () => {
     );
   }
 
+  if (activeView === 'materiale') {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setActiveView(null)}
+          className="fixed top-2 left-2 md:absolute md:top-4 md:left-4 z-50 px-3 py-2 md:px-4 md:py-2 text-sm md:text-base bg-gray-900/95 backdrop-blur-sm hover:bg-gray-800/95 text-white rounded-lg transition-all flex items-center gap-1 md:gap-2 shadow-lg border border-gray-700/50 hover:border-amber-400/50"
+        >
+          <ChevronRight className="w-4 h-4 rotate-180" />
+          <span className="hidden md:inline">{language === 'ro' ? 'Înapoi la Meniu' : 'Back to Menu'}</span>
+          <span className="md:hidden">{language === 'ro' ? 'Înapoi' : 'Back'}</span>
+        </button>
+        <MaterialeArmy />
+      </div>
+    );
+  }
+
   // Meniul principal după autentificare - două carduri
   return (
     <div className="min-h-screen p-4 md:p-8 text-white">
@@ -353,7 +370,7 @@ const Army = () => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Card 1 - Biblia */}
           <button
             onClick={() => setActiveView('biblia')}
@@ -440,6 +457,41 @@ const Army = () => {
                 </div>
               </div>
             )}
+          </button>
+
+          {/* Card 3 - Materiale Army */}
+          <button
+            onClick={() => setActiveView('materiale')}
+            className="group relative bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 hover:border-amber-400/30 transition-all duration-300 text-left"
+          >
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-800/50 rounded-full mb-4 border border-gray-700/50">
+                <FileText className="w-8 h-8 text-amber-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                {language === 'ro' ? 'Materiale Army' : 'Army Materials'}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {language === 'ro' 
+                  ? 'Resurse și materiale ajutătoare pentru toți cursanții' 
+                  : 'Resources and helpful materials for all students'}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-amber-400 transition-colors">
+                <span className="text-sm font-medium">
+                  {language === 'ro' ? 'Acces Materiale' : 'Access Materials'}
+                </span>
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+            
+            {/* Info badge */}
+            <div className="mt-6 pt-6 border-t border-gray-700/50">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-amber-400 text-sm font-medium">
+                  📚 {language === 'ro' ? 'Nou!' : 'New!'}
+                </span>
+              </div>
+            </div>
           </button>
         </div>
 
