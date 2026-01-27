@@ -39,6 +39,8 @@ const MaterialeTab = ({
     nota: "",
     modul: "1"
   });
+  const [filtruModul, setFiltruModul] = useState("toate");
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
   
   // Plugin pentru PDF viewer
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
@@ -201,6 +203,22 @@ const MaterialeTab = ({
         </div>
       )}
 
+      {/* Filtru Modul */}
+      <div className="mb-4">
+        <label className="block text-gray-300 mb-2">Filtrează după categorie:</label>
+        <select
+          value={filtruModul}
+          onChange={(e) => setFiltruModul(e.target.value)}
+          className="w-full md:w-64 p-2 rounded border border-gray-600 bg-gray-700 text-white"
+        >
+          <option value="toate">Toate materialele</option>
+          <option value="1">Modul 1</option>
+          <option value="2">Modul 2</option>
+          <option value="3">Modul 3</option>
+          <option value="rapoarte">Rapoarte/Indici</option>
+        </select>
+      </div>
+
       {/* Buton Adaugă Material */}
       <button
         onClick={() => setShowAddMaterialForm(!showAddMaterialForm)}
@@ -226,9 +244,7 @@ const MaterialeTab = ({
                 <option value="1">Modul 1</option>
                 <option value="2">Modul 2</option>
                 <option value="3">Modul 3</option>
-                <option value="4">Modul 4</option>
-                <option value="5">Modul 5</option>
-                <option value="6">Modul 6</option>
+                <option value="rapoarte">Rapoarte/Indici</option>
               </select>
             </div>
 
@@ -318,128 +334,164 @@ const MaterialeTab = ({
         </div>
       )}
 
-      {/* Lista Materiale */}
+      {/* Modal pentru vizualizare material */}
+      {selectedMaterial && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelectedMaterial(null)}>
+          <div className="bg-gray-800 rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-amber-400">{selectedMaterial.nota.substring(0, 50)}...</h3>
+              <button onClick={() => setSelectedMaterial(null)} className="text-white hover:text-red-400 text-2xl">
+                ✕
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-300 whitespace-pre-wrap mb-4">{selectedMaterial.nota}</p>
+              {selectedMaterial.imagine && (
+                selectedMaterial.imagine.type === 'pdf' ? (
+                  <div className="bg-gray-700 p-4 rounded border border-gray-600">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-4xl">📄</span>
+                        <p className="text-white font-semibold">{selectedMaterial.imagine.name || 'Document PDF'}</p>
+                      </div>
+                      <a href={selectedMaterial.imagine.url} target="_blank" rel="noopener noreferrer"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2">
+                        <span>🔗</span>
+                        <span className="hidden sm:inline">Deschide PDF</span>
+                      </a>
+                    </div>
+                    <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
+                      <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                        <Viewer fileUrl={selectedMaterial.imagine.url} plugins={[defaultLayoutPluginInstance]} />
+                      </Worker>
+                    </div>
+                  </div>
+                ) : (
+                  <img src={selectedMaterial.imagine.url} alt="Material" className="w-full max-h-[600px] object-contain rounded border border-gray-600" />
+                )
+              )}
+              <p className="text-gray-500 text-sm mt-4">
+                Adăugat de {selectedMaterial.autor} • {formatDate(selectedMaterial.timestamp)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lista Materiale - Tabel */}
       {loadingMateriale ? (
         <p className="text-gray-400">Se încarcă materialele...</p>
       ) : materialeArmy.length === 0 ? (
         <p className="text-gray-400">Nu există materiale încă.</p>
       ) : (
         <div className="space-y-6">
-          {[1, 2, 3, 4, 5, 6].map(modul => {
+          {[1, 2, 3, 'rapoarte'].map(modul => {
+            // Filtrare: dacă e setat un filtru specific, arată doar acel modul
+            if (filtruModul !== "toate" && String(modul) !== filtruModul) return null;
+            
             const materialeModul = materialeArmy.filter(m => m.modul === String(modul));
             if (materialeModul.length === 0) return null;
 
+            const titluModul = modul === 'rapoarte' ? '📊 Rapoarte/Indici' : `📖 Modul ${modul}`;
+
             return (
               <div key={modul} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                <h3 className="text-lg font-bold text-amber-400 mb-4">📖 Modul {modul}</h3>
-                <div className="space-y-4">
-                  {materialeModul.map((material) => (
-                    <div key={material.id} className="bg-gray-700 p-4 rounded-lg">
-                      {/* Editare */}
-                      {editingMaterial === material.id ? (
-                        <div className="space-y-3">
-                          <select
-                            value={editMaterialData.modul}
-                            onChange={(e) => setEditMaterialData({ ...editMaterialData, modul: e.target.value })}
-                            className="w-full p-2 rounded border border-gray-600 bg-gray-600 text-white"
-                          >
-                            <option value="1">Modul 1</option>
-                            <option value="2">Modul 2</option>
-                            <option value="3">Modul 3</option>
-                            <option value="4">Modul 4</option>
-                            <option value="5">Modul 5</option>
-                            <option value="6">Modul 6</option>
-                          </select>
-                          <textarea
-                            value={editMaterialData.nota}
-                            onChange={(e) => setEditMaterialData({ ...editMaterialData, nota: e.target.value })}
-                            className="w-full p-2 rounded border border-gray-600 bg-gray-600 text-white"
-                            rows={4}
-                          />
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleUpdateMaterial(material.id)}
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-                              disabled={loadingMateriale}
-                            >
-                              {loadingMateriale ? "Se salvează..." : "✅ Salvează"}
-                            </button>
-                            <button
-                              onClick={() => setEditingMaterial(null)}
-                              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
-                            >
-                              ❌ Anulează
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="text-gray-300 whitespace-pre-wrap mb-3">{material.nota}</p>
-                          {material.imagine && (
-                            material.imagine.type === 'pdf' ? (
-                              <div className="bg-gray-600 p-4 rounded border border-gray-500 mb-3">
-                                <div className="flex items-center justify-between mb-3">
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-4xl">📄</span>
-                                    <div>
-                                      <p className="text-white font-semibold">{material.imagine.name || 'Document PDF'}</p>
-                                    </div>
-                                  </div>
-                                  <a 
-                                    href={material.imagine.url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2 transition-colors text-sm"
+                <h3 className="text-lg font-bold text-amber-400 mb-4">{titluModul}</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-600">
+                        <th className="text-left p-3 text-gray-300 font-semibold">Nume Material</th>
+                        <th className="text-left p-3 text-gray-300 font-semibold">Modul</th>
+                        <th className="text-left p-3 text-gray-300 font-semibold">Data</th>
+                        <th className="text-left p-3 text-gray-300 font-semibold">Acțiuni</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {materialeModul.map((material) => (
+                        <tr key={material.id} className="border-b border-gray-700 hover:bg-gray-700/50 transition-colors">
+                          {editingMaterial === material.id ? (
+                            <td colSpan="4" className="p-3">
+                              <div className="space-y-3">
+                                <select
+                                  value={editMaterialData.modul}
+                                  onChange={(e) => setEditMaterialData({ ...editMaterialData, modul: e.target.value })}
+                                  className="w-full p-2 rounded border border-gray-600 bg-gray-600 text-white"
+                                >
+                                  <option value="1">Modul 1</option>
+                                  <option value="2">Modul 2</option>
+                                  <option value="3">Modul 3</option>
+                                  <option value="rapoarte">Rapoarte/Indici</option>
+                                </select>
+                                <textarea
+                                  value={editMaterialData.nota}
+                                  onChange={(e) => setEditMaterialData({ ...editMaterialData, nota: e.target.value })}
+                                  className="w-full p-2 rounded border border-gray-600 bg-gray-600 text-white"
+                                  rows={4}
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleUpdateMaterial(material.id)}
+                                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
+                                    disabled={loadingMateriale}
                                   >
-                                    <span>🔗</span>
-                                    <span className="hidden sm:inline">Deschide PDF</span>
-                                  </a>
-                                </div>
-                                <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
-                                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                                    <Viewer
-                                      fileUrl={material.imagine.url}
-                                      plugins={[defaultLayoutPluginInstance]}
-                                    />
-                                  </Worker>
+                                    {loadingMateriale ? "Se salvează..." : "✅ Salvează"}
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingMaterial(null)}
+                                    className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+                                  >
+                                    ❌ Anulează
+                                  </button>
                                 </div>
                               </div>
-                            ) : (
-                              <img
-                                src={material.imagine.url}
-                                alt="Material"
-                                className="w-full max-h-96 object-contain rounded border border-gray-600 mb-3"
-                              />
-                            )
+                            </td>
+                          ) : (
+                            <>
+                              <td className="p-3">
+                                <button
+                                  onClick={() => setSelectedMaterial(material)}
+                                  className="text-left text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-2"
+                                >
+                                  {material.imagine?.type === 'pdf' ? '📄' : '🖼️'}
+                                  <span className="line-clamp-2">{material.nota.substring(0, 80)}{material.nota.length > 80 ? '...' : ''}</span>
+                                </button>
+                              </td>
+                              <td className="p-3 text-gray-300">
+                                {modul === 'rapoarte' ? 'Rapoarte' : `Modul ${modul}`}
+                              </td>
+                              <td className="p-3 text-gray-400 text-sm">
+                                {formatDate(material.timestamp)}
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      setEditingMaterial(material.id);
+                                      setEditMaterialData({
+                                        nota: material.nota,
+                                        modul: material.modul
+                                      });
+                                    }}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteMaterial(material.id)}
+                                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                                    disabled={loadingMateriale}
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              </td>
+                            </>
                           )}
-                          <p className="text-gray-500 text-xs mb-3">
-                            Adăugat de {material.autor} • {formatDate(material.timestamp)}
-                          </p>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                setEditingMaterial(material.id);
-                                setEditMaterialData({
-                                  nota: material.nota,
-                                  modul: material.modul
-                                });
-                              }}
-                              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
-                            >
-                              ✏️ Editează
-                            </button>
-                            <button
-                              onClick={() => handleDeleteMaterial(material.id)}
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-                              disabled={loadingMateriale}
-                            >
-                              🗑️ Șterge
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             );
