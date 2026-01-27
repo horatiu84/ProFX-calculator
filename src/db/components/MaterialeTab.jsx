@@ -378,11 +378,22 @@ const MaterialeTab = ({
                           {material.imagine && (
                             material.imagine.type === 'pdf' ? (
                               <div className="bg-gray-600 p-4 rounded border border-gray-500 mb-3">
-                                <div className="flex items-center gap-3 mb-3">
-                                  <span className="text-4xl">📄</span>
-                                  <div>
-                                    <p className="text-white font-semibold">{material.imagine.name || 'Document PDF'}</p>
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-4xl">📄</span>
+                                    <div>
+                                      <p className="text-white font-semibold">{material.imagine.name || 'Document PDF'}</p>
+                                    </div>
                                   </div>
+                                  <a 
+                                    href={material.imagine.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2 transition-colors text-sm"
+                                  >
+                                    <span>🔗</span>
+                                    <span className="hidden sm:inline">Deschide PDF</span>
+                                  </a>
                                 </div>
                                 <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
                                   <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
