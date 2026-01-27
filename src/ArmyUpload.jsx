@@ -159,20 +159,35 @@ const ArmyUpload = () => {
     const loadThemes = async () => {
       setLoadingThemes(true);
       try {
-        // Generează datele pentru astăzi și mâine
-        const today = new Date();
+        // Generează datele pentru astăzi și mâine în fus orar România (UTC+2/+3)
+        const nowUTC = new Date();
+        const romaniaOffset = 2 * 60; // UTC+2 (sau +3 în timpul verii)
+        const nowRomania = new Date(nowUTC.getTime() + romaniaOffset * 60 * 1000);
+        
+        const today = new Date(nowRomania.getFullYear(), nowRomania.getMonth(), nowRomania.getDate());
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         
-        const todayString = today.toISOString().split('T')[0];
-        const tomorrowString = tomorrow.toISOString().split('T')[0];
+        const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const tomorrowString = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
         
         console.log('🔄 Citire teme zilnice din Firebase...');
+        console.log('📅 Căutăm tema pentru astăzi:', todayString);
+        console.log('📅 Căutăm tema pentru mâine:', tomorrowString);
+        
         const snapshot = await getDocs(collection(db, "TemeZilnice"));
         const temesData = {};
+        
+        // Căutăm după câmpul "data" din fiecare document, nu după doc.id
         snapshot.docs.forEach((doc) => {
-          temesData[doc.id] = doc.data().tema || "";
+          const docData = doc.data();
+          const dataField = docData.data; // Câmpul "data" din document
+          if (dataField) {
+            temesData[dataField] = docData.tema || "";
+          }
         });
+        
+        console.log('📚 Teme găsite:', Object.keys(temesData));
         
         setTodayTheme(temesData[todayString] || "");
         setTomorrowTheme(temesData[tomorrowString] || "");
