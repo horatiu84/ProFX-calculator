@@ -1608,19 +1608,14 @@ const Dashboard = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Ora Lumânare 4H (Tranzacționare)
                   </label>
-                  <select
+                  <input
+                    type="text"
                     value={newCursant.oraLumanare}
                     onChange={(e) => setNewCursant({ ...newCursant, oraLumanare: e.target.value })}
+                    placeholder="Ex: 13:00 - 17:00"
                     className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
                     required
-                  >
-                    <option value="0:00 - 4:00">0:00 - 4:00</option>
-                    <option value="4:00 - 8:00">4:00 - 8:00</option>
-                    <option value="8:00 - 12:00">8:00 - 12:00</option>
-                    <option value="12:00 - 16:00">12:00 - 16:00</option>
-                    <option value="16:00 - 20:00">16:00 - 20:00</option>
-                    <option value="20:00 - 24:00">20:00 - 24:00</option>
-                  </select>
+                  />
                 </div>
               </div>
               <button
@@ -1720,18 +1715,13 @@ const Dashboard = () => {
                               />
                             </td>
                             <td className="p-2 border border-gray-700">
-                              <select
+                              <input
+                                type="text"
                                 value={editFormData.oraLumanare}
                                 onChange={(e) => setEditFormData({ ...editFormData, oraLumanare: e.target.value })}
+                                placeholder="Ex: 13:00 - 17:00"
                                 className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
-                              >
-                                <option value="0:00 - 4:00">0:00 - 4:00</option>
-                                <option value="4:00 - 8:00">4:00 - 8:00</option>
-                                <option value="8:00 - 12:00">8:00 - 12:00</option>
-                                <option value="12:00 - 16:00">12:00 - 16:00</option>
-                                <option value="16:00 - 20:00">16:00 - 20:00</option>
-                                <option value="20:00 - 24:00">20:00 - 24:00</option>
-                              </select>
+                              />
                             </td>
                             <td className="p-2 border border-gray-700 text-center">
                               {hasUploadedToday(cursant.lastUploadDate) ? (
@@ -1960,18 +1950,13 @@ const Dashboard = () => {
                               />
                             </td>
                             <td className="p-2 border border-gray-700">
-                              <select
+                              <input
+                                type="text"
                                 value={editFormData.oraLumanare}
                                 onChange={(e) => setEditFormData({ ...editFormData, oraLumanare: e.target.value })}
+                                placeholder="Ex: 13:00 - 17:00"
                                 className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
-                              >
-                                <option value="0:00 - 4:00">0:00 - 4:00</option>
-                                <option value="4:00 - 8:00">4:00 - 8:00</option>
-                                <option value="8:00 - 12:00">8:00 - 12:00</option>
-                                <option value="12:00 - 16:00">12:00 - 16:00</option>
-                                <option value="16:00 - 20:00">16:00 - 20:00</option>
-                                <option value="20:00 - 24:00">20:00 - 24:00</option>
-                              </select>
+                              />
                             </td>
                             <td className="p-2 border border-gray-700 text-center">
                               {hasUploadedToday(cursant.lastUploadDate) ? (
