@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "./contexts/LanguageContext";
 import { 
   FileText, Eye, Loader
@@ -7,11 +7,23 @@ import {
   collection, getDocs, orderBy, query 
 } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const MaterialeArmy = () => {
   const { language } = useLanguage();
   const [materiale, setMateriale] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Plugin pentru PDF viewer - creat direct fără useMemo
+  const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    sidebarTabs: (defaultTabs) => [
+      defaultTabs[0], // Thumbnails
+    ],
+  });
 
   // Încarcă materiale din Firebase
   useEffect(() => {
@@ -97,24 +109,43 @@ const MaterialeArmy = () => {
                           {material.nota}
                         </p>
 
-                        {/* Imagine */}
+                        {/* Imagine sau PDF */}
                         {material.imagine && (
                           <div className="mt-4">
-                            <a
-                              href={material.imagine.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group relative block rounded-lg overflow-hidden border border-gray-700/50 hover:border-amber-400/50 transition-all"
-                            >
-                              <img 
-                                src={material.imagine.url} 
-                                alt={material.imagine.name}
-                                className="w-full max-h-96 object-contain bg-gray-800/50"
-                              />
-                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <Eye className="w-12 h-12 text-white" />
+                            {material.imagine.type === 'pdf' ? (
+                              <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <span className="text-4xl">📄</span>
+                                  <div>
+                                    <p className="text-white font-semibold">{material.imagine.name || 'Document PDF'}</p>
+                                  </div>
+                                </div>
+                                <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
+                                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                                    <Viewer
+                                      fileUrl={material.imagine.url}
+                                      plugins={[defaultLayoutPluginInstance]}
+                                    />
+                                  </Worker>
+                                </div>
                               </div>
-                            </a>
+                            ) : (
+                              <a
+                                href={material.imagine.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group relative block rounded-lg overflow-hidden border border-gray-700/50 hover:border-amber-400/50 transition-all"
+                              >
+                                <img 
+                                  src={material.imagine.url} 
+                                  alt={material.imagine.name}
+                                  className="w-full max-h-96 object-contain bg-gray-800/50"
+                                />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Eye className="w-12 h-12 text-white" />
+                                </div>
+                              </a>
+                            )}
                           </div>
                         )}
 
