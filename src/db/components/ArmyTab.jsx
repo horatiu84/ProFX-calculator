@@ -615,7 +615,7 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
             ))}
           </select>
           <span className="text-gray-400 text-sm">
-            ({armyCursanti.filter(c => c.grupa === selectedGrupa).length} cursanți în această grupă)
+            ({armyCursanti.filter(c => c.tipParticipant !== 'Mentor' && c.grupa === selectedGrupa).length} cursanți în această grupă)
           </span>
         </div>
       </div>
@@ -625,9 +625,9 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-purple-400 flex items-center gap-2">
             <span>👨‍🏫</span>
-            Lista Mentori ({armyCursanti.filter(c => c.tipParticipant === 'Mentor' && c.grupa === selectedGrupa).length})
+            Lista Mentori ({armyCursanti.filter(c => c.tipParticipant === 'Mentor').length})
           </h3>
-          {armyCursanti.filter(c => c.tipParticipant === 'Mentor' && c.grupa === selectedGrupa).length > 0 && (
+          {armyCursanti.filter(c => c.tipParticipant === 'Mentor').length > 0 && (
             <button
               onClick={() => fetchArmyCursanti(true)}
               disabled={loadingArmy}
@@ -641,8 +641,8 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
         </div>
         {loadingArmy && !armyCursanti.length ? (
           <p>Se încarcă mentorii...</p>
-        ) : armyCursanti.filter(c => c.tipParticipant === 'Mentor' && c.grupa === selectedGrupa).length === 0 ? (
-          <p className="text-gray-400">Nu există mentori înregistrați încă pentru această grupă.</p>
+        ) : armyCursanti.filter(c => c.tipParticipant === 'Mentor').length === 0 ? (
+          <p className="text-gray-400">Nu există mentori înregistrați încă.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse">
@@ -659,7 +659,7 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                 </tr>
               </thead>
               <tbody>
-                {armyCursanti.filter(c => c.tipParticipant === 'Mentor' && c.grupa === selectedGrupa).map((cursant, idx) => (
+                {armyCursanti.filter(c => c.tipParticipant === 'Mentor').map((cursant, idx) => (
                   <tr key={cursant.id} className="hover:bg-gray-700">
                     <td className="p-2 border border-gray-700 text-center font-semibold">
                       {idx + 1}
