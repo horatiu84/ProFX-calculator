@@ -11,6 +11,7 @@ import MaterialeTab from "./components/MaterialeTab.jsx";
 import FeedbackTab from "./components/FeedbackTab.jsx";
 import ConcursTab from "./components/ConcursTab.jsx";
 import ArmyTab from "./components/ArmyTab.jsx";
+import LeaduriTab from "./components/LeaduriTab.jsx";
 
 
 const formatDate = (createdAt) => {
@@ -571,6 +572,16 @@ const Dashboard = () => {
         >
           📚 Materiale Army
         </button>
+        {/* <button
+          onClick={() => setActiveTab("leaduri")}
+          className={`px-4 py-2 rounded-t ${
+            activeTab === "leaduri"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          👥 Leaduri
+        </button> */}
         <button
           onClick={() => setActiveTab("feedback")}
           className={`px-4 py-2 rounded-t ${
@@ -601,6 +612,11 @@ const Dashboard = () => {
           fetchMaterialeArmy={fetchMaterialeArmy}
           clearCachedData={clearCachedData}
         />
+      )}
+
+      {/* Tab Content: Leaduri */}
+      {activeTab === "leaduri" && (
+        <LeaduriTab clearCachedData={clearCachedData} />
       )}
 
       {/* Tab Content: Feedback Anonim */}

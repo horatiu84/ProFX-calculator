@@ -23,17 +23,17 @@ const CompetitionBanner = () => {
     const updateTimer = () => {
       const now = new Date();
       
-      // Data de început a concursului din ianuarie (5 ianuarie 2026, 00:00:00)
-      const startDate = new Date(2026, 0, 5, 0, 0, 0); // Month is 0-indexed: 0 = January
+      // Data de început a concursului din februarie (2 februarie 2026, 00:00:00)
+      const startDate = new Date(2026, 1, 2, 0, 0, 0); // Month is 0-indexed: 1 = February
       
-      // Data de sfârșit a concursului din ianuarie (30 ianuarie 2026, 23:59:59)
-      const endDate = new Date(2026, 0, 30, 23, 59, 59);
+      // Data de sfârșit a concursului din februarie (27 februarie 2026, 23:59:59)
+      const endDate = new Date(2026, 1, 27, 23, 59, 59);
       
-      // Data de închidere a înscrierilor (5 ianuarie 2026, 23:59:59 - sfârșitul zilei)
-      const registrationCloseDate = new Date(2026, 0, 5, 23, 59, 59);
+      // Data de închidere a înscrierilor (9 februarie 2026, 23:59:59 - sfârșitul zilei)
+      const registrationCloseDate = new Date(2026, 1, 9, 23, 59, 59);
       
-      // Data de început a concursului următor (1 februarie 2026)
-      const nextStartDate = new Date(2026, 1, 1, 0, 0, 0); // 1 = February
+      // Data de început a concursului următor (1 martie 2026)
+      const nextStartDate = new Date(2026, 2, 1, 0, 0, 0); // 2 = March
 
       // Verifică dacă înscrierile sunt încă deschise
       const regOpen = now < registrationCloseDate;
@@ -262,6 +262,10 @@ const CompetitionBanner = () => {
                 <b className="text-white">{t.competitionStartDate}</b> {t.competitionStartDateValue}
               </li>
               <li>
+                <b className="text-white">{t.competitionRegistrationDeadlineNote}</b>{" "}
+                <span className="font-bold text-amber-400">{t.competitionRegistrationDeadlineDate}</span>
+              </li>
+              <li>
                 <b className="text-white">{t.competitionPeriod}</b> {t.competitionPeriodValue}
               </li>
               <li>
@@ -306,6 +310,34 @@ const CompetitionBanner = () => {
                 </span>
               </li>
             </ul>
+          </div>
+        </div>
+
+        <div className="mb-8 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl p-5 shadow-md border border-amber-400/40 transition-all duration-300 hover:from-amber-500/30 hover:to-orange-500/30 hover:shadow-xl">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="w-full md:w-1/3">
+              <img
+                src="/Rome.jpg"
+                alt="Rome"
+                className="h-72 md:h-56 w-full object-cover rounded-xl border border-amber-300/40 shadow-sm"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <span className="font-bold text-amber-300 text-lg">{t.competitionSpecialPrizeTitle}</span>
+                <span className="flex items-center text-white font-bold">
+                  {t.competitionSpecialPrizeValue}
+                  <span className="ml-2">✈️</span>
+                </span>
+              </div>
+              <div className="text-xs sm:text-sm text-amber-200/80 mt-3">
+                {t.competitionSpecialPrizeCondition}
+              </div>
+              <div className="text-xs sm:text-sm text-amber-100/90 mt-3">
+                {t.competitionSpecialPrizeNote}
+              </div>
+            </div>
           </div>
         </div>
         
