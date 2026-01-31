@@ -1,11 +1,202 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "./contexts/LanguageContext";
-import { User, LogOut, Loader, Book, Upload, ChevronRight, FileText } from "lucide-react";
-import { collection, getDocs } from "firebase/firestore";
+import { User, LogOut, Loader, Book, Upload, ChevronRight, FileText, MessageSquare, Eye, X, Image as ImageIcon, ZoomIn, ZoomOut } from "lucide-react";
+import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import Biblia from "./Biblia.jsx";
 import ArmyUpload from "./ArmyUpload.jsx";
 import MaterialeArmy from "./MaterialeArmy.jsx";
+import { uploadScreenshotToCloudinary } from "./ArmyUpload.jsx";
+
+// Component pentru rândul din tabel cu expandare
+const QuestionRow = ({ question, language }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [enlargedImage, setEnlargedImage] = useState(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return '-';
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleString(language === 'ro' ? 'ro-RO' : 'en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return '-';
+    }
+  };
+
+  const truncateText = (text, maxLength = 60) => {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
+
+  useEffect(() => {
+    setIsZoomed(false);
+  }, [enlargedImage]);
+
+  return (
+    <>
+      <tr className="hover:bg-gray-800/30 transition-colors">
+        <td className="px-4 py-3">
+          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
+            question.status === 'resolved'
+              ? 'bg-green-900/50 text-green-300 border border-green-700'
+              : 'bg-red-900/50 text-red-300 border border-red-700'
+          }`}>
+            {question.status === 'resolved' 
+              ? (language === 'ro' ? '✓ REZOLVAT' : '✓ RESOLVED')
+              : (language === 'ro' ? '⏳ ÎN AȘTEPTARE' : '⏳ PENDING')}
+          </span>
+        </td>
+        <td className="px-4 py-3">
+          <span className="text-sm text-gray-300">{formatDateTime(question.createdAt)}</span>
+        </td>
+        <td className="px-4 py-3">
+          <div className="text-sm text-white">{truncateText(question.question)}</div>
+          {question.image && (
+            <span className="text-xs text-amber-400 flex items-center gap-1 mt-1">
+              <ImageIcon className="w-3 h-3" />
+              {language === 'ro' ? 'Cu imagine' : 'With image'}
+            </span>
+          )}
+        </td>
+        <td className="px-4 py-3 text-center">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            {isExpanded 
+              ? (language === 'ro' ? 'Ascunde' : 'Hide')
+              : (language === 'ro' ? 'Vezi' : 'View')
+            }
+          </button>
+        </td>
+      </tr>
+
+      {/* Rând expandabil cu detalii */}
+      {isExpanded && (
+        <tr>
+          <td colSpan="4" className="px-4 py-6 bg-gray-800/50">
+            <div className="space-y-6 max-w-4xl">
+              {/* Întrebarea completă */}
+              <div>
+                <h4 className="text-sm font-semibold text-amber-400 uppercase mb-2">
+                  {language === 'ro' ? 'Întrebarea ta:' : 'Your question:'}
+                </h4>
+                <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                  <p className="text-white whitespace-pre-wrap">{question.question}</p>
+                </div>
+              </div>
+
+              {/* Imaginea întrebării */}
+              {question.image && (
+                <div>
+                  <h4 className="text-sm font-semibold text-amber-400 uppercase mb-2">
+                    {language === 'ro' ? 'Poză atașată:' : 'Attached image:'}
+                  </h4>
+                  <div className="overflow-hidden rounded-lg">
+                    <img
+                      src={question.image.url}
+                      alt="Întrebare"
+                      className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => setEnlargedImage(question.image.url)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Răspunsul mentorului */}
+              {question.status === 'resolved' && question.raspuns && (
+                <>
+                  <div>
+                    <h4 className="text-sm font-semibold text-green-400 uppercase mb-2">
+                      {language === 'ro' ? '💬 Răspunsul mentorului:' : '💬 Mentor\'s answer:'}
+                    </h4>
+                    <div className="bg-green-900/20 rounded-lg p-4 border border-green-700/50">
+                      <p className="text-white whitespace-pre-wrap">{question.raspuns}</p>
+                    </div>
+                  </div>
+
+                  {question.raspunsImage && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-green-400 uppercase mb-2">
+                        {language === 'ro' ? 'Poză răspuns:' : 'Answer image:'}
+                      </h4>
+                      <div className="overflow-hidden rounded-lg">
+                        <img
+                          src={question.raspunsImage.url}
+                          alt="Răspuns"
+                          className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setEnlargedImage(question.raspunsImage.url)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {question.resolvedAt && (
+                    <p className="text-xs text-gray-400">
+                      {language === 'ro' ? 'Răspuns primit pe:' : 'Answered on:'}{' '}
+                      {formatDateTime(question.resolvedAt)}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </td>
+        </tr>
+      )}
+
+      {/* Lightbox pentru imaginea mărită */}
+      {enlargedImage && typeof document !== "undefined" && createPortal(
+        <div 
+          className="fixed inset-0 bg-black/95 z-[99999] p-4 overflow-auto"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <button
+            onClick={() => setEnlargedImage(null)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsZoomed((prev) => !prev);
+            }}
+            className="absolute top-4 right-16 text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2"
+            title={isZoomed ? (language === 'ro' ? 'Micșorează' : 'Zoom out') : (language === 'ro' ? 'Mărește' : 'Zoom in')}
+          >
+            {isZoomed ? <ZoomOut className="w-8 h-8" /> : <ZoomIn className="w-8 h-8" />}
+          </button>
+          <div
+            className="min-w-full min-h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={enlargedImage}
+              alt="Enlarged"
+              className={`object-contain transition-all duration-200 origin-center ${isZoomed ? 'cursor-zoom-out max-w-none max-h-none' : 'cursor-zoom-in max-w-full max-h-full'}`}
+              style={{ width: isZoomed ? '220%' : 'auto', height: 'auto' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsZoomed((prev) => !prev);
+              }}
+            />
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
 
 // === CACHE HELPERS - Reduce Firebase reads === 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minute
@@ -57,7 +248,19 @@ const Army = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   
   // State pentru selecția activității
-  const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload', 'materiale'
+  const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload', 'materiale', 'mentor'
+
+  // State pentru întrebări mentor
+  const [mentorQuestion, setMentorQuestion] = useState("");
+  const [mentorImageFile, setMentorImageFile] = useState(null);
+  const [mentorImagePreview, setMentorImagePreview] = useState("");
+  const [mentorSending, setMentorSending] = useState(false);
+  const [mentorError, setMentorError] = useState("");
+  const [mentorSuccess, setMentorSuccess] = useState("");
+  const [myQuestions, setMyQuestions] = useState([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const questionsPerPage = 5;
 
   // Listen for updates from Biblia component when user switches back
   useEffect(() => {
@@ -97,6 +300,13 @@ const Army = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [authenticatedUser, activeView]);
+
+  // Încarcă întrebările când view-ul mentor este activ
+  useEffect(() => {
+    if (activeView === 'mentor' && authenticatedUser) {
+      fetchMyQuestions();
+    }
+  }, [activeView, authenticatedUser]);
 
   // Funcție de autentificare
   const handleLogin = async (e) => {
@@ -188,6 +398,125 @@ const Army = () => {
     localStorage.removeItem('armyUploadUser');
     
     setLoginForm({ nume: "", telefon: "" });
+  };
+
+  const handleMentorImageChange = (e) => {
+    setMentorError("");
+    setMentorSuccess("");
+
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (mentorImagePreview) {
+      URL.revokeObjectURL(mentorImagePreview);
+    }
+
+    setMentorImageFile(file);
+    setMentorImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleMentorImageRemove = () => {
+    if (mentorImagePreview) {
+      URL.revokeObjectURL(mentorImagePreview);
+    }
+    setMentorImagePreview("");
+    setMentorImageFile(null);
+  };
+
+  const handleMentorSubmit = async (e) => {
+    e.preventDefault();
+    setMentorError("");
+    setMentorSuccess("");
+
+    const trimmedQuestion = mentorQuestion.trim();
+    if (!trimmedQuestion) {
+      setMentorError(language === 'ro'
+        ? 'Completează întrebarea înainte de trimitere.'
+        : 'Please enter your question before sending.');
+      return;
+    }
+
+    if (!authenticatedUser) {
+      setMentorError(language === 'ro'
+        ? 'Trebuie să fii autentificat pentru a trimite o întrebare.'
+        : 'You must be logged in to send a question.');
+      return;
+    }
+
+    setMentorSending(true);
+
+    try {
+      let imageData = null;
+
+      if (mentorImageFile) {
+        const uploadResult = await uploadScreenshotToCloudinary(mentorImageFile);
+        imageData = {
+          url: uploadResult.secure_url,
+          publicId: uploadResult.public_id,
+          format: uploadResult.format,
+          size: mentorImageFile.size,
+          fileName: mentorImageFile.name
+        };
+      }
+
+      await addDoc(collection(db, "ArmyMentorQuestions"), {
+        userId: authenticatedUser.id,
+        nume: authenticatedUser.nume,
+        telefon: authenticatedUser.telefon,
+        perecheValutara: authenticatedUser.perecheValutara,
+        tipParticipant: authenticatedUser.tipParticipant,
+        question: trimmedQuestion,
+        image: imageData,
+        createdAt: Timestamp.now(),
+        status: "new"
+      });
+
+      setMentorSuccess(language === 'ro'
+        ? 'Întrebarea a fost trimisă cu succes!'
+        : 'Question sent successfully!');
+      setMentorQuestion("");
+      handleMentorImageRemove();
+      
+      // Reîncarcă întrebările pentru a vedea noua întrebare
+      await fetchMyQuestions();
+    } catch (err) {
+      console.error("Eroare trimitere întrebare:", err);
+      setMentorError(language === 'ro'
+        ? 'Eroare la trimitere. Te rugăm să încerci din nou.'
+        : 'Send error. Please try again.');
+    } finally {
+      setMentorSending(false);
+    }
+  };
+
+  const fetchMyQuestions = async () => {
+    if (!authenticatedUser) return;
+
+    setLoadingQuestions(true);
+    try {
+      const snapshot = await getDocs(collection(db, "ArmyMentorQuestions"));
+      const allQuestions = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Filtrează doar întrebările utilizatorului curent
+      const userQuestions = allQuestions.filter(q => q.userId === authenticatedUser.id);
+      
+      // Sortează după dată (cele mai recente primele)
+      userQuestions.sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+        return dateB - dateA;
+      });
+
+      setMyQuestions(userQuestions);
+      setCurrentPage(1); // Reset la prima pagină când se încarcă întrebări noi
+    } catch (err) {
+      console.error("Eroare încărcare întrebări:", err);
+    } finally {
+      setLoadingQuestions(false);
+    }
   };
 
   // Formular de autentificare
@@ -329,7 +658,218 @@ const Army = () => {
     );
   }
 
-  // Meniul principal după autentificare - două carduri
+  if (activeView === 'mentor') {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setActiveView(null)}
+          className="fixed top-2 left-2 md:absolute md:top-4 md:left-4 z-50 px-3 py-2 md:px-4 md:py-2 text-sm md:text-base bg-gray-900/95 backdrop-blur-sm hover:bg-gray-800/95 text-white rounded-lg transition-all flex items-center gap-1 md:gap-2 shadow-lg border border-gray-700/50 hover:border-amber-400/50"
+        >
+          <ChevronRight className="w-4 h-4 rotate-180" />
+          <span className="hidden md:inline">{language === 'ro' ? 'Înapoi la Meniu' : 'Back to Menu'}</span>
+          <span className="md:hidden">{language === 'ro' ? 'Înapoi' : 'Back'}</span>
+        </button>
+
+        <div className="min-h-screen p-4 md:p-8 text-white">
+          <div className="max-w-6xl mx-auto pt-12 md:pt-0 space-y-6">
+            
+            {/* Formular întrebare nouă */}
+            <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+              <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                <MessageSquare className="w-6 h-6 text-amber-400" />
+                {language === 'ro' ? 'Întreabă mentorul' : 'Ask the Mentor'}
+              </h3>
+              <p className="text-gray-400 text-sm mb-6">
+                {language === 'ro'
+                  ? 'Trimite o întrebare către mentorul tău. Poți atașa o poză dacă este relevantă.'
+                  : 'Send a question to your mentor. You can attach an image if relevant.'}
+              </p>
+
+              <form onSubmit={handleMentorSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {language === 'ro' ? 'Întrebarea ta' : 'Your question'}
+                  </label>
+                  <textarea
+                    value={mentorQuestion}
+                    onChange={(e) => setMentorQuestion(e.target.value)}
+                    rows={5}
+                    placeholder={language === 'ro'
+                      ? 'Scrie aici întrebarea ta despre trade-uri sau neclarități...'
+                      : 'Write your question about trades or anything unclear...'}
+                    className="w-full p-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-500 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {language === 'ro' ? 'Poză (opțional)' : 'Image (optional)'}
+                  </label>
+                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center bg-gray-800/30">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMentorImageChange}
+                      className="hidden"
+                      id="mentor-image-upload"
+                    />
+                    <label
+                      htmlFor="mentor-image-upload"
+                      className="cursor-pointer inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {language === 'ro' ? 'Selectează imagine' : 'Select image'}
+                    </label>
+                    {mentorImageFile && (
+                      <p className="mt-3 text-sm text-gray-400">
+                        {language === 'ro' ? 'Fișier selectat:' : 'Selected file:'}{" "}
+                        <span className="font-semibold text-white">{mentorImageFile.name}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {mentorImagePreview && (
+                    <div className="mt-4">
+                      <div className="relative">
+                        <img
+                          src={mentorImagePreview}
+                          alt={language === 'ro' ? 'Previzualizare imagine' : 'Image preview'}
+                          className="w-full max-h-72 object-cover rounded-xl border border-gray-700/50"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleMentorImageRemove}
+                          className="absolute top-3 right-3 bg-gray-900/80 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded-full border border-gray-700/50"
+                        >
+                          {language === 'ro' ? 'Șterge' : 'Remove'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {mentorError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                    <p className="text-red-400 text-sm">{mentorError}</p>
+                  </div>
+                )}
+
+                {mentorSuccess && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                    <p className="text-green-400 text-sm">{mentorSuccess}</p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={mentorSending}
+                  className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold rounded-lg hover:from-amber-600 hover:to-yellow-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {mentorSending
+                    ? (language === 'ro' ? 'Se trimite...' : 'Sending...')
+                    : (language === 'ro' ? 'Trimite întrebarea' : 'Send question')}
+                </button>
+              </form>
+            </div>
+
+            {/* Istoric întrebări */}
+            {myQuestions.length > 0 && (
+              <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                  📋 {language === 'ro' ? 'Istoricul întrebărilor tale' : 'Your Questions History'}
+                </h3>
+                
+                {loadingQuestions ? (
+                  <div className="text-center py-8">
+                    <Loader className="w-8 h-8 text-amber-400 animate-spin mx-auto mb-2" />
+                    <p className="text-gray-400">{language === 'ro' ? 'Se încarcă...' : 'Loading...'}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-800/50 border-b border-gray-700">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">
+                              {language === 'ro' ? 'Status' : 'Status'}
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">
+                              {language === 'ro' ? 'Dată' : 'Date'}
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">
+                              {language === 'ro' ? 'Întrebare' : 'Question'}
+                            </th>
+                            <th className="px-4 py-3 text-center text-xs font-semibold text-gray-300 uppercase">
+                              {language === 'ro' ? 'Acțiuni' : 'Actions'}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-700/50">
+                          {myQuestions
+                            .slice((currentPage - 1) * questionsPerPage, currentPage * questionsPerPage)
+                            .map((q) => (
+                              <QuestionRow key={q.id} question={q} language={language} />
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Paginație */}
+                    {myQuestions.length > questionsPerPage && (
+                      <div className="mt-6 flex items-center justify-between border-t border-gray-700 pt-4">
+                        <div className="text-sm text-gray-400">
+                          {language === 'ro' 
+                            ? `Afișare ${(currentPage - 1) * questionsPerPage + 1}-${Math.min(currentPage * questionsPerPage, myQuestions.length)} din ${myQuestions.length}`
+                            : `Showing ${(currentPage - 1) * questionsPerPage + 1}-${Math.min(currentPage * questionsPerPage, myQuestions.length)} of ${myQuestions.length}`
+                          }
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {language === 'ro' ? '← Anterior' : '← Previous'}
+                          </button>
+                          
+                          <div className="flex gap-1">
+                            {Array.from({ length: Math.ceil(myQuestions.length / questionsPerPage) }, (_, i) => i + 1).map(page => (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`px-3 py-1 rounded-lg text-sm font-semibold transition-colors ${
+                                  currentPage === page
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-700 hover:bg-gray-600 text-white'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <button
+                            onClick={() => setCurrentPage(prev => Math.min(Math.ceil(myQuestions.length / questionsPerPage), prev + 1))}
+                            disabled={currentPage === Math.ceil(myQuestions.length / questionsPerPage)}
+                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {language === 'ro' ? 'Următor →' : 'Next →'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Meniul principal după autentificare - patru carduri
   return (
     <div className="min-h-screen p-4 md:p-8 text-white">
       <div className="max-w-4xl mx-auto">
@@ -370,7 +910,7 @@ const Army = () => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Card 1 - Biblia */}
           <button
             onClick={() => setActiveView('biblia')}
@@ -490,6 +1030,32 @@ const Army = () => {
                 <span className="text-amber-400 text-sm font-medium">
                   📚 {language === 'ro' ? 'Nou!' : 'New!'}
                 </span>
+              </div>
+            </div>
+          </button>
+
+          {/* Card 4 - Intreaba mentorul */}
+          <button
+            onClick={() => setActiveView('mentor')}
+            className="group relative bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 hover:border-amber-400/30 transition-all duration-300 text-left"
+          >
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-800/50 rounded-full mb-4 border border-gray-700/50">
+                <MessageSquare className="w-8 h-8 text-amber-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                {language === 'ro' ? 'Întreabă mentorul' : 'Ask the Mentor'}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {language === 'ro'
+                  ? 'Trimite întrebări despre trade-uri sau neclarități' 
+                  : 'Send questions about trades or anything unclear'}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-amber-400 transition-colors">
+                <span className="text-sm font-medium">
+                  {language === 'ro' ? 'Acces Mentor' : 'Access Mentor'}
+                </span>
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </button>

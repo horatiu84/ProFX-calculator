@@ -12,6 +12,7 @@ import FeedbackTab from "./components/FeedbackTab.jsx";
 import ConcursTab from "./components/ConcursTab.jsx";
 import ArmyTab from "./components/ArmyTab.jsx";
 import LeaduriTab from "./components/LeaduriTab.jsx";
+import IntrebariArmyTab from "./components/IntrebariArmyTab.jsx";
 
 
 const formatDate = (createdAt) => {
@@ -583,6 +584,16 @@ const Dashboard = () => {
           👥 Leaduri
         </button> */}
         <button
+          onClick={() => setActiveTab("intrebari")}
+          className={`px-4 py-2 rounded-t ${
+            activeTab === "intrebari"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          💬 Întrebări Army
+        </button>
+        <button
           onClick={() => setActiveTab("feedback")}
           className={`px-4 py-2 rounded-t ${
             activeTab === "feedback"
@@ -642,6 +653,15 @@ const Dashboard = () => {
       {/* Tab Content: Army */}
       {activeTab === "army" && (
         <ArmyTab 
+          getCachedData={getCachedData}
+          setCachedData={setCachedData}
+          clearCachedData={clearCachedData}
+        />
+      )}
+
+      {/* Tab Content: Întrebări Army */}
+      {activeTab === "intrebari" && (
+        <IntrebariArmyTab 
           getCachedData={getCachedData}
           setCachedData={setCachedData}
           clearCachedData={clearCachedData}
