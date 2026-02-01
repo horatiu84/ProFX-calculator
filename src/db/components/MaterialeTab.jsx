@@ -272,13 +272,19 @@ const MaterialeTab = ({
             {/* Upload Fișier (Imagine, PDF sau Video) */}
             <div>
               <label className="block text-gray-300 mb-2">Fișier - Imagine, PDF sau Video (opțional)</label>
-              <p className="text-amber-400 text-sm mb-2 flex items-start gap-2">
-                <span>⚠️</span>
-                <span>Notă: Limita maximă pentru fișiere video este 100 MB</span>
-              </p>
+              <div className="bg-amber-900/30 border border-amber-600/50 rounded p-3 mb-2">
+                <p className="text-amber-400 text-sm flex items-start gap-2 mb-1">
+                  <span>⚠️</span>
+                  <span>Limita maximă pentru fișiere video: 100 MB</span>
+                </p>
+                <p className="text-amber-300 text-xs flex items-start gap-2 ml-6">
+                  <span>📱</span>
+                  <span>Pentru compatibilitate iPhone, folosește doar format MP4 sau MOV</span>
+                </p>
+              </div>
               <input
                 type="file"
-                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf,video/mp4,video/webm,video/ogg,video/quicktime"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf,video/mp4,video/quicktime"
                 onChange={handleImageUpload}
                 className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
                 disabled={uploadingImage}
@@ -312,6 +318,8 @@ const MaterialeTab = ({
                       <video
                         src={uploadedImageUrl.url}
                         controls
+                        playsInline
+                        preload="metadata"
                         className="w-full max-w-md rounded border border-gray-500"
                       >
                         Browser-ul tău nu suportă tag-ul video.
@@ -401,6 +409,8 @@ const MaterialeTab = ({
                     <video
                       src={selectedMaterial.imagine.url}
                       controls
+                      playsInline
+                      preload="metadata"
                       className="w-full max-h-[600px] rounded border border-gray-500"
                     >
                       Browser-ul tău nu suportă tag-ul video.

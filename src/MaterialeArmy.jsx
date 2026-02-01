@@ -136,6 +136,8 @@ const MaterialeArmy = () => {
                       <video
                         src={selectedMaterial.imagine.url}
                         controls
+                        playsInline
+                        preload="metadata"
                         className="w-full max-h-[600px] rounded border border-gray-500"
                       >
                         {language === 'ro' ? 'Browser-ul tău nu suportă tag-ul video.' : 'Your browser does not support the video tag.'}
