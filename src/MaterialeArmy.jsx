@@ -146,12 +146,12 @@ const MaterialeArmy = () => {
                       </div>
                     </div>
                   ) : selectedMaterial.imagine.type === 'youtube' ? (
-                    <div className="bg-gray-700 p-4 rounded border border-gray-600">
-                      <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-gray-700 p-2 sm:p-4 rounded border border-gray-600">
+                      <div className="hidden sm:flex items-center gap-3 mb-3">
                         <span className="text-4xl">▶️</span>
                         <p className="text-white font-semibold">YouTube</p>
                       </div>
-                      <div className="w-full aspect-video rounded overflow-hidden border border-gray-500 bg-black">
+                      <div className="w-full aspect-video sm:rounded overflow-hidden sm:border border-gray-500 bg-black">
                         <iframe
                           src={getYouTubeEmbedUrl(selectedMaterial.imagine.url)}
                           title="YouTube video"
