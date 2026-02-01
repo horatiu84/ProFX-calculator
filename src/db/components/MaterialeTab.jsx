@@ -17,11 +17,22 @@ const formatDate = (createdAt) => {
   }
 };
 
-const getVideoUrl = (url) => {
-  if (!url) return url;
-  if (!url.includes("res.cloudinary.com")) return url;
-  if (url.includes("/upload/f_mp4")) return url;
-  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac,fl_progressive,so_0/");
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) {
+      const id = parsed.pathname.replace("/", "");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+    return "";
+  } catch {
+    return "";
+  }
 };
 
 const MaterialeTab = ({ 
@@ -40,6 +51,7 @@ const MaterialeTab = ({
     imagine: null
   });
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState(null);
   const [editMaterialData, setEditMaterialData] = useState({
@@ -93,7 +105,6 @@ const MaterialeTab = ({
       const result = await uploadFileToCloudinary(file);
       let fileType = 'image';
       if (file.type.includes('pdf')) fileType = 'pdf';
-      else if (file.type.includes('video')) fileType = 'video';
       
       const fileData = {
         url: result.secure_url,
@@ -103,7 +114,7 @@ const MaterialeTab = ({
       console.log('File uploaded:', fileData);
       setUploadedImageUrl(fileData);
       
-      const fileTypeText = fileType === 'pdf' ? 'PDF' : fileType === 'video' ? 'Video' : 'Imagine';
+      const fileTypeText = fileType === 'pdf' ? 'PDF' : 'Imagine';
       setSuccessMateriale(`${fileTypeText} încărcat cu succes!`);
       setTimeout(() => setSuccessMateriale(""), 3000);
     } catch (err) {
@@ -123,12 +134,21 @@ const MaterialeTab = ({
       return;
     }
 
+    if (youtubeUrl && !getYouTubeEmbedUrl(youtubeUrl)) {
+      setErrorMateriale("Link YouTube invalid. Te rog folosește un link YouTube corect.");
+      return;
+    }
+
     setLoadingMateriale(true);
     try {
       await addDoc(collection(db, "MaterialeArmy"), {
         nota: newMaterial.nota,
         modul: newMaterial.modul,
-        imagine: uploadedImageUrl ? {
+        imagine: youtubeUrl ? {
+          url: youtubeUrl,
+          type: 'youtube',
+          name: "YouTube"
+        } : uploadedImageUrl ? {
           url: typeof uploadedImageUrl === 'string' ? uploadedImageUrl : uploadedImageUrl.url,
           type: typeof uploadedImageUrl === 'object' ? uploadedImageUrl.type : 'image',
           name: typeof uploadedImageUrl === 'object' ? uploadedImageUrl.name : "material_image.jpg"
@@ -140,6 +160,7 @@ const MaterialeTab = ({
       setSuccessMateriale("Material adăugat cu succes!");
       setNewMaterial({ nota: "", modul: "1", imagine: null });
       setUploadedImageUrl(null);
+      setYoutubeUrl("");
       setShowAddMaterialForm(false);
       
       clearCachedData('dashboard_materiale');
@@ -276,22 +297,27 @@ const MaterialeTab = ({
               />
             </div>
 
-            {/* Upload Fișier (Imagine, PDF sau Video) */}
+            {/* Link YouTube (opțional) */}
             <div>
-              <label className="block text-gray-300 mb-2">Fișier - Imagine, PDF sau Video (opțional)</label>
-              <div className="bg-amber-900/30 border border-amber-600/50 rounded p-3 mb-2">
-                <p className="text-amber-400 text-sm flex items-start gap-2 mb-1">
-                  <span>⚠️</span>
-                  <span>Limita maximă pentru fișiere video: 100 MB</span>
-                </p>
-                <p className="text-amber-300 text-xs flex items-start gap-2 ml-6">
-                  <span>📱</span>
-                  <span>Pentru compatibilitate iPhone, folosește doar format MP4 sau MOV</span>
-                </p>
-              </div>
+              <label className="block text-gray-300 mb-2">Link YouTube (opțional)</label>
+              <input
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
+              />
+              <p className="text-gray-400 text-xs mt-1">
+                Dacă completezi un link YouTube, fișierul încărcat nu va fi folosit.
+              </p>
+            </div>
+
+            {/* Upload Fișier (Imagine sau PDF) */}
+            <div>
+              <label className="block text-gray-300 mb-2">Fișier - Imagine sau PDF (opțional)</label>
               <input
                 type="file"
-                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf,video/mp4,video/quicktime"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf"
                 onChange={handleImageUpload}
                 className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
                 disabled={uploadingImage}
@@ -315,22 +341,6 @@ const MaterialeTab = ({
                       >
                         👁️ Previzualizează PDF
                       </a>
-                    </div>
-                  ) : uploadedImageUrl.type === 'video' ? (
-                    <div className="bg-gray-600 p-3 rounded border border-gray-500">
-                      <p className="text-white flex items-center gap-2 mb-2">
-                        <span className="text-2xl">🎥</span>
-                        <span>{uploadedImageUrl.name}</span>
-                      </p>
-                      <video
-                        controls
-                        playsInline
-                        preload="metadata"
-                        className="w-full max-w-md rounded border border-gray-500"
-                      >
-                        <source src={getVideoUrl(uploadedImageUrl.url)} type="video/mp4" />
-                        Browser-ul tău nu suportă tag-ul video.
-                      </video>
                     </div>
                   ) : (
                     <img
@@ -365,6 +375,7 @@ const MaterialeTab = ({
                   setShowAddMaterialForm(false);
                   setNewMaterial({ nota: "", modul: "1", imagine: null });
                   setUploadedImageUrl(null);
+                  setYoutubeUrl("");
                 }}
                 className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
               >
@@ -407,21 +418,21 @@ const MaterialeTab = ({
                       </Worker>
                     </div>
                   </div>
-                ) : selectedMaterial.imagine.type === 'video' ? (
+                ) : selectedMaterial.imagine.type === 'youtube' ? (
                   <div className="bg-gray-700 p-4 rounded border border-gray-600">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-4xl">🎥</span>
-                      <p className="text-white font-semibold">{selectedMaterial.imagine.name || 'Video'}</p>
+                      <span className="text-4xl">▶️</span>
+                      <p className="text-white font-semibold">YouTube</p>
                     </div>
-                    <video
-                      controls
-                      playsInline
-                      preload="metadata"
-                      className="w-full max-h-[600px] rounded border border-gray-500"
-                    >
-                      <source src={getVideoUrl(selectedMaterial.imagine.url)} type="video/mp4" />
-                      Browser-ul tău nu suportă tag-ul video.
-                    </video>
+                    <div className="w-full aspect-video rounded overflow-hidden border border-gray-500 bg-black">
+                      <iframe
+                        src={getYouTubeEmbedUrl(selectedMaterial.imagine.url)}
+                        title="YouTube video"
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    </div>
                   </div>
                 ) : (
                   <img src={selectedMaterial.imagine.url} alt="Material" className="w-full max-h-[600px] object-contain rounded border border-gray-600" />
@@ -510,7 +521,7 @@ const MaterialeTab = ({
                                   onClick={() => setSelectedMaterial(material)}
                                   className="text-left text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-2"
                                 >
-                                  {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'video' ? '🎥' : '🖼️'}
+                                  {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'youtube' ? '▶️' : '🖼️'}
                                   <span className="line-clamp-2">{material.nota.substring(0, 80)}{material.nota.length > 80 ? '...' : ''}</span>
                                 </button>
                               </td>

@@ -13,11 +13,22 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-const getVideoUrl = (url) => {
-  if (!url) return url;
-  if (!url.includes("res.cloudinary.com")) return url;
-  if (url.includes("/upload/f_mp4")) return url;
-  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac,fl_progressive,so_0/");
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) {
+      const id = parsed.pathname.replace("/", "");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+    return "";
+  } catch {
+    return "";
+  }
 };
 
 const MaterialeArmy = () => {
@@ -134,21 +145,21 @@ const MaterialeArmy = () => {
                         </Worker>
                       </div>
                     </div>
-                  ) : selectedMaterial.imagine.type === 'video' ? (
+                  ) : selectedMaterial.imagine.type === 'youtube' ? (
                     <div className="bg-gray-700 p-4 rounded border border-gray-600">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-4xl">🎥</span>
-                        <p className="text-white font-semibold">{selectedMaterial.imagine.name || (language === 'ro' ? 'Video' : 'Video')}</p>
+                        <span className="text-4xl">▶️</span>
+                        <p className="text-white font-semibold">YouTube</p>
                       </div>
-                      <video
-                        controls
-                        playsInline
-                        preload="metadata"
-                        className="w-full max-h-[600px] rounded border border-gray-500"
-                      >
-                        <source src={getVideoUrl(selectedMaterial.imagine.url)} type="video/mp4" />
-                        {language === 'ro' ? 'Browser-ul tău nu suportă tag-ul video.' : 'Your browser does not support the video tag.'}
-                      </video>
+                      <div className="w-full aspect-video rounded overflow-hidden border border-gray-500 bg-black">
+                        <iframe
+                          src={getYouTubeEmbedUrl(selectedMaterial.imagine.url)}
+                          title="YouTube video"
+                          className="w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                      </div>
                     </div>
                   ) : (
                     <img src={selectedMaterial.imagine.url} alt="Material" className="w-full max-h-[600px] object-contain rounded border border-gray-600" />
@@ -215,7 +226,7 @@ const MaterialeArmy = () => {
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
                                   <span className="text-2xl">
-                                    {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'video' ? '🎥' : '🖼️'}
+                                    {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'youtube' ? '▶️' : '🖼️'}
                                   </span>
                                   <span className="text-gray-300 line-clamp-2">
                                     {material.nota.substring(0, 80)}{material.nota.length > 80 ? '...' : ''}
