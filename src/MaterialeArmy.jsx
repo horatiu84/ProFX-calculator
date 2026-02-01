@@ -127,6 +127,20 @@ const MaterialeArmy = () => {
                         </Worker>
                       </div>
                     </div>
+                  ) : selectedMaterial.imagine.type === 'video' ? (
+                    <div className="bg-gray-700 p-4 rounded border border-gray-600">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-4xl">🎥</span>
+                        <p className="text-white font-semibold">{selectedMaterial.imagine.name || (language === 'ro' ? 'Video' : 'Video')}</p>
+                      </div>
+                      <video
+                        src={selectedMaterial.imagine.url}
+                        controls
+                        className="w-full max-h-[600px] rounded border border-gray-500"
+                      >
+                        {language === 'ro' ? 'Browser-ul tău nu suportă tag-ul video.' : 'Your browser does not support the video tag.'}
+                      </video>
+                    </div>
                   ) : (
                     <img src={selectedMaterial.imagine.url} alt="Material" className="w-full max-h-[600px] object-contain rounded border border-gray-600" />
                   )
@@ -191,7 +205,9 @@ const MaterialeArmy = () => {
                             >
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
-                                  <span className="text-2xl">{material.imagine?.type === 'pdf' ? '📄' : '🖼️'}</span>
+                                  <span className="text-2xl">
+                                    {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'video' ? '🎥' : '🖼️'}
+                                  </span>
                                   <span className="text-gray-300 line-clamp-2">
                                     {material.nota.substring(0, 80)}{material.nota.length > 80 ? '...' : ''}
                                   </span>

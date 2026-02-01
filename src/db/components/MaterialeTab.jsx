@@ -49,15 +49,19 @@ const MaterialeTab = ({
     ],
   });
 
-  // Upload fișier (imagine sau PDF) la Cloudinary
+  // Upload fișier (imagine, PDF sau video) la Cloudinary
   const uploadFileToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "screenshots_unsigned");
 
-    // Folosim /auto/upload pentru a suporta și PDF-uri, nu doar imagini
+    // Detectăm tipul de fișier
+    const isVideo = file.type.includes('video');
+    const uploadType = isVideo ? 'video' : 'auto';
+
+    // Folosim /auto/upload pentru PDF și imagini, /video/upload pentru video-uri
     const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dtdovbtye/auto/upload",
+      `https://api.cloudinary.com/v1_1/dtdovbtye/${uploadType}/upload`,
       {
         method: "POST",
         body: formData,
@@ -80,7 +84,10 @@ const MaterialeTab = ({
 
     try {
       const result = await uploadFileToCloudinary(file);
-      const fileType = file.type.includes('pdf') ? 'pdf' : 'image';
+      let fileType = 'image';
+      if (file.type.includes('pdf')) fileType = 'pdf';
+      else if (file.type.includes('video')) fileType = 'video';
+      
       const fileData = {
         url: result.secure_url,
         type: fileType,
@@ -88,7 +95,8 @@ const MaterialeTab = ({
       };
       console.log('File uploaded:', fileData);
       setUploadedImageUrl(fileData);
-      const fileTypeText = fileType === 'pdf' ? 'PDF' : 'Imagine';
+      
+      const fileTypeText = fileType === 'pdf' ? 'PDF' : fileType === 'video' ? 'Video' : 'Imagine';
       setSuccessMateriale(`${fileTypeText} încărcat cu succes!`);
       setTimeout(() => setSuccessMateriale(""), 3000);
     } catch (err) {
@@ -261,12 +269,16 @@ const MaterialeTab = ({
               />
             </div>
 
-            {/* Upload Fișier (Imagine sau PDF) */}
+            {/* Upload Fișier (Imagine, PDF sau Video) */}
             <div>
-              <label className="block text-gray-300 mb-2">Fișier - Imagine sau PDF (opțional)</label>
+              <label className="block text-gray-300 mb-2">Fișier - Imagine, PDF sau Video (opțional)</label>
+              <p className="text-amber-400 text-sm mb-2 flex items-start gap-2">
+                <span>⚠️</span>
+                <span>Notă: Limita maximă pentru fișiere video este 100 MB</span>
+              </p>
               <input
                 type="file"
-                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf,video/mp4,video/webm,video/ogg,video/quicktime"
                 onChange={handleImageUpload}
                 className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
                 disabled={uploadingImage}
@@ -276,7 +288,7 @@ const MaterialeTab = ({
               )}
               {uploadedImageUrl && (
                 <div className="mt-2">
-                  {(uploadedImageUrl.type === 'pdf') ? (
+                  {uploadedImageUrl.type === 'pdf' ? (
                     <div className="bg-gray-600 p-3 rounded border border-gray-500">
                       <p className="text-white flex items-center gap-2">
                         <span className="text-2xl">📄</span>
@@ -290,6 +302,20 @@ const MaterialeTab = ({
                       >
                         👁️ Previzualizează PDF
                       </a>
+                    </div>
+                  ) : uploadedImageUrl.type === 'video' ? (
+                    <div className="bg-gray-600 p-3 rounded border border-gray-500">
+                      <p className="text-white flex items-center gap-2 mb-2">
+                        <span className="text-2xl">🎥</span>
+                        <span>{uploadedImageUrl.name}</span>
+                      </p>
+                      <video
+                        src={uploadedImageUrl.url}
+                        controls
+                        className="w-full max-w-md rounded border border-gray-500"
+                      >
+                        Browser-ul tău nu suportă tag-ul video.
+                      </video>
                     </div>
                   ) : (
                     <img
@@ -365,6 +391,20 @@ const MaterialeTab = ({
                         <Viewer fileUrl={selectedMaterial.imagine.url} plugins={[defaultLayoutPluginInstance]} />
                       </Worker>
                     </div>
+                  </div>
+                ) : selectedMaterial.imagine.type === 'video' ? (
+                  <div className="bg-gray-700 p-4 rounded border border-gray-600">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-4xl">🎥</span>
+                      <p className="text-white font-semibold">{selectedMaterial.imagine.name || 'Video'}</p>
+                    </div>
+                    <video
+                      src={selectedMaterial.imagine.url}
+                      controls
+                      className="w-full max-h-[600px] rounded border border-gray-500"
+                    >
+                      Browser-ul tău nu suportă tag-ul video.
+                    </video>
                   </div>
                 ) : (
                   <img src={selectedMaterial.imagine.url} alt="Material" className="w-full max-h-[600px] object-contain rounded border border-gray-600" />
@@ -453,7 +493,7 @@ const MaterialeTab = ({
                                   onClick={() => setSelectedMaterial(material)}
                                   className="text-left text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-2"
                                 >
-                                  {material.imagine?.type === 'pdf' ? '📄' : '🖼️'}
+                                  {material.imagine?.type === 'pdf' ? '📄' : material.imagine?.type === 'video' ? '🎥' : '🖼️'}
                                   <span className="line-clamp-2">{material.nota.substring(0, 80)}{material.nota.length > 80 ? '...' : ''}</span>
                                 </button>
                               </td>
