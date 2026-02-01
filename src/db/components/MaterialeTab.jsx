@@ -17,6 +17,13 @@ const formatDate = (createdAt) => {
   }
 };
 
+const getVideoUrl = (url) => {
+  if (!url) return url;
+  if (!url.includes("res.cloudinary.com")) return url;
+  if (url.includes("/upload/f_mp4")) return url;
+  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac/");
+};
+
 const MaterialeTab = ({ 
   materialeArmy, 
   setMaterialeArmy,
@@ -316,12 +323,12 @@ const MaterialeTab = ({
                         <span>{uploadedImageUrl.name}</span>
                       </p>
                       <video
-                        src={uploadedImageUrl.url}
                         controls
                         playsInline
                         preload="metadata"
                         className="w-full max-w-md rounded border border-gray-500"
                       >
+                        <source src={getVideoUrl(uploadedImageUrl.url)} type="video/mp4" />
                         Browser-ul tău nu suportă tag-ul video.
                       </video>
                     </div>
@@ -407,12 +414,12 @@ const MaterialeTab = ({
                       <p className="text-white font-semibold">{selectedMaterial.imagine.name || 'Video'}</p>
                     </div>
                     <video
-                      src={selectedMaterial.imagine.url}
                       controls
                       playsInline
                       preload="metadata"
                       className="w-full max-h-[600px] rounded border border-gray-500"
                     >
+                      <source src={getVideoUrl(selectedMaterial.imagine.url)} type="video/mp4" />
                       Browser-ul tău nu suportă tag-ul video.
                     </video>
                   </div>

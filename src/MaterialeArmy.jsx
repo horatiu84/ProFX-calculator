@@ -13,6 +13,13 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
+const getVideoUrl = (url) => {
+  if (!url) return url;
+  if (!url.includes("res.cloudinary.com")) return url;
+  if (url.includes("/upload/f_mp4")) return url;
+  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac/");
+};
+
 const MaterialeArmy = () => {
   const { language } = useLanguage();
   const [materiale, setMateriale] = useState([]);
@@ -134,12 +141,12 @@ const MaterialeArmy = () => {
                         <p className="text-white font-semibold">{selectedMaterial.imagine.name || (language === 'ro' ? 'Video' : 'Video')}</p>
                       </div>
                       <video
-                        src={selectedMaterial.imagine.url}
                         controls
                         playsInline
                         preload="metadata"
                         className="w-full max-h-[600px] rounded border border-gray-500"
                       >
+                        <source src={getVideoUrl(selectedMaterial.imagine.url)} type="video/mp4" />
                         {language === 'ro' ? 'Browser-ul tău nu suportă tag-ul video.' : 'Your browser does not support the video tag.'}
                       </video>
                     </div>
