@@ -17,7 +17,7 @@ const getVideoUrl = (url) => {
   if (!url) return url;
   if (!url.includes("res.cloudinary.com")) return url;
   if (url.includes("/upload/f_mp4")) return url;
-  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac/");
+  return url.replace("/upload/", "/upload/f_mp4,vc_h264,ac_aac,fl_progressive,so_0/");
 };
 
 const MaterialeArmy = () => {
