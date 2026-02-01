@@ -23,11 +23,11 @@ const getYouTubeEmbedUrl = (url) => {
     const parsed = new URL(url);
     if (parsed.hostname.includes("youtu.be")) {
       const id = parsed.pathname.replace("/", "");
-      return id ? `https://www.youtube.com/embed/${id}` : "";
+      return id ? `https://www.youtube.com/embed/${id}?playsinline=1&fs=1` : "";
     }
     if (parsed.hostname.includes("youtube.com")) {
       const id = parsed.searchParams.get("v");
-      return id ? `https://www.youtube.com/embed/${id}` : "";
+      return id ? `https://www.youtube.com/embed/${id}?playsinline=1&fs=1` : "";
     }
     return "";
   } catch {
@@ -429,7 +429,7 @@ const MaterialeTab = ({
                         src={getYouTubeEmbedUrl(selectedMaterial.imagine.url)}
                         title="YouTube video"
                         className="w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                         allowFullScreen
                       />
                     </div>
