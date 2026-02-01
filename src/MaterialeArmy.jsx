@@ -158,7 +158,19 @@ const MaterialeArmy = () => {
                           className="w-full h-full"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                           allowFullScreen
+                          webkitAllowFullScreen
+                          mozAllowFullScreen
                         />
+                      </div>
+                      <div className="mt-3 flex justify-end">
+                        <a
+                          href={selectedMaterial.imagine.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+                        >
+                          {language === 'ro' ? 'Deschide în YouTube (fullscreen)' : 'Open in YouTube (fullscreen)'}
+                        </a>
                       </div>
                     </div>
                   ) : (
