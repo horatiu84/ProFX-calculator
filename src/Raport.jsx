@@ -7,6 +7,9 @@ const Raport = () => {
   const t = translations;
   const [selectedPdf, setSelectedPdf] = useState(null);
 
+  // Detectează dacă este mobil
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   // Rapoarte organizate pe ani
   const rapoartePerAn = {
     2026: [
@@ -27,7 +30,12 @@ const Raport = () => {
   const handleReportClick = (raport, e) => {
     if (raport.type === "pdf") {
       e.preventDefault();
-      setSelectedPdf(raport);
+      // Pe mobil, deschide PDF-ul direct în browser
+      if (isMobile) {
+        window.open(raport.href, '_blank');
+      } else {
+        setSelectedPdf(raport);
+      }
     }
     // Pentru HTML, link-ul va funcționa normal (target="_blank")
   };
