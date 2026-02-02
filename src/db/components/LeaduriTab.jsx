@@ -21,6 +21,68 @@ const MENTORI_DISPONIBILI = [
   { id: 'adrian', nume: 'Adrian' }
 ];
 
+// Constante pentru status leaduri
+const LEAD_STATUS = {
+  NEALOCAT: 'nealocat',
+  ALOCAT: 'alocat',
+  CONFIRMAT: 'confirmat',
+  NECONFIRMAT: 'neconfirmat',
+  NO_SHOW: 'no_show',
+  COMPLET: 'complet'
+};
+
+// Constante pentru sesiune 1:20
+const ONE_TO_TWENTY_STATUS = {
+  PENDING: 'pending',
+  CONFIRMED: 'confirmed',
+  NO_SHOW: 'no_show',
+  COMPLETED: 'completed'
+};
+
+// Timeout 6 ore pentru confirmare (în milisecunde)
+const TIMEOUT_6H = 6 * 60 * 60 * 1000;
+
+// === FUNCȚII HELPER PENTRU TIMEOUT (PREGĂTITE PENTRU FIREBASE FUNCTIONS) ===
+
+/**
+ * Verifică dacă un lead a depășit timeout-ul de 6h fără confirmare
+ * Această funcție va fi mutată în Firebase Function în viitor
+ */
+const checkLeadTimeout = (lead) => {
+  if (lead.status !== LEAD_STATUS.ALOCAT) return false;
+  if (!lead.dataAlocare) return false;
+  
+  const dataAlocare = lead.dataAlocare.toDate ? lead.dataAlocare.toDate() : new Date(lead.dataAlocare);
+  const now = new Date();
+  const timeDiff = now - dataAlocare;
+  
+  return timeDiff >= TIMEOUT_6H;
+};
+
+/**
+ * Calculează timpul rămas până la timeout (în minute)
+ */
+const getTimeUntilTimeout = (lead) => {
+  if (!lead.dataAlocare) return null;
+  
+  const dataAlocare = lead.dataAlocare.toDate ? lead.dataAlocare.toDate() : new Date(lead.dataAlocare);
+  const timeoutDate = new Date(dataAlocare.getTime() + TIMEOUT_6H);
+  const now = new Date();
+  const minutesLeft = Math.floor((timeoutDate - now) / (1000 * 60));
+  
+  return minutesLeft > 0 ? minutesLeft : 0;
+};
+
+/**
+ * Formatează timpul rămas într-un string lizibil
+ */
+const formatTimeRemaining = (minutes) => {
+  if (minutes <= 0) return 'Expirat';
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+};
+
 const LeaduriTab = ({ clearCachedData }) => {
   const [leaduri, setLeaduri] = useState([]);
   const [mentori, setMentori] = useState([]);
@@ -132,7 +194,36 @@ const LeaduriTab = ({ clearCachedData }) => {
         id: doc.id,
         ...doc.data()
       }));
-      setLeaduri(leaduriData);
+      
+      // === VERIFICARE AUTOMATĂ TIMEOUT (VA FI MUTATĂ ÎN FIREBASE FUNCTION) ===
+      // Verifică leadurile care au depășit timeout-ul de 6h fără confirmare
+      let leaduriExpirate = 0;
+      for (const lead of leaduriData) {
+        if (checkLeadTimeout(lead)) {
+          leaduriExpirate++;
+          // Marchează leadul ca neconfirmat și pregătește pentru re-alocare
+          await updateDoc(doc(db, "leaduri", lead.id), {
+            status: LEAD_STATUS.NECONFIRMAT,
+            motivNeconfirmare: 'Timeout 6h - fără confirmare de la mentor',
+            dataTimeout: Timestamp.now()
+          });
+        }
+      }
+      
+      if (leaduriExpirate > 0) {
+        console.log(`⏰ ${leaduriExpirate} leaduri au depășit timeout-ul de 6h`);
+        // Re-fetch pentru a obține datele actualizate
+        const updatedSnapshot = await getDocs(
+          query(collection(db, "leaduri"), orderBy("createdAt", "desc"))
+        );
+        const updatedData = updatedSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setLeaduri(updatedData);
+      } else {
+        setLeaduri(leaduriData);
+      }
     } catch (err) {
       console.error("Eroare fetch leaduri:", err);
       setError("Eroare la încărcarea leadurilor");
@@ -196,8 +287,15 @@ const LeaduriTab = ({ clearCachedData }) => {
               nume: String(nume).trim(),
               telefon: String(telefon).trim(),
               email: String(email).trim(),
-              status: 'nealocat',
+              status: LEAD_STATUS.NEALOCAT,
               mentorAlocat: null,
+              dataAlocare: null,
+              dataConfirmare: null,
+              dataTimeout: null,
+              statusOneToTwenty: ONE_TO_TWENTY_STATUS.PENDING,
+              dataOneToTwenty: null,
+              numarReAlocari: 0,
+              istoricMentori: [],
               createdAt: Timestamp.now()
             };
           });
@@ -265,8 +363,15 @@ const LeaduriTab = ({ clearCachedData }) => {
         nume: manualLead.nume.trim(),
         telefon: manualLead.telefon.trim(),
         email: manualLead.email.trim(),
-        status: 'nealocat',
+        status: LEAD_STATUS.NEALOCAT,
         mentorAlocat: null,
+        dataAlocare: null,
+        dataConfirmare: null,
+        dataTimeout: null,
+        statusOneToTwenty: ONE_TO_TWENTY_STATUS.PENDING,
+        dataOneToTwenty: null,
+        numarReAlocari: 0,
+        istoricMentori: [],
         createdAt: Timestamp.now()
       });
 
@@ -292,7 +397,7 @@ const LeaduriTab = ({ clearCachedData }) => {
 
     try {
       // Filtrează leadurile nealocate
-      const leaduriNealocate = leaduri.filter(lead => lead.status === 'nealocat');
+      const leaduriNealocate = leaduri.filter(lead => lead.status === LEAD_STATUS.NEALOCAT);
       
       if (leaduriNealocate.length < 20) {
         setError(`Sunt disponibile doar ${leaduriNealocate.length} leaduri. Minimul necesar este 20 pentru alocare.`);
@@ -325,7 +430,7 @@ const LeaduriTab = ({ clearCachedData }) => {
 
         const mentorCurent = mentoriDisponibili[indexMentor % mentoriDisponibili.length];
         
-        // Aloca între 20-30 leaduri
+        // Aloca între 20-30 leaduri (max 30 conform schemei)
         const numarAlocare = Math.min(30, leaduriRamase);
         const leaduriDeSters = leaduriNealocate.slice(leaduriProcesate, leaduriProcesate + numarAlocare);
 
@@ -339,13 +444,23 @@ const LeaduriTab = ({ clearCachedData }) => {
           status: 'activa'
         });
 
-        // Actualizează statusul leadurilor
+        const dataAlocare = Timestamp.now();
+        const dataAlocareDate = dataAlocare.toDate();
+        const dataTimeoutDate = new Date(dataAlocareDate.getTime() + TIMEOUT_6H);
+        const dataTimeout = Timestamp.fromDate(dataTimeoutDate);
+
+        // Actualizează statusul leadurilor cu noua structură
         for (const lead of leaduriDeSters) {
+          const updatedIstoric = [...(lead.istoricMentori || []), mentorCurent.id];
+          
           await updateDoc(doc(db, "leaduri", lead.id), {
-            status: 'alocat',
+            status: LEAD_STATUS.ALOCAT,
             mentorAlocat: mentorCurent.id,
             alocareId: alocareRef.id,
-            dataAlocare: Timestamp.now()
+            dataAlocare: dataAlocare,
+            dataTimeout: dataTimeout,
+            istoricMentori: updatedIstoric,
+            numarReAlocari: (lead.numarReAlocari || 0)
           });
         }
 
@@ -353,7 +468,7 @@ const LeaduriTab = ({ clearCachedData }) => {
         await updateDoc(doc(db, "mentori", mentorCurent.id), {
           ordineCoada: mentoriDisponibili.length + indexMentor,
           leaduriAlocate: (mentorCurent.leaduriAlocate || 0) + numarAlocare,
-          available: false // Dezactivează mentorul automat după ce primește leaduri
+          available: false // Dezactivează mentorul automat după ce primește leaduri (busy)
         });
 
         alocariNoi.push({
@@ -440,6 +555,186 @@ const LeaduriTab = ({ clearCachedData }) => {
       return;
     }
     updateOneToTwenty(selectedMentorForDate, manualDate);
+  };
+
+  // === FUNCȚII PENTRU GESTIONAREA STATUSURILOR LEADURILOR ===
+
+  /**
+   * Confirmă că leadul participă la sesiunea 1:20
+   * Această funcție va fi apelată de mentor după contactarea leadului
+   */
+  const handleConfirmLead = async (leadId) => {
+    if (!confirm("Confirmă că acest lead participă la sesiunea 1:20?")) return;
+    
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "leaduri", leadId), {
+        status: LEAD_STATUS.CONFIRMAT,
+        dataConfirmare: Timestamp.now(),
+        statusOneToTwenty: ONE_TO_TWENTY_STATUS.CONFIRMED
+      });
+      
+      await fetchLeaduri();
+      setSuccess("Lead confirmat cu succes!");
+      
+      if (clearCachedData) {
+        clearCachedData('leaduri');
+      }
+    } catch (err) {
+      console.error("Eroare confirmare lead:", err);
+      setError("Eroare la confirmarea leadului");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Marchează leadul ca refuzat/neconfirmat
+   */
+  const handleRejectLead = async (leadId) => {
+    const motiv = prompt("Motiv refuz (opțional):");
+    
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "leaduri", leadId), {
+        status: LEAD_STATUS.NECONFIRMAT,
+        dataConfirmare: Timestamp.now(),
+        motivNeconfirmare: motiv || 'Lead-ul a refuzat sau nu răspunde'
+      });
+      
+      await fetchLeaduri();
+      setSuccess("Lead marcat ca neconfirmat. Poate fi re-alocat.");
+      
+      if (clearCachedData) {
+        clearCachedData('leaduri');
+      }
+    } catch (err) {
+      console.error("Eroare refuz lead:", err);
+      setError("Eroare la marcarea leadului");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Marchează leadul ca NO-SHOW (nu s-a prezentat la sesiune)
+   */
+  const handleNoShowLead = async (leadId) => {
+    if (!confirm("Marchează acest lead ca NO-SHOW (nu s-a prezentat)?")) return;
+    
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "leaduri", leadId), {
+        status: LEAD_STATUS.NO_SHOW,
+        statusOneToTwenty: ONE_TO_TWENTY_STATUS.NO_SHOW,
+        dataOneToTwenty: Timestamp.now()
+      });
+      
+      await fetchLeaduri();
+      setSuccess("Lead marcat ca NO-SHOW. Poate fi re-alocat.");
+      
+      if (clearCachedData) {
+        clearCachedData('leaduri');
+      }
+    } catch (err) {
+      console.error("Eroare no-show lead:", err);
+      setError("Eroare la marcarea leadului");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Marchează leadul ca COMPLET (sesiunea 1:20 finalizată cu succes)
+   */
+  const handleCompleteLead = async (leadId) => {
+    if (!confirm("Marchează sesiunea 1:20 ca finalizată cu succes?")) return;
+    
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "leaduri", leadId), {
+        status: LEAD_STATUS.COMPLET,
+        statusOneToTwenty: ONE_TO_TWENTY_STATUS.COMPLETED,
+        dataOneToTwenty: Timestamp.now()
+      });
+      
+      await fetchLeaduri();
+      setSuccess("Lead marcat ca finalizat cu succes! 🎉");
+      
+      if (clearCachedData) {
+        clearCachedData('leaduri');
+      }
+    } catch (err) {
+      console.error("Eroare completare lead:", err);
+      setError("Eroare la marcarea leadului");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Re-alocă un lead neconfirmat/no_show către alt mentor disponibil
+   * Această funcție va fi mutată în Firebase Function pentru re-alocare automată
+   */
+  const handleReallocateLead = async (leadId) => {
+    if (!confirm("Re-alocă acest lead către alt mentor disponibil?")) return;
+    
+    setLoading(true);
+    try {
+      const lead = leaduri.find(l => l.id === leadId);
+      if (!lead) {
+        setError("Lead nu a fost găsit");
+        return;
+      }
+
+      // Găsește un mentor disponibil (exclude mentorul curent dacă există)
+      const mentoriDisponibili = mentori
+        .filter(m => m.available && m.id !== lead.mentorAlocat)
+        .sort((a, b) => a.ordineCoada - b.ordineCoada);
+
+      if (mentoriDisponibili.length === 0) {
+        setError("Nu există mentori disponibili pentru re-alocare");
+        setLoading(false);
+        return;
+      }
+
+      const mentorNou = mentoriDisponibili[0];
+      const dataAlocare = Timestamp.now();
+      const dataAlocareDate = dataAlocare.toDate();
+      const dataTimeoutDate = new Date(dataAlocareDate.getTime() + TIMEOUT_6H);
+      const dataTimeout = Timestamp.fromDate(dataTimeoutDate);
+
+      // Actualizează leadul cu noul mentor
+      await updateDoc(doc(db, "leaduri", leadId), {
+        status: LEAD_STATUS.ALOCAT,
+        mentorAlocat: mentorNou.id,
+        dataAlocare: dataAlocare,
+        dataTimeout: dataTimeout,
+        dataConfirmare: null,
+        numarReAlocari: (lead.numarReAlocari || 0) + 1,
+        istoricMentori: [...(lead.istoricMentori || []), mentorNou.id]
+      });
+
+      // Actualizează mentorul
+      await updateDoc(doc(db, "mentori", mentorNou.id), {
+        leaduriAlocate: (mentorNou.leaduriAlocate || 0) + 1
+      });
+
+      await fetchLeaduri();
+      await fetchMentori();
+      
+      setSuccess(`Lead re-alocat către ${mentorNou.nume} cu succes!`);
+      
+      if (clearCachedData) {
+        clearCachedData('leaduri');
+        clearCachedData('mentori');
+      }
+    } catch (err) {
+      console.error("Eroare re-alocare lead:", err);
+      setError("Eroare la re-alocarea leadului");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const stergeLeaduri = async () => {
@@ -587,8 +882,12 @@ const LeaduriTab = ({ clearCachedData }) => {
     }
   };
 
-  const leaduriNealocate = leaduri.filter(l => l.status === 'nealocat').length;
-  const leaduriAlocate = leaduri.filter(l => l.status === 'alocat').length;
+  const leaduriNealocate = leaduri.filter(l => l.status === LEAD_STATUS.NEALOCAT).length;
+  const leaduriAlocate = leaduri.filter(l => l.status === LEAD_STATUS.ALOCAT).length;
+  const leaduriConfirmate = leaduri.filter(l => l.status === LEAD_STATUS.CONFIRMAT).length;
+  const leaduriNeconfirmate = leaduri.filter(l => l.status === LEAD_STATUS.NECONFIRMAT).length;
+  const leaduriNoShow = leaduri.filter(l => l.status === LEAD_STATUS.NO_SHOW).length;
+  const leaduriComplete = leaduri.filter(l => l.status === LEAD_STATUS.COMPLET).length;
 
   // Filtrare și sortare leaduri
   const leaduriFiltrate = leaduri.filter(lead => 
@@ -734,20 +1033,57 @@ const LeaduriTab = ({ clearCachedData }) => {
         📊 Gestionare Leaduri
       </h2>
 
-      {/* Header cu statistici */}
+      {/* Header cu statistici extinse */}
       <div className="bg-gray-800 rounded-lg p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-300">Total Leaduri</p>
+        <h3 className="text-lg font-bold text-blue-300 mb-4">📊 Statistici Generale</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="bg-gray-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-gray-300 mb-1">Total</p>
             <p className="text-3xl font-bold text-blue-400">{leaduri.length}</p>
           </div>
-          <div className="bg-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-300">Nealocate</p>
+          <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-yellow-300 mb-1">⏳ Nealocate</p>
             <p className="text-3xl font-bold text-yellow-400">{leaduriNealocate}</p>
           </div>
+          <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-blue-300 mb-1">🎯 Alocate</p>
+            <p className="text-3xl font-bold text-blue-400">{leaduriAlocate}</p>
+          </div>
+          <div className="bg-green-900/30 border border-green-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-green-300 mb-1">✅ Confirmate</p>
+            <p className="text-3xl font-bold text-green-400">{leaduriConfirmate}</p>
+          </div>
+          <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-red-300 mb-1">❌ Neconfirmate</p>
+            <p className="text-3xl font-bold text-red-400">{leaduriNeconfirmate}</p>
+          </div>
+          <div className="bg-purple-900/30 border border-purple-700 rounded-lg p-4 text-center">
+            <p className="text-sm text-purple-300 mb-1">🏆 Complete</p>
+            <p className="text-3xl font-bold text-purple-400">{leaduriComplete}</p>
+          </div>
+        </div>
+        
+        {/* Statistici secundare */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="bg-orange-900/30 border border-orange-700 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-orange-300 mb-1">👻 No-Show</p>
+                <p className="text-2xl font-bold text-orange-400">{leaduriNoShow}</p>
+              </div>
+              <span className="text-4xl">👻</span>
+            </div>
+          </div>
           <div className="bg-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-300">Alocate</p>
-            <p className="text-3xl font-bold text-green-400">{leaduriAlocate}</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-300 mb-1">📈 Rată conversie</p>
+                <p className="text-2xl font-bold text-blue-400">
+                  {leaduri.length > 0 ? Math.round((leaduriComplete / leaduri.length) * 100) : 0}%
+                </p>
+              </div>
+              <span className="text-4xl">📊</span>
+            </div>
           </div>
         </div>
       </div>
@@ -845,7 +1181,32 @@ const LeaduriTab = ({ clearCachedData }) => {
                 </div>
                 <h4 className="font-bold text-lg text-white">{mentor.nume || 'Mentor'}</h4>
                 <p className="text-sm text-gray-300">Poziție: #{index + 1}</p>
-                <p className="text-sm text-gray-300">Leaduri: {mentor.leaduriAlocate || 0}</p>
+                
+                {/* Statistici leaduri per mentor */}
+                <div className="mt-3 space-y-1 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Total:</span>
+                    <span className="text-white font-bold">{mentor.leaduriAlocate || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-400">Alocate:</span>
+                    <span className="text-blue-400 font-bold">
+                      {leaduri.filter(l => l.mentorAlocat === mentor.id && l.status === LEAD_STATUS.ALOCAT).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-400">Confirmate:</span>
+                    <span className="text-green-400 font-bold">
+                      {leaduri.filter(l => l.mentorAlocat === mentor.id && l.status === LEAD_STATUS.CONFIRMAT).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-400">Complete:</span>
+                    <span className="text-purple-400 font-bold">
+                      {leaduri.filter(l => l.mentorAlocat === mentor.id && l.status === LEAD_STATUS.COMPLET).length}
+                    </span>
+                  </div>
+                </div>
                 
                 <div className="mt-2">
                   <span
@@ -855,7 +1216,7 @@ const LeaduriTab = ({ clearCachedData }) => {
                         : 'bg-gray-600 text-gray-300'
                     }`}
                   >
-                    {mentor.available ? '✓ Available' : '✗ Unavailable'}
+                    {mentor.available ? '✓ Available' : '✗ Busy'}
                   </span>
                 </div>
 
@@ -1343,13 +1704,30 @@ const LeaduriTab = ({ clearCachedData }) => {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            lead.status === 'alocat' 
-                              ? 'bg-green-600 text-white' 
-                              : 'bg-yellow-600 text-white'
-                          }`}>
-                            {lead.status === 'alocat' ? '✓ Alocat' : '⏳ Nealocat'}
-                          </span>
+                          <div className="flex flex-col gap-1">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full text-center ${
+                              lead.status === LEAD_STATUS.NEALOCAT ? 'bg-yellow-600 text-white' :
+                              lead.status === LEAD_STATUS.ALOCAT ? 'bg-blue-600 text-white' :
+                              lead.status === LEAD_STATUS.CONFIRMAT ? 'bg-green-600 text-white' :
+                              lead.status === LEAD_STATUS.NECONFIRMAT ? 'bg-red-600 text-white' :
+                              lead.status === LEAD_STATUS.NO_SHOW ? 'bg-orange-600 text-white' :
+                              lead.status === LEAD_STATUS.COMPLET ? 'bg-purple-600 text-white' :
+                              'bg-gray-600 text-white'
+                            }`}>
+                              {lead.status === LEAD_STATUS.NEALOCAT ? '⏳ Nealocat' :
+                               lead.status === LEAD_STATUS.ALOCAT ? '🎯 Alocat' :
+                               lead.status === LEAD_STATUS.CONFIRMAT ? '✅ Confirmat' :
+                               lead.status === LEAD_STATUS.NECONFIRMAT ? '❌ Neconfirmat' :
+                               lead.status === LEAD_STATUS.NO_SHOW ? '👻 No-Show' :
+                               lead.status === LEAD_STATUS.COMPLET ? '🏆 Complet' :
+                               lead.status}
+                            </span>
+                            {lead.status === LEAD_STATUS.ALOCAT && lead.dataAlocare && (
+                              <span className="text-xs text-gray-400">
+                                ⏰ {formatTimeRemaining(getTimeUntilTimeout(lead))}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                           {mentor ? mentor.nume : '-'}
@@ -1357,7 +1735,7 @@ const LeaduriTab = ({ clearCachedData }) => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                           {formatDate(lead.createdAt)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <td className="px-6 py-4 text-sm">
                           {isEditing ? (
                             <div className="flex gap-2">
                               <button
@@ -1375,23 +1753,80 @@ const LeaduriTab = ({ clearCachedData }) => {
                               </button>
                             </div>
                           ) : (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEditLead(lead)}
-                                disabled={loading}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
-                                title="Editează lead"
-                              >
-                                ✏️ Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteLead(lead)}
-                                disabled={loading}
-                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
-                                title="Șterge lead"
-                              >
-                                🗑️ Șterge
-                              </button>
+                            <div className="flex flex-col gap-2">
+                              {/* Acțiuni bazate pe status */}
+                              {lead.status === LEAD_STATUS.ALOCAT && (
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => handleConfirmLead(lead.id)}
+                                    disabled={loading}
+                                    className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                    title="Confirmă participare"
+                                  >
+                                    ✅ Confirmă
+                                  </button>
+                                  <button
+                                    onClick={() => handleRejectLead(lead.id)}
+                                    disabled={loading}
+                                    className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                    title="Refuză / Nu răspunde"
+                                  >
+                                    ❌ Refuză
+                                  </button>
+                                </div>
+                              )}
+                              
+                              {lead.status === LEAD_STATUS.CONFIRMAT && (
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => handleCompleteLead(lead.id)}
+                                    disabled={loading}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                    title="Sesiune finalizată"
+                                  >
+                                    🏆 Complet
+                                  </button>
+                                  <button
+                                    onClick={() => handleNoShowLead(lead.id)}
+                                    disabled={loading}
+                                    className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                    title="Nu s-a prezentat"
+                                  >
+                                    👻 No-Show
+                                  </button>
+                                </div>
+                              )}
+                              
+                              {(lead.status === LEAD_STATUS.NECONFIRMAT || lead.status === LEAD_STATUS.NO_SHOW) && (
+                                <button
+                                  onClick={() => handleReallocateLead(lead.id)}
+                                  disabled={loading}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                  title="Re-alocă către alt mentor"
+                                >
+                                  🔄 Re-alocă
+                                </button>
+                              )}
+                              
+                              {/* Acțiuni generale */}
+                              <div className="flex gap-1 mt-1 pt-1 border-t border-gray-600">
+                                <button
+                                  onClick={() => handleEditLead(lead)}
+                                  disabled={loading}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                  title="Editează lead"
+                                >
+                                  ✏️ Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteLead(lead)}
+                                  disabled={loading}
+                                  className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors disabled:bg-gray-400"
+                                  title="Șterge lead"
+                                >
+                                  🗑️ Șterge
+                                </button>
+                              </div>
                             </div>
                           )}
                         </td>

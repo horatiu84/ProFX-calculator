@@ -573,7 +573,7 @@ const Dashboard = () => {
         >
           📚 Materiale Army
         </button>
-        {/* <button
+        <button
           onClick={() => setActiveTab("leaduri")}
           className={`px-4 py-2 rounded-t ${
             activeTab === "leaduri"
@@ -582,7 +582,7 @@ const Dashboard = () => {
           }`}
         >
           👥 Leaduri
-        </button> */}
+        </button>
         <button
           onClick={() => setActiveTab("intrebari")}
           className={`px-4 py-2 rounded-t ${
