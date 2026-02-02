@@ -39,6 +39,11 @@ import decembrie2 from "../../utils/Decembrie 2.jpg";
 import decembrie3 from "../../utils/Decembrie 3.jpg";
 import decembrie4 from "../../utils/Decembrie 4.jpg";
 import decembrie5 from "../../utils/Decembrie 5.jpg";
+import ianuarie1 from "../../utils/Ianuarie2026 1.jpg";
+import ianuarie2 from "../../utils/Ianuarie2026 2.jpg";
+import ianuarie3 from "../../utils/Ianuarie2026 3.jpg";
+import ianuarie4 from "../../utils/Ianuarie2026 4.jpg";
+import ianuarie5 from "../../utils/Ianuarie2026 5.jpg";
 
 const hallOfFame = [
   { img: aprilie1, name: "Ciprian Penisoara", place: 1, month: "Aprilie", year: 2025 },
@@ -77,13 +82,20 @@ const hallOfFame = [
   { img: decembrie3, name: "Ilie Mihai", place: 3, month: "Decembrie", year: 2025 },
   { img: decembrie4, name: "Lavinia Sabau", place: 4, month: "Decembrie", year: 2025 },
   { img: decembrie5, name: "Cotoc Adrian", place: 5, month: "Decembrie", year: 2025 },
+  { img: ianuarie1, name: "Gheorghita Sebastian", place: 1, month: "Ianuarie", year: 2026 },
+  { img: ianuarie2, name: "Andras Fancsali", place: 2, month: "Ianuarie", year: 2026 },
+  { img: ianuarie3, name: "Horatiu Evu", place: 3, month: "Ianuarie", year: 2026 },
+  { img: ianuarie4, name: "Adrian Berar", place: 4, month: "Ianuarie", year: 2026 },
+  { img: ianuarie5, name: "Paul Madosa", place: 5, month: "Ianuarie", year: 2026 },
 ];
 
 const HallOfFameCarousel = () => {
   const { language, translations } = useLanguage();
   const t = translations.carusel;
   
+  const currentYear = new Date().getFullYear();
   const [modalImg, setModalImg] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState("Toate");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -119,8 +131,17 @@ const HallOfFameCarousel = () => {
     return `${placeText} ${monthText} ${item.year}`;
   };
 
-  // Extrage lunile unice din array (în română din data)
-  const uniqueMonthsRo = [...new Set(hallOfFame.map(item => item.month))];
+  // Extrage anii unici din array
+  const uniqueYears = [...new Set(hallOfFame.map(item => item.year))].sort((a, b) => b - a);
+  const years = ["Toate", ...uniqueYears];
+
+  // Filtrare diplome bazată pe anul selectat pentru a determina lunile disponibile
+  const diplomasForSelectedYear = selectedYear === "Toate" 
+    ? hallOfFame 
+    : hallOfFame.filter(item => item.year === parseInt(selectedYear));
+
+  // Extrage lunile unice din diplomele anului selectat
+  const uniqueMonthsRo = [...new Set(diplomasForSelectedYear.map(item => item.month))];
   
   // Construiește array de luni traduse pentru butoane
   const months = [t.allMonths, ...uniqueMonthsRo.map(monthRo => monthTranslations[monthRo] || monthRo)];
@@ -128,9 +149,10 @@ const HallOfFameCarousel = () => {
   // Filtrare diplome
   const filteredDiplomas = hallOfFame.filter(item => {
     const translatedMonth = monthTranslations[item.month] || item.month;
+    const matchesYear = selectedYear === "Toate" || item.year === selectedYear;
     const matchesMonth = selectedMonth === t.allMonths || translatedMonth === selectedMonth;
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesMonth && matchesSearch;
+    return matchesYear && matchesMonth && matchesSearch;
   });
 
   // Blochează scroll-ul pe body când modalul e deschis
@@ -153,10 +175,10 @@ const HallOfFameCarousel = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Reset selectedMonth la schimbarea limbii
+  // Reset selectedMonth la schimbarea limbii sau a anului
   useEffect(() => {
     setSelectedMonth(t.allMonths);
-  }, [language, t.allMonths]);
+  }, [language, t.allMonths, selectedYear]);
 
   return (
     <div key={language} className="w-full max-w-7xl mx-auto px-4 py-8 animate-language-change">
@@ -175,6 +197,23 @@ const HallOfFameCarousel = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
           />
+        </div>
+
+        {/* Filtre Ani */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {years.map((year) => (
+            <button
+              key={year}
+              onClick={() => setSelectedYear(year)}
+              className={`px-5 py-2.5 rounded-xl font-bold transition-all duration-300 backdrop-blur-sm ${
+                selectedYear === year
+                  ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg scale-105 border-2 border-yellow-400"
+                  : "bg-gray-800/80 text-gray-300 hover:bg-gray-700/80 hover:text-yellow-400 hover:border-yellow-400/30 border-2 border-gray-600/50"
+              }`}
+            >
+              {year}
+            </button>
+          ))}
         </div>
 
         {/* Filtre Luni */}
