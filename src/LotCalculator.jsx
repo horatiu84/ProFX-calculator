@@ -381,7 +381,12 @@ export default function LotCalculator() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Verifică dacă animația a fost deja văzută în această sesiune
+  const [isLoading, setIsLoading] = useState(() => {
+    const hasSeenAnimation = sessionStorage.getItem('hasSeenLoadingAnimation');
+    return !hasSeenAnimation; // Doar dacă NU a fost văzută
+  });
 
   const menuItems = [
     { key: "agenda", label: t.agenda, icon: "🗓️", component: <ProFXSchedule /> },
@@ -450,6 +455,8 @@ export default function LotCalculator() {
   // Handle loading completion
   const handleLoadingComplete = () => {
     setIsLoading(false);
+    // Marchează că animația a fost văzută în această sesiune
+    sessionStorage.setItem('hasSeenLoadingAnimation', 'true');
   };
 
   const handleTabChange = (newTab) => {

@@ -5,6 +5,7 @@ import Dashboard from "./db/Dashboard";
 import LotCalculator from "./LotCalculator";
 import ProFXbook from "./ProFXbook";
 import Simulare from "./Simulare";
+import LiveJournal from "./LiveJournal";
 
 export default function App() {
   const { language, setLanguage } = useLanguage();
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profxbook" element={<ProFXbook />} />
         <Route path="/afiliere" element={<Simulare />} />
+        <Route path="/journal" element={<LiveJournal />} />
       </Routes>
     </Router>
   );

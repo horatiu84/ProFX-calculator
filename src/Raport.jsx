@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useLanguage } from "./contexts/LanguageContext";
+import { Link } from "react-router-dom";
 
 const Raport = () => {
   const { translations, language } = useLanguage();
@@ -48,7 +49,7 @@ const Raport = () => {
   const aniSortati = Object.keys(rapoartePerAn).sort((a, b) => b - a);
 
   return (
-    <div key={language} className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-2xl mx-auto overflow-hidden animate-language-change">
+    <div key={language} className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-10 max-w-4xl mx-auto overflow-hidden animate-language-change">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
 
@@ -56,6 +57,45 @@ const Raport = () => {
         <h2 className="text-2xl font-semibold mb-8 text-center text-blue-400 transition-colors duration-300">
           {t.raportTitle}
         </h2>
+
+        {/* Link către Live Trading Journal */}
+        <Link 
+          to="/journal"
+          className="block mb-10 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-8 hover:border-amber-400/50 hover:from-amber-500/20 hover:to-yellow-500/20 transition-all duration-300 group shadow-xl"
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-amber-500/20 p-4 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-amber-300 transition-colors duration-300">
+                  📊 Jurnal de trade 2026
+                </h3>
+                <p className="text-gray-300 text-sm">
+                  Vezi toate trade-urile zilnice
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-amber-400 group-hover:gap-4 transition-all duration-300">
+              <span className="font-semibold">Deschide Journal</span>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </div>
+          </div>
+        </Link>
+
+        {/* Separator */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+          <h3 className="px-4 text-lg font-semibold text-gray-300">
+            📑 Rapoarte Arhivate
+          </h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+        </div>
 
         <div className="space-y-8">
           {aniSortati.map((an) => (
