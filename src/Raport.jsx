@@ -14,7 +14,7 @@ const Raport = () => {
   // Rapoarte organizate pe ani
   const rapoartePerAn = {
     2026: [
-      { label: t.raportFebruary || "Februarie", href: "/Rapoarte/ProFX_Journal_Februarie_2026.pdf", type: "pdf" },
+      // { label: t.raportFebruary || "Februarie", href: "/Rapoarte/ProFX_Journal_Februarie_2026.pdf", type: "pdf" }, // Comentat până se termină luna
     ],
     2025: [
       { label: t.raportMay, href: "/Rapoarte/RaportMai.html", type: "html" },
