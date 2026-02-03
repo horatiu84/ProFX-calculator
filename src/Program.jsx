@@ -121,7 +121,7 @@ const WeeklySchedule = () => {
   const isRomaniaJan7_2026 = roYear === 2026 && roMonth === 1 && roDay === 7;
   
   // Verifică dacă suntem după 13 Ianuarie 2026
-  const isAfterJan13_2026 = roYear > 2026 || (roYear === 2026 && roMonth === 1 && roDay >= 13);
+  const isAfterJan13_2026 = roYear > 2026 || (roYear === 2026 && roMonth > 1) || (roYear === 2026 && roMonth === 1 && roDay >= 13);
 
   // Doar azi (Luni, 05 Ianuarie 2026): sesiune pe știri cu Flavius (USD)
   // Link + passcode identice cu restul sesiunilor lui Flavius.
