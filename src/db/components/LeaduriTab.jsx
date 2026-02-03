@@ -1167,7 +1167,7 @@ const LeaduriTab = ({ clearCachedData }) => {
               <div className="text-center">
                 <div className="mb-3 flex justify-center">
                   <img 
-                    src={`/src/pics/${mentor.nume}.jpg`}
+                    src={`/mentori/${mentor.nume}.jpg`}
                     alt={mentor.nume} 
                     className="w-20 h-20 rounded-full object-cover border-2 border-gray-600"
                     onError={(e) => {

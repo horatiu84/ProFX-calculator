@@ -574,16 +574,6 @@ const Dashboard = () => {
           📚 Materiale Army
         </button>
         <button
-          onClick={() => setActiveTab("leaduri")}
-          className={`px-4 py-2 rounded-t ${
-            activeTab === "leaduri"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-          }`}
-        >
-          👥 Leaduri
-        </button>
-        <button
           onClick={() => setActiveTab("intrebari")}
           className={`px-4 py-2 rounded-t ${
             activeTab === "intrebari"
@@ -592,6 +582,16 @@ const Dashboard = () => {
           }`}
         >
           💬 Întrebări Army
+        </button>
+        <button
+          onClick={() => setActiveTab("leaduri")}
+          className={`px-4 py-2 rounded-t ${
+            activeTab === "leaduri"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          👥 Leaduri
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
@@ -623,11 +623,6 @@ const Dashboard = () => {
           fetchMaterialeArmy={fetchMaterialeArmy}
           clearCachedData={clearCachedData}
         />
-      )}
-
-      {/* Tab Content: Leaduri */}
-      {activeTab === "leaduri" && (
-        <LeaduriTab clearCachedData={clearCachedData} />
       )}
 
       {/* Tab Content: Feedback Anonim */}
@@ -666,6 +661,11 @@ const Dashboard = () => {
           setCachedData={setCachedData}
           clearCachedData={clearCachedData}
         />
+      )}
+
+      {/* Tab Content: Leaduri */}
+      {activeTab === "leaduri" && (
+        <LeaduriTab clearCachedData={clearCachedData} />
       )}
     </div>
   );
