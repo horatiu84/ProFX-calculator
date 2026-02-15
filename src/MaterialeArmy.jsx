@@ -7,11 +7,6 @@ import {
   collection, getDocs, orderBy, query 
 } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const getYouTubeEmbedUrl = (url) => {
   if (!url) return "";
@@ -31,19 +26,27 @@ const getYouTubeEmbedUrl = (url) => {
   }
 };
 
-const MaterialeArmy = () => {
+const grupeDisponibile = [
+  "Ianuarie 2026", "Februarie 2026", "Martie 2026", "Aprilie 2026",
+  "Mai 2026", "Iunie 2026", "Iulie 2026", "August 2026",
+  "Septembrie 2026", "Octombrie 2026", "Noiembrie 2026", "Decembrie 2026"
+];
+
+const MaterialeArmy = ({ userGrupa, tipParticipant }) => {
   const { language } = useLanguage();
   const [materiale, setMateriale] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtruModul, setFiltruModul] = useState("toate");
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   
-  // Plugin pentru PDF viewer - creat direct fără useMemo
-  const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    sidebarTabs: (defaultTabs) => [
-      defaultTabs[0], // Thumbnails
-    ],
-  });
+  const isMentor = tipParticipant === 'Mentor';
+  
+  // Grupa efectivă a cursantului - fallback la localStorage dacă prop-ul lipsește
+  const efectivGrupaUser = userGrupa || localStorage.getItem('armyUserGrupa') || 'Ianuarie 2026';
+  const [filtruGrupa, setFiltruGrupa] = useState(isMentor ? 'toate' : efectivGrupaUser);
+  
+  // Grupa activă pentru filtrare
+  const efectivGrupa = isMentor ? filtruGrupa : efectivGrupaUser;
 
   // Încarcă materiale din Firebase
   useEffect(() => {
@@ -95,22 +98,50 @@ const MaterialeArmy = () => {
           </p>
         </div>
 
-        {/* Filtru Modul */}
-        <div className="mb-6">
-          <label className="block text-gray-300 mb-2 font-semibold">
-            {language === 'ro' ? 'Filtrează după categorie:' : 'Filter by category:'}
-          </label>
-          <select
-            value={filtruModul}
-            onChange={(e) => setFiltruModul(e.target.value)}
-            className="w-full md:w-64 p-3 rounded-lg border border-gray-600 bg-gray-800 text-white"
-          >
-            <option value="toate">{language === 'ro' ? 'Toate materialele' : 'All materials'}</option>
-            <option value="1">{language === 'ro' ? 'Modul 1' : 'Module 1'}</option>
-            <option value="2">{language === 'ro' ? 'Modul 2' : 'Module 2'}</option>
-            <option value="3">{language === 'ro' ? 'Modul 3' : 'Module 3'}</option>
-            <option value="rapoarte">{language === 'ro' ? 'Rapoarte/Indici' : 'Reports/Indices'}</option>
-          </select>
+        {/* Filtre */}
+        <div className="mb-6 flex flex-col md:flex-row gap-4">
+          {/* Grupa */}
+          <div className="flex-1">
+            <label className="block text-gray-300 mb-2 font-semibold">
+              {isMentor 
+                ? (language === 'ro' ? 'Filtrează după grupă:' : 'Filter by group:')
+                : (language === 'ro' ? 'Grupa ta:' : 'Your group:')}
+            </label>
+            {isMentor ? (
+              <select
+                value={filtruGrupa}
+                onChange={(e) => setFiltruGrupa(e.target.value)}
+                className="w-full md:w-64 p-3 rounded-lg border border-purple-500/50 bg-gray-800 text-white"
+              >
+                <option value="toate">{language === 'ro' ? 'Toate grupele' : 'All groups'}</option>
+                {grupeDisponibile.map(g => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="w-full md:w-64 p-3 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-400 font-semibold">
+                {efectivGrupa}
+              </div>
+            )}
+          </div>
+
+          {/* Filtru Modul */}
+          <div className="flex-1">
+            <label className="block text-gray-300 mb-2 font-semibold">
+              {language === 'ro' ? 'Filtrează după categorie:' : 'Filter by category:'}
+            </label>
+            <select
+              value={filtruModul}
+              onChange={(e) => setFiltruModul(e.target.value)}
+              className="w-full md:w-64 p-3 rounded-lg border border-gray-600 bg-gray-800 text-white"
+            >
+              <option value="toate">{language === 'ro' ? 'Toate materialele' : 'All materials'}</option>
+              <option value="1">{language === 'ro' ? 'Modul 1' : 'Module 1'}</option>
+              <option value="2">{language === 'ro' ? 'Modul 2' : 'Module 2'}</option>
+              <option value="3">{language === 'ro' ? 'Modul 3' : 'Module 3'}</option>
+              <option value="rapoarte">{language === 'ro' ? 'Rapoarte/Indici' : 'Reports/Indices'}</option>
+            </select>
+          </div>
         </div>
 
         {/* Modal pentru vizualizare material */}
@@ -140,9 +171,11 @@ const MaterialeArmy = () => {
                         </a>
                       </div>
                       <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
-                        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                          <Viewer fileUrl={selectedMaterial.imagine.url} plugins={[defaultLayoutPluginInstance]} />
-                        </Worker>
+                        <iframe
+                          src={selectedMaterial.imagine.url}
+                          title="PDF Viewer"
+                          className="w-full h-full border-0 rounded"
+                        />
                       </div>
                     </div>
                   ) : selectedMaterial.imagine.type === 'youtube' ? (
@@ -182,7 +215,15 @@ const MaterialeArmy = () => {
               // Filtrare: dacă e setat un filtru specific, arată doar acel modul
               if (filtruModul !== "toate" && String(modul) !== filtruModul) return null;
               
-              const materialeModul = materiale.filter(m => m.modul === String(modul));
+              const materialeModul = materiale.filter(m => {
+                if (m.modul !== String(modul)) return false;
+                // Filtrare după grupă
+                if (efectivGrupa !== 'toate') {
+                  const grupe = m.grupe || ["Ianuarie 2026"]; // fallback pentru materiale vechi
+                  if (!grupe.includes("toate") && !grupe.includes(efectivGrupa)) return false;
+                }
+                return true;
+              });
               
               if (materialeModul.length === 0) return null;
               

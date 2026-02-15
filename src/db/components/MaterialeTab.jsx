@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { collection, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "../FireBase.js";
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const formatDate = (createdAt) => {
   if (!createdAt) return "N/A";
@@ -35,6 +30,21 @@ const getYouTubeEmbedUrl = (url) => {
   }
 };
 
+const grupeDisponibile = [
+  "Ianuarie 2026",
+  "Februarie 2026",
+  "Martie 2026",
+  "Aprilie 2026",
+  "Mai 2026",
+  "Iunie 2026",
+  "Iulie 2026",
+  "August 2026",
+  "Septembrie 2026",
+  "Octombrie 2026",
+  "Noiembrie 2026",
+  "Decembrie 2026"
+];
+
 const MaterialeTab = ({ 
   materialeArmy, 
   setMaterialeArmy,
@@ -48,7 +58,8 @@ const MaterialeTab = ({
   const [newMaterial, setNewMaterial] = useState({
     nota: "",
     modul: "1",
-    imagine: null
+    imagine: null,
+    grupe: []
   });
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -56,17 +67,12 @@ const MaterialeTab = ({
   const [editingMaterial, setEditingMaterial] = useState(null);
   const [editMaterialData, setEditMaterialData] = useState({
     nota: "",
-    modul: "1"
+    modul: "1",
+    grupe: []
   });
   const [filtruModul, setFiltruModul] = useState("toate");
+  const [filtruGrupa, setFiltruGrupa] = useState("toate");
   const [selectedMaterial, setSelectedMaterial] = useState(null);
-  
-  // Plugin pentru PDF viewer
-  const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    sidebarTabs: (defaultTabs) => [
-      defaultTabs[0], // Thumbnails
-    ],
-  });
 
   // Upload fișier (imagine, PDF sau video) la Cloudinary
   const uploadFileToCloudinary = async (file) => {
@@ -134,6 +140,11 @@ const MaterialeTab = ({
       return;
     }
 
+    if (newMaterial.grupe.length === 0) {
+      setErrorMateriale("Selectează cel puțin o grupă!");
+      return;
+    }
+
     if (youtubeUrl && !getYouTubeEmbedUrl(youtubeUrl)) {
       setErrorMateriale("Link YouTube invalid. Te rog folosește un link YouTube corect.");
       return;
@@ -144,6 +155,7 @@ const MaterialeTab = ({
       await addDoc(collection(db, "MaterialeArmy"), {
         nota: newMaterial.nota,
         modul: newMaterial.modul,
+        grupe: newMaterial.grupe,
         imagine: youtubeUrl ? {
           url: youtubeUrl,
           type: 'youtube',
@@ -184,6 +196,7 @@ const MaterialeTab = ({
       await updateDoc(docRef, {
         nota: editMaterialData.nota,
         modul: editMaterialData.modul,
+        grupe: editMaterialData.grupe,
         updatedAt: Timestamp.now()
       });
 
@@ -239,20 +252,35 @@ const MaterialeTab = ({
         </div>
       )}
 
-      {/* Filtru Modul */}
-      <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Filtrează după categorie:</label>
-        <select
-          value={filtruModul}
-          onChange={(e) => setFiltruModul(e.target.value)}
-          className="w-full md:w-64 p-2 rounded border border-gray-600 bg-gray-700 text-white"
-        >
-          <option value="toate">Toate materialele</option>
-          <option value="1">Modul 1</option>
-          <option value="2">Modul 2</option>
-          <option value="3">Modul 3</option>
-          <option value="rapoarte">Rapoarte/Indici</option>
-        </select>
+      {/* Filtre */}
+      <div className="mb-4 flex flex-col md:flex-row gap-4">
+        <div>
+          <label className="block text-gray-300 mb-2">Filtrează după grupă:</label>
+          <select
+            value={filtruGrupa}
+            onChange={(e) => setFiltruGrupa(e.target.value)}
+            className="w-full md:w-64 p-2 rounded border border-gray-600 bg-gray-700 text-white"
+          >
+            <option value="toate">Toate grupele</option>
+            {grupeDisponibile.map(g => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-gray-300 mb-2">Filtrează după categorie:</label>
+          <select
+            value={filtruModul}
+            onChange={(e) => setFiltruModul(e.target.value)}
+            className="w-full md:w-64 p-2 rounded border border-gray-600 bg-gray-700 text-white"
+          >
+            <option value="toate">Toate materialele</option>
+            <option value="1">Modul 1</option>
+            <option value="2">Modul 2</option>
+            <option value="3">Modul 3</option>
+            <option value="rapoarte">Rapoarte/Indici</option>
+          </select>
+        </div>
       </div>
 
       {/* Buton Adaugă Material */}
@@ -282,6 +310,49 @@ const MaterialeTab = ({
                 <option value="3">Modul 3</option>
                 <option value="rapoarte">Rapoarte/Indici</option>
               </select>
+            </div>
+
+            {/* Grupe */}
+            <div>
+              <label className="block text-gray-300 mb-2">Grupe cursanți *</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-white cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newMaterial.grupe.includes("toate")}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setNewMaterial({ ...newMaterial, grupe: ["toate"] });
+                      } else {
+                        setNewMaterial({ ...newMaterial, grupe: [] });
+                      }
+                    }}
+                    className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-amber-500 focus:ring-amber-500"
+                  />
+                  <span className="font-semibold text-amber-400">📌 Toate grupele (universal)</span>
+                </label>
+                {!newMaterial.grupe.includes("toate") && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                    {grupeDisponibile.map(g => (
+                      <label key={g} className="flex items-center gap-2 text-gray-300 cursor-pointer hover:text-white transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={newMaterial.grupe.includes(g)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewMaterial({ ...newMaterial, grupe: [...newMaterial.grupe, g] });
+                            } else {
+                              setNewMaterial({ ...newMaterial, grupe: newMaterial.grupe.filter(gr => gr !== g) });
+                            }
+                          }}
+                          className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-amber-500 focus:ring-amber-500"
+                        />
+                        <span className="text-sm">{g}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Notă */}
@@ -373,7 +444,7 @@ const MaterialeTab = ({
                 type="button"
                 onClick={() => {
                   setShowAddMaterialForm(false);
-                  setNewMaterial({ nota: "", modul: "1", imagine: null });
+                  setNewMaterial({ nota: "", modul: "1", imagine: null, grupe: [] });
                   setUploadedImageUrl(null);
                   setYoutubeUrl("");
                 }}
@@ -413,9 +484,11 @@ const MaterialeTab = ({
                       </a>
                     </div>
                     <div className="bg-white rounded" style={{ height: 'min(600px, 70vh)' }}>
-                      <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                        <Viewer fileUrl={selectedMaterial.imagine.url} plugins={[defaultLayoutPluginInstance]} />
-                      </Worker>
+                      <iframe
+                        src={selectedMaterial.imagine.url}
+                        title="PDF Viewer"
+                        className="w-full h-full border-0 rounded"
+                      />
                     </div>
                   </div>
                 ) : selectedMaterial.imagine.type === 'youtube' ? (
@@ -459,7 +532,14 @@ const MaterialeTab = ({
             // Filtrare: dacă e setat un filtru specific, arată doar acel modul
             if (filtruModul !== "toate" && String(modul) !== filtruModul) return null;
             
-            const materialeModul = materialeArmy.filter(m => m.modul === String(modul));
+            const materialeModul = materialeArmy.filter(m => {
+              if (m.modul !== String(modul)) return false;
+              if (filtruGrupa !== "toate") {
+                const grupe = m.grupe || ["Ianuarie 2026"];
+                if (!grupe.includes("toate") && !grupe.includes(filtruGrupa)) return false;
+              }
+              return true;
+            });
             if (materialeModul.length === 0) return null;
 
             const titluModul = modul === 'rapoarte' ? '📊 Rapoarte/Indici' : `📖 Modul ${modul}`;
@@ -472,7 +552,7 @@ const MaterialeTab = ({
                     <thead>
                       <tr className="border-b border-gray-600">
                         <th className="text-left p-3 text-gray-300 font-semibold">Nume Material</th>
-                        <th className="text-left p-3 text-gray-300 font-semibold">Modul</th>
+                        <th className="text-left p-3 text-gray-300 font-semibold">Grupe</th>
                         <th className="text-left p-3 text-gray-300 font-semibold">Data</th>
                         <th className="text-left p-3 text-gray-300 font-semibold">Acțiuni</th>
                       </tr>
@@ -493,6 +573,49 @@ const MaterialeTab = ({
                                   <option value="3">Modul 3</option>
                                   <option value="rapoarte">Rapoarte/Indici</option>
                                 </select>
+                                {/* Grupe edit */}
+                                <div>
+                                  <label className="block text-gray-300 mb-1 text-sm">Grupe:</label>
+                                  <div className="space-y-1">
+                                    <label className="flex items-center gap-2 text-white cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={editMaterialData.grupe?.includes("toate")}
+                                        onChange={(e) => {
+                                          if (e.target.checked) {
+                                            setEditMaterialData({ ...editMaterialData, grupe: ["toate"] });
+                                          } else {
+                                            setEditMaterialData({ ...editMaterialData, grupe: [] });
+                                          }
+                                        }}
+                                        className="w-4 h-4 rounded"
+                                      />
+                                      <span className="text-sm font-semibold text-amber-400">📌 Toate grupele</span>
+                                    </label>
+                                    {!editMaterialData.grupe?.includes("toate") && (
+                                      <div className="grid grid-cols-2 md:grid-cols-3 gap-1 p-2 bg-gray-700/50 rounded border border-gray-600">
+                                        {grupeDisponibile.map(g => (
+                                          <label key={g} className="flex items-center gap-2 text-gray-300 cursor-pointer text-sm">
+                                            <input
+                                              type="checkbox"
+                                              checked={editMaterialData.grupe?.includes(g)}
+                                              onChange={(e) => {
+                                                const current = editMaterialData.grupe || [];
+                                                if (e.target.checked) {
+                                                  setEditMaterialData({ ...editMaterialData, grupe: [...current, g] });
+                                                } else {
+                                                  setEditMaterialData({ ...editMaterialData, grupe: current.filter(gr => gr !== g) });
+                                                }
+                                              }}
+                                              className="w-3 h-3 rounded"
+                                            />
+                                            {g}
+                                          </label>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                                 <textarea
                                   value={editMaterialData.nota}
                                   onChange={(e) => setEditMaterialData({ ...editMaterialData, nota: e.target.value })}
@@ -528,7 +651,17 @@ const MaterialeTab = ({
                                 </button>
                               </td>
                               <td className="p-3 text-gray-300">
-                                {modul === 'rapoarte' ? 'Rapoarte' : `Modul ${modul}`}
+                                <div className="flex flex-wrap gap-1">
+                                  {(material.grupe || ["Ianuarie 2026"]).map(g => (
+                                    <span key={g} className={`text-xs px-2 py-0.5 rounded-full ${
+                                      g === 'toate' 
+                                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' 
+                                        : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                    }`}>
+                                      {g === 'toate' ? '📌 Toate' : g}
+                                    </span>
+                                  ))}
+                                </div>
                               </td>
                               <td className="p-3 text-gray-400 text-sm">
                                 {formatDate(material.timestamp)}
@@ -540,7 +673,8 @@ const MaterialeTab = ({
                                       setEditingMaterial(material.id);
                                       setEditMaterialData({
                                         nota: material.nota,
-                                        modul: material.modul
+                                        modul: material.modul,
+                                        grupe: material.grupe || ["Ianuarie 2026"]
                                       });
                                     }}
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"

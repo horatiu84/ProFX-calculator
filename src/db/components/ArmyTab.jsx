@@ -875,6 +875,7 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                   <th className="p-2 border border-gray-700">Nume</th>
                   <th className="p-2 border border-gray-700">Telefon</th>
                   <th className="p-2 border border-gray-700 text-center">Tip Participant</th>
+                  <th className="p-2 border border-gray-700 text-center">Grupa</th>
                   <th className="p-2 border border-gray-700 text-center">Pereche Valutară</th>
                   <th className="p-2 border border-gray-700 text-center">Ora Lumânare 4H</th>
                   <th className="p-2 border border-gray-700 text-center">Upload Astăzi</th>
@@ -925,6 +926,17 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                           >
                             <option value="Cursant">Cursant</option>
                             <option value="Mentor">Mentor</option>
+                          </select>
+                        </td>
+                        <td className="p-2 border border-gray-700">
+                          <select
+                            value={editFormData.grupa || 'Ianuarie 2026'}
+                            onChange={(e) => setEditFormData({ ...editFormData, grupa: e.target.value })}
+                            className="w-full p-1 rounded border border-gray-600 bg-gray-700 text-white text-center"
+                          >
+                            {grupeDisponibile.map(g => (
+                              <option key={g} value={g}>{g}</option>
+                            ))}
                           </select>
                         </td>
                         <td className="p-2 border border-gray-700">
@@ -987,6 +999,11 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                               : 'bg-green-600 text-white'
                           }`}>
                             {cursant.tipParticipant || 'Cursant'}
+                          </span>
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          <span className="px-2 py-1 rounded text-xs bg-gray-700 text-gray-300">
+                            {cursant.grupa || 'Ianuarie 2026'}
                           </span>
                         </td>
                         <td className="p-2 border border-gray-700 text-center font-semibold text-blue-300">

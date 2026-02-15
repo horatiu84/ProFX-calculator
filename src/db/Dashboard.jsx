@@ -665,7 +665,7 @@ const Dashboard = () => {
 
       {/* Tab Content: Leaduri */}
       {activeTab === "leaduri" && (
-        <LeaduriTab clearCachedData={clearCachedData} />
+        <LeaduriTab />
       )}
     </div>
   );

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from 'react-dom';
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { db } from "./db/FireBase";
 import { doc, getDoc } from "firebase/firestore";
 import {
@@ -17,10 +15,6 @@ import {
 import VipInfoModal from "./components/VipInfoModal";
 import { useLanguage } from './contexts/LanguageContext';
 
-// Import CSS-urile necesare pentru PDF viewer
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-
 const PASSWORD_KEY = "profx_educatie_access";
 
 // -----------------------------
@@ -30,13 +24,6 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
   const { translations: t, language } = useLanguage();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pdfError, setPdfError] = useState(null);
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    sidebarTabs: (defaultTabs) => [
-      defaultTabs[0], // Thumbnails
-      defaultTabs[1], // Bookmarks
-    ],
-  });
 
   // Închide modal cu Escape
   useEffect(() => {
@@ -179,38 +166,13 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
               </div>
             ) : (
               /* PDF Viewer */
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                <div
-                  className="h-full pdf-viewer-dark"
-                  style={{
-                    backgroundColor: '#1f2937',
-                    '--rpv-core-primary-color': '#f59e0b',
-                    '--rpv-core-text-primary-color': '#ffffff',
-                    '--rpv-core-text-secondary-color': '#d1d5db',
-                    '--rpv-core-background-color': '#1f2937',
-                    '--rpv-core-secondary-color': '#374151',
-                    '--rpv-core-border-color': '#4b5563',
-                    '--rpv-core-menu-background-color': '#374151',
-                    '--rpv-core-menu-text-color': '#ffffff',
-                  }}
-                >
-                  <Viewer
-                    fileUrl={pdfFile}
-                    plugins={[defaultLayoutPluginInstance]}
-                    theme="dark"
-                    onDocumentLoadError={handleDocumentLoadError}
-                    renderError={(error) => (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center p-8">
-                          <div className="text-6xl mb-4">❌</div>
-                          <h3 className="text-xl font-bold text-white mb-2">{t.educatie.invalidPdf}</h3>
-                          <p className="text-gray-400">{t.educatie.invalidPdfMessage}</p>
-                        </div>
-                      </div>
-                    )}
-                  />
-                </div>
-              </Worker>
+              <iframe
+                src={pdfFile}
+                title={pdfTitle || 'PDF Viewer'}
+                className="w-full h-full border-0"
+                style={{ minHeight: '70vh', backgroundColor: '#1f2937' }}
+                onError={() => handleDocumentLoadError('Failed to load PDF')}
+              />
             )}
           </div>
         </div>

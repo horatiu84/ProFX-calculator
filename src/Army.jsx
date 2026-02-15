@@ -350,9 +350,13 @@ const Army = () => {
           perecheValutara: cursant.perecheValutara,
           tipParticipant: cursant.tipParticipant || 'Cursant',
           oraLumanare: cursant.oraLumanare || '8:00 - 12:00',
+          grupa: cursant.grupa || 'Ianuarie 2026',
           progres: cursant.progres || Array(20).fill(0),
           screenshots: cursant.screenshots || []
         };
+        
+        // Actualizează grupa în localStorage
+        localStorage.setItem('armyUserGrupa', userData.grupa);
         
         setAuthenticatedUser(userData);
         setIsAuthenticated(true);
@@ -653,7 +657,7 @@ const Army = () => {
           <span className="hidden md:inline">{language === 'ro' ? 'Înapoi la Meniu' : 'Back to Menu'}</span>
           <span className="md:hidden">{language === 'ro' ? 'Înapoi' : 'Back'}</span>
         </button>
-        <MaterialeArmy />
+        <MaterialeArmy userGrupa={authenticatedUser?.grupa} tipParticipant={authenticatedUser?.tipParticipant} />
       </div>
     );
   }

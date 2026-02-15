@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Viewer, Worker } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import FlipCard from "./FlipCard";
 import VipInfoModal from "./components/VipInfoModal";
 import { useLanguage } from './contexts/LanguageContext';
-
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const PASSWORD_KEY = "profx_access_password";
 
@@ -17,10 +12,6 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
   const { translations: t, language } = useLanguage();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pdfError, setPdfError] = useState(null);
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    sidebarTabs: (defaultTabs) => [defaultTabs[0], defaultTabs[1]],
-  });
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -99,9 +90,13 @@ const PDFViewerModal = ({ isOpen, onClose, pdfTitle, pdfFile }) => {
                 </div>
               </div>
             ) : (
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                <Viewer fileUrl={pdfFile} plugins={[defaultLayoutPluginInstance]} onDocumentLoadError={handleDocumentLoadError} />
-              </Worker>
+              <iframe
+                src={pdfFile}
+                title={pdfTitle || 'PDF Viewer'}
+                className="w-full h-full border-0"
+                style={{ minHeight: '70vh' }}
+                onError={() => handleDocumentLoadError('Failed to load PDF')}
+              />
             )}
           </div>
         </div>
