@@ -80,7 +80,7 @@ const Raport = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 text-amber-400 group-hover:gap-4 transition-all duration-300">
-              <span className="font-semibold">Deschide Journal</span>
+              <span className="font-semibold">Deschide Jurnal</span>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
