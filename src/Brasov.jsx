@@ -7,10 +7,10 @@ const BrasovEvent = () => {
   const content = {
     ro: {
       title: "Mastermind ProFX",
-      subtitle: "Cluj",
-      date: "7 Februarie 2026, 10:00 - 18:00",
-      location: "Radisson Blu Cluj",
-      hero: "O zi întreagă dedicată tradingului, fără teorie reciclață, fără promisiuni goale.",
+      subtitle: "Iași",
+      date: "Martie 2026 (Vom reveni cu detalii)",
+      location: "Locație de confirmat",
+      hero: "O zi întreagă dedicată tradingului",
       intro:
         "Aici înveți direct de la traderi, mentori și invitați internaționali care activează zilnic pe piețe.",
       benefits: [
@@ -21,7 +21,7 @@ const BrasovEvent = () => {
       mainMessage:
         "Dacă vrei mai mult decât tutoriale, conturi demo și informații reciclate de pe internet, asta e ziua în care faci diferența.",
       description:
-        "Pe 7 februarie 2026, la Radisson Blu Cluj, vei învăța trading direct de la mentori, traderi și antreprenori care chiar fac asta zi de zi, plus invitați internaționali din industrie.",
+        "În martie 2026, la Iași, vei învăța trading direct de la mentori, traderi și antreprenori care chiar fac asta zi de zi, plus invitați internaționali din industrie.",
       dayTitle: "O zi întreagă în care:",
       points: [
         "Înțelegi piața dintr-o perspectivă nouă",
@@ -46,10 +46,10 @@ const BrasovEvent = () => {
     },
     en: {
       title: "ProFX Mastermind",
-      subtitle: "Cluj",
-      date: "February 7, 2026, 10:00 AM - 6:00 PM",
-      location: "Radisson Blu Cluj",
-      hero: "A full day dedicated to trading, without recycled theory or empty promises.",
+      subtitle: "Iași",
+      date: "March 2026 (Details coming soon)",
+      location: "Location to be confirmed",
+      hero: "A full day dedicated to trading.",
       intro:
         "Here you learn directly from traders, mentors and international guests who are active daily in the markets.",
       benefits: [
@@ -60,7 +60,7 @@ const BrasovEvent = () => {
       mainMessage:
         "If you want more than tutorials, demo accounts and recycled information from the internet, this is the day you make a difference.",
       description:
-        "On February 7, 2026, at Radisson Blu Cluj, you will learn trading directly from mentors, traders and entrepreneurs who actually do this every day, plus international guests from the industry.",
+        "In March 2026, in Iași, you will learn trading directly from mentors, traders and entrepreneurs who actually do this every day, plus international guests from the industry.",
       dayTitle: "A full day where you will:",
       points: [
         "Understand the market from a new perspective",
@@ -91,8 +91,8 @@ const BrasovEvent = () => {
       {/* Hero Section with Image */}
       <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
         <img
-          src="/Cluj.jpg"
-          alt="Cluj Event"
+          src="/Iasi.jpg"
+          alt="Iași Event"
           className="w-full h-full object-cover opacity-80"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
@@ -142,19 +142,6 @@ const BrasovEvent = () => {
                   />
                 </svg>
                 <span className="font-semibold">{t.location}</span>
-              </div>
-            </div>
-            {/* Hotel Image */}
-            <div className="flex justify-center mb-4">
-              <div className="relative group">
-                <img
-                  src="/Radisson.jpg"
-                  alt="Radisson Blu Cluj"
-                  className="w-48 h-32 md:w-64 md:h-40 object-cover rounded-lg border-2 border-blue-400/50 shadow-lg transition-transform group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent rounded-lg flex items-end justify-center pb-2">
-                  <span className="text-white text-xs md:text-sm font-semibold">Radisson Blu Cluj</span>
-                </div>
               </div>
             </div>
             <p className="text-base md:text-xl text-gray-200 font-medium">
