@@ -106,6 +106,8 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
                     ? "bg-green-500/20 text-green-400 border border-green-500/30"
                     : selectedMedia.category === "herculane"
                     ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                    : selectedMedia.category === "cluj"
+                    ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                     : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
                 }`}
               >
@@ -154,6 +156,8 @@ function ModalOverlay({ selectedMedia, onClose, categories }) {
                     ? "bg-green-500/20 text-green-400 border border-green-500/30"
                     : selectedMedia.category === "herculane"
                     ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                    : selectedMedia.category === "cluj"
+                    ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                     : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
                 }`}
               >
@@ -347,6 +351,46 @@ const EventPhotoGallery = () => {
       title: { ro: "Eveniment Brașov", en: "Brasov Event" },
       type: "photo"
     },
+    {
+      id: 22,
+      src: "/Galerie/Cluj1.jpg",
+      alt: { ro: "Mastermind ProFX Cluj 2026", en: "ProFX Mastermind Cluj 2026" },
+      category: "cluj",
+      title: { ro: "Mastermind Cluj 2026", en: "Mastermind Cluj 2026" },
+      type: "photo"
+    },
+    {
+      id: 23,
+      src: "/Galerie/Cluj2.jpg",
+      alt: { ro: "Mastermind ProFX Cluj 2026", en: "ProFX Mastermind Cluj 2026" },
+      category: "cluj",
+      title: { ro: "Mastermind Cluj 2026", en: "Cluj Mastermind 2026" },
+      type: "photo"
+    },
+    {
+      id: 24,
+      src: "/Galerie/Cluj3.jpg",
+      alt: { ro: "Mastermind ProFX Cluj 2026", en: "ProFX Mastermind Cluj 2026" },
+      category: "cluj",
+      title: { ro: "Mastermind Cluj 2026", en: "Cluj Mastermind 2026" },
+      type: "photo"
+    },
+    {
+      id: 25,
+      src: "/Galerie/Cluj4.jpg",
+      alt: { ro: "Mastermind ProFX Cluj 2026", en: "ProFX Mastermind Cluj 2026" },
+      category: "cluj",
+      title: { ro: "Mastermind Cluj 2026", en: "Cluj Mastermind 2026" },
+      type: "photo"
+    },
+    {
+      id: 26,
+      src: "/Galerie/Cluj5.jpg",
+      alt: { ro: "Mastermind ProFX Cluj 2026", en: "ProFX Mastermind Cluj 2026" },
+      category: "cluj",
+      title: { ro: "Mastermind Cluj", en: "Cluj Mastermind" },
+      type: "photo"
+    },
   ];
 
   const videos = [
@@ -400,6 +444,7 @@ const EventPhotoGallery = () => {
     { id: "herculane", name: t.herculane, icon: Calendar },
     { id: "eforie", name: t.eforieNord, icon: Calendar },
     { id: "citybreak", name: t.citybreak, icon: MapPin },
+    { id: "cluj", name: t.cluj, icon: Calendar },
   ];
 
   const mediaTypes = [
@@ -586,6 +631,8 @@ const EventPhotoGallery = () => {
                           ? "bg-green-500/20 text-green-400 border border-green-500/30"
                           : item.category === "herculane"
                           ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                          : item.category === "cluj"
+                          ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                           : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
                       }`}
                     >

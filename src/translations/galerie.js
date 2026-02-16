@@ -17,6 +17,7 @@ export const galerieTranslations = {
       herculane: "Bootcamp Herculane",
       eforieNord: "Bootcamp Eforie Nord",
       citybreak: "CityBreak ProFX",
+      cluj: "Mastermind Cluj 2026",
       
       // Photo Titles & Alt
       founders: "Fondatorii ProFX",
@@ -74,6 +75,7 @@ export const galerieTranslations = {
       herculane: "Herculane Bootcamp",
       eforieNord: "Eforie Nord Bootcamp",
       citybreak: "CityBreak ProFX",
+      cluj: "Mastermind Cluj 2026",
       
       // Photo Titles & Alt
       founders: "ProFX Founders",
