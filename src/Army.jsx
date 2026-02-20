@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useLanguage } from "./contexts/LanguageContext";
-import { User, LogOut, Loader, Book, Upload, ChevronRight, FileText, MessageSquare, Eye, X, Image as ImageIcon, ZoomIn, ZoomOut } from "lucide-react";
+import { User, LogOut, Loader, Book, Upload, ChevronRight, FileText, MessageSquare, Eye, X, Image as ImageIcon, ZoomIn, ZoomOut, Info } from "lucide-react";
 import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "./db/FireBase.js";
 import Biblia from "./Biblia.jsx";
@@ -250,6 +250,9 @@ const Army = () => {
   
   // State pentru selecția activității
   const [activeView, setActiveView] = useState(null); // null, 'biblia', 'upload', 'materiale', 'mentor'
+
+  // State pentru modalul de informații program
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   // State pentru întrebări mentor
   const [mentorQuestion, setMentorQuestion] = useState("");
@@ -541,6 +544,169 @@ const Army = () => {
             </p>
           </div>
 
+          {/* Modal Informații Program */}
+          {showInfoModal && typeof document !== 'undefined' && createPortal(
+            <div
+              className="fixed inset-0 bg-black/92 z-[99999] flex items-center justify-center p-4"
+              onClick={() => setShowInfoModal(false)}
+            >
+              <div
+                className="relative bg-gray-950 border border-amber-400/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Buton închide */}
+                <button
+                  onClick={() => setShowInfoModal(false)}
+                  className="absolute top-4 right-4 z-10 text-gray-400 hover:text-white transition-colors bg-gray-800/80 rounded-full p-1.5"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                <div className="p-6 md:p-8 space-y-6">
+                  {/* Titlu */}
+                  <div className="text-center pr-8">
+                    <h2 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 leading-snug">
+                      🎖️ Pentru cine este programul Army?!
+                    </h2>
+                  </div>
+
+                  {/* Nu pentru începători */}
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
+                    <p className="text-red-300 font-semibold">
+                      Army <span className="underline">NU</span> este pentru începători absoluți.
+                    </p>
+                  </div>
+
+                  {/* Este pentru cei care */}
+                  <div className="space-y-2">
+                    <p className="text-gray-200 font-semibold">Army este pentru cei care:</p>
+                    <ul className="space-y-1.5 text-gray-200">
+                      {[
+                        'Cunosc deja bazele tradingului',
+                        'Știu ce înseamnă market structure, entry, SL, TP',
+                        'Au făcut deja tranzacții',
+                        'Dar… nu au încă claritate',
+                        'Nu au un plan clar de tranzacționare',
+                        'Nu reușesc să fie disciplinați singuri',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-green-400 font-bold mt-0.5 shrink-0">✔️</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Consistență */}
+                  <div className="bg-gray-900/60 border border-gray-700/50 rounded-xl p-4 space-y-3">
+                    <p className="text-white font-semibold">
+                      Army este pentru cei care simt că știu ce au de făcut… dar nu reușesc să execute constant.
+                    </p>
+                    <p className="text-gray-300">Este pentru cei care:</p>
+                    <ul className="space-y-1 text-gray-300">
+                      {[
+                        'Overtradează',
+                        'Intră din FOMO',
+                        'Mută SL-ul',
+                        'Sar de la o strategie la alta',
+                        'Au rezultate fluctuante pentru că nu au un sistem stabil',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-red-400 mt-0.5 shrink-0">–</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Ce facem */}
+                  <div className="space-y-2">
+                    <p className="text-amber-400 font-bold text-lg">🎯 Ce facem în Army?</p>
+                    <ul className="space-y-1 text-gray-200">
+                      {[
+                        'Construim un plan clar.',
+                        'Construim disciplină.',
+                        'Construim un sistem repetabil.',
+                        'Construim mentalitatea corectă.',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <span className="text-amber-400 shrink-0">▸</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Structură */}
+                  <div className="border-l-4 border-amber-400 pl-4 space-y-1">
+                    <p className="text-white font-semibold">Army este structură.</p>
+                    <p className="text-white font-semibold">Army este reguli.</p>
+                    <p className="text-white font-semibold">Army este responsabilitate.</p>
+                    <p className="text-gray-400 mt-2 text-sm">
+                      Nu este doar un curs.<br />
+                      Este un regim de execuție și disciplină.
+                    </p>
+                  </div>
+
+                  {/* Număr limitat */}
+                  <div className="bg-amber-400/10 border border-amber-400/40 rounded-xl p-4">
+                    <p className="text-amber-300 font-bold">⚠️ Lucrăm cu un număr limitat de persoane.</p>
+                    <p className="text-amber-200 font-semibold mt-1">Maximum 20 de oameni.</p>
+                    <p className="text-gray-300 text-sm mt-2">
+                      De ce? Pentru că fiecare persoană primește atenție, corectare și ghidare reală.<br />
+                      Nu putem face asta cu 100 de oameni.
+                    </p>
+                  </div>
+
+                  {/* Pentru tine dacă */}
+                  <div className="bg-gray-900/60 border border-gray-700/50 rounded-xl p-4 space-y-2">
+                    <p className="text-gray-300">Dacă simți că:</p>
+                    <ul className="space-y-1 text-gray-200 italic">
+                      <li>„Știu bazele, dar îmi lipsește consistența."</li>
+                      <li>„Am nevoie de un plan clar."</li>
+                      <li>„Singur nu reușesc să fiu disciplinat."</li>
+                    </ul>
+                    <p className="text-amber-300 font-semibold mt-2">Atunci Army este pentru tine.</p>
+                    <p className="text-gray-400 text-sm">Dacă doar cauți semnale rapide… nu este pentru tine.</p>
+                  </div>
+
+                  {/* Selectiv */}
+                  <div className="text-center space-y-1">
+                    <p className="text-white font-semibold">Selectăm atent. Nu lucrăm cu oricine.</p>
+                    <p className="text-gray-300 text-sm">
+                      Cei care sunt serioși și vor structură reală, disciplina reală și rezultate construite corect — vor înțelege valoarea.
+                    </p>
+                  </div>
+
+                  {/* Calendly */}
+                  <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-400/30 rounded-xl p-5 text-center space-y-3">
+                    <p className="text-gray-200 text-sm">
+                      Aici este link-ul de programare pentru o discuție gratuită cu John, să vedeți dacă Army e ce trebuie și să primiți mai multe detalii.
+                    </p>
+                    <a
+                      href="https://calendly.com/profxromania/profx-army"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold rounded-xl hover:from-amber-600 hover:to-yellow-600 transition-all shadow-lg"
+                    >
+                      📅 Programează discuția gratuită
+                    </a>
+                    <p className="text-gray-400 text-xs">
+                      Asigurați-vă că veți fi în liniște la un laptop când aveți zoom-ul.
+                    </p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="text-center pt-2 pb-1">
+                    <p className="text-amber-400 font-bold text-lg">Let&apos;s build traders.</p>
+                    <p className="text-gray-400">Nu jucători. 💪</p>
+                  </div>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
+
           {/* Formular Login */}
           <div className="bg-gray-900/50 backdrop-blur-sm border border-amber-400/30 rounded-2xl p-8">
             <div className="mb-6 text-center">
@@ -601,12 +767,19 @@ const Army = () => {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center space-y-3">
               <p className="text-xs text-gray-500">
                 {language === 'ro' 
-                  ? 'Nu ești înscris încă? Contactează administratorul pentru a fi adăugat în programul Army.' 
-                  : 'Not registered yet? Contact the administrator to be added to the Army program.'}
+                  ? 'Nu ești înscris încă? Aflați mai multe despre programul Army.' 
+                  : 'Not registered yet? Find out more about the Army program.'}
               </p>
+              <button
+                onClick={() => setShowInfoModal(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-400/40 hover:border-amber-400/80 hover:bg-amber-500/20 text-amber-300 font-semibold rounded-xl transition-all duration-200 text-sm"
+              >
+                <Info className="w-4 h-4" />
+                {language === 'ro' ? 'Informații Program Army' : 'Army Program Info'}
+              </button>
             </div>
           </div>
         </div>
@@ -1029,14 +1202,7 @@ const Army = () => {
               </div>
             </div>
             
-            {/* Info badge */}
-            <div className="mt-6 pt-6 border-t border-gray-700/50">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-amber-400 text-sm font-medium">
-                  📚 {language === 'ro' ? 'Nou!' : 'New!'}
-                </span>
-              </div>
-            </div>
+       
           </button>
 
           {/* Card 4 - Intreaba mentorul */}
