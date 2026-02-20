@@ -7,6 +7,7 @@ import { db } from "./db/FireBase.js";
 import Biblia from "./Biblia.jsx";
 import ArmyUpload from "./ArmyUpload.jsx";
 import MaterialeArmy from "./MaterialeArmy.jsx";
+import ArmyFeedback from "./ArmyFeedback.jsx";
 import { uploadScreenshotToCloudinary } from "./ArmyUpload.jsx";
 
 // Component pentru rândul din tabel cu expandare
@@ -1065,8 +1066,11 @@ const Army = () => {
           </button>
         </div>
 
+        {/* Feedback Army */}
+        <ArmyFeedback />
+
         {/* Additional Info */}
-        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+        <div className="bg-gray-900/50 mt-5 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 border border-amber-500/30">
               <span className="text-2xl">💡</span>
