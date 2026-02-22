@@ -16,6 +16,12 @@ const QuestionRow = ({ question, language }) => {
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
 
+  const questionImages = Array.isArray(question.images)
+    ? question.images
+    : question.image
+      ? [question.image]
+      : [];
+
   const formatDateTime = (timestamp) => {
     if (!timestamp) return '-';
     try {
@@ -61,10 +67,12 @@ const QuestionRow = ({ question, language }) => {
         </td>
         <td className="px-4 py-3">
           <div className="text-sm text-white">{truncateText(question.question)}</div>
-          {question.image && (
+          {questionImages.length > 0 && (
             <span className="text-xs text-amber-400 flex items-center gap-1 mt-1">
               <ImageIcon className="w-3 h-3" />
-              {language === 'ro' ? 'Cu imagine' : 'With image'}
+              {language === 'ro'
+                ? `Cu ${questionImages.length} ${questionImages.length === 1 ? 'imagine' : 'imagini'}`
+                : `With ${questionImages.length} ${questionImages.length === 1 ? 'image' : 'images'}`}
             </span>
           )}
         </td>
@@ -98,18 +106,22 @@ const QuestionRow = ({ question, language }) => {
               </div>
 
               {/* Imaginea întrebării */}
-              {question.image && (
+              {questionImages.length > 0 && (
                 <div>
                   <h4 className="text-sm font-semibold text-amber-400 uppercase mb-2">
-                    {language === 'ro' ? 'Poză atașată:' : 'Attached image:'}
+                    {language === 'ro' ? 'Poze atașate:' : 'Attached images:'}
                   </h4>
-                  <div className="overflow-hidden rounded-lg">
-                    <img
-                      src={question.image.url}
-                      alt="Întrebare"
-                      className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => setEnlargedImage(question.image.url)}
-                    />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {questionImages.map((img, index) => (
+                      <div key={`${img.publicId || img.url}-${index}`} className="overflow-hidden rounded-lg">
+                        <img
+                          src={img.url}
+                          alt={`${language === 'ro' ? 'Întrebare' : 'Question'} ${index + 1}`}
+                          className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setEnlargedImage(img.url)}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -256,8 +268,8 @@ const Army = () => {
 
   // State pentru întrebări mentor
   const [mentorQuestion, setMentorQuestion] = useState("");
-  const [mentorImageFile, setMentorImageFile] = useState(null);
-  const [mentorImagePreview, setMentorImagePreview] = useState("");
+  const [mentorImageFiles, setMentorImageFiles] = useState([]);
+  const [mentorImagePreviews, setMentorImagePreviews] = useState([]);
   const [mentorSending, setMentorSending] = useState(false);
   const [mentorError, setMentorError] = useState("");
   const [mentorSuccess, setMentorSuccess] = useState("");
@@ -412,24 +424,51 @@ const Army = () => {
     setMentorError("");
     setMentorSuccess("");
 
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
 
-    if (mentorImagePreview) {
-      URL.revokeObjectURL(mentorImagePreview);
+    const imageFiles = selectedFiles.filter((file) => file.type.startsWith("image/"));
+
+    if (imageFiles.length !== selectedFiles.length) {
+      setMentorError(language === 'ro'
+        ? 'Doar fișierele imagine sunt acceptate.'
+        : 'Only image files are accepted.');
     }
 
-    setMentorImageFile(file);
-    setMentorImagePreview(URL.createObjectURL(file));
+    if (imageFiles.length === 0) return;
+
+    const newPreviews = imageFiles.map((file) => URL.createObjectURL(file));
+
+    setMentorImageFiles((prev) => [...prev, ...imageFiles]);
+    setMentorImagePreviews((prev) => [...prev, ...newPreviews]);
+
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
-  const handleMentorImageRemove = () => {
-    if (mentorImagePreview) {
-      URL.revokeObjectURL(mentorImagePreview);
+  const handleMentorImageRemove = (indexToRemove = null) => {
+    if (indexToRemove === null) {
+      mentorImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+      setMentorImagePreviews([]);
+      setMentorImageFiles([]);
+      return;
     }
-    setMentorImagePreview("");
-    setMentorImageFile(null);
+
+    const previewToRemove = mentorImagePreviews[indexToRemove];
+    if (previewToRemove) {
+      URL.revokeObjectURL(previewToRemove);
+    }
+
+    setMentorImageFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+    setMentorImagePreviews((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
+
+  useEffect(() => {
+    return () => {
+      mentorImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+    };
+  }, [mentorImagePreviews]);
 
   const handleMentorSubmit = async (e) => {
     e.preventDefault();
@@ -454,17 +493,21 @@ const Army = () => {
     setMentorSending(true);
 
     try {
-      let imageData = null;
+      let imagesData = [];
 
-      if (mentorImageFile) {
-        const uploadResult = await uploadScreenshotToCloudinary(mentorImageFile);
-        imageData = {
-          url: uploadResult.secure_url,
-          publicId: uploadResult.public_id,
-          format: uploadResult.format,
-          size: mentorImageFile.size,
-          fileName: mentorImageFile.name
-        };
+      if (mentorImageFiles.length > 0) {
+        imagesData = await Promise.all(
+          mentorImageFiles.map(async (file) => {
+            const uploadResult = await uploadScreenshotToCloudinary(file);
+            return {
+              url: uploadResult.secure_url,
+              publicId: uploadResult.public_id,
+              format: uploadResult.format,
+              size: file.size,
+              fileName: file.name
+            };
+          })
+        );
       }
 
       await addDoc(collection(db, "ArmyMentorQuestions"), {
@@ -474,7 +517,8 @@ const Army = () => {
         perecheValutara: authenticatedUser.perecheValutara,
         tipParticipant: authenticatedUser.tipParticipant,
         question: trimmedQuestion,
-        image: imageData,
+        image: imagesData[0] || null,
+        images: imagesData,
         createdAt: Timestamp.now(),
         status: "new"
       });
@@ -881,11 +925,12 @@ const Army = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {language === 'ro' ? 'Poză (opțional)' : 'Image (optional)'}
+                    {language === 'ro' ? 'Poze (opțional)' : 'Images (optional)'}
                   </label>
                   <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center bg-gray-800/30">
                     <input
                       type="file"
+                      multiple
                       accept="image/*"
                       onChange={handleMentorImageChange}
                       className="hidden"
@@ -896,31 +941,39 @@ const Army = () => {
                       className="cursor-pointer inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
                     >
                       <Upload className="w-4 h-4" />
-                      {language === 'ro' ? 'Selectează imagine' : 'Select image'}
+                      {language === 'ro' ? 'Selectează imagini' : 'Select images'}
                     </label>
-                    {mentorImageFile && (
+                    {mentorImageFiles.length > 0 && (
                       <p className="mt-3 text-sm text-gray-400">
-                        {language === 'ro' ? 'Fișier selectat:' : 'Selected file:'}{" "}
-                        <span className="font-semibold text-white">{mentorImageFile.name}</span>
+                        {language === 'ro'
+                          ? `${mentorImageFiles.length} ${mentorImageFiles.length === 1 ? 'fișier selectat' : 'fișiere selectate'}`
+                          : `${mentorImageFiles.length} ${mentorImageFiles.length === 1 ? 'file selected' : 'files selected'}`}
                       </p>
                     )}
                   </div>
 
-                  {mentorImagePreview && (
+                  {mentorImagePreviews.length > 0 && (
                     <div className="mt-4">
-                      <div className="relative">
-                        <img
-                          src={mentorImagePreview}
-                          alt={language === 'ro' ? 'Previzualizare imagine' : 'Image preview'}
-                          className="w-full max-h-72 object-cover rounded-xl border border-gray-700/50"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleMentorImageRemove}
-                          className="absolute top-3 right-3 bg-gray-900/80 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded-full border border-gray-700/50"
-                        >
-                          {language === 'ro' ? 'Șterge' : 'Remove'}
-                        </button>
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {mentorImagePreviews.map((preview, index) => (
+                          <div key={`${preview}-${index}`} className="relative">
+                            <img
+                              src={preview}
+                              alt={`${language === 'ro' ? 'Previzualizare imagine' : 'Image preview'} ${index + 1}`}
+                              className="w-full h-40 object-cover rounded-xl border border-gray-700/50"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleMentorImageRemove(index)}
+                              className="absolute top-3 right-3 bg-gray-900/80 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded-full border border-gray-700/50"
+                            >
+                              {language === 'ro' ? 'Șterge' : 'Remove'}
+                            </button>
+                            <p className="mt-1 text-xs text-gray-400 truncate">
+                              {mentorImageFiles[index]?.name}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}

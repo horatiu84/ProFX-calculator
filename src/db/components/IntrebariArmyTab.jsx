@@ -40,6 +40,12 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
 
+  const getQuestionImages = (question) => {
+    if (!question) return [];
+    if (Array.isArray(question.images) && question.images.length > 0) return question.images;
+    return question.image ? [question.image] : [];
+  };
+
   // Fetch întrebări
   const fetchIntrebari = async (forceRefresh = false) => {
     const cacheKey = 'army_mentor_questions';
@@ -439,16 +445,20 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
               </div>
 
               {/* Imaginea întrebării */}
-              {selectedQuestion.image && (
+              {getQuestionImages(selectedQuestion).length > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-400 uppercase mb-2">Poză atașată:</h4>
-                  <div className="overflow-hidden rounded-lg">
-                    <img
-                      src={selectedQuestion.image.url}
-                      alt="Întrebare"
-                      className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => setEnlargedImage(selectedQuestion.image.url)}
-                    />
+                  <h4 className="text-sm font-semibold text-gray-400 uppercase mb-2">Poze atașate:</h4>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {getQuestionImages(selectedQuestion).map((image, index) => (
+                      <div key={`${image.publicId || image.url}-${index}`} className="overflow-hidden rounded-lg">
+                        <img
+                          src={image.url}
+                          alt={`Întrebare ${index + 1}`}
+                          className="w-full max-h-96 object-contain rounded-lg border border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setEnlargedImage(image.url)}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
