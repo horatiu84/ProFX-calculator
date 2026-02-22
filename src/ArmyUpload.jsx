@@ -367,6 +367,10 @@ const ArmyUpload = () => {
 
     setUploadProgress(Array(selectedFiles.length).fill(0));
     const results = [];
+    const uploadBatchId = `${authenticatedUser?.id || 'user'}-${Date.now()}`;
+    const now = new Date();
+    const uploadThemeDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const uploadThemeText = (todayTheme || "").trim();
 
     try {
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -383,7 +387,10 @@ const ArmyUpload = () => {
             fileName: file.name,
             size: file.size,
             format: cloudinaryResponse.format,
-            note: fileNotes[i] || '' // Adaugă nota (opțională)
+            note: fileNotes[i] || '', // Adaugă nota (opțională)
+            uploadBatchId,
+            themeDate: uploadThemeDate,
+            themeText: uploadThemeText
           };
 
           // Actualizează progresul
@@ -444,6 +451,28 @@ const ArmyUpload = () => {
         : "Upload error. Please try again.");
       setUploading(false);
     }
+  };
+
+  const getScreenshotGroupKey = (screenshot) => {
+    if (!screenshot) return null;
+    if (screenshot.uploadBatchId) return `batch:${screenshot.uploadBatchId}`;
+    if (screenshot.themeDate && screenshot.themeText) {
+      return `theme:${screenshot.themeDate}:${screenshot.themeText}`;
+    }
+
+    const safeDate = screenshot.uploadDate ? new Date(screenshot.uploadDate) : null;
+    if (safeDate && !Number.isNaN(safeDate.getTime())) {
+      const dateKey = `${safeDate.getFullYear()}-${String(safeDate.getMonth() + 1).padStart(2, '0')}-${String(safeDate.getDate()).padStart(2, '0')}`;
+      return `day:${dateKey}`;
+    }
+
+    return screenshot.publicId || screenshot.url;
+  };
+
+  const getScreenshotsInSameGroup = (screenshot) => {
+    const targetKey = getScreenshotGroupKey(screenshot);
+    if (!targetKey) return screenshot ? [screenshot] : [];
+    return userScreenshots.filter((item) => getScreenshotGroupKey(item) === targetKey);
   };
 
   // Interfața principală de upload
@@ -986,6 +1015,35 @@ const ArmyUpload = () => {
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
+
+            {getScreenshotsInSameGroup(selectedImage).length > 1 && (
+              <div className="w-full max-w-4xl bg-gray-900/80 backdrop-blur-sm rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
+                <p className="text-gray-300 text-sm mb-3">
+                  {language === 'ro' ? 'Poze din aceeași temă:' : 'Images from the same theme:'}
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                  {getScreenshotsInSameGroup(selectedImage).map((groupImage, index) => (
+                    <button
+                      key={`${groupImage.publicId || groupImage.url}-${index}`}
+                      onClick={() => setSelectedImage(groupImage)}
+                      className={`relative overflow-hidden rounded-lg border-2 transition-colors ${
+                        (groupImage.publicId && groupImage.publicId === selectedImage.publicId) || groupImage.url === selectedImage.url
+                          ? 'border-amber-400'
+                          : 'border-gray-700 hover:border-gray-500'
+                      }`}
+                      title={groupImage.fileName}
+                    >
+                      <img
+                        src={groupImage.url}
+                        alt={groupImage.fileName}
+                        className="w-full h-20 object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="text-center bg-gray-900/80 backdrop-blur-sm rounded-lg px-6 py-3 w-full max-w-2xl">
               <p className="text-white font-medium text-lg">{selectedImage.fileName}</p>
               <p className="text-gray-400 text-sm mt-1">

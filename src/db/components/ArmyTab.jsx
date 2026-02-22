@@ -29,6 +29,30 @@ const hasUploadedToday = (lastUploadDate) => {
   );
 };
 
+const getScreenshotGroupKey = (screenshot) => {
+  if (!screenshot) return null;
+
+  if (screenshot.uploadBatchId) return `batch:${screenshot.uploadBatchId}`;
+
+  if (screenshot.themeDate && screenshot.themeText) {
+    return `theme:${screenshot.themeDate}:${screenshot.themeText}`;
+  }
+
+  if (screenshot.themeDate) {
+    return `theme-date:${screenshot.themeDate}`;
+  }
+
+  const uploadDate = screenshot.uploadDate ? new Date(screenshot.uploadDate) : null;
+  const noteLower = (screenshot.note || '').toLowerCase();
+
+  if (uploadDate && !Number.isNaN(uploadDate.getTime()) && noteLower.includes('tema')) {
+    const minuteKey = `${uploadDate.getFullYear()}-${String(uploadDate.getMonth() + 1).padStart(2, '0')}-${String(uploadDate.getDate()).padStart(2, '0')} ${String(uploadDate.getHours()).padStart(2, '0')}:${String(uploadDate.getMinutes()).padStart(2, '0')}`;
+    return `tema-minute:${minuteKey}`;
+  }
+
+  return screenshot.publicId || screenshot.url;
+};
+
 const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
   // State-uri pentru cursanți Army
   const [armyCursanti, setArmyCursanti] = useState([]);
@@ -1472,10 +1496,35 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
             {/* Screenshots Section */}
             {selectedCursant.screenshots && selectedCursant.screenshots.length > 0 && (() => {
               const reversedScreenshots = selectedCursant.screenshots.slice().reverse();
-              const totalPages = Math.ceil(reversedScreenshots.length / screenshotsPerPage);
+              const groupedMap = new Map();
+              const groupedOrder = [];
+
+              reversedScreenshots.forEach((screenshot) => {
+                const groupKey = getScreenshotGroupKey(screenshot);
+                if (!groupedMap.has(groupKey)) {
+                  groupedMap.set(groupKey, []);
+                  groupedOrder.push(groupKey);
+                }
+                groupedMap.get(groupKey).push(screenshot);
+              });
+
+              const displayRows = groupedOrder.map((groupKey) => {
+                const group = groupedMap.get(groupKey) || [];
+                const representative = group[0];
+                const isMultiThemeGroup = group.length > 1;
+
+                return {
+                  key: groupKey,
+                  group,
+                  representative,
+                  isMultiThemeGroup
+                };
+              });
+
+              const totalPages = Math.ceil(displayRows.length / screenshotsPerPage);
               const startIndex = (screenshotsPage - 1) * screenshotsPerPage;
               const endIndex = startIndex + screenshotsPerPage;
-              const currentScreenshots = reversedScreenshots.slice(startIndex, endIndex);
+              const currentRows = displayRows.slice(startIndex, endIndex);
               
               return (
               <div className="p-6 bg-gray-900 border-t border-gray-700">
@@ -1496,11 +1545,11 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentScreenshots.map((screenshot, index) => (
+                      {currentRows.map((row, index) => (
                         <tr 
-                          key={index}
+                          key={row.key}
                           className="border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer transition-colors"
-                          onClick={() => setSelectedScreenshot(screenshot)}
+                          onClick={() => setSelectedScreenshot(row.representative)}
                         >
                           <td className="py-3 px-4 text-blue-400 font-semibold">{startIndex + index + 1}</td>
                           <td className="py-3 px-4 text-white">
@@ -1508,11 +1557,15 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                               <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
-                              <span className="truncate">{screenshot.fileName}</span>
+                              <span className="truncate">
+                                {row.isMultiThemeGroup
+                                  ? `Temă (${row.group.length} poze)`
+                                  : row.representative.fileName}
+                              </span>
                             </div>
                           </td>
                           <td className="py-3 px-4 text-gray-300 text-sm">
-                            {new Date(screenshot.uploadDate).toLocaleDateString('ro-RO', {
+                            {new Date(row.representative.uploadDate).toLocaleDateString('ro-RO', {
                               year: 'numeric',
                               month: 'short',
                               day: 'numeric',
@@ -1521,10 +1574,16 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                             })}
                           </td>
                           <td className="py-3 px-4 text-gray-300 text-sm">
-                            {screenshot.note ? (
+                            {row.isMultiThemeGroup ? (
                               <div className="max-w-xs">
-                                <span className="line-clamp-2" title={screenshot.note}>
-                                  📝 {screenshot.note}
+                                <span className="text-blue-300">
+                                  📚 Grup temă • {row.group.length} poze
+                                </span>
+                              </div>
+                            ) : row.representative.note ? (
+                              <div className="max-w-xs">
+                                <span className="line-clamp-2" title={row.representative.note}>
+                                  📝 {row.representative.note}
                                 </span>
                               </div>
                             ) : (
@@ -1624,6 +1683,46 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                 className="max-w-full h-auto object-contain rounded-lg"
                 onClick={(e) => e.stopPropagation()}
               />
+
+              {selectedCursant?.screenshots && (() => {
+                const selectedGroupKey = getScreenshotGroupKey(selectedScreenshot);
+                const sameThemeScreenshots = selectedCursant.screenshots
+                  .filter((shot) => getScreenshotGroupKey(shot) === selectedGroupKey)
+                  .slice()
+                  .reverse();
+
+                if (sameThemeScreenshots.length <= 1) return null;
+
+                return (
+                  <div
+                    className="w-full bg-gray-900/90 backdrop-blur-sm rounded-lg px-4 py-3 max-w-4xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <p className="text-blue-300 text-sm mb-3">Poze din aceeași temă ({sameThemeScreenshots.length})</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                      {sameThemeScreenshots.map((shot, index) => (
+                        <button
+                          key={`${shot.publicId || shot.url}-${index}`}
+                          onClick={() => setSelectedScreenshot(shot)}
+                          className={`relative overflow-hidden rounded-lg border-2 transition-colors ${
+                            ((shot.publicId && shot.publicId === selectedScreenshot.publicId) || shot.url === selectedScreenshot.url)
+                              ? 'border-blue-400'
+                              : 'border-gray-700 hover:border-gray-500'
+                          }`}
+                          title={shot.fileName}
+                        >
+                          <img
+                            src={shot.url}
+                            alt={shot.fileName}
+                            className="w-full h-20 object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="w-full bg-gray-900/90 backdrop-blur-sm rounded-lg px-6 py-4 max-w-4xl">
                 <p className="text-white font-medium text-lg text-left">{selectedScreenshot.fileName}</p>
                 <p className="text-gray-400 text-sm mt-1 text-left">
