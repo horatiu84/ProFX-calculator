@@ -22,6 +22,7 @@ import HowTo from "./HowTo.jsx";
 import ProFXChecklist from "./Clase1La20.jsx";
 import TradingJournal from "./Jurnal.jsx";
 import Army from "./Army.jsx";
+import Roboti from "./Roboti.jsx";
 import "./LotCalculator.css";
 
 // Brain Loading Screen Component
@@ -405,6 +406,13 @@ export default function LotCalculator() {
       label: t.training,
       icon: "🧑‍🏫",
       component: <Training />,
+      isSpecial: true
+    },
+    {
+      key: "roboti",
+      label: t.roboti,
+      icon: "🤖",
+      component: <Roboti />,
       isSpecial: true
     },
     // { 
