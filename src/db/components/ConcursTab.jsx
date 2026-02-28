@@ -53,11 +53,42 @@ const formatDate = (createdAt) => {
 const ConcursTab = ({ 
   concursInscrieri,
   loadingConcurs,
-  errorConcurs
+  errorConcurs,
+  onDeleteAll,
+  onEditConcurent
 }) => {
   const [concursSortBy, setConcursSortBy] = useState("desc");
   const [currentPageConcurs, setCurrentPageConcurs] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [editForm, setEditForm] = useState({ nume: "", telefon: "", linkMyFxBook: "" });
+  const [saving, setSaving] = useState(false);
   const concursPerPage = 10;
+
+  const openEdit = (item) => {
+    setEditItem(item);
+    setEditForm({
+      nume: item.nume || "",
+      telefon: item.telefon || "",
+      linkMyFxBook: item.linkMyFxBook || "",
+    });
+  };
+
+  const closeEdit = () => {
+    setEditItem(null);
+    setEditForm({ nume: "", telefon: "", linkMyFxBook: "" });
+  };
+
+  const handleSaveEdit = async () => {
+    setSaving(true);
+    try {
+      await onEditConcurent(editItem.id, editForm);
+      closeEdit();
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // Sortare și paginare
   const sortedConcurs = concursInscrieri.slice().sort((a, b) => {
@@ -115,8 +146,14 @@ const ConcursTab = ({
         Înscrieri Concurs ProFX
       </h2>
 
-      {/* Export Excel */}
-      <div className="flex justify-end mb-4">
+      {/* Export Excel + Stergere */}
+      <div className="flex justify-end mb-4 gap-2">
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="p-2 px-4 bg-red-700 text-white rounded hover:bg-red-800 text-sm"
+        >
+          Ștergere Concurenți Concurs
+        </button>
         <button
           onClick={exportConcursToExcel}
           className="p-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
@@ -124,6 +161,96 @@ const ConcursTab = ({
           Exportă Înscrieri Concurs în Excel
         </button>
       </div>
+
+      {/* Modal Editare Concurent */}
+      {editItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-gray-900 border border-blue-700 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold text-blue-400 mb-4">Editare Concurent</h3>
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="text-gray-300 text-sm font-semibold block mb-1">Nume</label>
+                <input
+                  type="text"
+                  value={editForm.nume}
+                  onChange={(e) => setEditForm((f) => ({ ...f, nume: e.target.value }))}
+                  className="w-full p-2 rounded border border-gray-600 bg-gray-800 text-white"
+                />
+              </div>
+              <div>
+                <label className="text-gray-300 text-sm font-semibold block mb-1">Telefon</label>
+                <input
+                  type="text"
+                  value={editForm.telefon}
+                  onChange={(e) => setEditForm((f) => ({ ...f, telefon: e.target.value }))}
+                  className="w-full p-2 rounded border border-gray-600 bg-gray-800 text-white"
+                />
+              </div>
+              <div>
+                <label className="text-gray-300 text-sm font-semibold block mb-1">Link MyFxBook</label>
+                <input
+                  type="text"
+                  value={editForm.linkMyFxBook}
+                  onChange={(e) => setEditForm((f) => ({ ...f, linkMyFxBook: e.target.value }))}
+                  className="w-full p-2 rounded border border-gray-600 bg-gray-800 text-white"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end mt-5">
+              <button
+                onClick={closeEdit}
+                disabled={saving}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={saving}
+                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:opacity-50 font-semibold"
+              >
+                {saving ? "Se salvează..." : "Salvează"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Confirmare Ștergere */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-gray-900 border border-red-700 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold text-red-400 mb-3">Confirmare Ștergere</h3>
+            <p className="text-gray-200 mb-1">
+              Ești sigur că vrei să ștergi <span className="font-bold text-white">toți concurenții</span> din baza de date?
+            </p>
+            <p className="text-gray-400 text-sm mb-5">
+              Această acțiune este <span className="text-red-400 font-semibold">ireversibilă</span>. Toți cei {concursInscrieri.length} concurenți înscriși vor fi eliminați.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={async () => {
+                  setDeleting(true);
+                  await onDeleteAll();
+                  setDeleting(false);
+                  setShowDeleteModal(false);
+                }}
+                disabled={deleting}
+                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 disabled:opacity-50 font-semibold"
+              >
+                {deleting ? "Se șterge..." : "Da, șterge toți"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sortare */}
       <div className="mb-3 flex gap-2 items-center">
@@ -158,6 +285,7 @@ const ConcursTab = ({
                   <th className="p-2 border border-gray-700 text-center">Telefon</th>
                   <th className="p-2 border border-gray-700">Link MyFxBook</th>
                   <th className="p-2 border border-gray-700">Data</th>
+                  <th className="p-2 border border-gray-700 text-center">Acțiuni</th>
                 </tr>
               </thead>
               <tbody>
@@ -186,11 +314,19 @@ const ConcursTab = ({
                       <td className="p-2 border border-gray-700">
                         {formatDate(item.createdAt)}
                       </td>
+                      <td className="p-2 border border-gray-700 text-center">
+                        <button
+                          onClick={() => openEdit(item)}
+                          className="px-3 py-1 bg-blue-700 text-white rounded hover:bg-blue-800 text-xs font-semibold"
+                        >
+                          Editează
+                        </button>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="p-2 text-center">
+                    <td colSpan="6" className="p-2 text-center">
                       Nicio înscriere la concurs înregistrată.
                     </td>
                   </tr>

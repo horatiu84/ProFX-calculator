@@ -23,17 +23,17 @@ const CompetitionBanner = () => {
     const updateTimer = () => {
       const now = new Date();
       
-      // Data de început a concursului din februarie (2 februarie 2026, 00:00:00)
-      const startDate = new Date(2026, 1, 2, 0, 0, 0); // Month is 0-indexed: 1 = February
+      // Data de început a concursului din martie (2 martie 2026, 00:00:00)
+      const startDate = new Date(2026, 2, 2, 0, 0, 0); // Month is 0-indexed: 2 = March
       
-      // Data de sfârșit a concursului din februarie (27 februarie 2026, 23:59:59)
-      const endDate = new Date(2026, 1, 27, 23, 59, 59);
+      // Data de sfârșit a concursului din martie (27 martie 2026, 23:59:59)
+      const endDate = new Date(2026, 2, 27, 23, 59, 59);
       
-      // Data de închidere a înscrierilor (9 februarie 2026, 23:59:59 - sfârșitul zilei)
-      const registrationCloseDate = new Date(2026, 1, 9, 23, 59, 59);
+      // Data de închidere a înscrierilor (8 martie 2026, 23:59:59 - sfârșitul zilei)
+      const registrationCloseDate = new Date(2026, 2, 8, 23, 59, 59);
       
-      // Data de început a concursului următor (1 martie 2026)
-      const nextStartDate = new Date(2026, 2, 1, 0, 0, 0); // 2 = March
+      // Data de început a concursului următor (1 aprilie 2026)
+      const nextStartDate = new Date(2026, 3, 1, 0, 0, 0); // 3 = April
 
       // Verifică dacă înscrierile sunt încă deschise
       const regOpen = now < registrationCloseDate;

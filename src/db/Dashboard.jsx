@@ -269,6 +269,33 @@ const Dashboard = () => {
     }
   };
 
+  const deleteAllConcursInscrieri = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "inscrieri_concurs"));
+      const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(db, "inscrieri_concurs", d.id)));
+      await Promise.all(deletePromises);
+      setConcursInscrieri([]);
+      clearCachedData('dashboard_concurs');
+      console.log('🗑️ Toți concurenții au fost șterși.');
+    } catch (err) {
+      alert("Eroare la ștergerea concurenților: " + err.message);
+    }
+  };
+
+  const updateConcurent = async (id, fields) => {
+    try {
+      const docRef = doc(db, "inscrieri_concurs", id);
+      await updateDoc(docRef, fields);
+      setConcursInscrieri((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, ...fields } : item))
+      );
+      clearCachedData('dashboard_concurs');
+    } catch (err) {
+      alert("Eroare la editarea concurentului: " + err.message);
+      throw err;
+    }
+  };
+
   // --- FEEDBACK: SORTARE & PAGINARE ---
 
   const sortedFeedback = feedbackAnonim.slice().sort((a, b) => {
@@ -653,6 +680,8 @@ const Dashboard = () => {
           concursInscrieri={concursInscrieri}
           loadingConcurs={loadingConcurs}
           errorConcurs={errorConcurs}
+          onDeleteAll={deleteAllConcursInscrieri}
+          onEditConcurent={updateConcurent}
         />
       )}
 
