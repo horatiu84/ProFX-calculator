@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { useLanguage } from "./contexts/LanguageContext";
 import { Upload, Image, CheckCircle, XCircle, Loader, Trash2, X } from "lucide-react";
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection, getDocs } from "firebase/firestore";
@@ -111,7 +110,6 @@ const ArmyUpload = () => {
   const [textOnlyNote, setTextOnlyNote] = useState("");
   const [submittingTextOnly, setSubmittingTextOnly] = useState(false);
   const [textOnlySuccess, setTextOnlySuccess] = useState(false);
-  const [showTextOnlyConfirm, setShowTextOnlyConfirm] = useState(false);
 
   // Încarcă screenshot-urile utilizatorului din Firebase
   useEffect(() => {
@@ -391,11 +389,6 @@ const ArmyUpload = () => {
       return;
     }
 
-    setShowTextOnlyConfirm(true);
-  };
-
-  const confirmTextOnlySubmit = async () => {
-    setShowTextOnlyConfirm(false);
     setSubmittingTextOnly(true);
     try {
       const now = new Date();
@@ -406,8 +399,8 @@ const ArmyUpload = () => {
         note: textOnlyNote.trim(),
         uploadDate: now.toISOString(),
         fileName: language === 'ro'
-          ? `Notă zilnică - ${now.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}`
-          : `Daily Note - ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
+          ? `Notă fără screenshot - ${now.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}`
+          : `Note without screenshot - ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
         uploadBatchId: `text-${authenticatedUser?.id || 'user'}-${Date.now()}`,
         themeDate: uploadThemeDate,
         themeText: uploadThemeText,
@@ -876,12 +869,12 @@ const ArmyUpload = () => {
         <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-blue-700/40">
           <h3 className="text-xl font-bold text-blue-300 mb-1 flex items-center gap-2">
             <span className="text-2xl">📝</span>
-            {language === 'ro' ? 'Zi fără tranzacție?' : 'No trade today?'}
+            {language === 'ro' ? 'Notă fără screenshot?' : 'Note without screenshot?'}
           </h3>
           <p className="text-gray-400 text-sm mb-4">
             {language === 'ro'
-              ? 'Dacă astăzi nu ai luat nicio tranzacție, poți trimite doar o notă textuală fără a fi necesară o poză.'
-              : 'If you had no trades today, you can submit a text note without needing to upload a screenshot.'}
+              ? 'Poți trimite o notă fără screenshot/imagine. Nota poate fi suplimentară față de tema curentă.'
+              : 'You can submit a text note without a screenshot/image. The note can be additional to the current task.'}
           </p>
           {textOnlySuccess && (
             <div className="mb-4 bg-green-600/20 border border-green-500/50 rounded-lg p-3 flex items-center gap-2">
@@ -895,8 +888,8 @@ const ArmyUpload = () => {
             value={textOnlyNote}
             onChange={(e) => setTextOnlyNote(e.target.value)}
             placeholder={language === 'ro'
-              ? 'Explică de ce nu ai luat tranzacție astăzi, ce ai analizat, ce ai studiat...'
-              : 'Explain why you had no trade today, what you analyzed, what you studied...'}
+              ? 'Scrie nota ta aici (observații, analiză, concluzii, pași următori)...'
+              : 'Write your note here (observations, analysis, conclusions, next steps)...'}
             className="w-full bg-gray-800/80 text-white text-sm rounded-lg px-3 py-3 border border-blue-600/40 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 focus:outline-none resize-none placeholder:text-gray-500 mb-3"
             rows="4"
             maxLength={1000}
@@ -906,7 +899,7 @@ const ArmyUpload = () => {
             <span className="text-gray-500 text-xs">{textOnlyNote.length}/1000</span>
             <button
               onClick={handleTextOnlySubmit}
-              disabled={submittingTextOnly || showTextOnlyConfirm || !textOnlyNote.trim()}
+              disabled={submittingTextOnly || !textOnlyNote.trim()}
               className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {submittingTextOnly ? (
@@ -1058,55 +1051,6 @@ const ArmyUpload = () => {
         </div>
       )}
 
-      {/* Modal confirmare notă fără screenshot */}
-      {showTextOnlyConfirm && typeof document !== 'undefined' && createPortal(
-        <div
-          className="fixed inset-0 bg-black/85 z-[9999] flex items-center justify-center p-4"
-          onClick={() => setShowTextOnlyConfirm(false)}
-        >
-          <div
-            className="w-full max-w-lg bg-gray-900 border border-blue-500/50 rounded-2xl shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="px-6 py-4 bg-gradient-to-r from-blue-700/80 to-indigo-700/80 border-b border-blue-400/40">
-              <h3 className="text-white font-bold text-lg flex items-center gap-2">
-                <span className="text-xl">🧐</span>
-                {language === 'ro' ? 'Confirmare trimitere notă' : 'Note submission confirmation'}
-              </h3>
-            </div>
-
-            <div className="p-6">
-              <p className="text-white text-base leading-relaxed mb-3">
-                {language === 'ro'
-                  ? 'Ești sigur că nu ai nicio poză/screenshot de uploadat?'
-                  : 'Are you sure you do not have any screenshot to upload?'}
-              </p>
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">
-                {language === 'ro'
-                  ? 'Dacă ai un screenshot cu contul de tranzacții unde se vede ziua curentă, te rugăm să îl încarci înainte de a trimite doar nota.'
-                  : 'If you have a trading account screenshot showing the current day, please upload it before submitting only the note.'}
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-                <button
-                  onClick={() => setShowTextOnlyConfirm(false)}
-                  className="px-4 py-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white font-semibold transition-colors"
-                >
-                  {language === 'ro' ? 'Încarc screenshot' : 'I will upload screenshot'}
-                </button>
-                <button
-                  onClick={confirmTextOnlySubmit}
-                  className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold transition-all"
-                >
-                  {language === 'ro' ? 'Continuă cu nota' : 'Continue with note'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-      
       {/* Modal pentru editarea notei */}
       {editingNote && (
         <div 
