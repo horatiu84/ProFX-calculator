@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../db/FireBase.js";
 import { useLanguage } from "../contexts/LanguageContext";
+import { sanitizeText } from "../security/formSecurity";
 
 const FormularAnonim = () => {
   const { language, translations } = useLanguage();
@@ -18,6 +19,11 @@ const FormularAnonim = () => {
     setError("");
     setSuccess(false);
 
+    const sanitizedMesaj = sanitizeText(mesaj, {
+      maxLength: 1500,
+      preserveNewLines: true,
+    });
+
     if (!educatie) {
       setError(t.errorEducation);
       return;
@@ -26,7 +32,7 @@ const FormularAnonim = () => {
       setError(t.errorLiveTrade);
       return;
     }
-    if (!mesaj.trim()) {
+    if (!sanitizedMesaj) {
       setError(t.errorMessage);
       return;
     }
@@ -35,7 +41,7 @@ const FormularAnonim = () => {
       await addDoc(collection(db, "formularAnonim"), {
         educatie: Number(educatie),
         liveTrade: Number(liveTrade),
-        mesaj: mesaj.trim(),
+        mesaj: sanitizedMesaj,
         createdAt: serverTimestamp(),
       });
       setSuccess(true);

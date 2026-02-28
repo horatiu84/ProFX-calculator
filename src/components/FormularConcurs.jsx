@@ -12,6 +12,7 @@ import PhoneInput from "react-phone-number-input";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import "react-phone-number-input/style.css";
 import { useLanguage } from "../contexts/LanguageContext";
+import { sanitizeText, sanitizePhone, sanitizeSafeUrl } from "../security/formSecurity";
 
 // Custom input component with forwardRef - definit în afara componentei pentru a evita re-crearea
 const CustomPhoneInput = forwardRef((props, ref) => (
@@ -38,18 +39,19 @@ const FormularInscriereConcurs = () => {
     setError("");
     setSuccess(false);
 
-    if (!nume || !telefon || !linkMyFxBook) {
+    const sanitizedNume = sanitizeText(nume, { maxLength: 120 });
+    const sanitizedTelefon = sanitizePhone(telefon);
+    const sanitizedLinkMyFxBook = sanitizeSafeUrl(linkMyFxBook);
+
+    if (!sanitizedNume || !sanitizedTelefon || !sanitizedLinkMyFxBook) {
       setError(t.errorAllFields);
       return;
     }
-    if (!isValidPhoneNumber(telefon)) {
+    if (!isValidPhoneNumber(sanitizedTelefon)) {
       setError(t.errorInvalidPhone);
       return;
     }
-    // Validare simplă pentru link (poate fi îmbunătățită)
-    try {
-      new URL(linkMyFxBook);
-    } catch (_) {
+    if (!sanitizedLinkMyFxBook) {
       setError(t.errorInvalidUrl);
       return;
     }
@@ -58,7 +60,7 @@ const FormularInscriereConcurs = () => {
       // Verificăm duplicat după telefon, deoarece link-ul sau numele pot varia
       const telefonQuery = query(
         collection(db, "inscrieri_concurs"),
-        where("telefon", "==", telefon)
+        where("telefon", "==", sanitizedTelefon)
       );
       const querySnapshot = await getDocs(telefonQuery);
       if (querySnapshot.size > 0) {
@@ -67,9 +69,9 @@ const FormularInscriereConcurs = () => {
       }
 
       await addDoc(collection(db, "inscrieri_concurs"), {
-        nume,
-        telefon,
-        linkMyFxBook,
+        nume: sanitizedNume,
+        telefon: sanitizedTelefon,
+        linkMyFxBook: sanitizedLinkMyFxBook,
         createdAt: serverTimestamp(),
       });
       setSuccess(true);

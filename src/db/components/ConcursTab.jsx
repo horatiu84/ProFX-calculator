@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
+import { sanitizeText, sanitizePhone, sanitizeSafeUrl } from "../../security/formSecurity";
 
 const formatDate = (createdAt) => {
   if (!createdAt) return "N/A";
@@ -83,7 +84,20 @@ const ConcursTab = ({
   const handleSaveEdit = async () => {
     setSaving(true);
     try {
-      await onEditConcurent(editItem.id, editForm);
+      const sanitizedNume = sanitizeText(editForm.nume, { maxLength: 120 });
+      const sanitizedTelefon = sanitizePhone(editForm.telefon);
+      const sanitizedLinkMyFxBook = sanitizeSafeUrl(editForm.linkMyFxBook);
+
+      if (!sanitizedNume || !sanitizedTelefon || !sanitizedLinkMyFxBook) {
+        alert("Date invalide. Verifică numele, telefonul și linkul MyFxBook (doar http/https).");
+        return;
+      }
+
+      await onEditConcurent(editItem.id, {
+        nume: sanitizedNume,
+        telefon: sanitizedTelefon,
+        linkMyFxBook: sanitizedLinkMyFxBook,
+      });
       closeEdit();
     } finally {
       setSaving(false);
@@ -302,14 +316,18 @@ const ConcursTab = ({
                         {item.telefon}
                       </td>
                       <td className="p-2 border border-gray-700 whitespace-pre-wrap">
-                        <a
-                          href={item.linkMyFxBook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:underline"
-                        >
-                          {item.linkMyFxBook}
-                        </a>
+                        {sanitizeSafeUrl(item.linkMyFxBook) ? (
+                          <a
+                            href={sanitizeSafeUrl(item.linkMyFxBook)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:underline"
+                          >
+                            {item.linkMyFxBook}
+                          </a>
+                        ) : (
+                          <span className="text-gray-400">Link invalid</span>
+                        )}
                       </td>
                       <td className="p-2 border border-gray-700">
                         {formatDate(item.createdAt)}

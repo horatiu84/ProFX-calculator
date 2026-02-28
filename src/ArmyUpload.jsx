@@ -62,6 +62,7 @@ const ArmyUpload = () => {
   // State pentru upload
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileNotes, setFileNotes] = useState([]); // Note pentru fiecare fișier
+  const [previewUrls, setPreviewUrls] = useState([]); // Preview URLs pentru imagini
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState([]);
   const [uploadResults, setUploadResults] = useState([]);
@@ -89,6 +90,11 @@ const ArmyUpload = () => {
   const [editingNote, setEditingNote] = useState(null);
   const [editedNoteText, setEditedNoteText] = useState("");
   const [savingNote, setSavingNote] = useState(false);
+
+  // State pentru trimitere text-only (zi fără tranzacție)
+  const [textOnlyNote, setTextOnlyNote] = useState("");
+  const [submittingTextOnly, setSubmittingTextOnly] = useState(false);
+  const [textOnlySuccess, setTextOnlySuccess] = useState(false);
 
   // Încarcă screenshot-urile utilizatorului din Firebase
   useEffect(() => {
@@ -212,15 +218,19 @@ const ArmyUpload = () => {
         : "Only image files are accepted.");
     }
     
+    const newUrls = imageFiles.map(f => URL.createObjectURL(f));
     setSelectedFiles(prev => [...prev, ...imageFiles]);
     setFileNotes(prev => [...prev, ...Array(imageFiles.length).fill('')]);
+    setPreviewUrls(prev => [...prev, ...newUrls]);
     setUploadResults([]);
   };
 
   // Șterge fișier din selecție
   const removeFile = (index) => {
+    URL.revokeObjectURL(previewUrls[index]);
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
     setFileNotes(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   // Șterge screenshot
@@ -352,6 +362,54 @@ const ArmyUpload = () => {
     }
   };
 
+  // Trimite notă text-only (zi fără tranzacție)
+  const handleTextOnlySubmit = async () => {
+    if (!textOnlyNote.trim()) {
+      alert(language === 'ro'
+        ? 'Te rugăm să adaugi o notă înainte de a trimite.'
+        : 'Please add a note before submitting.');
+      return;
+    }
+    setSubmittingTextOnly(true);
+    try {
+      const now = new Date();
+      const uploadThemeDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const uploadThemeText = (todayTheme || '').trim();
+      const entryData = {
+        textOnly: true,
+        note: textOnlyNote.trim(),
+        uploadDate: now.toISOString(),
+        fileName: language === 'ro'
+          ? `Notă zilnică - ${now.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}`
+          : `Daily Note - ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
+        uploadBatchId: `text-${authenticatedUser?.id || 'user'}-${Date.now()}`,
+        themeDate: uploadThemeDate,
+        themeText: uploadThemeText,
+      };
+      const userRef = doc(db, 'Army', authenticatedUser.id);
+      await updateDoc(userRef, {
+        screenshots: arrayUnion(entryData),
+        lastUploadDate: now.toISOString(),
+      });
+      setUserScreenshots(prev => [...prev, entryData]);
+      setHasUploadedTodayStatus(true);
+      localStorage.removeItem(`userScreenshots_${authenticatedUser.id}`);
+      const updatedUser = { ...authenticatedUser, lastUploadDate: now.toISOString() };
+      localStorage.setItem('armyUser', JSON.stringify(updatedUser));
+      localStorage.setItem('armyUploadUser', JSON.stringify(updatedUser));
+      setTextOnlyNote('');
+      setTextOnlySuccess(true);
+      setTimeout(() => setTextOnlySuccess(false), 4000);
+    } catch (error) {
+      console.error('Eroare la trimitere notă:', error);
+      alert(language === 'ro'
+        ? 'Eroare la trimitere. Te rugăm să încerci din nou.'
+        : 'Submit error. Please try again.');
+    } finally {
+      setSubmittingTextOnly(false);
+    }
+  };
+
   // Upload screenshots
   const handleUpload = async () => {
     // Dezactivează butonul imediat pentru a preveni click-uri multiple
@@ -434,8 +492,10 @@ const ArmyUpload = () => {
       // Dacă toate au reușit, șterge selecția și reactivează butonul
       if (results.every(r => r.success)) {
         setTimeout(() => {
+          previewUrls.forEach(url => URL.revokeObjectURL(url));
           setSelectedFiles([]);
           setFileNotes([]);
+          setPreviewUrls([]);
           setUploadResults([]);
           setUploading(false);
         }, 3000);
@@ -632,33 +692,47 @@ const ArmyUpload = () => {
               <div className="space-y-3">
                 {selectedFiles.map((file, index) => (
                   <div key={index} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3 flex-1">
-                        <Image className="w-5 h-5 text-amber-400" />
-                        <span className="text-white text-sm truncate">{file.name}</span>
-                        <span className="text-gray-400 text-xs">
-                          {(file.size / 1024).toFixed(1)} KB
-                        </span>
-                      </div>
-                      {uploading && uploadProgress[index] !== undefined && (
-                        <div className="flex items-center gap-2 mx-4">
-                          <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all duration-300"
-                              style={{ width: `${uploadProgress[index]}%` }}
-                            />
-                          </div>
-                          <span className="text-gray-400 text-xs">{uploadProgress[index]}%</span>
+                    <div className="flex items-start gap-3 mb-3">
+                      {/* Thumbnail preview */}
+                      {previewUrls[index] && (
+                        <div className="flex-shrink-0">
+                          <img
+                            src={previewUrls[index]}
+                            alt={file.name}
+                            className="w-20 h-20 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(previewUrls[index], '_blank')}
+                            title={language === 'ro' ? 'Click pentru a vedea imaginea completă' : 'Click to view full image'}
+                          />
                         </div>
                       )}
-                      {!uploading && (
-                        <button
-                          onClick={() => removeFile(index)}
-                          className="text-red-300 hover:text-red-200 transition-colors"
-                        >
-                          <XCircle className="w-5 h-5" />
-                        </button>
-                      )}
+                      <div className="flex items-center justify-between flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <Image className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                          <span className="text-white text-sm truncate">{file.name}</span>
+                          <span className="text-gray-400 text-xs flex-shrink-0">
+                            {(file.size / 1024).toFixed(1)} KB
+                          </span>
+                        </div>
+                        {uploading && uploadProgress[index] !== undefined && (
+                          <div className="flex items-center gap-2 mx-4">
+                            <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all duration-300"
+                                style={{ width: `${uploadProgress[index]}%` }}
+                              />
+                            </div>
+                            <span className="text-gray-400 text-xs">{uploadProgress[index]}%</span>
+                          </div>
+                        )}
+                        {!uploading && (
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="text-red-300 hover:text-red-200 transition-colors ml-2 flex-shrink-0"
+                          >
+                            <XCircle className="w-5 h-5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Notă opțională - Design îmbunătățit */}
@@ -762,6 +836,52 @@ const ArmyUpload = () => {
           )}
         </div>
 
+        {/* Secțiune: Zi fără tranzacție - notă text-only */}
+        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-blue-700/40">
+          <h3 className="text-xl font-bold text-blue-300 mb-1 flex items-center gap-2">
+            <span className="text-2xl">📝</span>
+            {language === 'ro' ? 'Zi fără tranzacție?' : 'No trade today?'}
+          </h3>
+          <p className="text-gray-400 text-sm mb-4">
+            {language === 'ro'
+              ? 'Dacă astăzi nu ai luat nicio tranzacție, poți trimite doar o notă textuală fără a fi necesară o poză.'
+              : 'If you had no trades today, you can submit a text note without needing to upload a screenshot.'}
+          </p>
+          {textOnlySuccess && (
+            <div className="mb-4 bg-green-600/20 border border-green-500/50 rounded-lg p-3 flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              <span className="text-green-300 text-sm font-semibold">
+                {language === 'ro' ? 'Notă trimisă cu succes!' : 'Note submitted successfully!'}
+              </span>
+            </div>
+          )}
+          <textarea
+            value={textOnlyNote}
+            onChange={(e) => setTextOnlyNote(e.target.value)}
+            placeholder={language === 'ro'
+              ? 'Explică de ce nu ai luat tranzacție astăzi, ce ai analizat, ce ai studiat...'
+              : 'Explain why you had no trade today, what you analyzed, what you studied...'}
+            className="w-full bg-gray-800/80 text-white text-sm rounded-lg px-3 py-3 border border-blue-600/40 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30 focus:outline-none resize-none placeholder:text-gray-500 mb-3"
+            rows="4"
+            maxLength={1000}
+            disabled={submittingTextOnly}
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-xs">{textOnlyNote.length}/1000</span>
+            <button
+              onClick={handleTextOnlySubmit}
+              disabled={submittingTextOnly || !textOnlyNote.trim()}
+              className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {submittingTextOnly ? (
+                <><Loader className="w-4 h-4 animate-spin" />{language === 'ro' ? 'Se trimite...' : 'Submitting...'}</>
+              ) : (
+                <><CheckCircle className="w-4 h-4" />{language === 'ro' ? 'Trimite Nota' : 'Submit Note'}</>
+              )}
+            </button>
+          </div>
+        </div>
+
         {/* Screenshots Gallery */}
         {userScreenshots.length > 0 && (() => {
           const reversedScreenshots = userScreenshots.slice().reverse();
@@ -803,11 +923,17 @@ const ArmyUpload = () => {
                       <td className="py-3 px-4 text-amber-400 font-semibold">{startIndex + index + 1}</td>
                       <td 
                         className="py-3 px-4 text-white cursor-pointer hover:text-amber-400 transition-colors"
-                        onClick={() => setSelectedImage(screenshot)}
+                        onClick={() => !screenshot.textOnly && setSelectedImage(screenshot)}
                       >
                         <div className="flex items-center gap-2">
-                          <Image className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span className="truncate">{screenshot.fileName}</span>
+                          {screenshot.textOnly ? (
+                            <svg className="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          ) : (
+                            <Image className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          )}
+                          <span className={`truncate ${screenshot.textOnly ? 'text-blue-300 italic' : ''}`}>{screenshot.fileName}</span>
                         </div>
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm">
@@ -830,15 +956,17 @@ const ArmyUpload = () => {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
-                          <button
-                            onClick={() => handleDownloadScreenshot(screenshot)}
-                            className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-2 rounded-lg transition-colors"
-                            title={language === 'ro' ? 'Download' : 'Download'}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </button>
+                          {!screenshot.textOnly && (
+                            <button
+                              onClick={() => handleDownloadScreenshot(screenshot)}
+                              className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-2 rounded-lg transition-colors"
+                              title={language === 'ro' ? 'Download' : 'Download'}
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                              </svg>
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDeleteScreenshot(screenshot)}
                             className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors"
