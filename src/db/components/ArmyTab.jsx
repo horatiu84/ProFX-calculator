@@ -29,6 +29,45 @@ const hasUploadedToday = (lastUploadDate) => {
   );
 };
 
+const getTodayUploadStatusMeta = (cursant) => {
+  const screenshots = Array.isArray(cursant?.screenshots) ? cursant.screenshots : [];
+  const todayEntries = screenshots.filter((shot) => hasUploadedToday(shot?.uploadDate));
+
+  if (todayEntries.some((shot) => !shot?.textOnly)) {
+    return {
+      key: 'screenshot',
+      emoji: '🟢',
+      title: 'A trimis screenshot astăzi',
+      excelValue: 'SCREENSHOT'
+    };
+  }
+
+  if (todayEntries.some((shot) => shot?.textOnly)) {
+    return {
+      key: 'note',
+      emoji: '🟡',
+      title: 'A trimis doar notă astăzi',
+      excelValue: 'NOTĂ'
+    };
+  }
+
+  if (hasUploadedToday(cursant?.lastUploadDate)) {
+    return {
+      key: 'screenshot',
+      emoji: '🟢',
+      title: 'A trimis screenshot astăzi',
+      excelValue: 'SCREENSHOT'
+    };
+  }
+
+  return {
+    key: 'none',
+    emoji: '🔴',
+    title: 'Nu a trimis nimic astăzi',
+    excelValue: 'NU'
+  };
+};
+
 const getScreenshotGroupKey = (screenshot) => {
   if (!screenshot) return null;
 
@@ -102,6 +141,7 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
   
   // State-uri pentru screenshots
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
+  const [selectedNotePreview, setSelectedNotePreview] = useState(null);
   const [screenshotsPage, setScreenshotsPage] = useState(1);
   const screenshotsPerPage = 10;
   
@@ -393,7 +433,7 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
         "Tip Participant": cursant.tipParticipant || "Cursant",
         "Pereche Valutară": cursant.perecheValutara,
         "Ora Lumânare 4H": cursant.oraLumanare || "8:00 - 12:00",
-        "Upload Astăzi": hasUploadedToday(cursant.lastUploadDate) ? "DA" : "NU",
+        "Upload Astăzi": getTodayUploadStatusMeta(cursant).excelValue,
         "Data Ultimului Upload": cursant.lastUploadDate 
           ? new Date(cursant.lastUploadDate.toDate ? cursant.lastUploadDate.toDate() : cursant.lastUploadDate).toLocaleDateString('ro-RO')
           : "-"
@@ -734,11 +774,9 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                           />
                         </td>
                         <td className="p-2 border border-gray-700 text-center">
-                          {hasUploadedToday(cursant.lastUploadDate) ? (
-                            <span className="text-2xl" title="A uploadat astăzi">🟢</span>
-                          ) : (
-                            <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
-                          )}
+                          <span className="text-2xl" title={getTodayUploadStatusMeta(cursant).title}>
+                            {getTodayUploadStatusMeta(cursant).emoji}
+                          </span>
                         </td>
                         <td className="p-2 border border-gray-700">
                           <div className="flex gap-2 justify-center">
@@ -785,11 +823,9 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                           {cursant.oraLumanare || '8:00 - 12:00'}
                         </td>
                         <td className="p-2 border border-gray-700 text-center">
-                          {hasUploadedToday(cursant.lastUploadDate) ? (
-                            <span className="text-2xl" title="A uploadat astăzi">🟢</span>
-                          ) : (
-                            <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
-                          )}
+                          <span className="text-2xl" title={getTodayUploadStatusMeta(cursant).title}>
+                            {getTodayUploadStatusMeta(cursant).emoji}
+                          </span>
                         </td>
                         <td className="p-2 border border-gray-700">
                           <div className="flex gap-2 justify-center">
@@ -981,11 +1017,9 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                           />
                         </td>
                         <td className="p-2 border border-gray-700 text-center">
-                          {hasUploadedToday(cursant.lastUploadDate) ? (
-                            <span className="text-2xl" title="A uploadat astăzi">🟢</span>
-                          ) : (
-                            <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
-                          )}
+                          <span className="text-2xl" title={getTodayUploadStatusMeta(cursant).title}>
+                            {getTodayUploadStatusMeta(cursant).emoji}
+                          </span>
                         </td>
                         <td className="p-2 border border-gray-700">
                           <div className="flex gap-2 justify-center">
@@ -1037,11 +1071,9 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                           {cursant.oraLumanare || '8:00 - 12:00'}
                         </td>
                         <td className="p-2 border border-gray-700 text-center">
-                          {hasUploadedToday(cursant.lastUploadDate) ? (
-                            <span className="text-2xl" title="A uploadat astăzi">🟢</span>
-                          ) : (
-                            <span className="text-2xl" title="Nu a uploadat astăzi">🔴</span>
-                          )}
+                          <span className="text-2xl" title={getTodayUploadStatusMeta(cursant).title}>
+                            {getTodayUploadStatusMeta(cursant).emoji}
+                          </span>
                         </td>
                         <td className="p-2 border border-gray-700">
                           <div className="flex gap-2 justify-center">
@@ -1587,8 +1619,14 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                                 </span>
                               </div>
                             ) : row.representative.note ? (
-                              <div className="max-w-xs">
-                                <span className="line-clamp-2" title={row.representative.note}>
+                              <div
+                                className="max-w-xs cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedNotePreview(row.representative);
+                                }}
+                              >
+                                <span className="line-clamp-2 hover:text-amber-300 transition-colors" title={row.representative.note}>
                                   📝 {row.representative.note}
                                 </span>
                               </div>
@@ -1749,6 +1787,65 @@ const ArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal vizualizare notă pentru admin */}
+      {selectedNotePreview && (
+        <div
+          className="fixed inset-0 bg-black/95 z-[70] flex items-center justify-center p-4"
+          onClick={() => setSelectedNotePreview(null)}
+        >
+          <div
+            className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-blue-700/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-blue-300 flex items-center gap-2">
+                <span className="text-2xl">📝</span>
+                Detalii Notă
+              </h3>
+              <button
+                onClick={() => setSelectedNotePreview(null)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-4 bg-gray-800/60 rounded-lg p-3 border border-gray-700">
+              <p className="text-gray-300 text-sm mb-1">
+                <span className="text-blue-300 font-semibold">Sursă:</span>{" "}
+                {selectedNotePreview.textOnly ? "Notă fără screenshot" : selectedNotePreview.fileName}
+              </p>
+              <p className="text-gray-400 text-xs">
+                {new Date(selectedNotePreview.uploadDate).toLocaleDateString('ro-RO', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-500/20 max-h-[50vh] overflow-y-auto">
+              <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {selectedNotePreview.note}
+              </p>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setSelectedNotePreview(null)}
+                className="px-5 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                Închide
+              </button>
             </div>
           </div>
         </div>

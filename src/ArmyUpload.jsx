@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "./contexts/LanguageContext";
 import { Upload, Image, CheckCircle, XCircle, Loader, Trash2, X } from "lucide-react";
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection, getDocs } from "firebase/firestore";
@@ -91,6 +92,10 @@ const ArmyUpload = () => {
   // State pentru paginatie
   const [screenshotsPage, setScreenshotsPage] = useState(1);
   const screenshotsPerPage = 10;
+  const [notesPage, setNotesPage] = useState(1);
+  const notesPerPage = 10;
+  const [historyTab, setHistoryTab] = useState("screenshots");
+  const [selectedNotePreview, setSelectedNotePreview] = useState(null);
   
   // State pentru verificare upload zilnic
   const [hasUploadedTodayStatus, setHasUploadedTodayStatus] = useState(false);
@@ -914,136 +919,289 @@ const ArmyUpload = () => {
         {/* Screenshots Gallery */}
         {userScreenshots.length > 0 && (() => {
           const reversedScreenshots = userScreenshots.slice().reverse();
-          const totalPages = Math.ceil(reversedScreenshots.length / screenshotsPerPage);
+          const screenshotEntries = reversedScreenshots.filter((item) => !item.textOnly);
+          const notesEntries = reversedScreenshots.filter((item) => item.textOnly && (item.note || '').trim().length > 0);
+
+          const totalPages = Math.ceil(screenshotEntries.length / screenshotsPerPage);
           const startIndex = (screenshotsPage - 1) * screenshotsPerPage;
           const endIndex = startIndex + screenshotsPerPage;
-          const currentScreenshots = reversedScreenshots.slice(startIndex, endIndex);
+          const currentScreenshots = screenshotEntries.slice(startIndex, endIndex);
+          const totalNotesPages = Math.ceil(notesEntries.length / notesPerPage);
+          const notesStartIndex = (notesPage - 1) * notesPerPage;
+          const notesEndIndex = notesStartIndex + notesPerPage;
+          const currentNotes = notesEntries.slice(notesStartIndex, notesEndIndex);
           
           return (
           <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
             <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <Image className="w-6 h-6" />
               {language === 'ro' 
-                ? `Screenshots-urile Tale (${userScreenshots.length})` 
-                : `Your Screenshots (${userScreenshots.length})`}
+                ? `Screenshots-urile Tale (${screenshotEntries.length})` 
+                : `Your Screenshots (${screenshotEntries.length})`}
             </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-16">#</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">
-                      {language === 'ro' ? 'Nume Fișier' : 'File Name'}
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-48">
-                      {language === 'ro' ? 'Data și Ora' : 'Date & Time'}
-                    </th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold text-sm w-32">
-                      {language === 'ro' ? 'Acțiuni' : 'Actions'}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentScreenshots.map((screenshot, index) => (
-                    <tr 
-                      key={index}
-                      className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
-                    >
-                      <td className="py-3 px-4 text-amber-400 font-semibold">{startIndex + index + 1}</td>
-                      <td 
-                        className="py-3 px-4 text-white cursor-pointer hover:text-amber-400 transition-colors"
-                        onClick={() => !screenshot.textOnly && setSelectedImage(screenshot)}
-                      >
-                        <div className="flex items-center gap-2">
-                          {screenshot.textOnly ? (
-                            <svg className="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          ) : (
-                            <Image className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          )}
-                          <span className={`truncate ${screenshot.textOnly ? 'text-blue-300 italic' : ''}`}>{screenshot.fileName}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-gray-300 text-sm">
-                        {new Date(screenshot.uploadDate).toLocaleDateString(language === 'ro' ? 'ro-RO' : 'en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => handleEditNote(screenshot)}
-                            className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 p-2 rounded-lg transition-colors"
-                            title={language === 'ro' ? 'Editează Nota' : 'Edit Note'}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          {!screenshot.textOnly && (
-                            <button
-                              onClick={() => handleDownloadScreenshot(screenshot)}
-                              className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-2 rounded-lg transition-colors"
-                              title={language === 'ro' ? 'Download' : 'Download'}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                              </svg>
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleDeleteScreenshot(screenshot)}
-                            className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors"
-                            title={language === 'ro' ? 'Șterge' : 'Delete'}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="mb-4 flex gap-2">
+              <button
+                onClick={() => setHistoryTab("screenshots")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  historyTab === "screenshots"
+                    ? "bg-amber-500 text-gray-900"
+                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
+              >
+                {language === 'ro' ? `Screenshots (${screenshotEntries.length})` : `Screenshots (${screenshotEntries.length})`}
+              </button>
+              <button
+                onClick={() => setHistoryTab("notes")}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  historyTab === "notes"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
+              >
+                {language === 'ro' ? `Notele Tale (${notesEntries.length})` : `Your Notes (${notesEntries.length})`}
+              </button>
             </div>
-            
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
-                <button
-                  onClick={() => setScreenshotsPage(prev => Math.max(1, prev - 1))}
-                  disabled={screenshotsPage === 1}
-                  className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  ← {language === 'ro' ? 'Anterior' : 'Previous'}
-                </button>
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
-                      key={page}
-                      onClick={() => setScreenshotsPage(page)}
-                      className={`w-10 h-10 rounded ${
-                        page === screenshotsPage
-                          ? 'bg-amber-500 text-gray-900 font-bold'
-                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                      } transition-colors`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+
+            {historyTab === "screenshots" ? (
+              <>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-16">#</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">
+                          {language === 'ro' ? 'Nume Fișier' : 'File Name'}
+                        </th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-48">
+                          {language === 'ro' ? 'Data și Ora' : 'Date & Time'}
+                        </th>
+                        <th className="text-center py-3 px-4 text-gray-400 font-semibold text-sm w-32">
+                          {language === 'ro' ? 'Acțiuni' : 'Actions'}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentScreenshots.map((screenshot, index) => (
+                        <tr 
+                          key={index}
+                          className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                        >
+                          <td className="py-3 px-4 text-amber-400 font-semibold">{startIndex + index + 1}</td>
+                          <td 
+                            className="py-3 px-4 text-white cursor-pointer hover:text-amber-400 transition-colors"
+                            onClick={() => !screenshot.textOnly && setSelectedImage(screenshot)}
+                          >
+                            <div className="flex items-center gap-2">
+                              {screenshot.textOnly ? (
+                                <svg className="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              ) : (
+                                <Image className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              )}
+                              <span className={`truncate ${screenshot.textOnly ? 'text-blue-300 italic' : ''}`}>{screenshot.fileName}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-300 text-sm">
+                            {new Date(screenshot.uploadDate).toLocaleDateString(language === 'ro' ? 'ro-RO' : 'en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleEditNote(screenshot)}
+                                className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 p-2 rounded-lg transition-colors"
+                                title={language === 'ro' ? 'Editează Nota' : 'Edit Note'}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              {!screenshot.textOnly && (
+                                <button
+                                  onClick={() => handleDownloadScreenshot(screenshot)}
+                                  className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-2 rounded-lg transition-colors"
+                                  title={language === 'ro' ? 'Download' : 'Download'}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                  </svg>
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteScreenshot(screenshot)}
+                                className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors"
+                                title={language === 'ro' ? 'Șterge' : 'Delete'}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <button
-                  onClick={() => setScreenshotsPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={screenshotsPage === totalPages}
-                  className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {language === 'ro' ? 'Următor' : 'Next'} →
-                </button>
-              </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+                    <button
+                      onClick={() => setScreenshotsPage(prev => Math.max(1, prev - 1))}
+                      disabled={screenshotsPage === 1}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      ← {language === 'ro' ? 'Anterior' : 'Previous'}
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setScreenshotsPage(page)}
+                          className={`w-10 h-10 rounded ${
+                            page === screenshotsPage
+                              ? 'bg-amber-500 text-gray-900 font-bold'
+                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                          } transition-colors`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setScreenshotsPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={screenshotsPage === totalPages}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {language === 'ro' ? 'Următor' : 'Next'} →
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {notesEntries.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-700">
+                          <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-16">#</th>
+                          <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">
+                            {language === 'ro' ? 'Sursă' : 'Source'}
+                          </th>
+                          <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm w-48">
+                            {language === 'ro' ? 'Data și Ora' : 'Date & Time'}
+                          </th>
+                          <th className="text-left py-3 px-4 text-gray-400 font-semibold text-sm">
+                            {language === 'ro' ? 'Notă' : 'Note'}
+                          </th>
+                          <th className="text-center py-3 px-4 text-gray-400 font-semibold text-sm w-32">
+                            {language === 'ro' ? 'Acțiuni' : 'Actions'}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentNotes.map((noteItem, index) => (
+                          <tr
+                            key={`${noteItem.uploadDate}-${index}`}
+                            className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors cursor-pointer"
+                            onClick={() => setSelectedNotePreview(noteItem)}
+                          >
+                            <td className="py-3 px-4 text-blue-400 font-semibold">{notesStartIndex + index + 1}</td>
+                            <td className="py-3 px-4 text-gray-200 text-sm">
+                              {noteItem.textOnly
+                                ? (language === 'ro' ? 'Notă fără screenshot' : 'Note without screenshot')
+                                : (noteItem.fileName || (language === 'ro' ? 'Screenshot' : 'Screenshot'))}
+                            </td>
+                            <td className="py-3 px-4 text-gray-300 text-sm">
+                              {new Date(noteItem.uploadDate).toLocaleDateString(language === 'ro' ? 'ro-RO' : 'en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                            <td className="py-3 px-4 text-gray-300 text-sm">
+                              <span className="line-clamp-1">
+                                {noteItem.note}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditNote(noteItem);
+                                  }}
+                                  className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 p-2 rounded-lg transition-colors"
+                                  title={language === 'ro' ? 'Editează Nota' : 'Edit Note'}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteScreenshot(noteItem);
+                                  }}
+                                  className="bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-lg transition-colors"
+                                  title={language === 'ro' ? 'Șterge' : 'Delete'}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-gray-400">
+                    {language === 'ro' ? 'Nu există note salvate încă.' : 'No notes saved yet.'}
+                  </div>
+                )}
+
+                {totalNotesPages > 1 && (
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+                    <button
+                      onClick={() => setNotesPage(prev => Math.max(1, prev - 1))}
+                      disabled={notesPage === 1}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      ← {language === 'ro' ? 'Anterior' : 'Previous'}
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalNotesPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setNotesPage(page)}
+                          className={`w-10 h-10 rounded ${
+                            page === notesPage
+                              ? 'bg-blue-600 text-white font-bold'
+                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                          } transition-colors`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setNotesPage(prev => Math.min(totalNotesPages, prev + 1))}
+                      disabled={notesPage === totalNotesPages}
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {language === 'ro' ? 'Următor' : 'Next'} →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
           );
@@ -1137,6 +1295,66 @@ const ArmyUpload = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal vizualizare notă */}
+      {selectedNotePreview && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center p-4"
+          onClick={() => setSelectedNotePreview(null)}
+        >
+          <div
+            className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full border border-blue-700/40"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-blue-300 flex items-center gap-2">
+                <span className="text-2xl">📝</span>
+                {language === 'ro' ? 'Detalii Notă' : 'Note Details'}
+              </h3>
+              <button
+                onClick={() => setSelectedNotePreview(null)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="mb-4 bg-gray-800/60 rounded-lg p-3 border border-gray-700">
+              <p className="text-gray-300 text-sm mb-1">
+                <span className="text-blue-300 font-semibold">{language === 'ro' ? 'Sursă:' : 'Source:'}</span>{' '}
+                {selectedNotePreview.textOnly
+                  ? (language === 'ro' ? 'Notă fără screenshot' : 'Note without screenshot')
+                  : selectedNotePreview.fileName}
+              </p>
+              <p className="text-gray-400 text-xs">
+                {new Date(selectedNotePreview.uploadDate).toLocaleDateString(language === 'ro' ? 'ro-RO' : 'en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-500/20 max-h-[50vh] overflow-y-auto">
+              <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {selectedNotePreview.note}
+              </p>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setSelectedNotePreview(null)}
+                className="px-5 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                {language === 'ro' ? 'Închide' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
 
       {/* Lightbox Modal */}
