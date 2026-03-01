@@ -31,17 +31,21 @@ const StarDisplay = ({ rating }) => {
   );
 };
 
+const toDate = (timestamp) => {
+  if (!timestamp) return null;
+  if (timestamp.toDate) return timestamp.toDate();
+  if (timestamp.seconds != null) return new Date(timestamp.seconds * 1000);
+  const d = new Date(timestamp);
+  return isNaN(d.getTime()) ? null : d;
+};
+
 const formatDate = (timestamp) => {
-  if (!timestamp) return '—';
-  try {
-    const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return d.toLocaleString('ro-RO', {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-    });
-  } catch {
-    return '—';
-  }
+  const d = toDate(timestamp);
+  if (!d) return '—';
+  return d.toLocaleString('ro-RO', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
 };
 
 const PER_PAGE = 10;
@@ -92,8 +96,8 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
     .filter((f) => filterCategory === 'all' || f.category === filterCategory)
     .slice()
     .sort((a, b) => {
-      const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
-      const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+      const aDate = toDate(a.createdAt) ?? new Date(0);
+      const bDate = toDate(b.createdAt) ?? new Date(0);
       return sortBy === 'asc' ? aDate - bDate : bDate - aDate;
     });
 
