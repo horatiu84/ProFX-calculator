@@ -8,79 +8,92 @@ const BrasovEvent = () => {
     ro: {
       title: "Mastermind ProFX",
       subtitle: "Iași",
-      date: "Martie 2026 (Vom reveni cu detalii)",
-      location: "Locație de confirmat",
-      hero: "O zi întreagă dedicată tradingului",
+      date: "28 Martie 2026 de la ora 10:00",
+      location: "Hotel Pleiada, Iași",
+      hero: "O zi intensivă, practică şi plină de informații aplicabile",
       intro:
-        "Aici înveți direct de la traderi, mentori și invitați internaționali care activează zilnic pe piețe.",
+        "Un nou MasterClass dedicat celor care vor mai mult de la trading: claritate în strategie, disciplină în execuție şi o înțelegere reală a etapelor prin care trece un trader până la consistență. 📈",
       benefits: [
-        "Idei reale, explicații clare, perspectivă nouă",
-        "Te conectezi cu oameni ca tine",
-        "Totul gratuit",
+        "Claritate în strategie",
+        "Disciplină în execuție",
+        "Comunitate în creştere",
       ],
       mainMessage:
-        "Dacă vrei mai mult decât tutoriale, conturi demo și informații reciclate de pe internet, asta e ziua în care faci diferența.",
+        "Continuăm turul național. Ne vedem pe 28 martie la Iaşi!",
       description:
-        "În martie 2026, la Iași, vei învăța trading direct de la mentori, traderi și antreprenori care chiar fac asta zi de zi, plus invitați internaționali din industrie.",
+        "Va fi o zi intensivă, practică şi plină de informații aplicabile — alături de o comunitate care creşte de la un oraş la altul.",
       dayTitle: "O zi întreagă în care:",
       points: [
-        "Înțelegi piața dintr-o perspectivă nouă",
-        "Descoperi idei pe care nu le găsești online",
-        "Te conectezi cu oameni ca tine, care vor mai mult",
+        "Înțelegi etapele reale prin care trece un trader până la consistență",
+        "Descoperi strategii clare, aplicate de traderi activi",
+        "Te conectezi cu o comunitate care creşte de la un oraş la altul",
       ],
       free: "Totul Gratuit",
       freeDesc:
         "fără costuri ascunse. Doar educație reală și o experiență intensă care îți poate schimba modul de a privi tradingul.",
       limited: "Locurile sunt limitate",
       registerButton: "Înscrie-te Acum",
-      registerInfo: "Înscrierile vor începe în curând",
+      registerInfo: "Înscrierile sunt deschise! Locurile sunt limitate.",
       whatToExpect: "Ce vei avea de câștigat?",
       expectations: [
         "Vei învăța Bazele Tradingului",
         "Vei învăța cum să folosești aplicațiile",
-
-        "Vei afla cum să participi la competiția lunară de 2000$ din ProFX",
+        "Vei descoperi cum poți câștiga o vacanță la Roma pentru 2 persoane ✈️",
+        "Vei afla cum participi la competiția lunară cu premii de 2.000€ 🎉",
         "Vei învăța psihologie în trading",
         "Vei putea pune întrebări într-o sesiune Q&A",
       ],
+      callToAction: "Dacă ești din Iași sau din apropiere, e momentul să faci pasul următor.",
+      venueTitle: "Locația Evenimentului",
+      venueHotel: "Hotel Pleiada",
+      venueAddress: "Iași, România",
+      venueMapLink: "https://maps.google.com/?q=Hotel+Pleiada+Iasi",
+      venueMapLabel: "Deschide în Google Maps",
     },
     en: {
       title: "ProFX Mastermind",
       subtitle: "Iași",
       date: "March 2026 (Details coming soon)",
       location: "Location to be confirmed",
-      hero: "A full day dedicated to trading.",
+      hero: "An intensive, practical day packed with actionable insights",
       intro:
-        "Here you learn directly from traders, mentors and international guests who are active daily in the markets.",
+        "A new MasterClass for those who want more from trading: clarity in strategy, discipline in execution, and a real understanding of every stage a trader goes through to reach consistency. 📈",
       benefits: [
-        "Real ideas, clear explanations, new perspective",
-        "Connect with people like you",
-        "Everything for free",
+        "Clarity in strategy",
+        "Discipline in execution",
+        "A growing community",
       ],
       mainMessage:
-        "If you want more than tutorials, demo accounts and recycled information from the internet, this is the day you make a difference.",
+        "We continue the national tour. See you on March 28th in Iaşi!",
       description:
-        "In March 2026, in Iași, you will learn trading directly from mentors, traders and entrepreneurs who actually do this every day, plus international guests from the industry.",
+        "It will be an intensive, practical day full of actionable information — alongside a community that grows from city to city.",
       dayTitle: "A full day where you will:",
       points: [
-        "Understand the market from a new perspective",
-        "Discover ideas you won't find online",
-        "Connect with people like you who want more",
+        "Understand the real stages every trader goes through to reach consistency",
+        "Discover clear strategies used by active traders",
+        "Connect with a community that grows from city to city",
       ],
       free: "Completely Free",
       freeDesc:
         "no hidden costs. Just real education and an intense experience that can change the way you look at trading.",
       limited: "Limited seats available",
       registerButton: "Register Now",
-      registerInfo: "Registration will open soon",
+      registerInfo: "Registration is open! Limited spots available.",
       whatToExpect: "What will you gain?",
       expectations: [
         "You will learn the Trading Basics",
         "You will learn how to use the applications",
-        "You will discover how to participate in the monthly ProFX competition worth $2000",
+        "You will discover how to win a vacation to Rome for 2 people ✈️",
+        "You will learn how to join the monthly competition with prizes worth €2,000 🎉",
         "You will learn trading psychology",
         "You will be able to ask questions in a Q&A session",
       ],
+      callToAction: "If you're from Iaşi or nearby, now is the time to take the next step.",
+      venueTitle: "Event Venue",
+      venueHotel: "Hotel Pleiada",
+      venueAddress: "Iași, Romania",
+      venueMapLink: "https://maps.google.com/?q=Hotel+Pleiada+Iasi",
+      venueMapLabel: "Open in Google Maps",
     },
   };
 
@@ -153,6 +166,46 @@ const BrasovEvent = () => {
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 py-12 md:py-20">
+
+              {/* Venue Section */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden mb-8 md:mb-12">
+          <div className="flex flex-col md:flex-row">
+            {/* Hotel Photo */}
+            <div className="relative md:w-2/5 h-56 md:h-auto overflow-hidden">
+              <img
+                src="/Pleiada.jpg"
+                alt="Hotel Pleiada Iași"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent md:bg-gradient-to-r"></div>
+            </div>
+            {/* Venue Info */}
+            <div className="flex-1 p-6 md:p-10 flex flex-col justify-center">
+              <p className="text-sm font-semibold text-blue-400 uppercase tracking-widest mb-2">
+                📍 {t.venueTitle}
+              </p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                {t.venueHotel}
+              </h3>
+              <p className="text-gray-400 text-base md:text-lg mb-6">{t.venueAddress}</p>
+              <a
+                href={t.venueMapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm md:text-base font-medium transition-colors group"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="group-hover:underline">{t.venueMapLabel}</span>
+                <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
         {/* Intro Section */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 md:p-10 mb-8 md:mb-12">
           <p className="text-lg md:text-2xl text-gray-200 text-center mb-6 md:mb-8 leading-relaxed">
@@ -267,12 +320,17 @@ const BrasovEvent = () => {
           <h3 className="text-2xl md:text-4xl font-bold text-amber-400 mb-4 md:mb-6">
             🎯 {t.limited}
           </h3>
-          <p className="text-base md:text-xl text-gray-200 mb-6 md:mb-8">
+          <p className="text-base md:text-xl text-gray-200 mb-3 md:mb-4">
             {t.registerInfo}
           </p>
-          <button
-            disabled
-            className="inline-flex items-center gap-3 bg-gray-600 text-gray-400 font-bold text-lg md:text-xl px-8 md:px-12 py-4 md:py-5 rounded-xl cursor-not-allowed opacity-60"
+          <p className="text-sm md:text-base text-amber-300/80 italic mb-6 md:mb-8">
+            {t.callToAction}
+          </p>
+          <a
+            href="https://linktr.ee/profxromania?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZnRzaAQRgGVleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA8xMjQwMjQ1NzQyODc0MTQAAaerG2Q0QNvA-ncrlYr4vlYzje940VYaMbE7D0bk_LS2I4zGMZ1s7NAk5HTlYw_aem_7CATgdzh2vwk87cOFRXCaA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-bold text-lg md:text-xl px-8 md:px-12 py-4 md:py-5 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-amber-500/50"
           >
             <svg
               className="w-6 h-6"
@@ -288,7 +346,7 @@ const BrasovEvent = () => {
               />
             </svg>
             <span>{t.registerButton}</span>
-          </button>
+          </a>
         </div>
 
         {/* Additional Info */}
