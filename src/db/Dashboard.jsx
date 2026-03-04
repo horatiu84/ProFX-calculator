@@ -282,6 +282,17 @@ const Dashboard = () => {
     }
   };
 
+  const deleteConcurent = async (id) => {
+    try {
+      await deleteDoc(doc(db, "inscrieri_concurs", id));
+      setConcursInscrieri((prev) => prev.filter((item) => item.id !== id));
+      clearCachedData('dashboard_concurs');
+    } catch (err) {
+      alert("Eroare la ștergerea concurentului: " + err.message);
+      throw err;
+    }
+  };
+
   const updateConcurent = async (id, fields) => {
     try {
       const docRef = doc(db, "inscrieri_concurs", id);
@@ -681,6 +692,7 @@ const Dashboard = () => {
           loadingConcurs={loadingConcurs}
           errorConcurs={errorConcurs}
           onDeleteAll={deleteAllConcursInscrieri}
+          onDeleteOne={deleteConcurent}
           onEditConcurent={updateConcurent}
         />
       )}

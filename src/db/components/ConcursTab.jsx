@@ -56,6 +56,7 @@ const ConcursTab = ({
   loadingConcurs,
   errorConcurs,
   onDeleteAll,
+  onDeleteOne,
   onEditConcurent
 }) => {
   const [concursSortBy, setConcursSortBy] = useState("desc");
@@ -65,6 +66,9 @@ const ConcursTab = ({
   const [editItem, setEditItem] = useState(null);
   const [editForm, setEditForm] = useState({ nume: "", telefon: "", linkMyFxBook: "" });
   const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteOneItem, setDeleteOneItem] = useState(null);
+  const [deletingOne, setDeletingOne] = useState(false);
   const concursPerPage = 10;
 
   const openEdit = (item) => {
@@ -104,7 +108,7 @@ const ConcursTab = ({
     }
   };
 
-  // Sortare și paginare
+  // Sortare, filtrare și paginare
   const sortedConcurs = concursInscrieri.slice().sort((a, b) => {
     let aDate, bDate;
     
@@ -129,14 +133,20 @@ const ConcursTab = ({
     return concursSortBy === "asc" ? aDate - bDate : bDate - aDate;
   });
 
+  const filteredConcurs = searchQuery.trim()
+    ? sortedConcurs.filter((item) =>
+        (item.nume || "").toLowerCase().includes(searchQuery.trim().toLowerCase())
+      )
+    : sortedConcurs;
+
   const indexOfLastConcurs = currentPageConcurs * concursPerPage;
   const indexOfFirstConcurs = indexOfLastConcurs - concursPerPage;
-  const currentConcurs = sortedConcurs.slice(
+  const currentConcurs = filteredConcurs.slice(
     indexOfFirstConcurs,
     indexOfLastConcurs
   );
 
-  const totalPagesConcurs = Math.ceil(sortedConcurs.length / concursPerPage);
+  const totalPagesConcurs = Math.ceil(filteredConcurs.length / concursPerPage);
 
   const exportConcursToExcel = () => {
     if (concursInscrieri.length === 0) return;
@@ -230,6 +240,44 @@ const ConcursTab = ({
         </div>
       )}
 
+      {/* Modal Confirmare Ștergere Individuală */}
+      {deleteOneItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-gray-900 border border-red-700 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold text-red-400 mb-3">Confirmare Ștergere</h3>
+            <p className="text-gray-200 mb-1">
+              Ești sigur că vrei să ștergi concurentul{" "}
+              <span className="font-bold text-white">{deleteOneItem.nume}</span>?
+            </p>
+            <p className="text-gray-400 text-sm mb-5">
+              Această acțiune este{" "}
+              <span className="text-red-400 font-semibold">ireversibilă</span>.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteOneItem(null)}
+                disabled={deletingOne}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={async () => {
+                  setDeletingOne(true);
+                  await onDeleteOne(deleteOneItem.id);
+                  setDeletingOne(false);
+                  setDeleteOneItem(null);
+                }}
+                disabled={deletingOne}
+                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 disabled:opacity-50 font-semibold"
+              >
+                {deletingOne ? "Se șterge..." : "Da, șterge"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal Confirmare Ștergere */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
@@ -266,23 +314,64 @@ const ConcursTab = ({
         </div>
       )}
 
-      {/* Sortare */}
-      <div className="mb-3 flex gap-2 items-center">
-        <label className="text-gray-300 font-semibold">
-          Sortare înscrieri concurs:
-        </label>
-        <select
-          value={concursSortBy}
-          onChange={(e) => {
-            setConcursSortBy(e.target.value);
-            setCurrentPageConcurs(1);
-          }}
-          className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
-        >
-          <option value="desc">Data (recent primul)</option>
-          <option value="asc">Data (vechi primul)</option>
-        </select>
+      {/* Search + Sortare */}
+      <div className="mb-3 flex flex-wrap gap-2 items-center">
+        {/* Search */}
+        <div className="relative">
+          <svg
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Caută după nume..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPageConcurs(1);
+            }}
+            className="pl-8 pr-8 py-2 rounded border border-gray-600 bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm w-52"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(""); setCurrentPageConcurs(1); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Sortare */}
+        <div className="flex items-center gap-2 ml-auto">
+          <label className="text-gray-300 font-semibold">
+            Sortare înscrieri concurs:
+          </label>
+          <select
+            value={concursSortBy}
+            onChange={(e) => {
+              setConcursSortBy(e.target.value);
+              setCurrentPageConcurs(1);
+            }}
+            className="p-2 rounded border border-gray-600 bg-gray-800 text-white"
+          >
+            <option value="desc">Data (recent primul)</option>
+            <option value="asc">Data (vechi primul)</option>
+          </select>
+        </div>
       </div>
+
+      {searchQuery && (
+        <p className="text-gray-400 text-sm mb-2">
+          {filteredConcurs.length === 0
+            ? "Niciun rezultat pentru "
+            : `${filteredConcurs.length} rezultat${filteredConcurs.length !== 1 ? "e" : ""} pentru `}
+          <span className="text-white font-semibold">"{searchQuery}"</span>
+        </p>
+      )}
 
       {errorConcurs && <p className="text-red-400 mb-4">{errorConcurs}</p>}
 
@@ -333,12 +422,20 @@ const ConcursTab = ({
                         {formatDate(item.createdAt)}
                       </td>
                       <td className="p-2 border border-gray-700 text-center">
+                        <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => openEdit(item)}
                           className="px-3 py-1 bg-blue-700 text-white rounded hover:bg-blue-800 text-xs font-semibold"
                         >
                           Editează
                         </button>
+                        <button
+                          onClick={() => setDeleteOneItem(item)}
+                          className="px-3 py-1 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-semibold"
+                        >
+                          Șterge
+                        </button>
+                        </div>
                       </td>
                     </tr>
                   ))
