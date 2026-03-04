@@ -556,7 +556,7 @@ const BootcampRoma = () => {
         <div className="bootcamp-section mb-16 md:mb-24">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-black/30 border border-amber-500/30 backdrop-blur-sm">
-              <span className="text-amber-400 text-sm">🏨</span>
+              <span className="text-amber-400 text-sm">⭐</span>
               <span className="text-xs md:text-sm font-semibold tracking-[0.15em] text-amber-400 uppercase">
                 {t.hotelStars}
               </span>
