@@ -62,7 +62,8 @@ const FeedbackTab = ({
   const feedbackPerPage = 10;
 
   // Sortare și paginare
-  const sortedFeedback = feedbackAnonim.slice().sort((a, b) => {
+  const sortedFeedback = feedbackAnonim
+    .slice().sort((a, b) => {
     let aDate, bDate;
     
     // Handle a.createdAt

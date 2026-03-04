@@ -1,7 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, updateDoc, doc, query, orderBy, Timestamp } from 'firebase/firestore';
 import { db } from '../FireBase';
-import { MessageSquare, Calendar, CheckCircle, AlertCircle, Upload, X, Image as ImageIcon, ZoomIn, ZoomOut } from 'lucide-react';
+import { MessageSquare, Calendar, CheckCircle, AlertCircle, Upload, X, Image as ImageIcon, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const PER_PAGE = 10;
+
+const PaginationBar = ({ currentPage, totalPages, onPageChange, totalItems }) => {
+  if (totalPages <= 1) return null;
+  return (
+    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-700">
+      <span className="text-sm text-gray-400">
+        {(currentPage - 1) * PER_PAGE + 1}–{Math.min(currentPage * PER_PAGE, totalItems)} din {totalItems}
+      </span>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onPageChange(p => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+          className="p-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg disabled:opacity-40 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => onPageChange(() => page)}
+            className={`px-3 py-1 rounded-lg text-sm font-semibold transition-colors ${
+              currentPage === page ? 'bg-blue-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-white'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          onClick={() => onPageChange(p => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+          className="p-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg disabled:opacity-40 transition-colors"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // Upload imagine la Cloudinary
 const uploadImageToCloudinary = async (file) => {
@@ -39,6 +79,8 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
   const [sending, setSending] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [pageNez, setPageNez] = useState(1);
+  const [pageRez, setPageRez] = useState(1);
 
   const getQuestionImages = (question) => {
     if (!question) return [];
@@ -279,12 +321,16 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
       ) : (
         <div className="space-y-6">
           {/* Tabel Întrebări Nerezolvate */}
-          {intrebari.filter(q => q.status !== 'resolved').length > 0 && (
+          {intrebari.filter(q => q.status !== 'resolved').length > 0 && (() => {
+            const nerez = intrebari.filter(q => q.status !== 'resolved');
+            const totalPagesNez = Math.ceil(nerez.length / PER_PAGE);
+            const paginatedNez = nerez.slice((pageNez - 1) * PER_PAGE, pageNez * PER_PAGE);
+            return (
             <div className="bg-gray-800 rounded-lg overflow-hidden border border-red-700/50">
               <div className="bg-red-900/30 px-4 py-3 border-b border-red-700/50">
                 <h3 className="text-lg font-bold text-red-300 flex items-center gap-2">
                   <AlertCircle className="w-5 h-5" />
-                  Întrebări Nerezolvate ({intrebari.filter(q => q.status !== 'resolved').length})
+                  Întrebări Nerezolvate ({nerez.length})
                 </h3>
               </div>
               <div className="overflow-x-auto">
@@ -306,7 +352,7 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {intrebari.filter(q => q.status !== 'resolved').map((intrebare) => (
+                    {paginatedNez.map((intrebare) => (
                       <tr
                         key={intrebare.id}
                         className="hover:bg-gray-700/50 transition-colors"
@@ -338,16 +384,22 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
                   </tbody>
                 </table>
               </div>
+              <PaginationBar currentPage={pageNez} totalPages={totalPagesNez} onPageChange={setPageNez} totalItems={nerez.length} />
             </div>
-          )}
+            );
+          })()}
 
           {/* Tabel Întrebări Rezolvate */}
-          {intrebari.filter(q => q.status === 'resolved').length > 0 && (
+          {intrebari.filter(q => q.status === 'resolved').length > 0 && (() => {
+            const rez = intrebari.filter(q => q.status === 'resolved');
+            const totalPagesRez = Math.ceil(rez.length / PER_PAGE);
+            const paginatedRez = rez.slice((pageRez - 1) * PER_PAGE, pageRez * PER_PAGE);
+            return (
             <div className="bg-gray-800 rounded-lg overflow-hidden border border-green-700/50">
               <div className="bg-green-900/30 px-4 py-3 border-b border-green-700/50">
                 <h3 className="text-lg font-bold text-green-300 flex items-center gap-2">
                   <CheckCircle className="w-5 h-5" />
-                  Întrebări Rezolvate ({intrebari.filter(q => q.status === 'resolved').length})
+                  Întrebări Rezolvate ({rez.length})
                 </h3>
               </div>
               <div className="overflow-x-auto">
@@ -372,7 +424,7 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {intrebari.filter(q => q.status === 'resolved').map((intrebare) => (
+                    {paginatedRez.map((intrebare) => (
                       <tr
                         key={intrebare.id}
                         className="hover:bg-gray-700/50 transition-colors"
@@ -409,8 +461,10 @@ const IntrebariArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => 
                   </tbody>
                 </table>
               </div>
+              <PaginationBar currentPage={pageRez} totalPages={totalPagesRez} onPageChange={setPageRez} totalItems={rez.length} />
             </div>
-          )}
+            );
+          })()}
         </div>
       )}
 

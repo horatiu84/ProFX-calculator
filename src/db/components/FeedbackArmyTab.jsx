@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../FireBase';
 import { MessageSquare, RefreshCw, Star, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -48,7 +48,57 @@ const formatDate = (timestamp) => {
   });
 };
 
-const PER_PAGE = 10;
+const STATUS_OPTIONS = [
+  { value: 'stand_by', label: '⏳ Stand By', color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' },
+  { value: 'in_lucru', label: '🔧 În Lucru', color: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
+  { value: 'rezolvat', label: '✅ Rezolvat', color: 'bg-green-500/20 text-green-300 border-green-500/40' },
+];
+
+const getStatusStyle = (status) => {
+  const found = STATUS_OPTIONS.find((s) => s.value === status);
+  return found ? found.color : 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+};
+
+const getStatusOption = (status) => STATUS_OPTIONS.find((s) => s.value === status) || STATUS_OPTIONS[0];
+
+const ConfirmStatusModal = ({ pending, onConfirm, onCancel, saving }) => {
+  if (!pending) return null;
+  const from = getStatusOption(pending.currentStatus);
+  const to = getStatusOption(pending.newStatus);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+        <h3 className="text-white font-bold text-lg mb-2">Schimbare status</h3>
+        <p className="text-gray-400 text-sm mb-5">
+          Vrei să schimbi statusul din{' '}
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-semibold ${from.color}`}>{from.label}</span>
+          {' '}în{' '}
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-semibold ${to.color}`}>{to.label}</span>
+          ?
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onCancel}
+            disabled={saving}
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+          >
+            Anulează
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={saving}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+            Confirmă
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PER_PAGE = 5;
 
 const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -56,7 +106,10 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
   const [error, setError] = useState('');
   const [sortBy, setSortBy] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [pendingChange, setPendingChange] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchFeedbacks = async (forceRefresh = false) => {
     const cacheKey = 'dashboard_army_feedback';
@@ -91,9 +144,30 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
     // eslint-disable-next-line
   }, []);
 
+  const handleStatusChange = async (id, newStatus) => {
+    setSaving(true);
+    try {
+      await updateDoc(doc(db, 'ArmyFeedback', id), { status: newStatus });
+      setFeedbacks((prev) => {
+        const updated = prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item));
+        if (setCachedData) setCachedData('dashboard_army_feedback', updated);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Eroare la actualizarea statusului:', err);
+    } finally {
+      setSaving(false);
+      setPendingChange(null);
+    }
+  };
+
   // Filtered + sorted data
   const filtered = feedbacks
     .filter((f) => filterCategory === 'all' || f.category === filterCategory)
+    .filter((f) => {
+      if (statusFilter === 'all') return true;
+      return (f.status || 'stand_by') === statusFilter;
+    })
     .slice()
     .sort((a, b) => {
       const aDate = toDate(a.createdAt) ?? new Date(0);
@@ -133,6 +207,12 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
 
   return (
     <div className="space-y-6">
+      <ConfirmStatusModal
+        pending={pendingChange}
+        saving={saving}
+        onConfirm={() => handleStatusChange(pendingChange.id, pendingChange.newStatus)}
+        onCancel={() => setPendingChange(null)}
+      />
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
@@ -212,7 +292,18 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
             </button>
           ))}
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-sm text-gray-400">Status:</span>
+          <select
+            value={statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+            className="bg-gray-700 text-white text-sm rounded-lg px-3 py-1.5 border border-gray-600 focus:border-blue-400 cursor-pointer"
+          >
+            <option value="all">Toate</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
           <span className="text-sm text-gray-400">Sortare:</span>
           <select
             value={sortBy}
@@ -255,6 +346,7 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Rating</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Feedback</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Dată</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700/50">
@@ -280,6 +372,19 @@ const FeedbackArmyTab = ({ getCachedData, setCachedData, clearCachedData }) => {
                     </td>
                     <td className="px-4 py-4 text-gray-400 text-xs whitespace-nowrap">
                       {formatDate(item.createdAt)}
+                    </td>
+                    <td className="px-4 py-4">
+                      <select
+                        value={item.status || 'stand_by'}
+                        onChange={(e) => setPendingChange({ id: item.id, currentStatus: item.status || 'stand_by', newStatus: e.target.value })}
+                        className={`text-xs font-semibold px-2 py-1 rounded-lg border cursor-pointer focus:outline-none bg-transparent ${getStatusStyle(item.status || 'stand_by')}`}
+                      >
+                        {STATUS_OPTIONS.map((s) => (
+                          <option key={s.value} value={s.value} className="bg-gray-800 text-white">
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                   </tr>
                 ))}
