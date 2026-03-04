@@ -771,7 +771,7 @@ const ArmyUpload = () => {
                     
                     {/* Notă opțională - Design îmbunătățit */}
                     {!uploading && (
-                      <div className="mt-3 bg-gradient-to-r from-emerald-500/15 to-cyan-500/15 border-2 border-emerald-400/40 rounded-lg p-4 shadow-lg">
+                      <div className="mt-3 bg-gradient-to-r from-emerald-500/15 to-cyan-500/15 border-2 border-emerald-400/40 rounded-xl p-6 shadow-lg">
                         <div className="flex items-center gap-3 mb-2">
                           <div className="bg-gradient-to-br from-emerald-400 to-cyan-400 p-2 rounded-lg shadow-md animate-pulse">
                             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -796,12 +796,16 @@ const ArmyUpload = () => {
                             newNotes[index] = e.target.value;
                             setFileNotes(newNotes);
                           }}
+                          onInput={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                          }}
                           placeholder={language === 'ro' 
                             ? 'Setup-ul folosit pentru trade ...' 
                             : 'Setup used for this trade ...'}
-                          className="w-full bg-gray-800/80 text-white text-sm rounded-lg px-3 py-2.5 border border-emerald-500/30 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 focus:outline-none resize-none placeholder:text-gray-500"
-                          rows="3"
-                          maxLength={500}
+                          className="w-full bg-gray-800/80 text-white text-sm rounded-lg px-3 py-2.5 border border-emerald-500/30 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 focus:outline-none resize-none placeholder:text-gray-500 transition-all duration-200"
+                          style={{ minHeight: '100px' }}
+                          maxLength={10000}
                         />
                         <div className="flex items-center justify-between mt-1.5">
                           <p className="text-gray-500 text-xs">
@@ -810,7 +814,7 @@ const ArmyUpload = () => {
                               : '💡 Tip: Note technical analysis, setup used, emotions'}
                           </p>
                           <p className="text-gray-500 text-xs">
-                            {(fileNotes[index] || '').length}/500
+                            {(fileNotes[index] || '').length}/10000
                           </p>
                         </div>
                       </div>
