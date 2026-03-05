@@ -139,6 +139,11 @@ const MaterialeArmy = ({ userGrupa, tipParticipant }) => {
               <option value="1">{language === 'ro' ? 'Modul 1' : 'Module 1'}</option>
               <option value="2">{language === 'ro' ? 'Modul 2' : 'Module 2'}</option>
               <option value="3">{language === 'ro' ? 'Modul 3' : 'Module 3'}</option>
+              <option value="4">{language === 'ro' ? 'Modul 4' : 'Module 4'}</option>
+              <option value="5">{language === 'ro' ? 'Modul 5' : 'Module 5'}</option>
+              <option value="6">{language === 'ro' ? 'Modul 6' : 'Module 6'}</option>
+              <option value="7">{language === 'ro' ? 'Modul 7' : 'Module 7'}</option>
+              <option value="8">{language === 'ro' ? 'Modul 8' : 'Module 8'}</option>
               <option value="rapoarte">{language === 'ro' ? 'Rapoarte/Indici' : 'Reports/Indices'}</option>
             </select>
           </div>
@@ -211,7 +216,7 @@ const MaterialeArmy = ({ userGrupa, tipParticipant }) => {
           </div>
         ) : (
           <div className="space-y-8">
-            {[1, 2, 3, 'rapoarte'].map(modul => {
+            {[1, 2, 3, 4, 5, 6, 7, 8, 'rapoarte'].map(modul => {
               // Filtrare: dacă e setat un filtru specific, arată doar acel modul
               if (filtruModul !== "toate" && String(modul) !== filtruModul) return null;
               
