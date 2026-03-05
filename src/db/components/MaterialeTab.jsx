@@ -278,6 +278,11 @@ const MaterialeTab = ({
             <option value="1">Modul 1</option>
             <option value="2">Modul 2</option>
             <option value="3">Modul 3</option>
+            <option value="4">Modul 4</option>
+            <option value="5">Modul 5</option>
+            <option value="6">Modul 6</option>
+            <option value="7">Modul 7</option>
+            <option value="8">Modul 8</option>
             <option value="rapoarte">Rapoarte/Indici</option>
           </select>
         </div>
@@ -308,9 +313,11 @@ const MaterialeTab = ({
                 <option value="1">Modul 1</option>
                 <option value="2">Modul 2</option>
                 <option value="3">Modul 3</option>
-                <option value="3">Modul 4</option>
-                <option value="3">Modul 5</option>
-                <option value="3">Modul 6</option>
+                <option value="4">Modul 4</option>
+                <option value="5">Modul 5</option>
+                <option value="6">Modul 6</option>
+                <option value="7">Modul 7</option>
+                <option value="8">Modul 8</option>
                 <option value="rapoarte">Rapoarte/Indici</option>
               </select>
             </div>
@@ -531,7 +538,7 @@ const MaterialeTab = ({
         <p className="text-gray-400">Nu există materiale încă.</p>
       ) : (
         <div className="space-y-6">
-          {[1, 2, 3, 'rapoarte'].map(modul => {
+          {[1, 2, 3, 4, 5, 6, 7, 8, 'rapoarte'].map(modul => {
             // Filtrare: dacă e setat un filtru specific, arată doar acel modul
             if (filtruModul !== "toate" && String(modul) !== filtruModul) return null;
             
@@ -574,6 +581,11 @@ const MaterialeTab = ({
                                   <option value="1">Modul 1</option>
                                   <option value="2">Modul 2</option>
                                   <option value="3">Modul 3</option>
+                                  <option value="4">Modul 4</option>
+                                  <option value="5">Modul 5</option>
+                                  <option value="6">Modul 6</option>
+                                  <option value="7">Modul 7</option>
+                                  <option value="8">Modul 8</option>
                                   <option value="rapoarte">Rapoarte/Indici</option>
                                 </select>
                                 {/* Grupe edit */}
