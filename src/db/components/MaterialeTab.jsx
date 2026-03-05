@@ -308,6 +308,9 @@ const MaterialeTab = ({
                 <option value="1">Modul 1</option>
                 <option value="2">Modul 2</option>
                 <option value="3">Modul 3</option>
+                <option value="3">Modul 4</option>
+                <option value="3">Modul 5</option>
+                <option value="3">Modul 6</option>
                 <option value="rapoarte">Rapoarte/Indici</option>
               </select>
             </div>
